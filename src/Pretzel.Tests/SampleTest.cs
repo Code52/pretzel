@@ -2,18 +2,27 @@
 
 namespace Pretzel.Tests
 {
-    public class SampleClass { }
-
-    public class SampleTest : SpecificationFor<SampleClass>
+    public class SampleTest
     {
-        public override SampleClass Given()
-        {
-            return new SampleClass();
-        }
+        public class SampleClass { }
 
-        public override void When()
+        public class For_A_Test_That_Does_Nothing : SpecificationFor<SampleClass>
         {
-            Assert.True(true);
+            public override SampleClass Given()
+            {
+                return new SampleClass();
+            }
+
+            public override void When()
+            {
+                // TODO: do something
+            }
+
+            [Fact]
+            public void We_Always_Get_True()
+            {
+                Assert.True(true);
+            }
         }
     }
 }
