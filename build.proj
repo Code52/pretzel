@@ -14,9 +14,9 @@
 
   	<Message Text="===========Tests===========" Importance="High" />
 
-  	<ItemGroup>
-  		<TestFiles Include=".\**\bin\$(Configuration)\*Tests.dll" />
-	</ItemGroup>
+  	<CreateItem Include=".\**\bin\$(Configuration)\*Tests.dll">
+  		<Output TaskParameter="Include" ItemName="TestFiles" />
+	</CreateItem>
 
     <xunit Assembly="@(TestFiles)" />
   </Target>
