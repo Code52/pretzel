@@ -40,5 +40,5 @@ Once you're familiar with Git and GitHub, clone the repository and run the ```.\
 
 ### Discussing ideas 
 
-* [Trello Board](https://trello.com/board/trello/4f1d3d847a38f6221f1d9354) - add ideas, or claim an idea and start working on it!
+* [Trello Board](https://trello.com/board/pretzel/4f25ffb3dbbed1ab5a4f0f5a) - add ideas, or claim an idea and start working on it!
 * [JabbR Chatroom](http://jabbr.net/#/rooms/code52) - discuss things in real-time with people all over the world!
