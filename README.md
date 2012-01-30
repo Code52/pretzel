@@ -1,6 +1,32 @@
-## {{Your Project Here}}
+## Pretzel
 
-Description
+A simple, pluggable site generation tool for .NET developers and Windows users (with Mono support planned I think)
+
+### Usage
+
+Initially, we plan to support two modes - **bake** and **taste**. **Bake** is for a once-off generation of the site, whereas **taste** is for testing a site locally - make a change, and pretzel should handle regenerating the page when a file changes.
+
+To scan the current directory for a website and detect the content to process, run:
+
+    pretzel bake 
+
+To scan a specific folder and parse the contents, run:
+
+    pretzel bake C:\path\to\folder
+
+To explicitly specify the input - we should support inferring the input based on the files found anyway - run:
+
+    pretzel bake --engine jekyll
+    
+
+To test a site locally (we plan to use [Dragonfly](https://github.com/loudej/dragonfly)), run:
+
+	pretzel taste 
+
+To specify the port to serve the site from (default will be 4000), run:
+
+    pretzel taste --port 5000
+
 
 ### Getting started
 
@@ -14,5 +40,5 @@ Once you're familiar with Git and GitHub, clone the repository and run the ```.\
 
 ### Discussing ideas 
 
-* [Trello Board](https://trello.com/board/samurai/4f1d3d847a38f6221f1d9354) - add ideas, or claim an idea and start working on it!
+* [Trello Board](https://trello.com/board/trello/4f1d3d847a38f6221f1d9354) - add ideas, or claim an idea and start working on it!
 * [JabbR Chatroom](http://jabbr.net/#/rooms/code52) - discuss things in real-time with people all over the world!
