@@ -36,7 +36,7 @@ To specify the port to serve the site from (default will be 4000), run:
  * [Forking a GitHub repository](http://help.github.com/fork-a-repo/)
  * [The simple gude to GIT guide](http://rogerdudler.github.com/git-guide/)
 
-Once you're familiar with Git and GitHub, clone the repository and run the ```.\build.cmd``` script to compile the code and run all the unit tests. You can use this script to test your changes quickly.
+Once you're familiar with Git and GitHub, clone the repository and run the ```.\build.cmd``` (on Windows) or ```./build.sh``` (on Linux/Mac OS X) script to compile the code and run all the unit tests. You can use this script to test your changes quickly.
 
 ### Discussing ideas 
 
