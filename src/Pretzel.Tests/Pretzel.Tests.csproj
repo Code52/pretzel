@@ -56,6 +56,7 @@
     <Compile Include="PretzelContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SampleTest.cs" />
+    <Compile Include="YamlExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
