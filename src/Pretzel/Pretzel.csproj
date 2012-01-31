@@ -74,7 +74,13 @@
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
   -->
+
+  <Target Name="AfterBuild" Condition="(($(MSBuildTargets) == '') Or ($(MSBuildTargets) == 'CSharp')) And '$(OS)' == 'Windows_NT'">
+    <CreateItem Include="@(ReferenceCopyLocalPaths)" Condition="'%(Extension)'=='.dll'">
+      <Output ItemName="AssembliesToMerge" TaskParameter="Include" />
+    </CreateItem>
+    <exec command="&quot;$(MSBuildProjectDirectory)\..\..\tools\Ilmerge\ILMerge.exe&quot; /out:@(MainAssembly) /targetplatform:v4,$(MSBuildToolsPath) &quot;@(IntermediateAssembly)&quot; @(AssembliesToMerge->'&quot;%(FullPath)&quot;', ' ')" />
+    <delete files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
+  </Target>
 </Project>
