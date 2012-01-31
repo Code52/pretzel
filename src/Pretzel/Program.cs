@@ -11,8 +11,6 @@ namespace Pretzel
     {
         static void Main(string[] args)
         {
-            Test(null);
-
             if (!args.Any())
             {
                 Usage();
@@ -28,10 +26,6 @@ namespace Pretzel
                 Bake(commandArgs);
             else if (string.Equals("taste", command, StringComparison.InvariantCultureIgnoreCase))
                 Taste(commandArgs);
-#if DEBUG
-            else if (string.Equals("test", command, StringComparison.InvariantCultureIgnoreCase))
-                Test(commandArgs);
-#endif
             else
             {
                 Console.WriteLine("Unknown Command: " + command);
@@ -53,32 +47,6 @@ namespace Pretzel
 
             Console.WriteLine("Taste Options");
             TasteOptions.WriteHelp(Console.Out);
-        }
-
-        private static void Test(string[] args)
-        {
-            var text = @"---
-                        layout: post
-                        title: This is a test jekyll document
-                        description: TEST ALL THE THINGS
-                        date: 2012-01-30
-                        tags : 
-                        - test
-                        - alsotest
-                        - lasttest
-                        ---
-            
-                        ##Test
-            
-                        This is a test of YAML parsing";
-
-            var header = text.YamlHeader();
-
-            var fs = new System.IO.Abstractions.FileSystem();
-            fs.Directory.SetCurrentDirectory(@"c:\test");
-
-            var minifier = new CssMinifier(fs, new List<FileInfo>() { new FileInfo(@"c:\test\test.less") }, @"c:\test\output.css");
-            minifier.Minify();
         }
 
         public static void Bake(string[] args)
