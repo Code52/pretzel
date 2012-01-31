@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
+using Pretzel.Logic.Minification;
 using Pretzel.Logic.Extensions;
+using System.IO;
+using System.Collections.Generic;
 
 namespace Pretzel
 {
@@ -8,6 +11,8 @@ namespace Pretzel
     {
         static void Main(string[] args)
         {
+            Test(null);
+
             if (!args.Any())
             {
                 Usage();
@@ -68,6 +73,12 @@ namespace Pretzel
                         This is a test of YAML parsing";
 
             var header = text.YamlHeader();
+
+            var fs = new System.IO.Abstractions.FileSystem();
+            fs.Directory.SetCurrentDirectory(@"c:\test");
+
+            var minifier = new CssMinifier(fs, new List<FileInfo>() { new FileInfo(@"c:\test\test.less") }, @"c:\test\output.css");
+            minifier.Minify();
         }
 
         public static void Bake(string[] args)
