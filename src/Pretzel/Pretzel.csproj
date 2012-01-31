@@ -35,6 +35,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>pretzel.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="NDesk.Options">
       <HintPath>..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
@@ -68,6 +71,9 @@
       <Name>Pretzel.Logic</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="pretzel.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -75,7 +81,6 @@
   <Target Name="BeforeBuild">
   </Target>
   -->
-
   <Target Name="AfterBuild" Condition="(($(MSBuildTargets) == '') Or ($(MSBuildTargets) == 'CSharp')) And '$(OS)' == 'Windows_NT'">
     <CreateItem Include="@(ReferenceCopyLocalPaths)" Condition="'%(Extension)'=='.dll'">
       <Output ItemName="AssembliesToMerge" TaskParameter="Include" />
