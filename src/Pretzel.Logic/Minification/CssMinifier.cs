@@ -26,7 +26,7 @@ namespace Pretzel.Logic.Minification
 
         public void Minify()
         {
-            var bundled = bundleFiles(_files);
+            var bundled = _fileSystem.BundleFiles(_files);
 
             //todo resolve imports
             //_fileSystem.Directory.SetCurrentDirectory("");
@@ -44,7 +44,7 @@ namespace Pretzel.Logic.Minification
 
         public string ProcessCss(FileInfo file)
         {
-            var content = ReadFile(file.FullName);
+            var content = _fileSystem.File.ReadAllText(file.FullName);
 
             //todo resolve imports
             //_fileSystem.Directory.SetCurrentDirectory("");
@@ -55,21 +55,6 @@ namespace Pretzel.Logic.Minification
             var engine = engineFactory.GetEngine();
             
             return engine.TransformToCss(content, file.FullName);
-        }
-
-        private string bundleFiles(IEnumerable<FileInfo> filePaths)
-        {
-            var outputCss = new StringBuilder();
-
-            filePaths.Select(file => ReadFile(file.FullName))
-                .Aggregate(outputCss, (builder, val) => builder.Append(val + "\n"));
-
-            return outputCss.ToString();
-        }
-
-        private string ReadFile(string filepath)
-        {
-            return _fileSystem.File.ReadAllText(filepath);
         }
     }
 }
