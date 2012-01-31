@@ -39,6 +39,9 @@ namespace Pretzel
             Console.WriteLine("Usage:");
             Console.WriteLine("  pretzel bake [OPTIONS] [PATH]");
             Console.WriteLine("  pretzel taste [OPTIONS]");
+#if DEBUG
+			Console.WriteLine("  pretzel test [OPTIONS]");
+#endif
             Console.WriteLine();
 
             Console.WriteLine("Bake Options");
