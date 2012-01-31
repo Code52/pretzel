@@ -30,7 +30,7 @@ namespace Pretzel.Tests
                 Assert.Equal("post", result["layout"].ToString());
                 Assert.Equal("This is a test jekyll document", result["title"].ToString());
                 Assert.Equal("2012-01-30", result["date"].ToString());
-				Assert.Equal("TEST ALL THE THINGS", result["description"].ToString());
+		Assert.Equal("TEST ALL THE THINGS", result["description"].ToString());
                 Assert.Equal("[ test, alsotest, lasttest ]", result["tags"].ToString());
             }
         }
