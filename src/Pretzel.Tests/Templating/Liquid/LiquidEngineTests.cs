@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
 using Pretzel.Logic.Templating.Liquid;
 using Xunit;
@@ -13,7 +12,7 @@ namespace Pretzel.Tests.Templating.Liquid
             return s.Replace("\r\n", "").Replace("\n", "");
         }
     }
-    
+
     public class LiquidEngineTests
     {
         public class When_Recieving_A_Folder_Containing_One_File : SpecificationFor<LiquidEngine>
@@ -28,12 +27,9 @@ namespace Pretzel.Tests.Templating.Liquid
 
             public override void When()
             {
-                var filepath = @"C:\website\index.html";
-
-
                 fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
                                                 {
-                                                    {filepath, new MockFileData(fileContents)}
+                                                    {@"C:\website\index.html", new MockFileData(fileContents)}
                                                 });
 
                 Subject.Process(fileSystem, @"C:\website\", null);
@@ -70,12 +66,9 @@ namespace Pretzel.Tests.Templating.Liquid
 
             public override void When()
             {
-                var filepath = @"C:\website\content\index.html";
-
-
                 fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
                                                 {
-                                                    {filepath, new MockFileData(fileContents)}
+                                                    {@"C:\website\content\index.html", new MockFileData(fileContents)}
                                                 });
 
                 Subject.Process(fileSystem, @"C:\website\", null);
@@ -113,12 +106,9 @@ namespace Pretzel.Tests.Templating.Liquid
 
             public override void When()
             {
-                var filepath = @"C:\website\index.html";
-
-
                 fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
                                                 {
-                                                    {filepath, new MockFileData(fileContents)}
+                                                    {@"C:\website\index.html", new MockFileData(fileContents)}
                                                 });
 
                 Subject.Process(fileSystem, @"C:\website\", new Site { Title = "My Web Site" });
@@ -145,13 +135,10 @@ namespace Pretzel.Tests.Templating.Liquid
 
             public override void When()
             {
-                var layoutFile = @"C:\website\_layouts\default.html";
-                var contentFile = @"C:\website\index.md";
-
                 fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
                                                 {
-                                                    {layoutFile, new MockFileData(templateContents)},
-                                                    {contentFile, new MockFileData(pageContents)}
+                                                    {@"C:\website\_layouts\default.html", new MockFileData(templateContents)},
+                                                    {@"C:\website\index.md", new MockFileData(pageContents)}
                                                 });
 
                 Subject.Process(fileSystem, @"C:\website\", new Site { Title = "My Web Site" });
@@ -167,6 +154,37 @@ namespace Pretzel.Tests.Templating.Liquid
             public void Does_Not_Copy_Template_To_Output()
             {
                 Assert.False(fileSystem.File.Exists(@"C:\website\_site\_layouts\default.html"));
+            }
+        }
+
+
+        public class Given_Markdown_Page_Has_A_Permalink : SpecificationFor<LiquidEngine>
+        {
+            MockFileSystem fileSystem;
+            const string templateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            const string pageContents = "---\r\n layout: default\r\npermalink: /somepage.html\r\n---\r\n\r\n# Hello World!";
+            const string expectedfileContents = "<html><head><title>My Web Site</title></head><body><h1>Hello World!</h1></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+                                                {
+                                                    {@"C:\website\_layouts\default.html", new MockFileData(templateContents)},
+                                                    {@"C:\website\index.md", new MockFileData(pageContents)}
+                                                });
+
+                Subject.Process(fileSystem, @"C:\website\", new Site { Title = "My Web Site" });
+            }
+
+            [Fact]
+            public void The_File_Should_Be_At_A_Different_Path()
+            {
+                Assert.True(fileSystem.File.Exists(@"C:\website\_site\somepage.html"));
             }
         }
     }

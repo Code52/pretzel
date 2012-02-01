@@ -44,6 +44,11 @@ namespace Pretzel.Logic.Templating.Liquid
 
                     var metadata = inputFile.YamlHeader();
 
+                    if (metadata.ContainsKey("permalink"))
+                    {
+                        newPath = metadata["permalink"].ToString();
+                    }
+
                     if (metadata.ContainsKey("layout"))
                     {
                         var key = metadata["layout"];
