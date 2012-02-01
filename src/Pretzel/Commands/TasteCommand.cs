@@ -29,6 +29,11 @@ namespace Pretzel.Commands
             Settings.Parse(arguments);
             Console.WriteLine("Port: " + Port);
             Console.WriteLine("Debug: " + Debug);
+
+            var f = new FileContentProvider();
+            var w = new WebHost(Directory.GetCurrentDirectory(), f);
+            w.Start();
+            Console.ReadLine();
         }
 
         public void WriteHelp(TextWriter writer)
