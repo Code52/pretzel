@@ -50,6 +50,31 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
         }
 
+
+        public class When_Recieving_A_Folder_Without_A_Trailing_Slash : BakingEnvironment<JekyllEngine>
+        {
+            const string FileContents = "<html><head></head><body></body></html>";
+
+            public override JekyllEngine Given()
+            {
+                return new JekyllEngine();
+            }
+
+            public override void When()
+            {
+                var context = new SiteContext { Folder = @"C:\website" };
+                FileSystem.AddFile(@"C:\website\index.html", new MockFileData(FileContents));
+                Subject.Initialize(FileSystem, context);
+                Subject.Process();
+            }
+
+            [Fact]
+            public void The_File_Is_Added_At_The_Root()
+            {
+                Assert.True(FileSystem.File.Exists(@"C:\website\_site\index.html"));
+            }
+        }
+
         public class When_Recieving_A_Folder_Containing_One_File_In_A_Subfolder : BakingEnvironment<JekyllEngine>
         {
             const string FileContents = "<html><head></head><body></body></html>";
@@ -86,10 +111,9 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
         }
 
-        public class When_Recieving_A_File_With_A_Template : BakingEnvironment<JekyllEngine>
+        public class When_Recieving_A_File_Without_Metadata : BakingEnvironment<JekyllEngine>
         {
             const string FileContents = "<html><head><title>{{ page.title }}</title></head><body></body></html>";
-            const string ExpectedfileContents = "<html><head><title>My Web Site</title></head><body></body></html>";
 
             public override JekyllEngine Given()
             {
@@ -105,9 +129,9 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
 
             [Fact]
-            public void The_File_Is_Applies_Data_To_The_Template()
+            public void The_File_Is_Unaltered()
             {
-                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html"));
+                Assert.Equal(FileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html"));
             }
         }
 

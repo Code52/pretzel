@@ -20,7 +20,7 @@ namespace Pretzel.Logic.Templating.Jekyll
 
             foreach (var file in fileSystem.Directory.GetFiles(context.Folder, "*.*", SearchOption.AllDirectories))
             {
-                var relativePath = file.Replace(context.Folder, "");
+                var relativePath = file.Replace(context.Folder, "").TrimStart('\\');
                 if (relativePath.StartsWith("_")) continue;
                 if (relativePath.StartsWith(".")) continue;
 
@@ -28,6 +28,17 @@ namespace Pretzel.Logic.Templating.Jekyll
                 var outputFile = Path.Combine(outputDirectory, relativePath);
 
                 var inputFile = fileSystem.File.ReadAllText(file);
+                if (!inputFile.StartsWith("---"))
+                {
+                    fileSystem.File.WriteAllText(outputFile, inputFile);
+                    continue;
+                }
+
+                // TODO: refine this step
+                // markdown file should not be treated differently
+                // output from markdown file should be sent to template pipeline
+                
+
                 if (extension.IsMarkdownFile())
                 {
                     outputFile = outputFile.Replace(extension, ".html");
@@ -43,11 +54,11 @@ namespace Pretzel.Logic.Templating.Jekyll
             }
         }
 
-        private PageContext ProcessMarkdownPage(string inputFile, string outputPath, string outputDirectory)
+        private PageContext ProcessMarkdownPage(string fileContents, string outputPath, string outputDirectory)
         {
-            var metadata = inputFile.YamlHeader();
+            var metadata = fileContents.YamlHeader();
             var pageContext = PageContext.FromDictionary(metadata, outputDirectory, outputPath);
-            pageContext.Content = Markdown.Transform(inputFile.ExcludeHeader());
+            pageContext.Content = Markdown.Transform(fileContents.ExcludeHeader());
 
             while (metadata.ContainsKey("layout"))
             {
@@ -67,34 +78,34 @@ namespace Pretzel.Logic.Templating.Jekyll
             var metadata = templateFile.YamlHeader();
             var templateContent = templateFile.ExcludeHeader();
 
-            var data = FromAnonymousObject(context, pageContext);
+            var data = CreatePageData(context, pageContext);
             pageContext.Content = RenderTemplate(templateContent, data);
             return metadata;
         }
 
         private void RenderTemplate(string inputFile, string outputPath)
         {
-            var data = FromAnonymousObject(context);
+            var data = CreatePageData(context);
             var template = Template.Parse(inputFile);
             var output = template.Render(data);
             fileSystem.File.WriteAllText(outputPath, output);
         }
 
-        private static Hash FromAnonymousObject(SiteContext context, PageContext pageContext)
+        private static Hash CreatePageData(SiteContext context, PageContext pageContext)
         {
             var title = string.IsNullOrWhiteSpace(pageContext.Title) ? context.Title : pageContext.Title;
 
             return Hash.FromAnonymousObject(new { page = new { title }, content = pageContext.Content });
         }
 
-        private static Hash FromAnonymousObject(SiteContext context)
+        private static Hash CreatePageData(SiteContext context)
         {
             return Hash.FromAnonymousObject(new { page = new { title = context.Title } });
         }
 
-        private static string RenderTemplate(string templateFile, Hash data)
+        private static string RenderTemplate(string templateContents, Hash data)
         {
-            var template = Template.Parse(templateFile);
+            var template = Template.Parse(templateContents);
             return template.Render(data);
         }
 
