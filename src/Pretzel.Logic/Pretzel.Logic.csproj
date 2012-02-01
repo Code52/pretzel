@@ -47,6 +47,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Abstractions">
       <HintPath>..\packages\System.IO.Abstractions.1.4.0.12\lib\net35\System.IO.Abstractions.dll</HintPath>
     </Reference>
@@ -63,6 +64,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\YamlExtensions.cs" />
     <Compile Include="Minification\CssMinifier.cs" />
     <Compile Include="Minification\FileSystemExtensions.cs" />
@@ -73,11 +75,58 @@
     <Compile Include="Templating\Liquid\LiquidExtensions.cs" />
     <Compile Include="Templating\Liquid\PageContext.cs" />
     <Compile Include="Templating\Liquid\SiteContext.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Recipe\Recipe.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Rss.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Layout.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Post.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\25.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Atom.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\About.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Index.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\FirstPost.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\favicon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\favicon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Style.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

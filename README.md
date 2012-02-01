@@ -19,7 +19,7 @@ To explicitly specify the input - we should support inferring the input based on
     pretzel bake --engine jekyll
     
 
-To test a site locally (we plan to use [Dragonfly](https://github.com/loudej/dragonfly)), run:
+To test a site locally (we plan to use [Firefly](https://github.com/loudej/firefly)), run:
 
 	pretzel taste 
 
@@ -44,4 +44,8 @@ Once you're familiar with Git and GitHub, clone the repository and run the ```.\
 * [JabbR Chatroom](http://jabbr.net/#/rooms/code52) - discuss things in real-time with people all over the world!
 
 ### Links
-- [ColorCode Fork](https://github.com/csainty/ColorCode) - Switch from inline html to stylesheet approach
+- [ColorCode Fork](https://github.com/csainty/ColorCode) - Switch from inline html to stylesheet approach 
+
+
+### Attribution
+ “[Pretzel](http://thenounproject.com/noun/pretzel/#icon-No555)” symbol by [The Noun Project](http://www.thenounproject.com/), from The Noun Project collection.

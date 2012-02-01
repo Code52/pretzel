@@ -55,6 +55,7 @@
     <Compile Include="Minification\JsMinificationTests.cs" />
     <Compile Include="PretzelContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Recipe\RecipeTests.cs" />
     <Compile Include="SampleTest.cs" />
     <Compile Include="Templating\Liquid\BakingEnvironment.cs" />
     <Compile Include="Templating\Liquid\LiquidEngineTests.cs" />
