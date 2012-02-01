@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using NDesk.Options;
+using Pretzel.Logic.Templating.Jekyll;
 using Pretzel.Logic.Templating.Liquid;
 
 namespace Pretzel.Commands
@@ -35,15 +36,29 @@ namespace Pretzel.Commands
             Console.WriteLine("Engine: " + Engine);
             Console.WriteLine("Debug: " + Debug);
 
+            if (string.IsNullOrWhiteSpace(Path))
+            {
+                Path = Directory.GetCurrentDirectory();
+            }
+            if (string.IsNullOrWhiteSpace(Engine))
+            {
+                Engine = InferEngineFromDirectory(Path);
+            }
+
             if (Engine.ToLower() == "jekyll")
             {
-                var engine = new LiquidEngine();
+                var engine = new JekyllEngine();
                 var fileSystem = new FileSystem();
                 var context = new SiteContext { Folder = Path }; // TODO: process _config.yml file
                 engine.Initialize(fileSystem, context);
                 engine.Process();
             }
 
+        }
+
+        private string InferEngineFromDirectory(string path)
+        {
+            return "jekyll"; // TODO: logic
         }
 
         public void WriteHelp(TextWriter writer)

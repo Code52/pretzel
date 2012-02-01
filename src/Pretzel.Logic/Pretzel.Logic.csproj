@@ -70,11 +70,11 @@
     <Compile Include="Minification\FileSystemExtensions.cs" />
     <Compile Include="Minification\JsMinifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Templating\ITemplateEngine.cs" />
-    <Compile Include="Templating\Liquid\LiquidEngine.cs" />
-    <Compile Include="Templating\Liquid\LiquidExtensions.cs" />
-    <Compile Include="Templating\Liquid\PageContext.cs" />
-    <Compile Include="Templating\Liquid\SiteContext.cs" />
+    <Compile Include="Templating\ISiteEngine.cs" />
+    <Compile Include="Templating\Jekyll\JekyllEngine.cs" />
+    <Compile Include="Templating\Jekyll\JekyllExtensions.cs" />
+    <Compile Include="Templating\Jekyll\PageContext.cs" />
+    <Compile Include="Templating\Jekyll\SiteContext.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
