@@ -45,3 +45,6 @@ Once you're familiar with Git and GitHub, clone the repository and run the ```.\
 
 ### Links
 - [ColorCode Fork](https://github.com/csainty/ColorCode) - Switch from inline html to stylesheet approach
+                                                         - 
+### Attribution
+ “[Pretzel](http://thenounproject.com/noun/pretzel/#icon-No555)” symbol by [The Noun Project](http://www.thenounproject.com/), from The Noun Project collection.
