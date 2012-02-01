@@ -11,6 +11,7 @@ namespace Pretzel.Commands
     {
         public int Port { get; private set; }
         public bool Debug { get; private set; }
+        public string Path { get; private set; }
 
         private OptionSet Settings
         {
@@ -19,6 +20,7 @@ namespace Pretzel.Commands
                 return new OptionSet
                            {
                                {"p|port=", "The server port number.", v => Port = int.Parse(v)},
+                               {"path=", "The path to site directory", p => Path = p },
                                {"debug", "Enable debugging", v => Debug = true}
                            };
             }
@@ -30,8 +32,11 @@ namespace Pretzel.Commands
             Console.WriteLine("Port: " + Port);
             Console.WriteLine("Debug: " + Debug);
 
+            Path = Path ?? Directory.GetCurrentDirectory();
+            Console.WriteLine("Path: " + Path);
+
             var f = new FileContentProvider();
-            var w = new WebHost(Directory.GetCurrentDirectory(), f);
+            var w = new WebHost(Path, f);
             w.Start();
             Console.ReadLine();
         }
