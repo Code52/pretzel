@@ -19,7 +19,7 @@ To explicitly specify the input - we should support inferring the input based on
     pretzel bake --engine jekyll
     
 
-To test a site locally (we plan to use [Dragonfly](https://github.com/loudej/dragonfly)), run:
+To test a site locally (we plan to use [Firefly](https://github.com/loudej/firefly)), run:
 
 	pretzel taste 
 
