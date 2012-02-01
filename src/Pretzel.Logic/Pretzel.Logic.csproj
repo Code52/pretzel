@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\YamlExtensions.cs" />
+    <Compile Include="Minification\AssetMinifier.cs" />
     <Compile Include="Minification\CssMinifier.cs" />
     <Compile Include="Minification\FileSystemExtensions.cs" />
     <Compile Include="Minification\JsMinifier.cs" />

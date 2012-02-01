@@ -11,8 +11,6 @@ namespace Pretzel.Logic.Minification
 {
     public class CssMinifier
     {
-        private readonly static Regex IMPORT_PATTERN = new Regex(@"@import +url\(([""']){0,1}(.*?)\1{0,1}\);", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
         private readonly IFileSystem _fileSystem;
         private IEnumerable<FileInfo> _files;
         private string _outputPath;
