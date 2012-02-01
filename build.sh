@@ -4,7 +4,7 @@ config=${1-Debug}
 function nugetit {
   olddir=`pwd`
   cd $1
-  mono --runtime=v4.0 ../.nuget/NuGet.exe install packages.config
+  mono --runtime=v4.0 ../.nuget/NuGet.exe install packages.config -o ../packages/
   cd $olddir
 }
 
