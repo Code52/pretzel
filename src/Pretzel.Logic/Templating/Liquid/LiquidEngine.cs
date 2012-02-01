@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.IO.Abstractions;
+using DotLiquid;
 
 namespace Pretzel.Logic.Templating.Liquid
 {
@@ -20,10 +21,15 @@ namespace Pretzel.Logic.Templating.Liquid
                 var relativePath = file.Replace(folder, "");
                 var newPath = Path.Combine(outputPath, relativePath);
 
-                var template = DotLiquid.Template.Parse(fileSystem.File.ReadAllText(file));
+                var template = Template.Parse(fileSystem.File.ReadAllText(file));
 
-                var output = template.Render();
+                Hash data = null;
+                if (site != null)
+                {
+                    data = Hash.FromAnonymousObject(new {page = new {title = site.Title}});
+                }
 
+                var output = template.Render(data);
                 fileSystem.File.WriteAllText(newPath, output);
             }
         }
