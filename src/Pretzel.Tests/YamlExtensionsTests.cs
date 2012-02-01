@@ -8,7 +8,7 @@ namespace Pretzel.Tests
         public class YamlHeaderTests
         {
             [Fact]
-            public void Parse_multiple_fields_in_header()
+            public void YamlHeader_WithSampleData_ReturnsExpectedValues()
             {
                 const string header = @"---
                         layout: post
@@ -30,8 +30,38 @@ namespace Pretzel.Tests
                 Assert.Equal("post", result["layout"].ToString());
                 Assert.Equal("This is a test jekyll document", result["title"].ToString());
                 Assert.Equal("2012-01-30", result["date"].ToString());
-		Assert.Equal("TEST ALL THE THINGS", result["description"].ToString());
+                Assert.Equal("TEST ALL THE THINGS", result["description"].ToString());
                 Assert.Equal("[ test, alsotest, lasttest ]", result["tags"].ToString());
+            }
+
+            [Fact]
+            public void RemoveHeader_WithSampleValue_ContainsRestOfDocument()
+            {
+                const string header = @"---
+                        layout: post
+                        title: This is a test jekyll document
+                        description: TEST ALL THE THINGS
+                        date: 2012-01-30
+                        tags : 
+                        - test
+                        - alsotest
+                        - lasttest
+                        ---
+            
+                        ##Test
+            
+                        This is a test of YAML parsing";
+
+                var result = header.ExcludeHeader();
+
+                Assert.Equal("##Test\r\n            \r\n                        This is a test of YAML parsing", result);
+            }
+
+
+            [Fact]
+            public void YamlHeader_WhenNoMetadataSet_ReturnsEmptyDictionary()
+            {
+                Assert.NotNull("".YamlHeader());
             }
         }
     }

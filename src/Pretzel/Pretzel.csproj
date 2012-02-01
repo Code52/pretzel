@@ -40,13 +40,13 @@
     <ApplicationIcon>pretzel.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Firefly, Version=0.3.0.0, Culture=neutral, PublicKeyToken=1d0e30769d803c61, processorArchitecture=MSIL">
+    <Reference Include="Firefly">
       <HintPath>..\packages\Firefly.0.3\lib\net40\Firefly.dll</HintPath>
     </Reference>
     <Reference Include="NDesk.Options">
       <HintPath>..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
     </Reference>
-    <Reference Include="Owin, Version=0.7.0.0, Culture=neutral, PublicKeyToken=f585506a2da1fef4, processorArchitecture=MSIL">
+    <Reference Include="Owin">
       <HintPath>..\packages\Owin.0.7\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="System" />
