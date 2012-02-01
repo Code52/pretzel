@@ -12,5 +12,13 @@ namespace Pretzel.Tests.Templating.Liquid
             Assert.True(".markdown".IsMarkdownFile());
             Assert.True(".mdown".IsMarkdownFile());
         }
+
+        [Fact]
+        public void Permalink_WithLeadingSlash_SwitchestoBackslash()
+        {
+            Assert.Equal("index.html", "index.html".ToRelativeFile());
+            Assert.Equal(@"index.html", "/index.html".ToRelativeFile());
+            Assert.Equal(@"folder\index.html", "/folder/index.html".ToRelativeFile());
+        }
     }
 }

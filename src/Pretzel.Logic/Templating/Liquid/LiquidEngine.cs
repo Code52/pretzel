@@ -46,7 +46,7 @@ namespace Pretzel.Logic.Templating.Liquid
 
                     if (metadata.ContainsKey("permalink"))
                     {
-                        newPath = metadata["permalink"].ToString();
+                        newPath = Path.Combine(outputPath, metadata["permalink"].ToString().ToRelativeFile());
                     }
 
                     if (metadata.ContainsKey("layout"))

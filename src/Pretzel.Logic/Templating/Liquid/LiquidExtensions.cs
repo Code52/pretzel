@@ -10,5 +10,10 @@ namespace Pretzel.Logic.Templating.Liquid
         {
             return markdownFiles.Contains(extension.ToLower());
         }
+
+        public static string ToRelativeFile(this string path)
+        {
+            return path.Replace(@"/", @"\").TrimStart('\\');
+        }
     }
 }

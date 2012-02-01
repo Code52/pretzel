@@ -157,13 +157,9 @@ namespace Pretzel.Tests.Templating.Liquid
             }
         }
 
-
-        public class Given_Markdown_Page_Has_A_Permalink : SpecificationFor<LiquidEngine>
+        public class Given_Markdown_Page_Has_A_Permalink : BakingEnvironment<LiquidEngine>
         {
-            MockFileSystem fileSystem;
-            const string templateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
-            const string pageContents = "---\r\n layout: default\r\npermalink: /somepage.html\r\n---\r\n\r\n# Hello World!";
-            const string expectedfileContents = "<html><head><title>My Web Site</title></head><body><h1>Hello World!</h1></body></html>";
+            const string pageContents = "---\r\npermalink: /somepage.html\r\n---\r\n\r\n# Hello World!";
 
             public override LiquidEngine Given()
             {
@@ -172,19 +168,15 @@ namespace Pretzel.Tests.Templating.Liquid
 
             public override void When()
             {
-                fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
-                                                {
-                                                    {@"C:\website\_layouts\default.html", new MockFileData(templateContents)},
-                                                    {@"C:\website\index.md", new MockFileData(pageContents)}
-                                                });
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(pageContents));
 
-                Subject.Process(fileSystem, @"C:\website\", new Site { Title = "My Web Site" });
+                Subject.Process(FileSystem, @"C:\website\", new Site { Title = "My Web Site" });
             }
 
             [Fact]
             public void The_File_Should_Be_At_A_Different_Path()
             {
-                Assert.True(fileSystem.File.Exists(@"C:\website\_site\somepage.html"));
+                Assert.True(FileSystem.File.Exists(@"C:\website\_site\somepage.html"));
             }
         }
     }
