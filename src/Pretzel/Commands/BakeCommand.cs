@@ -1,16 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using NDesk.Options;
+using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Jekyll;
 
 namespace Pretzel.Commands
 {
     [PartCreationPolicy(CreationPolicy.Shared)]
     [CommandInfo(CommandName = "bake")]
-    public sealed class BakeCommand : ICommand
+    public sealed class BakeCommand : ICommand, IPartImportsSatisfiedNotification
     {
+        private Dictionary<string, ISiteEngine> engineMap;
+
+        [ImportMany]
+        private Lazy<ISiteEngine, ISiteEngineInfo>[] Engines { get; set; }
+
         public string Path { get; private set; }
         public string Engine { get; private set; }
         public bool Debug { get; private set; }
@@ -31,38 +38,59 @@ namespace Pretzel.Commands
         public void Execute(string[] arguments)
         {
             Settings.Parse(arguments);
-            Console.WriteLine("Path: " + Path);
-            Console.WriteLine("Engine: " + Engine);
-            Console.WriteLine("Debug: " + Debug);
+            
+            var fileSystem = new FileSystem();
 
             if (string.IsNullOrWhiteSpace(Path))
             {
                 Path = Directory.GetCurrentDirectory();
             }
+
             if (string.IsNullOrWhiteSpace(Engine))
             {
-                Engine = InferEngineFromDirectory(Path);
+                Engine = InferEngineFromDirectory(Path, fileSystem);
             }
 
-            if (Engine.ToLower() == "jekyll")
+            ISiteEngine engine;
+
+            if (engineMap.TryGetValue(Engine, out engine))
             {
-                var engine = new JekyllEngine();
-                var fileSystem = new FileSystem();
-                var context = new SiteContext { Folder = Path }; // TODO: process _config.yml file
+                var context = new SiteContext { Folder = Path };
                 engine.Initialize(fileSystem, context);
                 engine.Process();
             }
-
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Cannot find engine for input: '{0}'", Engine);
+            }
         }
 
-        private string InferEngineFromDirectory(string path)
+        private string InferEngineFromDirectory(string path, IFileSystem fileSystem)
         {
-            return "jekyll"; // TODO: logic
+            foreach(var engine in engineMap)
+            {
+                if (!engine.Value.CanProcess(fileSystem, path)) continue;
+                System.Diagnostics.Debug.WriteLine("Recommended engine for directory: '{0}'", engine.Key);
+                return engine.Key;
+            }
+
+            return string.Empty;
         }
 
         public void WriteHelp(TextWriter writer)
         {
             Settings.WriteOptionDescriptions(writer);
+        }
+
+        public void OnImportsSatisfied()
+        {
+            engineMap = new Dictionary<string, ISiteEngine>(Engines.Length);
+
+            foreach (var command in Engines)
+            {
+                if (!engineMap.ContainsKey(command.Metadata.Engine))
+                    engineMap.Add(command.Metadata.Engine, command.Value);
+            }
         }
     }
 }

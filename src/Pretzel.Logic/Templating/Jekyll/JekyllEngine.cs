@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using DotLiquid;
@@ -7,6 +8,8 @@ using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Logic.Templating.Jekyll
 {
+    [PartCreationPolicy(CreationPolicy.Shared)]
+    [SiteEngineInfo(Engine = "jekyll")]
     public class JekyllEngine : ISiteEngine
     {
         private static readonly Markdown Markdown = new Markdown();
@@ -26,10 +29,14 @@ namespace Pretzel.Logic.Templating.Jekyll
 
                 var outputFile = Path.Combine(outputDirectory, relativePath);
 
+                var directory = Path.GetDirectoryName(outputFile);
+                if (!fileSystem.Directory.Exists(directory))
+                    fileSystem.Directory.CreateDirectory(directory);
+
                 var extension = Path.GetExtension(file);
                 if (extension.IsImageFormat())
                 {
-                    fileSystem.File.Copy(file, outputFile);
+                    fileSystem.File.Copy(file, outputFile, true);
                     continue;
                 }
 
@@ -44,7 +51,6 @@ namespace Pretzel.Logic.Templating.Jekyll
                 // markdown file should not be treated differently
                 // output from markdown file should be sent to template pipeline
                 
-
                 if (extension.IsMarkdownFile())
                 {
                     outputFile = outputFile.Replace(extension, ".html");
@@ -55,7 +61,7 @@ namespace Pretzel.Logic.Templating.Jekyll
                 }
                 else
                 {
-                    RenderTemplate(inputFile, outputFile);
+                    RenderTemplate(inputFile.ExcludeHeader(), outputFile);
                 }
             }
         }
@@ -113,6 +119,12 @@ namespace Pretzel.Logic.Templating.Jekyll
         {
             var template = Template.Parse(templateContents);
             return template.Render(data);
+        }
+
+        public bool CanProcess(IFileSystem fileSystem, string directory)
+        {
+            var configPath = Path.Combine(directory, "_config.yml");
+            return fileSystem.File.Exists(configPath);
         }
 
         public void Initialize(IFileSystem fileSystem, SiteContext context)
