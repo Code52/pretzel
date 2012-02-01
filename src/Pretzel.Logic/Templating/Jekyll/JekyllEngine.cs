@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using DotLiquid;
@@ -7,6 +8,8 @@ using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Logic.Templating.Jekyll
 {
+    [PartCreationPolicy(CreationPolicy.Shared)]
+    [SiteEngineInfo(Engine = "jekyll")]
     public class JekyllEngine : ISiteEngine
     {
         private static readonly Markdown Markdown = new Markdown();
@@ -33,7 +36,7 @@ namespace Pretzel.Logic.Templating.Jekyll
                 var extension = Path.GetExtension(file);
                 if (extension.IsImageFormat())
                 {
-                    fileSystem.File.Copy(file, outputFile);
+                    fileSystem.File.Copy(file, outputFile, true);
                     continue;
                 }
 
@@ -116,6 +119,12 @@ namespace Pretzel.Logic.Templating.Jekyll
         {
             var template = Template.Parse(templateContents);
             return template.Render(data);
+        }
+
+        public bool CanProcess(IFileSystem fileSystem, string directory)
+        {
+            var configPath = Path.Combine(directory, "_config.yml");
+            return fileSystem.File.Exists(configPath);
         }
 
         public void Initialize(IFileSystem fileSystem, SiteContext context)

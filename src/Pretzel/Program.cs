@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Pretzel.Commands;
-
+using Pretzel.Logic.Templating;
 
 namespace Pretzel
 {
@@ -30,12 +32,19 @@ namespace Pretzel
             var commandName = args[0];
             var commandArgs = args.Skip(1).ToArray();
             Commands[commandName].Execute(commandArgs);
+            WaitForClose();
+        }
+
+        [Conditional("DEBUG")]
+        public void WaitForClose()
+        {
+            Console.ReadLine();
         }
 
         public void Compose()
         {
-            var catalog = new AssemblyCatalog(Assembly.GetExecutingAssembly());
-            var container = new CompositionContainer(catalog);
+            var first = new AssemblyCatalog(Assembly.GetExecutingAssembly());
+            var container = new CompositionContainer(first);
             container.ComposeParts(this);
         }
     }
