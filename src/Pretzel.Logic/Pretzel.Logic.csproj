@@ -42,6 +42,9 @@
     <Reference Include="DotLiquid, Version=1.6.1.0, Culture=neutral, PublicKeyToken=82e46016ecf9f07c, processorArchitecture=MSIL">
       <HintPath>..\packages\DotLiquid.1.6.1.0\lib\NET40\DotLiquid.dll</HintPath>
     </Reference>
+    <Reference Include="MarkdownDeep">
+      <HintPath>..\packages\MarkdownDeep.NET.1.4\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -67,6 +70,11 @@
     <Compile Include="Minification\FileSystemExtensions.cs" />
     <Compile Include="Minification\JsMinifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Templating\ISiteEngine.cs" />
+    <Compile Include="Templating\Jekyll\JekyllEngine.cs" />
+    <Compile Include="Templating\Jekyll\JekyllExtensions.cs" />
+    <Compile Include="Templating\Jekyll\PageContext.cs" />
+    <Compile Include="Templating\Jekyll\SiteContext.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
