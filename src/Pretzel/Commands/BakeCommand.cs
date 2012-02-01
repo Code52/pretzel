@@ -5,37 +5,38 @@ using NDesk.Options;
 
 namespace Pretzel.Commands
 {
-    [Export(typeof(ICommand))]
     [PartCreationPolicy(CreationPolicy.Shared)]
     [CommandInfo(CommandName = "bake")]
     public sealed class BakeCommand : ICommand
     {
         public string Path { get; private set; }
         public string Engine { get; private set; }
+        public bool Debug { get; private set; }
 
-        private OptionSet GetSettings()
+        private OptionSet Settings
         {
-            var settings = new OptionSet
+            get
             {
-                { "e|engine=", "The render engine",
-                    v => Engine = v},
-                    {"p|path=", "The path to site directory",
-                    p=> Path = p}
-            };
-            return settings;
+                return new OptionSet
+                           {
+                               { "e|engine=", "The render engine", v => Engine = v },
+                               { "p|path=", "The path to site directory", p => Path = p },
+                               { "debug", "Enable debugging", p => Debug = true}
+                           };
+            }
         }
 
         public void Execute(string[] arguments)
         {
-            GetSettings().Parse(arguments);
+            Settings.Parse(arguments);
             Console.WriteLine("Path: " + Path);
             Console.WriteLine("Engine: " + Engine);
+            Console.WriteLine("Debug: " + Debug);
         }
 
         public void WriteHelp(TextWriter writer)
         {
-            var settings = GetSettings();
-            settings.WriteOptionDescriptions(writer);
+            Settings.WriteOptionDescriptions(writer);
         }
     }
 }
