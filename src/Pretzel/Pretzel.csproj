@@ -44,6 +44,7 @@
       <HintPath>..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Abstractions">
       <HintPath>..\packages\System.IO.Abstractions.1.4.0.12\lib\net35\System.IO.Abstractions.dll</HintPath>
@@ -61,10 +62,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BakeOptions.cs" />
+    <Compile Include="Commands\BakeCommand.cs" />
+    <Compile Include="Commands\CommandCollection.cs" />
+    <Compile Include="Commands\CommandInfoAttribute.cs" />
+    <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="Commands\ICommandInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TasteOptions.cs" />
+    <Compile Include="Commands\TasteCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
