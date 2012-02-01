@@ -6,6 +6,7 @@ using Firefly.Http;
 using Owin;
 using System.Threading;
 using System.IO;
+using Pretzel.Logic.Extensions;
 
 namespace Pretzel
 {
@@ -92,14 +93,14 @@ namespace Pretzel
             if (!content.IsAvailable(request))
             {
                 // File not found
-                SendText(result, "404 Not Found", "Page not found: " + request);
+                SendText(result, "404 Not Found", "text/plain", "Page not found: " + request);
                 return;
             }
             else
             {
                 // Send page back
                 string fileContents = content.GetContent(request);
-                SendText(result, "200 OK", fileContents);
+                SendText(result, "200 OK", request.MimeType(), fileContents);
                 return;
             }
         }
@@ -109,13 +110,13 @@ namespace Pretzel
         /// </summary>
         /// <param name="result">Result delegate from server-callback</param>
         /// <param name="bytes">byte-array to send</param>
-        private void SendText(ResultDelegate result, string header, string text)
+        private void SendText(ResultDelegate result, string header, string contenttype, string text)
         {
             result(
                 header,
                 new Dictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase)
                     {
-                        {"Content-Type", new[] {"text/plain"}}
+                        {"Content-Type", new[] {contenttype }}
                     },
                 (Func<ArraySegment<byte>, bool> write, Func<Action, bool> flush, Action<Exception> end, CancellationToken cancellationToken) =>
                 {
@@ -154,7 +155,9 @@ namespace Pretzel
         ~WebHost()
         {
             Dispose(false);
-        } 
+        }
         #endregion
     }
+
+    
 }
