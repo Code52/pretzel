@@ -27,7 +27,8 @@ namespace Pretzel.Tests.Templating.Liquid
             {
                 var context = new SiteContext {Folder = @"C:\website\"};
                 FileSystem.AddFile(@"C:\website\index.html", new MockFileData(FileContents));
-                Subject.Process(FileSystem, context);
+                Subject.Initialize(FileSystem, context);
+                Subject.Process();
             }
 
             [Fact]
@@ -62,7 +63,8 @@ namespace Pretzel.Tests.Templating.Liquid
             {
                 var context = new SiteContext { Folder = @"C:\website\" };
                 FileSystem.AddFile(@"C:\website\content\index.html", new MockFileData(FileContents));
-                Subject.Process(FileSystem,context);
+                Subject.Initialize(FileSystem, context);
+                Subject.Process();
             }
 
             [Fact]
@@ -98,7 +100,8 @@ namespace Pretzel.Tests.Templating.Liquid
             {
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
                 FileSystem.AddFile(@"C:\website\index.html", new MockFileData(FileContents));
-                Subject.Process(FileSystem, context);
+                Subject.Initialize(FileSystem, context);
+                Subject.Process();
             }
 
             [Fact]
@@ -124,7 +127,8 @@ namespace Pretzel.Tests.Templating.Liquid
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
-                Subject.Process(FileSystem, context);
+                Subject.Initialize(FileSystem, context);
+                Subject.Process();
             }
 
             [Fact]
@@ -159,7 +163,8 @@ namespace Pretzel.Tests.Templating.Liquid
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
 
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
-                Subject.Process(FileSystem, context);
+                Subject.Initialize(FileSystem, context);
+                Subject.Process();
             }
 
             [Fact]
@@ -188,7 +193,8 @@ namespace Pretzel.Tests.Templating.Liquid
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
-                Subject.Process(FileSystem, context);
+                Subject.Initialize(FileSystem, context);
+                Subject.Process();
             }
 
             [Fact]
@@ -215,7 +221,8 @@ namespace Pretzel.Tests.Templating.Liquid
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
-                Subject.Process(FileSystem, context);
+                Subject.Initialize(FileSystem, context);
+                Subject.Process();
             }
 
             [Fact]

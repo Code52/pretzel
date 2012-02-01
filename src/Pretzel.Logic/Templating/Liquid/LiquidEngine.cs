@@ -47,8 +47,10 @@ namespace Pretzel.Logic.Templating.Liquid
     public class LiquidEngine : ITemplateEngine
     {
         private static readonly Markdown markdown = new Markdown();
+        private SiteContext context;
+        private IFileSystem fileSystem;
 
-        public void Process(IFileSystem fileSystem, SiteContext context)
+        public void Process()
         {
             var outputPath = Path.Combine(context.Folder, "_site");
             fileSystem.Directory.CreateDirectory(outputPath);
@@ -69,6 +71,7 @@ namespace Pretzel.Logic.Templating.Liquid
 
                     var metadata = inputFile.YamlHeader();
                     var pageContext = PageContext.FromDictionary(metadata, outputPath, newPath);
+                    pageContext.Content = markdown.Transform(inputFile.ExcludeHeader());
 
                     if (metadata.ContainsKey("layout"))
                     {
@@ -76,11 +79,10 @@ namespace Pretzel.Logic.Templating.Liquid
 
                         if (fileSystem.File.Exists(path))
                         {
-                            var templateFile = fileSystem.File.ReadAllText(path);
-                            pageContext.Content = markdown.Transform(inputFile.ExcludeHeader());
-                            var templateContent = templateFile.ExcludeHeader();
-                            
                             var data = FromAnonymousObject(context, pageContext);
+
+                            var templateFile = fileSystem.File.ReadAllText(path);
+                            var templateContent = templateFile.ExcludeHeader();
 
                             output = RenderTemplate(templateContent, data);
                             var metaData = templateFile.YamlHeader();
@@ -126,6 +128,12 @@ namespace Pretzel.Logic.Templating.Liquid
         {
             var template = Template.Parse(templateFile);
             return template.Render(data);
+        }
+
+        public void Initialize(IFileSystem fileSystem, SiteContext context)
+        {
+            this.fileSystem = fileSystem;
+            this.context = context;
         }
     }
 }
