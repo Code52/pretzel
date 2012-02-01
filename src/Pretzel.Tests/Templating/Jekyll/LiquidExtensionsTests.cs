@@ -1,7 +1,7 @@
 ﻿using Pretzel.Logic.Templating.Jekyll;
 using Xunit;
 
-namespace Pretzel.Tests.Templating.Liquid
+namespace Pretzel.Tests.Templating.Jekyll
 {
     public class LiquidExtensionsTests
     {

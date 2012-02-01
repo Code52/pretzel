@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
 
-namespace Pretzel.Tests.Templating.Liquid
+namespace Pretzel.Tests.Templating.Jekyll
 {
     public abstract class BakingEnvironment<T> : SpecificationFor<T>
     {

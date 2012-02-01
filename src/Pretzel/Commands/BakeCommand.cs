@@ -4,7 +4,6 @@ using System.IO;
 using System.IO.Abstractions;
 using NDesk.Options;
 using Pretzel.Logic.Templating.Jekyll;
-using Pretzel.Logic.Templating.Liquid;
 
 namespace Pretzel.Commands
 {

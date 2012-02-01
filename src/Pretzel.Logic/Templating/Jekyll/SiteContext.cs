@@ -1,4 +1,4 @@
-namespace Pretzel.Logic.Templating.Liquid
+namespace Pretzel.Logic.Templating.Jekyll
 {
     public class SiteContext
     {

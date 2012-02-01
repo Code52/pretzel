@@ -1,5 +1,5 @@
 using System.IO.Abstractions;
-using Pretzel.Logic.Templating.Liquid;
+using Pretzel.Logic.Templating.Jekyll;
 
 namespace Pretzel.Logic.Templating
 {

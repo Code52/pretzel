@@ -4,7 +4,6 @@ using System.IO.Abstractions;
 using DotLiquid;
 using MarkdownDeep;
 using Pretzel.Logic.Extensions;
-using Pretzel.Logic.Templating.Liquid;
 
 namespace Pretzel.Logic.Templating.Jekyll
 {

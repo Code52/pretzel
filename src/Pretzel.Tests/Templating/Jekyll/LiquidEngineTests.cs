@@ -1,9 +1,8 @@
 ﻿using System.IO.Abstractions.TestingHelpers;
 using Pretzel.Logic.Templating.Jekyll;
-using Pretzel.Logic.Templating.Liquid;
 using Xunit;
 
-namespace Pretzel.Tests.Templating.Liquid
+namespace Pretzel.Tests.Templating.Jekyll
 {
     public static class TestExtensions
     {
