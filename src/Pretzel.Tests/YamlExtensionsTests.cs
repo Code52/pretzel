@@ -8,7 +8,7 @@ namespace Pretzel.Tests
         public class YamlHeaderTests
         {
             [Fact]
-            public void Parse_multiple_fields_in_header()
+            public void YamlHeader_WithSampleData_ReturnsExpectedValues()
             {
                 const string header = @"---
                         layout: post
@@ -35,7 +35,7 @@ namespace Pretzel.Tests
             }
 
             [Fact]
-            public void Remove_Header_From_File()
+            public void RemoveHeader_WithSampleValue_ContainsRestOfDocument()
             {
                 const string header = @"---
                         layout: post
@@ -55,6 +55,13 @@ namespace Pretzel.Tests
                 var result = header.ExcludeHeader();
 
                 Assert.Equal("##Test\r\n            \r\n                        This is a test of YAML parsing", result);
+            }
+
+
+            [Fact]
+            public void YamlHeader_WhenNoMetadataSet_ReturnsEmptyDictionary()
+            {
+                Assert.NotNull("".YamlHeader());
             }
         }
     }

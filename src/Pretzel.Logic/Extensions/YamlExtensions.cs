@@ -10,13 +10,13 @@ namespace Pretzel.Logic.Extensions
 {
     public static class YamlExtensions
     {
-        static Regex r = new Regex(@"^---([\d\D\w\W\s\S]+)---", RegexOptions.Multiline);
-        public static Dictionary<string, object> YamlHeader(this string text)
+        static readonly Regex r = new Regex(@"^---([\d\D\w\W\s\S]+)---", RegexOptions.Multiline);
+        public static IDictionary<string, object> YamlHeader(this string text)
         {
             var results = new Dictionary<string, object>();
             var m = r.Matches(text);
             if (m.Count == 0)
-                return null;
+                return results;
 
             var input = new StringReader(m[0].Groups[1].Value);
 
@@ -41,15 +41,13 @@ namespace Pretzel.Logic.Extensions
             return results;
         }
 
-
         public static string ExcludeHeader(this string text)
         {
             var m = r.Matches(text);
             if (m.Count == 0)
-                return null;
+                return text;
 
             return text.Replace(m[0].Groups[0].Value, "").Trim();
-
         }
     }
 }

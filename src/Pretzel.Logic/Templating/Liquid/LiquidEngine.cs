@@ -54,11 +54,24 @@ namespace Pretzel.Logic.Templating.Liquid
                         {
                             var templateFile = fileSystem.File.ReadAllText(path);
                             var fileContents = markdown.Transform(inputFile.ExcludeHeader());
+                            var templateContent = templateFile.ExcludeHeader();
 
                             data = Hash.FromAnonymousObject(new {page = new {title = site.Title}, content = fileContents});
+                            
+                            output = RenderTemplate(templateContent, data);
+                            var metaData = templateFile.YamlHeader();
+                            if (metaData.ContainsKey("layout"))
+                            {
+                                var innerPath = Path.Combine(folder, "_layouts", metaData["layout"] + ".html");
+                                if (fileSystem.File.Exists(innerPath))
+                                {
+                                    var templateFileContents = fileSystem.File.ReadAllText(innerPath);
 
-                            var template = Template.Parse(templateFile);
-                            output = template.Render(data);
+                                    data = Hash.FromAnonymousObject(new { page = new { title = site.Title }, content = output });
+
+                                    output = RenderTemplate(templateFileContents, data);
+                                }
+                            }
                         }
                     }
                     fileSystem.File.WriteAllText(newPath, output);
@@ -70,6 +83,12 @@ namespace Pretzel.Logic.Templating.Liquid
                     fileSystem.File.WriteAllText(newPath, output);
                 }
             }
+        }
+
+        private static string RenderTemplate(string templateFile, Hash data)
+        {
+            var template = Template.Parse(templateFile);
+            return template.Render(data);
         }
     }
 }
