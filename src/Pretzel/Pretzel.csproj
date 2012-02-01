@@ -65,9 +65,9 @@
     <Compile Include="Commands\BakeCommand.cs" />
     <Compile Include="Commands\CommandCollection.cs" />
     <Compile Include="Commands\CommandInfoAttribute.cs" />
+    <Compile Include="Commands\RecipeCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommandInfo.cs" />
-    <Compile Include="RecipeOptions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Commands\TasteCommand.cs" />

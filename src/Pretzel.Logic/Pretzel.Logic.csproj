@@ -71,7 +71,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Recipe.cs" />
+    <Compile Include="Recipe\Recipe.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
