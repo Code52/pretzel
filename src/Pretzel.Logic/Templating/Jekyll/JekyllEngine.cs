@@ -24,8 +24,14 @@ namespace Pretzel.Logic.Templating.Jekyll
                 if (relativePath.StartsWith("_")) continue;
                 if (relativePath.StartsWith(".")) continue;
 
-                var extension = Path.GetExtension(file);
                 var outputFile = Path.Combine(outputDirectory, relativePath);
+
+                var extension = Path.GetExtension(file);
+                if (extension.IsImageFormat())
+                {
+                    fileSystem.File.Copy(file, outputFile);
+                    continue;
+                }
 
                 var inputFile = fileSystem.File.ReadAllText(file);
                 if (!inputFile.StartsWith("---"))
