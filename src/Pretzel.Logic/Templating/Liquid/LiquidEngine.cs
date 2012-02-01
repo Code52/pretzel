@@ -23,10 +23,7 @@ namespace Pretzel.Logic.Templating.Liquid
             foreach (var file in fileSystem.Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories))
             {
                 var relativePath = file.Replace(folder, "");
-
                 if (relativePath.StartsWith("_")) continue;
-
-                var newPath = Path.Combine(outputPath, relativePath);
 
                 Hash data = null;
                 if (site != null)
@@ -35,6 +32,7 @@ namespace Pretzel.Logic.Templating.Liquid
                 }
 
                 var extension = Path.GetExtension(file);
+                var newPath = Path.Combine(outputPath, relativePath);
 
                 var inputFile = fileSystem.File.ReadAllText(file);
                 var output = "";
@@ -43,7 +41,6 @@ namespace Pretzel.Logic.Templating.Liquid
                     newPath = newPath.Replace(extension, ".html");
 
                     var metadata = inputFile.YamlHeader();
-
                     if (metadata.ContainsKey("permalink"))
                     {
                         newPath = Path.Combine(outputPath, metadata["permalink"].ToString().ToRelativeFile());
@@ -51,29 +48,27 @@ namespace Pretzel.Logic.Templating.Liquid
 
                     if (metadata.ContainsKey("layout"))
                     {
-                        var key = metadata["layout"];
-
-                        var path = Path.Combine(folder, "_layouts", key + ".html");
+                        var path = Path.Combine(folder, "_layouts", metadata["layout"] + ".html");
 
                         if (fileSystem.File.Exists(path))
                         {
                             var templateFile = fileSystem.File.ReadAllText(path);
-                            // TODO: extract YAML front matter?
                             var fileContents = markdown.Transform(inputFile.ExcludeHeader());
 
-                            data = Hash.FromAnonymousObject(new { page = new { title = site.Title }, content = fileContents });
+                            data = Hash.FromAnonymousObject(new {page = new {title = site.Title}, content = fileContents});
 
                             var template = Template.Parse(templateFile);
                             output = template.Render(data);
                         }
                     }
+                    fileSystem.File.WriteAllText(newPath, output);
                 }
                 else
                 {
                     var template = Template.Parse(inputFile);
                     output = template.Render(data);
+                    fileSystem.File.WriteAllText(newPath, output);
                 }
-                fileSystem.File.WriteAllText(newPath, output);
             }
         }
     }
