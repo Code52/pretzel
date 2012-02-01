@@ -279,5 +279,31 @@ namespace Pretzel.Tests.Templating.Jekyll
                 Assert.False(FileSystem.File.Exists(@"C:\website\_site\.gems\file.txt"));
             }
         }
+
+
+        public class When_Aeoth_Tests_The_Edge_Cases_Of_Handling_YAML_Front_Matter : BakingEnvironment<JekyllEngine>
+        {
+            const string PageContents = "---\n---";
+
+            public override JekyllEngine Given()
+            {
+                return new JekyllEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\file.txt", new MockFileData(PageContents));
+                var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
+                Subject.Initialize(FileSystem, context);
+                Subject.Process();
+            }
+
+            [Fact]
+            public void The_Yaml_Matter_Should_Be_Cleared()
+            {
+                var text = FileSystem.File.ReadAllText(@"C:\website\_site\file.txt");
+                Assert.False(text.StartsWith("---"));
+            }
+        }
     }
 }

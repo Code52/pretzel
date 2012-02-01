@@ -26,6 +26,10 @@ namespace Pretzel.Logic.Templating.Jekyll
 
                 var outputFile = Path.Combine(outputDirectory, relativePath);
 
+                var directory = Path.GetDirectoryName(outputFile);
+                if (!fileSystem.Directory.Exists(directory))
+                    fileSystem.Directory.CreateDirectory(directory);
+
                 var extension = Path.GetExtension(file);
                 if (extension.IsImageFormat())
                 {
@@ -44,7 +48,6 @@ namespace Pretzel.Logic.Templating.Jekyll
                 // markdown file should not be treated differently
                 // output from markdown file should be sent to template pipeline
                 
-
                 if (extension.IsMarkdownFile())
                 {
                     outputFile = outputFile.Replace(extension, ".html");
@@ -55,7 +58,7 @@ namespace Pretzel.Logic.Templating.Jekyll
                 }
                 else
                 {
-                    RenderTemplate(inputFile, outputFile);
+                    RenderTemplate(inputFile.ExcludeHeader(), outputFile);
                 }
             }
         }
