@@ -65,6 +65,8 @@
     <Compile Include="Minification\FileSystemExtensions.cs" />
     <Compile Include="Minification\JsMinifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Templating\ITemplateEngine.cs" />
+    <Compile Include="Templating\Liquid\LiquidEngine.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
