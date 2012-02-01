@@ -7,98 +7,33 @@ using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Logic.Templating.Liquid
 {
-    public class SiteContext
-    {
-        public string Folder { get; set; }
-        public string Title { get; set; }
-    }
-
-    public class PageContext
-    {
-        public string Title { get; set; }
-        public string OutputPath { get; set; }
-
-        public string Content { get; set; }
-
-        public static PageContext FromDictionary(IDictionary<string, object> metadata, string outputPath, string defaultOutputPath)
-        {
-            var context = new PageContext();
-
-            if (metadata.ContainsKey("permalink"))
-            {
-                context.OutputPath = Path.Combine(outputPath, metadata["permalink"].ToString().ToRelativeFile());
-            }
-            else
-            {
-                context.OutputPath = defaultOutputPath;
-            }
-
-            if (metadata.ContainsKey("title"))
-            {
-                context.Title = metadata["title"].ToString();
-            }
-
-            return context;
-        }
-    }
-
     public class LiquidEngine : ITemplateEngine
     {
-        private static readonly Markdown markdown = new Markdown();
-        private SiteContext context;
-        private IFileSystem fileSystem;
+        private static readonly Markdown Markdown = new Markdown();
+        private SiteContext _context;
+        private IFileSystem _fileSystem;
 
         public void Process()
         {
-            var outputDirectory = Path.Combine(context.Folder, "_site");
-            fileSystem.Directory.CreateDirectory(outputDirectory);
+            var outputDirectory = Path.Combine(_context.Folder, "_site");
+            _fileSystem.Directory.CreateDirectory(outputDirectory);
 
-            foreach (var file in fileSystem.Directory.GetFiles(context.Folder, "*.*", SearchOption.AllDirectories))
+            foreach (var file in _fileSystem.Directory.GetFiles(_context.Folder, "*.*", SearchOption.AllDirectories))
             {
-                var relativePath = file.Replace(context.Folder, "");
+                var relativePath = file.Replace(_context.Folder, "");
                 if (relativePath.StartsWith("_")) continue;
 
                 var extension = Path.GetExtension(file);
                 var outputPath = Path.Combine(outputDirectory, relativePath);
 
-                var inputPath = fileSystem.File.ReadAllText(file);
+                var inputPath = _fileSystem.File.ReadAllText(file);
                 if (extension.IsMarkdownFile())
                 {
                     outputPath = outputPath.Replace(extension, ".html");
 
-                    var metadata = inputPath.YamlHeader();
-                    var pageContext = PageContext.FromDictionary(metadata, outputDirectory, outputPath);
-                    pageContext.Content = markdown.Transform(inputPath.ExcludeHeader());
+                    var pageContext = ProcessMarkdownPage(inputPath, outputPath, outputDirectory);
 
-                    if (metadata.ContainsKey("layout"))
-                    {
-                        var path = Path.Combine(context.Folder, "_layouts", metadata["layout"] + ".html");
-
-                        if (fileSystem.File.Exists(path))
-                        {
-                            var data = FromAnonymousObject(context, pageContext);
-
-                            var templateFile = fileSystem.File.ReadAllText(path);
-
-                            var metaData = templateFile.YamlHeader();
-                            var templateContent = templateFile.ExcludeHeader();
-
-                            pageContext.Content = RenderTemplate(templateContent, data);
-                            
-                            if (metaData.ContainsKey("layout"))
-                            {
-                                var innerPath = Path.Combine(context.Folder, "_layouts", metaData["layout"] + ".html");
-                                if (fileSystem.File.Exists(innerPath))
-                                {
-                                    var templateFileContents = fileSystem.File.ReadAllText(innerPath);
-                                    data = FromAnonymousObject(context, pageContext);
-                                    pageContext.Content = RenderTemplate(templateFileContents, data);
-                                }
-                            }
-                        }
-                    }
-
-                    fileSystem.File.WriteAllText(pageContext.OutputPath, pageContext.Content);
+                    _fileSystem.File.WriteAllText(pageContext.OutputPath, pageContext.Content);
                 }
                 else
                 {
@@ -107,12 +42,41 @@ namespace Pretzel.Logic.Templating.Liquid
             }
         }
 
+        private PageContext ProcessMarkdownPage(string inputPath, string outputPath, string outputDirectory)
+        {
+            var metadata = inputPath.YamlHeader();
+            var pageContext = PageContext.FromDictionary(metadata, outputDirectory, outputPath);
+            pageContext.Content = Markdown.Transform(inputPath.ExcludeHeader());
+
+            while (metadata.ContainsKey("layout"))
+            {
+                var path = Path.Combine(_context.Folder, "_layouts", metadata["layout"] + ".html");
+
+                if (!_fileSystem.File.Exists(path)) 
+                    continue;
+
+                metadata = ProcessTemplate(pageContext, path);
+            }
+            return pageContext;
+        }
+
+        private IDictionary<string, object> ProcessTemplate(PageContext pageContext, string path)
+        {
+            var templateFile = _fileSystem.File.ReadAllText(path);
+            var metadata = templateFile.YamlHeader();
+            var templateContent = templateFile.ExcludeHeader();
+
+            var data = FromAnonymousObject(_context, pageContext);
+            pageContext.Content = RenderTemplate(templateContent, data);
+            return metadata;
+        }
+
         private void RenderTemplate(string inputPath, string outputPath)
         {
-            var data = FromAnonymousObject(context);
+            var data = FromAnonymousObject(_context);
             var template = Template.Parse(inputPath);
             var output = template.Render(data);
-            fileSystem.File.WriteAllText(outputPath, output);
+            _fileSystem.File.WriteAllText(outputPath, output);
         }
 
         private static Hash FromAnonymousObject(SiteContext context, PageContext pageContext)
@@ -135,8 +99,8 @@ namespace Pretzel.Logic.Templating.Liquid
 
         public void Initialize(IFileSystem fileSystem, SiteContext context)
         {
-            this.fileSystem = fileSystem;
-            this.context = context;
+            _fileSystem = fileSystem;
+            _context = context;
         }
     }
 }

@@ -71,6 +71,8 @@
     <Compile Include="Templating\ITemplateEngine.cs" />
     <Compile Include="Templating\Liquid\LiquidEngine.cs" />
     <Compile Include="Templating\Liquid\LiquidExtensions.cs" />
+    <Compile Include="Templating\Liquid\PageContext.cs" />
+    <Compile Include="Templating\Liquid\SiteContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
