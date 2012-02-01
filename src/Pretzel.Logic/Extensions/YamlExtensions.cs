@@ -22,14 +22,34 @@ namespace Pretzel.Logic.Extensions
 
             var yaml = new YamlStream();
             yaml.Load(input);
-            var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
-            foreach (KeyValuePair<YamlNode, YamlNode> entry in mapping.Children)
+
+            var root = yaml.Documents[0].RootNode;
+
+            var collection = root as YamlMappingNode;
+            if (collection != null)
             {
-                var key = ((YamlScalarNode)entry.Key).Value;
-                results.Add(key, entry.Value);
+                foreach (var entry in collection.Children)
+                {
+                    var node = entry.Key as YamlScalarNode;
+                    if (node != null)
+                    {
+                        results.Add(node.Value, entry.Value);    
+                    }
+                }
             }
 
             return results;
+        }
+
+
+        public static string ExcludeHeader(this string text)
+        {
+            var m = r.Matches(text);
+            if (m.Count == 0)
+                return null;
+
+            return text.Replace(m[0].Groups[0].Value, "").Trim();
+
         }
     }
 }

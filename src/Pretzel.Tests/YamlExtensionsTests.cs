@@ -33,6 +33,29 @@ namespace Pretzel.Tests
                 Assert.Equal("TEST ALL THE THINGS", result["description"].ToString());
                 Assert.Equal("[ test, alsotest, lasttest ]", result["tags"].ToString());
             }
+
+            [Fact]
+            public void Remove_Header_From_File()
+            {
+                const string header = @"---
+                        layout: post
+                        title: This is a test jekyll document
+                        description: TEST ALL THE THINGS
+                        date: 2012-01-30
+                        tags : 
+                        - test
+                        - alsotest
+                        - lasttest
+                        ---
+            
+                        ##Test
+            
+                        This is a test of YAML parsing";
+
+                var result = header.ExcludeHeader();
+
+                Assert.Equal("##Test\r\n            \r\n                        This is a test of YAML parsing", result);
+            }
         }
     }
 }

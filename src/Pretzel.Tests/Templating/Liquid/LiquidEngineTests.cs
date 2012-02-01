@@ -1,10 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
 using Pretzel.Logic.Templating.Liquid;
 using Xunit;
 
 namespace Pretzel.Tests.Templating.Liquid
 {
+    public static class TestExtensions
+    {
+        public static string RemoveWhiteSpace(this string s)
+        {
+            return s.Replace("\r\n", "").Replace("\n", "");
+        }
+    }
+    
     public class LiquidEngineTests
     {
         public class When_Recieving_A_Folder_Containing_One_File : SpecificationFor<LiquidEngine>
@@ -20,7 +29,7 @@ namespace Pretzel.Tests.Templating.Liquid
             public override void When()
             {
                 var filepath = @"C:\website\index.html";
-                
+
 
                 fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
                                                 {
@@ -112,7 +121,7 @@ namespace Pretzel.Tests.Templating.Liquid
                                                     {filepath, new MockFileData(fileContents)}
                                                 });
 
-                Subject.Process(fileSystem, @"C:\website\", new Site { Title = "My Web Site"});
+                Subject.Process(fileSystem, @"C:\website\", new Site { Title = "My Web Site" });
             }
 
             [Fact]
@@ -122,8 +131,43 @@ namespace Pretzel.Tests.Templating.Liquid
             }
         }
 
+        public class When_Recieving_A_Markdown_File : SpecificationFor<LiquidEngine>
+        {
+            MockFileSystem fileSystem;
+            const string templateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            const string pageContents = "---\r\n layout: default\r\n---\r\n\r\n# Hello World!";
+            const string expectedfileContents = "<html><head><title>My Web Site</title></head><body><h1>Hello World!</h1></body></html>";
 
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                var layoutFile = @"C:\website\_layouts\default.html";
+                var contentFile = @"C:\website\index.md";
+
+                fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+                                                {
+                                                    {layoutFile, new MockFileData(templateContents)},
+                                                    {contentFile, new MockFileData(pageContents)}
+                                                });
+
+                Subject.Process(fileSystem, @"C:\website\", new Site { Title = "My Web Site" });
+            }
+
+            [Fact]
+            public void The_File_Is_Applies_Data_To_The_Template()
+            {
+                Assert.Equal(expectedfileContents, fileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void Does_Not_Copy_Template_To_Output()
+            {
+                Assert.False(fileSystem.File.Exists(@"C:\website\_site\_layouts\default.html"));
+            }
+        }
     }
-
-    
 }
