@@ -1,11 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Pretzel.Logic;
 using Pretzel.Logic.Extensions;
 
 namespace Pretzel
 {
     class Program
     {
+        private readonly static List<string> Engines = new List<string>(new[]
+                                       {
+                                           "Liquid",
+                                           "Razor"
+                                       });
+
         static void Main(string[] args)
         {
             if (!args.Any())
@@ -23,6 +32,8 @@ namespace Pretzel
                 Bake(commandArgs);
             else if (string.Equals("taste", command, StringComparison.InvariantCultureIgnoreCase))
                 Taste(commandArgs);
+            else if (string.Equals("recipe", command, StringComparison.InvariantCultureIgnoreCase))
+                Recipe(commandArgs);
 #if DEBUG
             else if (string.Equals("test", command, StringComparison.InvariantCultureIgnoreCase))
                 Test(commandArgs);
@@ -37,8 +48,14 @@ namespace Pretzel
         private static void Usage()
         {
             Console.WriteLine("Usage:");
+            Console.WriteLine("  pretzel recipe [OPTIONS] [PATH]");
             Console.WriteLine("  pretzel bake [OPTIONS] [PATH]");
             Console.WriteLine("  pretzel taste [OPTIONS]");
+            Console.WriteLine();
+
+            Console.WriteLine("Recipe Options");
+            RecipeOptions.WriteHelp(Console.Out);
+
             Console.WriteLine();
 
             Console.WriteLine("Bake Options");
@@ -86,6 +103,25 @@ namespace Pretzel
 
             // TODO Implement Taste
             Console.WriteLine("Port: " + options.Port);
+        }
+
+        public static void Recipe(string[] args)
+        {
+            var options = RecipeOptions.Parse(args);
+
+            var engine = string.IsNullOrWhiteSpace(options.Engine)
+                             ? "Liquid"
+                             : options.Engine;
+
+            if(!Engines.Any(e => string.Equals(e, engine, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                Console.WriteLine(string.Format("Requested Render Engine not found: {0}", engine));
+                return;
+            }
+
+            var createResponse = new Recipe(engine, options.Path).Create();
+
+            Console.WriteLine(createResponse);
         }
     }
 }
