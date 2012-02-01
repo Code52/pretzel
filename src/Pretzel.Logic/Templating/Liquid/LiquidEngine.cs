@@ -3,9 +3,14 @@ using System.IO.Abstractions;
 
 namespace Pretzel.Logic.Templating.Liquid
 {
+    public class Site
+    {
+        public string Title { get; set; }
+    }
+
     public class LiquidEngine : ITemplateEngine
     {
-        public void Process(IFileSystem fileSystem, string folder)
+        public void Process(IFileSystem fileSystem, string folder, Site site)
         {
             var outputPath = Path.Combine(folder, "_site");
             fileSystem.Directory.CreateDirectory(outputPath);
@@ -14,7 +19,12 @@ namespace Pretzel.Logic.Templating.Liquid
             {
                 var relativePath = file.Replace(folder, "");
                 var newPath = Path.Combine(outputPath, relativePath);
-                fileSystem.File.WriteAllText(newPath, fileSystem.File.ReadAllText(file));
+
+                var template = DotLiquid.Template.Parse(fileSystem.File.ReadAllText(file));
+
+                var output = template.Render();
+
+                fileSystem.File.WriteAllText(newPath, output);
             }
         }
     }
