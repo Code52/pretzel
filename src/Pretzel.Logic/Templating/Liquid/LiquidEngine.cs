@@ -10,10 +10,10 @@ namespace Pretzel.Logic.Templating.Liquid
             var outputPath = Path.Combine(folder, "_site");
             fileSystem.Directory.CreateDirectory(outputPath);
 
-            foreach (var file in fileSystem.Directory.GetFiles(folder))
+            foreach (var file in fileSystem.Directory.GetFiles(folder, "*.*",SearchOption.AllDirectories))
             {
-                var fileName = Path.GetFileName(file);
-                var newPath = Path.Combine(outputPath, fileName);
+                var relativePath = file.Replace(folder, "");
+                var newPath = Path.Combine(outputPath, relativePath);
                 fileSystem.File.WriteAllText(newPath, fileSystem.File.ReadAllText(file));
             }
         }
