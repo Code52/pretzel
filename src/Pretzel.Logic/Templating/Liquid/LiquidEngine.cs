@@ -40,8 +40,6 @@ namespace Pretzel.Logic.Templating.Liquid
 
             return context;
         }
-
-
     }
 
     public class LiquidEngine : ITemplateEngine
@@ -64,7 +62,6 @@ namespace Pretzel.Logic.Templating.Liquid
                 var outputPath = Path.Combine(outputDirectory, relativePath);
 
                 var inputPath = fileSystem.File.ReadAllText(file);
-                var output = "";
                 if (extension.IsMarkdownFile())
                 {
                     outputPath = outputPath.Replace(extension, ".html");
@@ -86,7 +83,7 @@ namespace Pretzel.Logic.Templating.Liquid
                             var metaData = templateFile.YamlHeader();
                             var templateContent = templateFile.ExcludeHeader();
 
-                            output = RenderTemplate(templateContent, data);
+                            pageContext.Content = RenderTemplate(templateContent, data);
                             
                             if (metaData.ContainsKey("layout"))
                             {
@@ -94,15 +91,14 @@ namespace Pretzel.Logic.Templating.Liquid
                                 if (fileSystem.File.Exists(innerPath))
                                 {
                                     var templateFileContents = fileSystem.File.ReadAllText(innerPath);
-                                    pageContext.Content = output;
                                     data = FromAnonymousObject(context, pageContext);
-                                    output = RenderTemplate(templateFileContents, data);
+                                    pageContext.Content = RenderTemplate(templateFileContents, data);
                                 }
                             }
                         }
                     }
 
-                    fileSystem.File.WriteAllText(pageContext.OutputPath, output);
+                    fileSystem.File.WriteAllText(pageContext.OutputPath, pageContext.Content);
                 }
                 else
                 {
