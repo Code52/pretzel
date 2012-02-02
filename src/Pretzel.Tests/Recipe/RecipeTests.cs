@@ -18,7 +18,7 @@ namespace Pretzel.Tests.Recipe
             public void Files_and_Folders_Are_Created()
             {
                 _fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-                var recipe = new Logic.Recipe(_fileSystem, "Liquid", _baseSite);
+                var recipe = new Logic.Recipe.Recipe(_fileSystem, "Liquid", _baseSite);
 
                 var result = recipe.Create();
 
@@ -47,7 +47,7 @@ namespace Pretzel.Tests.Recipe
             public void Razor_Engine_returns_error()
             {
                 _fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-                var recipe = new Logic.Recipe(_fileSystem, "Razor", _baseSite);
+                var recipe = new Logic.Recipe.Recipe(_fileSystem, "Razor", _baseSite);
 
                 var result = recipe.Create();
 
@@ -58,7 +58,7 @@ namespace Pretzel.Tests.Recipe
             public void Other_Engine_returns_error()
             {
                 _fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-                var recipe = new Logic.Recipe(_fileSystem, "Musak", _baseSite);
+                var recipe = new Logic.Recipe.Recipe(_fileSystem, "Musak", _baseSite);
 
                 var result = recipe.Create();
 

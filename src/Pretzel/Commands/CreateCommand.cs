@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
+using System.IO.Abstractions;
 using NDesk.Options;
+using Pretzel.Logic;
+using Pretzel.Logic.Recipe;
 
 namespace Pretzel.Commands
 {
@@ -13,10 +12,12 @@ namespace Pretzel.Commands
     [CommandInfo(CommandName = "create")]
     public sealed class CreateCommand : ICommand
     {
-
         public string Engine { get; set; }
         public bool Debug { get; set; }
         public string Path { get; set; }
+
+        [Import] 
+        private IFileSystem fileSystem;
 
         private OptionSet Settings
         {
@@ -33,7 +34,20 @@ namespace Pretzel.Commands
 
         public void Execute(string[] arguments)
         {
-            throw new NotImplementedException();
+            Settings.Parse(arguments);
+
+            if (string.IsNullOrWhiteSpace(Path))
+            {
+                Path = Directory.GetCurrentDirectory();
+            }
+
+            if (string.IsNullOrWhiteSpace(Engine))
+            {
+                Engine = "";
+            }
+
+            var recipe = new Recipe(fileSystem, Engine, Path);
+            recipe.Create();
         }
 
         public void WriteHelp(TextWriter writer)

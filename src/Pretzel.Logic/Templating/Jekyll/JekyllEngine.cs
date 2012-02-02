@@ -133,7 +133,7 @@ namespace Pretzel.Logic.Templating.Jekyll
 
         public void Initialize()
         {
-            Template.RegisterTag<RenderTime>("render_time");
+            // Template.RegisterTag<RenderTime>("render_time");
         }
     }
 }

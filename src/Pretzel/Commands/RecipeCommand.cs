@@ -6,6 +6,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using NDesk.Options;
 using Pretzel.Logic;
+using Pretzel.Logic.Recipe;
 
 namespace Pretzel.Commands
 {
