@@ -2,6 +2,7 @@
 using System.ComponentModel.Composition;
 using System.IO;
 using NDesk.Options;
+using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Commands
 {
@@ -26,20 +27,27 @@ namespace Pretzel.Commands
 
         public void Execute(string[] arguments)
         {
+			Tracing.Info("taste - testing a site locally");
             Settings.Parse(arguments);
-
             if (Port == 0)
             {
                 Port = 8080;
             }
 
-            Console.WriteLine("Port: " + Port);
-            Console.WriteLine("Debug: " + Debug);
+            Tracing.Info("Port: " + Port);
+            Tracing.Info("Debug: " + Debug);
 
             var f = new FileContentProvider();
             var w = new WebHost(Directory.GetCurrentDirectory(), f);
             w.Start();
-            Console.ReadLine();
+			
+			Tracing.Info("Press 'Q' to stop the process");
+            ConsoleKeyInfo key;
+            do
+            {
+                key = Console.ReadKey();
+            } 
+            while (key.Key != ConsoleKey.Q);
         }
 
         public void WriteHelp(TextWriter writer)
