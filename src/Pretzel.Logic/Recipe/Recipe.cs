@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Abstractions;
 
-namespace Pretzel.Logic.Recipe
+namespace Pretzel.Logic
 {
     public class Recipe
     {
@@ -18,7 +19,7 @@ namespace Pretzel.Logic.Recipe
         private readonly string engine;
         private readonly string directory;
 
-        public string Create()
+        public void Create()
         {
             try
             {
@@ -27,16 +28,16 @@ namespace Pretzel.Logic.Recipe
 
                 if (string.Equals("Razor", engine, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return "Razor templating hasn't been implemented yet";
+                    Trace.WriteLine("Razor templating hasn't been implemented yet");
                 }
 
-                if (string.Equals("Liquid", engine, StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals("Jekyll", engine, StringComparison.InvariantCultureIgnoreCase))
                 {
                     fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"_posts"));
                     fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"_layouts"));
                     fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"css"));
                     fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"img"));
-                    
+
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"rss.xml"), Properties.Resources.Rss);
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"atom.xml"), Properties.Resources.Atom);
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\layout.html"), Properties.Resources.Layout);
@@ -63,13 +64,13 @@ namespace Pretzel.Logic.Recipe
                     fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img\favicon.ico"), ms.ToArray());
                 }
                 else
-                    return "Templating Engine not found";
+                    Trace.WriteLine("Templating Engine not found");
 
-                return "Pretzel site template has been created";
+                Trace.WriteLine("Pretzel site template has been created");
             }
             catch (Exception ex)
             {
-                return string.Format("Error trying to create template: {0}", ex.Message);
+                Trace.WriteLine(string.Format("Error trying to create template: {0}", ex));
             }
         }
     }

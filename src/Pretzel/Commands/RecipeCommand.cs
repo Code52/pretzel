@@ -6,7 +6,6 @@ using System.IO.Abstractions;
 using System.Linq;
 using NDesk.Options;
 using Pretzel.Logic;
-using Pretzel.Logic.Recipe;
 
 namespace Pretzel.Commands
 {
@@ -44,7 +43,7 @@ namespace Pretzel.Commands
                              : Path;
 
             var engine = String.IsNullOrWhiteSpace(Engine)
-                             ? "Liquid"
+                             ? "Jekyll"
                              : Engine;
 
             if (!Engines.Any(e => String.Equals(e, engine, StringComparison.InvariantCultureIgnoreCase)))
@@ -53,9 +52,8 @@ namespace Pretzel.Commands
                 return;
             }
 
-            var createResponse = new Recipe(new FileSystem(), engine, path).Create();
-
-            Console.WriteLine(createResponse);
+            var recipe = new Recipe(new FileSystem(), engine, path);
+            recipe.Create();
         }
 
         public void WriteHelp(TextWriter writer)

@@ -6,7 +6,6 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
 using Pretzel.Commands;
-using Pretzel.Logic.Templating;
 
 namespace Pretzel
 {

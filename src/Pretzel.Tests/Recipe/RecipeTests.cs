@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
 using System.IO.Abstractions.TestingHelpers;
 using Xunit;
 
@@ -9,61 +8,61 @@ namespace Pretzel.Tests.Recipe
 {
     public class RecipeTests
     {
-        public class Can_Setup_Site_Using_Liquid_Template
+        const string BaseSite = @"c:\site\";
+        MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
+        readonly TestTraceListener listener = new TestTraceListener();
+        
+        public RecipeTests()
         {
-            private MockFileSystem _fileSystem;
-            const string _baseSite = @"c:\site\";
+            Trace.Listeners.Add(listener);
+        }
 
-            [Fact]
-            public void Files_and_Folders_Are_Created()
-            {
-                _fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-                var recipe = new Logic.Recipe.Recipe(_fileSystem, "Liquid", _baseSite);
+        [Fact]
+        public void Files_and_Folders_Are_Created()
+        {
+            var recipe = new Logic.Recipe(fileSystem, "Jekyll", BaseSite);
+            recipe.Create();
 
-                var result = recipe.Create();
+            Assert.True(fileSystem.Directory.Exists(BaseSite + @"_posts\"));
+            Assert.True(fileSystem.Directory.Exists(BaseSite + @"_layouts\"));
+            Assert.True(fileSystem.Directory.Exists(BaseSite + @"css\"));
+            Assert.True(fileSystem.Directory.Exists(BaseSite + @"img\"));
 
-                Assert.True(_fileSystem.Directory.Exists(_baseSite + @"_posts\"));
-                Assert.True(_fileSystem.Directory.Exists(_baseSite + @"_layouts\"));
-                Assert.True(_fileSystem.Directory.Exists(_baseSite + @"css\"));
-                Assert.True(_fileSystem.Directory.Exists(_baseSite + @"img\"));
+            Assert.True(fileSystem.File.Exists(BaseSite + "rss.xml"));
+            Assert.True(fileSystem.File.Exists(BaseSite + "atom.xml"));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"_layouts\layout.html"));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"_layouts\post.html"));
+            Assert.True(fileSystem.File.Exists(BaseSite + "index.md"));
+            Assert.True(fileSystem.File.Exists(BaseSite + "about.md"));
+            Assert.True(fileSystem.File.Exists(BaseSite + string.Format(@"_posts\{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"css\style.css"));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"img\25.png"));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"img\favicon.png"));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"img\logo.png"));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"img\favicon.ico"));
 
-                Assert.True(_fileSystem.File.Exists(_baseSite + "rss.xml"));
-                Assert.True(_fileSystem.File.Exists(_baseSite + "atom.xml"));
-                Assert.True(_fileSystem.File.Exists(_baseSite + @"_layouts\layout.html"));
-                Assert.True(_fileSystem.File.Exists(_baseSite + @"_layouts\post.html"));
-                Assert.True(_fileSystem.File.Exists(_baseSite + "index.md"));
-                Assert.True(_fileSystem.File.Exists(_baseSite + "about.md"));
-                Assert.True(_fileSystem.File.Exists(_baseSite + string.Format(@"_posts\{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))));
-                Assert.True(_fileSystem.File.Exists(_baseSite + @"css\style.css"));
-                Assert.True(_fileSystem.File.Exists(_baseSite + @"img\25.png"));
-                Assert.True(_fileSystem.File.Exists(_baseSite + @"img\favicon.png"));
-                Assert.True(_fileSystem.File.Exists(_baseSite + @"img\logo.png"));
-                Assert.True(_fileSystem.File.Exists(_baseSite + @"img\favicon.ico"));
+            Assert.True(listener.Received("Pretzel site template has been created"));
+        }
 
-                Assert.Equal(result, "Pretzel site template has been created");
-            }
+        [Fact]
+        public void Razor_Engine_returns_error()
+        {
+            var recipe = new Logic.Recipe(fileSystem, "Razor", BaseSite);
 
-            [Fact]
-            public void Razor_Engine_returns_error()
-            {
-                _fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-                var recipe = new Logic.Recipe.Recipe(_fileSystem, "Razor", _baseSite);
+            recipe.Create();
 
-                var result = recipe.Create();
+            Assert.True(listener.Received("Razor templating hasn't been implemented yet"));
+        }
 
-                Assert.Equal(result, "Razor templating hasn't been implemented yet");
-            }
+        [Fact]
+        public void Other_Engine_returns_error()
+        {
+            fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
+            var recipe = new Logic.Recipe(fileSystem, "Musak", BaseSite);
 
-            [Fact]
-            public void Other_Engine_returns_error()
-            {
-                _fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-                var recipe = new Logic.Recipe.Recipe(_fileSystem, "Musak", _baseSite);
+            recipe.Create();
 
-                var result = recipe.Create();
-
-                Assert.Equal(result, "Templating Engine not found");
-            }
+            Assert.True(listener.Received("Templating Engine not found"));
         }
     }
 }
