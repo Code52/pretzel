@@ -84,7 +84,7 @@ namespace Pretzel.Commands
 
         public void OnImportsSatisfied()
         {
-            engineMap = new Dictionary<string, ISiteEngine>(Engines.Length);
+            engineMap = new Dictionary<string, ISiteEngine>(Engines.Length, StringComparer.OrdinalIgnoreCase);
 
             foreach (var command in Engines)
             {
