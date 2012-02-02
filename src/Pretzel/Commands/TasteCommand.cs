@@ -27,6 +27,12 @@ namespace Pretzel.Commands
         public void Execute(string[] arguments)
         {
             Settings.Parse(arguments);
+
+            if (Port == 0)
+            {
+                Port = 8080;
+            }
+
             Console.WriteLine("Port: " + Port);
             Console.WriteLine("Debug: " + Debug);
 

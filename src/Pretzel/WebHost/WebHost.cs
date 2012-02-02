@@ -12,13 +12,11 @@ namespace Pretzel
 {
     public class WebHost : IDisposable
     {
-        private string basePath;
-
         IDisposable host;
         IWebContent content;
 
         public int Port { get; private set; }
-        public bool IsRunning { get; set; }
+        public bool IsRunning { get; private set; }
 
         /// <summary>
         /// Constructor

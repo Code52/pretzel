@@ -61,6 +61,7 @@ namespace Pretzel.Commands
             }
             else
             {
+                Console.WriteLine("Cannot find engine for input: '{0}'", Engine);
                 System.Diagnostics.Debug.WriteLine("Cannot find engine for input: '{0}'", Engine);
             }
         }
@@ -84,7 +85,7 @@ namespace Pretzel.Commands
 
         public void OnImportsSatisfied()
         {
-            engineMap = new Dictionary<string, ISiteEngine>(Engines.Length);
+            engineMap = new Dictionary<string, ISiteEngine>(Engines.Length, StringComparer.OrdinalIgnoreCase);
 
             foreach (var command in Engines)
             {

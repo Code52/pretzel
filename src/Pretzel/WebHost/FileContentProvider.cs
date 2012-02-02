@@ -9,6 +9,7 @@ namespace Pretzel
     public class FileContentProvider : IWebContent
     {
         private string basePath;
+        private const string siteDirectory = "_site";
 
         /// <summary>
         /// Set a base path to work from
@@ -19,12 +20,12 @@ namespace Pretzel
             if (string.IsNullOrWhiteSpace(path))
             {
                 // No path specified, get working directory
-                this.basePath = Directory.GetCurrentDirectory();
+                this.basePath = Path.Combine(Directory.GetCurrentDirectory(), siteDirectory);
             }
             else
             {
                 // Get an absolute path for the directory
-                this.basePath = Path.GetFullPath(path);
+                this.basePath = Path.Combine(Path.GetFullPath(path), siteDirectory);
             }
         }
 
