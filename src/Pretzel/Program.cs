@@ -2,7 +2,6 @@
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
-using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
@@ -32,7 +31,6 @@ namespace Pretzel
 
             new Program().Run(args);
         }
-
 
         public void Run(string[] args)
         {
