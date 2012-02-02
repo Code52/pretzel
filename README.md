@@ -4,7 +4,17 @@ A simple, pluggable site generation tool for .NET developers and Windows users (
 
 ### Usage
 
-Initially, we plan to support two modes - **bake** and **taste**. **Bake** is for a once-off generation of the site, whereas **taste** is for testing a site locally - make a change, and pretzel should handle regenerating the page when a file changes.
+We are working on a number of features for the initial release of Pretzel, which are represented by the commands **create**, **bake** and **taste**. 
+
+**Create** is used to create the folder structure for a new site.
+
+    pretzel create
+    
+If the site should be at a specific folder, this can be specified as a parameter:
+
+    pretzel create C:\path\to\folder
+
+**Bake** is used to generate a site based on the contents of a folder.
 
 To scan the current directory for a website and detect the content to process, run:
 
@@ -18,6 +28,8 @@ To explicitly specify the input - we should support inferring the input based on
 
     pretzel bake --engine jekyll
     
+
+**Taste** is for testing a site locally - make a change, and pretzel should handle regenerating the page when a file changes.
 
 To test a site locally (we plan to use [Firefly](https://github.com/loudej/firefly)), run:
 
