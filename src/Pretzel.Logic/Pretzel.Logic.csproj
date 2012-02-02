@@ -65,7 +65,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\Logger.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\Tracing.cs" />
     <Compile Include="Extensions\YamlExtensions.cs" />
     <Compile Include="Minification\CssMinifier.cs" />
     <Compile Include="Minification\FileSystemExtensions.cs" />

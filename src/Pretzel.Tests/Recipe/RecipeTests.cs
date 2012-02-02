@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
 using System.IO.Abstractions.TestingHelpers;
+using System.Text;
+using Pretzel.Logic.Extensions;
 using Xunit;
 
 namespace Pretzel.Tests.Recipe
@@ -10,11 +12,15 @@ namespace Pretzel.Tests.Recipe
     {
         const string BaseSite = @"c:\site\";
         MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-        readonly TestTraceListener listener = new TestTraceListener();
-        
+        StringBuilder sb = new StringBuilder();
+        TextWriter writer;
+
         public RecipeTests()
         {
-            Trace.Listeners.Add(listener);
+            writer = new StringWriter(sb);
+            Tracing.Logger.SetWriter(writer);
+            Tracing.Logger.AddCategory("info");
+            Tracing.Logger.AddCategory("error");
         }
 
         [Fact]
@@ -41,7 +47,7 @@ namespace Pretzel.Tests.Recipe
             Assert.True(fileSystem.File.Exists(BaseSite + @"img\logo.png"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"img\favicon.ico"));
 
-            Assert.True(listener.Received("Pretzel site template has been created"));
+            Assert.True(writer.ToString().Contains("Pretzel site template has been created"));
         }
 
         [Fact]
@@ -51,7 +57,7 @@ namespace Pretzel.Tests.Recipe
 
             recipe.Create();
 
-            Assert.True(listener.Received("Razor templating hasn't been implemented yet"));
+            Assert.True(writer.ToString().Contains("Razor templating hasn't been implemented yet"));
         }
 
         [Fact]
@@ -62,7 +68,7 @@ namespace Pretzel.Tests.Recipe
 
             recipe.Create();
 
-            Assert.True(listener.Received("Templating Engine not found"));
+            Assert.True(writer.ToString().Contains("Templating Engine not found"));
         }
     }
 }

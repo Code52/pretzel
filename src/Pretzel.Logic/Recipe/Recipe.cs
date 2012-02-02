@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Abstractions;
+using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Logic
 {
@@ -28,7 +29,7 @@ namespace Pretzel.Logic
 
                 if (string.Equals("Razor", engine, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    Trace.WriteLine("Razor templating hasn't been implemented yet");
+                    Tracing.Info("Razor templating hasn't been implemented yet");
                 }
 
                 if (string.Equals("Jekyll", engine, StringComparison.InvariantCultureIgnoreCase))
@@ -62,15 +63,17 @@ namespace Pretzel.Logic
                     ms = new MemoryStream();
                     Properties.Resources.faviconico.Save(ms);
                     fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img\favicon.ico"), ms.ToArray());
+
+                    Tracing.Info("Pretzel site template has been created");
                 }
                 else
-                    Trace.WriteLine("Templating Engine not found");
-
-                Trace.WriteLine("Pretzel site template has been created");
+                {
+                    Tracing.Info("Templating Engine not found");
+                }
             }
             catch (Exception ex)
             {
-                Trace.WriteLine(string.Format("Error trying to create template: {0}", ex));
+                Tracing.Error(string.Format("Error trying to create template: {0}", ex));
             }
         }
     }
