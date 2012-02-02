@@ -501,6 +501,14 @@ namespace Pretzel.Logic.Extensions
 			{      "vrm", "x-world/x-vrml" }
 		};
 
+        private static List<string> binaryTypes = new List<string>()
+        {
+            "image",
+            "video",
+            "application",
+            "audio"
+        };
+
         /// <summary>
         /// Returns the mime type for the requested file extension. Returns the
         /// specified defaultMimeType if the extension is not found.
@@ -525,6 +533,15 @@ namespace Pretzel.Logic.Extensions
                 return "text/html";
             string extension = filename.Substring(filename.LastIndexOf("."));
             return Get(extension, types["bin"]);
+        }
+
+        public static bool IsBinaryMime(this string mime)
+        {
+            if (binaryTypes.Any(m => mime.StartsWith(m)))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

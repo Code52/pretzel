@@ -37,5 +37,15 @@ namespace Pretzel
         {
             return "Hello world"; // Or something else from the project content maybe
         }
+
+        /// <summary>
+        /// Read file
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns>Content to show to the user</returns>
+        public byte[] GetBinaryContent(string request)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
