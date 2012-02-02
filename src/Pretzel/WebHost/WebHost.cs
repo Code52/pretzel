@@ -12,8 +12,6 @@ namespace Pretzel
 {
     public class WebHost : IDisposable
     {
-        private string basePath;
-
         IDisposable host;
         IWebContent content;
 
