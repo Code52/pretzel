@@ -31,6 +31,14 @@ namespace Pretzel
 
             var commandName = args[0];
             var commandArgs = args.Skip(1).ToArray();
+
+            if (Commands[commandName] == null)
+            {
+                Console.WriteLine("Can't find command \"{0}\"", commandName);
+                Commands.WriteHelp();
+                return;
+            }
+
             Commands[commandName].Execute(commandArgs);
             WaitForClose();
         }
