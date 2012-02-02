@@ -75,6 +75,30 @@ namespace Pretzel
         }
 
         /// <summary>
+        /// Read file
+        /// </summary>
+        /// <param name="request">Request string</param>
+        /// <returns>Filecontents</returns>
+        public byte[] GetBinaryContent(string request)
+        {
+            string fileName = GetRequestedPage(request);
+
+            if (string.IsNullOrEmpty(basePath))
+            {
+                throw new InvalidOperationException("basePath required");
+            }
+
+            byte[] fileContents;
+            using (BinaryReader reader = new BinaryReader(File.Open(fileName, FileMode.Open)))
+            {
+                FileInfo fileInfo = new FileInfo(fileName);
+                fileContents = reader.ReadBytes((int)fileInfo.Length);
+            }
+
+            return fileContents;
+        }
+
+        /// <summary>
         /// Get the path for the page to send to the user
         /// </summary>
         /// <param name="env">env-dictionary as sent from the server-callback</param>

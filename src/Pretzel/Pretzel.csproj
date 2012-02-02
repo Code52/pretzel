@@ -43,6 +43,9 @@
     <Reference Include="Firefly">
       <HintPath>..\packages\Firefly.0.3\lib\net40\Firefly.dll</HintPath>
     </Reference>
+    <Reference Include="Gate">
+      <HintPath>..\packages\Gate.0.3.1\lib\net40\Gate.dll</HintPath>
+    </Reference>
     <Reference Include="NDesk.Options">
       <HintPath>..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
     </Reference>
