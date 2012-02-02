@@ -61,6 +61,7 @@ namespace Pretzel.Commands
             }
             else
             {
+                Console.WriteLine("Cannot find engine for input: '{0}'", Engine);
                 System.Diagnostics.Debug.WriteLine("Cannot find engine for input: '{0}'", Engine);
             }
         }
