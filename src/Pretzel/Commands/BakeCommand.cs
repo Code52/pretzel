@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using NDesk.Options;
+using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Jekyll;
 
@@ -36,6 +37,8 @@ namespace Pretzel.Commands
 
         public void Execute(string[] arguments)
         {
+            Tracing.Info("bake - transforming content into a website");
+
             Settings.Parse(arguments);
             
             if (string.IsNullOrWhiteSpace(Path))

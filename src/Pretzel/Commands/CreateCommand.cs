@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Abstractions;
 using NDesk.Options;
 using Pretzel.Logic;
+using Pretzel.Logic.Extensions;
 
 
 namespace Pretzel.Commands
@@ -33,6 +34,8 @@ namespace Pretzel.Commands
 
         public void Execute(string[] arguments)
         {
+            Tracing.Info("create - creating a new site");
+
             Settings.Parse(arguments);
 
             if (string.IsNullOrWhiteSpace(Path))
