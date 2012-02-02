@@ -48,6 +48,7 @@ namespace Pretzel.Logic
                     _fileSystem.File.WriteAllText(Path.Combine(_directory, @"about.md"), Properties.Resources.About);
                     _fileSystem.File.WriteAllText(Path.Combine(_directory, string.Format(@"_posts\{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Resources.FirstPost);
                     _fileSystem.File.WriteAllText(Path.Combine(_directory, @"css\style.css"), Properties.Resources.Style);
+                    _fileSystem.File.WriteAllText(Path.Combine(_directory, @"_config.yml"), Properties.Resources.Config);
 
                     var ms = new MemoryStream();
                     Properties.Resources._25.Save(ms, ImageFormat.Png);
