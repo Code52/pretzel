@@ -2,6 +2,7 @@
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
 using Pretzel.Commands;
@@ -45,7 +46,11 @@ namespace Pretzel
         {
             var first = new AssemblyCatalog(Assembly.GetExecutingAssembly());
             var container = new CompositionContainer(first);
-            container.ComposeParts(this);
+
+            var batch = new CompositionBatch();
+            batch.AddExportedValue<IFileSystem>(new FileSystem());
+            batch.AddPart(this);
+            container.Compose(batch);
         }
     }
 }

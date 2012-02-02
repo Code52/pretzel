@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.IO.Abstractions;
 using NDesk.Options;
 using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Jekyll;
@@ -39,8 +38,6 @@ namespace Pretzel.Commands
         {
             Settings.Parse(arguments);
             
-            var fileSystem = new FileSystem();
-
             if (string.IsNullOrWhiteSpace(Path))
             {
                 Path = Directory.GetCurrentDirectory();
@@ -48,7 +45,7 @@ namespace Pretzel.Commands
 
             if (string.IsNullOrWhiteSpace(Engine))
             {
-                Engine = InferEngineFromDirectory(Path, fileSystem);
+                Engine = InferEngineFromDirectory(Path);
             }
 
             ISiteEngine engine;
@@ -56,8 +53,8 @@ namespace Pretzel.Commands
             if (engineMap.TryGetValue(Engine, out engine))
             {
                 var context = new SiteContext { Folder = Path };
-                engine.Initialize(fileSystem, context);
-                engine.Process();
+                engine.Initialize();
+                engine.Process(context);
             }
             else
             {
@@ -65,11 +62,11 @@ namespace Pretzel.Commands
             }
         }
 
-        private string InferEngineFromDirectory(string path, IFileSystem fileSystem)
+        private string InferEngineFromDirectory(string path)
         {
             foreach(var engine in engineMap)
             {
-                if (!engine.Value.CanProcess(fileSystem, path)) continue;
+                if (!engine.Value.CanProcess(path)) continue;
                 System.Diagnostics.Debug.WriteLine("Recommended engine for directory: '{0}'", engine.Key);
                 return engine.Key;
             }

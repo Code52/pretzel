@@ -14,14 +14,18 @@ namespace Pretzel.Logic.Templating.Jekyll
     {
         private static readonly Markdown Markdown = new Markdown();
         private SiteContext context;
-        private IFileSystem fileSystem;
 
-        public void Process()
+        [Import]
+        public IFileSystem FileSystem { get; set; }
+
+        public void Process(SiteContext siteContext)
         {
-            var outputDirectory = Path.Combine(context.Folder, "_site");
-            fileSystem.Directory.CreateDirectory(outputDirectory);
+            context = siteContext;
 
-            foreach (var file in fileSystem.Directory.GetFiles(context.Folder, "*.*", SearchOption.AllDirectories))
+            var outputDirectory = Path.Combine(context.Folder, "_site");
+            FileSystem.Directory.CreateDirectory(outputDirectory);
+
+            foreach (var file in FileSystem.Directory.GetFiles(context.Folder, "*.*", SearchOption.AllDirectories))
             {
                 var relativePath = file.Replace(context.Folder, "").TrimStart('\\');
                 if (relativePath.StartsWith("_")) continue;
@@ -30,20 +34,20 @@ namespace Pretzel.Logic.Templating.Jekyll
                 var outputFile = Path.Combine(outputDirectory, relativePath);
 
                 var directory = Path.GetDirectoryName(outputFile);
-                if (!fileSystem.Directory.Exists(directory))
-                    fileSystem.Directory.CreateDirectory(directory);
+                if (!FileSystem.Directory.Exists(directory))
+                    FileSystem.Directory.CreateDirectory(directory);
 
                 var extension = Path.GetExtension(file);
                 if (extension.IsImageFormat())
                 {
-                    fileSystem.File.Copy(file, outputFile, true);
+                    FileSystem.File.Copy(file, outputFile, true);
                     continue;
                 }
 
-                var inputFile = fileSystem.File.ReadAllText(file);
+                var inputFile = FileSystem.File.ReadAllText(file);
                 if (!inputFile.StartsWith("---"))
                 {
-                    fileSystem.File.WriteAllText(outputFile, inputFile);
+                    FileSystem.File.WriteAllText(outputFile, inputFile);
                     continue;
                 }
 
@@ -57,7 +61,7 @@ namespace Pretzel.Logic.Templating.Jekyll
 
                     var pageContext = ProcessMarkdownPage(inputFile, outputFile, outputDirectory);
 
-                    fileSystem.File.WriteAllText(pageContext.OutputPath, pageContext.Content);
+                    FileSystem.File.WriteAllText(pageContext.OutputPath, pageContext.Content);
                 }
                 else
                 {
@@ -76,7 +80,7 @@ namespace Pretzel.Logic.Templating.Jekyll
             {
                 var path = Path.Combine(context.Folder, "_layouts", metadata["layout"] + ".html");
 
-                if (!fileSystem.File.Exists(path)) 
+                if (!FileSystem.File.Exists(path)) 
                     continue;
 
                 metadata = ProcessTemplate(pageContext, path);
@@ -86,7 +90,7 @@ namespace Pretzel.Logic.Templating.Jekyll
 
         private IDictionary<string, object> ProcessTemplate(PageContext pageContext, string path)
         {
-            var templateFile = fileSystem.File.ReadAllText(path);
+            var templateFile = FileSystem.File.ReadAllText(path);
             var metadata = templateFile.YamlHeader();
             var templateContent = templateFile.ExcludeHeader();
 
@@ -100,7 +104,7 @@ namespace Pretzel.Logic.Templating.Jekyll
             var data = CreatePageData(context);
             var template = Template.Parse(inputFile);
             var output = template.Render(data);
-            fileSystem.File.WriteAllText(outputPath, output);
+            FileSystem.File.WriteAllText(outputPath, output);
         }
 
         private static Hash CreatePageData(SiteContext context, PageContext pageContext)
@@ -121,16 +125,15 @@ namespace Pretzel.Logic.Templating.Jekyll
             return template.Render(data);
         }
 
-        public bool CanProcess(IFileSystem fileSystem, string directory)
+        public bool CanProcess(string directory)
         {
             var configPath = Path.Combine(directory, "_config.yml");
-            return fileSystem.File.Exists(configPath);
+            return FileSystem.File.Exists(configPath);
         }
 
-        public void Initialize(IFileSystem fileSystem, SiteContext context)
+        public void Initialize()
         {
-            this.fileSystem = fileSystem;
-            this.context = context;
+            Template.RegisterTag<RenderTime>("render_time");
         }
     }
 }

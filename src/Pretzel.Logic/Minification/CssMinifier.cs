@@ -48,10 +48,8 @@ namespace Pretzel.Logic.Minification
 
             //todo resolve imports
             //_fileSystem.Directory.SetCurrentDirectory("");
-
             var engineFactory = new EngineFactory();
             engineFactory.Configuration.MinifyOutput = true;
-
             var engine = engineFactory.GetEngine();
             
             return engine.TransformToCss(content, file.FullName);
