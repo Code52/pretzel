@@ -16,7 +16,7 @@ namespace Pretzel
         IWebContent content;
 
         public int Port { get; private set; }
-        public bool IsRunning { get; set; }
+        public bool IsRunning { get; private set; }
 
         /// <summary>
         /// Constructor
