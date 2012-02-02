@@ -65,7 +65,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\Logger.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\Tracing.cs" />
     <Compile Include="Extensions\YamlExtensions.cs" />
     <Compile Include="Minification\CssMinifier.cs" />
     <Compile Include="Minification\FileSystemExtensions.cs" />
@@ -129,6 +131,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Style.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Templating\Plugins\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

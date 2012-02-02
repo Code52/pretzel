@@ -19,8 +19,8 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 var context = new SiteContext {Folder = @"C:\website\"};
                 FileSystem.AddFile(@"C:\website\index.html", new MockFileData(FileContents));
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -55,8 +55,8 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 var context = new SiteContext { Folder = @"C:\website" };
                 FileSystem.AddFile(@"C:\website\index.html", new MockFileData(FileContents));
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -79,8 +79,8 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 var context = new SiteContext { Folder = @"C:\website\" };
                 FileSystem.AddFile(@"C:\website\content\index.html", new MockFileData(FileContents));
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -115,8 +115,8 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
                 FileSystem.AddFile(@"C:\website\index.html", new MockFileData(FileContents));
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -142,8 +142,8 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -178,8 +178,8 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
 
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -208,8 +208,8 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -236,8 +236,8 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -260,8 +260,8 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\.gems\file.txt", new MockFileData(PageContents));
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -284,8 +284,8 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\file.txt", new MockFileData(PageContents));
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
