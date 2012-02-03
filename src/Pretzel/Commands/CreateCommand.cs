@@ -45,7 +45,7 @@ namespace Pretzel.Commands
 
             if (string.IsNullOrWhiteSpace(Engine))
             {
-                Engine = "";
+                Engine = "Jekyll";
             }
 
             var recipe = new Recipe(fileSystem, Engine, Path);
