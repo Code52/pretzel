@@ -14,7 +14,7 @@ namespace Pretzel.Commands
     [CommandInfo(CommandName = "create")]
     public sealed class RecipeCommand : ICommand
     {
-        readonly static List<string> Engines = new List<string>(new[] { "Liquid", "Razor" });
+        readonly static List<string> Engines = new List<string>(new[] { "Liquid", "Razor", "Jekyll" });
 
         public string Path { get; private set; }
         public string Engine { get; private set; }
