@@ -2,16 +2,6 @@ using System.Collections.Generic;
 
 namespace Pretzel.Logic.Templating.Context
 {
-    public class Tag
-    {
-        public IEnumerable<Post> Posts { get; set; }
-        public string Name { get; set; }
-    }
-
-    public class Post
-    {
-    }
-
     public class SiteContext
     {
         public string Folder { get; set; }

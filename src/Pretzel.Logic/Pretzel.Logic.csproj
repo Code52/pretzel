@@ -95,6 +95,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Templating\Context\Page.cs" />
+    <Compile Include="Templating\Context\Post.cs" />
+    <Compile Include="Templating\Context\Tag.cs" />
+    <Compile Include="Templating\Jekyll\Liquid\PostDrop.cs" />
+    <Compile Include="Templating\Jekyll\Liquid\SiteContextDrop.cs" />
     <Compile Include="Templating\Razor\RazorEngine.cs" />
     <Compile Include="Templating\SiteEngineInfoAttribute.cs" />
     <Compile Include="Templating\ISiteEngineInfo.cs" />
