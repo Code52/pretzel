@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -26,9 +25,6 @@ namespace Pretzel.Logic.Templating.Jekyll
         {
             context = siteContext;
             context.Posts = new List<Page>();
-
-            var watch = new Stopwatch();
-            watch.Start();
 
             var outputDirectory = Path.Combine(context.Folder, "_site");
             Tracing.Info(string.Format("creating the jekyll site at {0}", outputDirectory));
@@ -63,9 +59,11 @@ namespace Pretzel.Logic.Templating.Jekyll
 
                 ProcessFile(outputDirectory, file, relativePath);
             }
+        }
 
-            watch.Stop();
-            Tracing.Info(string.Format("Done! Took {0}ms", watch.ElapsedMilliseconds));
+        public string GetOutputDirectory(string path)
+        {
+            return Path.Combine(path, "_site");
         }
 
         private string GetPathWithTimestamp(string outputDirectory, string file)
@@ -180,7 +178,6 @@ namespace Pretzel.Logic.Templating.Jekyll
                 content = pageContext.Content
             });
         }
-
 
         private static Hash CreatePageData(SiteContext context, PageContext pageContext)
         {

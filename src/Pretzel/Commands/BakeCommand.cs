@@ -6,7 +6,6 @@ using System.IO;
 using NDesk.Options;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
-using Pretzel.Logic.Templating.Jekyll;
 using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Commands
