@@ -6,6 +6,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
     public class PostDrop : Drop
     {
         private readonly Page page;
+        private readonly string content;
 
         public PostDrop(Page page)
         {
@@ -15,6 +16,11 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
         public string Title
         {
             get { return page.Title; }
+        }
+
+        public string Content
+        {
+            get { return page.Content; }
         }
     }
 }

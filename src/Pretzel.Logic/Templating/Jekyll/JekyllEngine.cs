@@ -27,7 +27,7 @@ namespace Pretzel.Logic.Templating.Jekyll
             context.Posts = new List<Page>();
 
             var outputDirectory = Path.Combine(context.Folder, "_site");
-            Tracing.Info(string.Format("creating the jekyll site at {0}", outputDirectory));
+            Tracing.Debug(string.Format("generating the site contents at {0}", outputDirectory));
             FileSystem.Directory.CreateDirectory(outputDirectory);
 
             IDictionary<string, string> posts = new Dictionary<string, string>();
@@ -42,7 +42,13 @@ namespace Pretzel.Logic.Templating.Jekyll
                     posts.Add(file, relativePath);
 
                     // TODO: more parsing of data
-                    context.Posts.Add(new Page { Title = "This is a post" });
+                    var contents = FileSystem.File.ReadAllText(file);
+                    var post = new Page
+                                   {
+                                       Title = "This is a post",
+                                       Content = Markdown.Transform(contents.ExcludeHeader())
+                                   };
+                    context.Posts.Add(post);
                 }
 
                 foreach (var p in posts)

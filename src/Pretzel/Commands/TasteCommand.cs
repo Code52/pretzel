@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.IO;
 using NDesk.Options;
 using Pretzel.Logic.Extensions;
@@ -18,7 +17,6 @@ namespace Pretzel.Commands
         private Dictionary<string, ISiteEngine> engineMap;
         private string Engine { get; set; }
         public int Port { get; private set; }
-        public bool Debug { get; private set; }
         public string Path { get; private set; }
 
         private ISiteEngine engine;
@@ -34,8 +32,6 @@ namespace Pretzel.Commands
                            {
                                {"p|port=", "The server port number.", v => Port = int.Parse(v)},
                                {"d|path=", "The path to site directory", p => Path = p },
-                               {"engine=", "The engine to choose", p => Engine = p },
-                               {"debug", "Enable debugging", v => Debug = true}
                            };
             }
         }
@@ -48,9 +44,6 @@ namespace Pretzel.Commands
             {
                 Port = 8080;
             }
-
-            Tracing.Info("Port: " + Port);
-            Tracing.Info("Debug: " + Debug);
 
             var f = new FileContentProvider();
             if (string.IsNullOrWhiteSpace(Path))
@@ -81,7 +74,7 @@ namespace Pretzel.Commands
             var w = new WebHost(engine.GetOutputDirectory(Path), f);
             w.Start();
 
-            Tracing.Info("Press 'Q' to stop the process");
+            Tracing.Info("Press 'Q' to stop the web host...");
             ConsoleKeyInfo key;
             do
             {
@@ -92,7 +85,7 @@ namespace Pretzel.Commands
 
         private void WatcherOnChanged(string file)
         {
-            Tracing.Info(string.Format("File changed: {0}", file));
+            Tracing.Info(string.Format("File change: {0}", file));
 
             var context = new SiteContext { Folder = Path };
             engine.Process(context);
