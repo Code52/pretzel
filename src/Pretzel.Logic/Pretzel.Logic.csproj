@@ -80,10 +80,10 @@
     <Compile Include="Minification\FileSystemExtensions.cs" />
     <Compile Include="Minification\JsMinifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Jeckyll1.Designer.cs">
+    <Compile Include="Properties\Liquid.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Jeckyll.resx</DependentUpon>
+      <DependentUpon>Liquid.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\Razor.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -95,6 +95,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Templating\Context\Page.cs" />
+    <Compile Include="Templating\Context\Post.cs" />
+    <Compile Include="Templating\Context\Tag.cs" />
+    <Compile Include="Templating\Jekyll\Liquid\PostDrop.cs" />
+    <Compile Include="Templating\Jekyll\Liquid\SiteContextDrop.cs" />
     <Compile Include="Templating\Razor\RazorEngine.cs" />
     <Compile Include="Templating\SiteEngineInfoAttribute.cs" />
     <Compile Include="Templating\ISiteEngineInfo.cs" />
@@ -114,10 +119,10 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Razor.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Jeckyll.resx">
+    <EmbeddedResource Include="Properties\Liquid.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
-      <LastGenOutput>Jeckyll1.Designer.cs</LastGenOutput>
+      <LastGenOutput>Liquid.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
