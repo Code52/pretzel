@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
+using Pretzel.Logic.Templating;
 
-namespace Pretzel.Logic.Templating.Jekyll
+namespace Pretzel.Logic.Templating.Context
 {
     public class PageContext
     {

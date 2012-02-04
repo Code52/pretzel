@@ -24,7 +24,7 @@ namespace Pretzel.Tests.Recipe
         }
 
         [Fact]
-        public void Files_and_Folders_Are_Created()
+        public void Files_and_Folders_Are_Created_for_Jekyll()
         {
             var recipe = new Logic.Recipe(fileSystem, "Jekyll", BaseSite);
             recipe.Create();
@@ -51,13 +51,30 @@ namespace Pretzel.Tests.Recipe
         }
 
         [Fact]
-        public void Razor_Engine_returns_error()
+        public void Files_and_Folders_Are_Created_for_Razor()
         {
             var recipe = new Logic.Recipe(fileSystem, "Razor", BaseSite);
-
             recipe.Create();
 
-            Assert.True(writer.ToString().Contains("Razor templating hasn't been implemented yet"));
+            Assert.True(fileSystem.Directory.Exists(BaseSite + @"_posts\"));
+            Assert.True(fileSystem.Directory.Exists(BaseSite + @"_layouts\"));
+            Assert.True(fileSystem.Directory.Exists(BaseSite + @"css\"));
+            Assert.True(fileSystem.Directory.Exists(BaseSite + @"img\"));
+
+            Assert.True(fileSystem.File.Exists(BaseSite + "rss.xml"));
+            Assert.True(fileSystem.File.Exists(BaseSite + "atom.xml"));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"_layouts\layout.html"));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"_layouts\post.html"));
+            Assert.True(fileSystem.File.Exists(BaseSite + "index.html"));
+            Assert.True(fileSystem.File.Exists(BaseSite + "about.html"));
+            Assert.True(fileSystem.File.Exists(BaseSite + string.Format(@"_posts\{0}-myfirstpost.html", DateTime.Today.ToString("yyyy-MM-dd"))));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"css\style.css"));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"img\25.png"));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"img\favicon.png"));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"img\logo.png"));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"img\favicon.ico"));
+
+            Assert.True(writer.ToString().Contains("Pretzel site template has been created"));
         }
 
         [Fact]
