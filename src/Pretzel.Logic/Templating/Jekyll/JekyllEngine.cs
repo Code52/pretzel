@@ -77,6 +77,9 @@ namespace Pretzel.Logic.Templating.Jekyll
             var pageContext = PageContext.FromDictionary(metadata, outputDirectory, outputPath);
             pageContext.Content = Markdown.Transform(fileContents.ExcludeHeader());
 
+            var data = CreatePageData(context, pageContext);
+            pageContext.Content = RenderTemplate(pageContext.Content, data);
+
             while (metadata.ContainsKey("layout"))
             {
                 var path = Path.Combine(context.Folder, "_layouts", metadata["layout"] + ".html");
