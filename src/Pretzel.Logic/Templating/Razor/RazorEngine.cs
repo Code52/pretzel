@@ -23,7 +23,7 @@ namespace Pretzel.Logic.Templating.Razor
             throw new System.NotImplementedException();
         }
 
-        void ISiteEngine.Process(Jekyll.SiteContext context)
+        void ISiteEngine.Process(SiteContext context)
         {
             throw new System.NotImplementedException();
         }
