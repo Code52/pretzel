@@ -61,8 +61,7 @@ namespace Pretzel.Commands
             }
             else
             {
-                Console.WriteLine("Cannot find engine for input: '{0}'", Engine);
-                System.Diagnostics.Debug.WriteLine(String.Format("Cannot find engine for input: '{0}'", Engine));
+                Tracing.Info(String.Format("Cannot find engine for input: '{0}'", Engine));
             }
         }
 
@@ -71,7 +70,7 @@ namespace Pretzel.Commands
             foreach(var engine in engineMap)
             {
                 if (!engine.Value.CanProcess(path)) continue;
-                System.Diagnostics.Debug.WriteLine(String.Format("Recommended engine for directory: '{0}'", engine.Key));
+                Tracing.Info(String.Format("Recommended engine for directory: '{0}'", engine.Key));
                 return engine.Key;
             }
 

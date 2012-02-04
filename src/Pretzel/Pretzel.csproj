@@ -74,7 +74,6 @@
     <Compile Include="Commands\BakeCommand.cs" />
     <Compile Include="Commands\CommandCollection.cs" />
     <Compile Include="Commands\CommandInfoAttribute.cs" />
-    <Compile Include="Commands\CreateCommand.cs" />
     <Compile Include="Commands\RecipeCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommandInfo.cs" />
