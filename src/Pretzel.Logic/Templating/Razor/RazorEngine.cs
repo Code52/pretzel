@@ -1,10 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.IO;
-using System.IO.Abstractions;
-using DotLiquid;
-using MarkdownDeep;
-using Pretzel.Logic.Extensions;
+﻿using System.ComponentModel.Composition;
 using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Logic.Templating.Razor
@@ -13,19 +7,19 @@ namespace Pretzel.Logic.Templating.Razor
     [SiteEngineInfo(Engine = "razor")]
     public class RazorEngine : ISiteEngine
     {
-        bool ISiteEngine.CanProcess(string directory)
+        public bool CanProcess(string directory)
         {
-            throw new System.NotImplementedException();
+            return false;
         }
 
-        void ISiteEngine.Initialize()
+        public void Initialize()
         {
-            throw new System.NotImplementedException();
+            
         }
 
-        void ISiteEngine.Process(SiteContext context)
+        public void Process(SiteContext context)
         {
-            throw new System.NotImplementedException();
+            
         }
     }
 }

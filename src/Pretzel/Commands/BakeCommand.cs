@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.IO;
 using NDesk.Options;
 using Pretzel.Logic.Extensions;
@@ -56,9 +57,13 @@ namespace Pretzel.Commands
 
             if (engineMap.TryGetValue(Engine, out engine))
             {
+                var watch = new Stopwatch();
+                watch.Start();
                 var context = new SiteContext { Folder = Path };
                 engine.Initialize();
                 engine.Process(context);
+                watch.Stop();
+                Tracing.Info(string.Format("done - took {0}ms", watch.ElapsedMilliseconds));
             }
             else
             {

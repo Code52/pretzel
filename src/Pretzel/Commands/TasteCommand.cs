@@ -50,6 +50,10 @@ namespace Pretzel.Commands
             {
                 Path = Directory.GetCurrentDirectory();
             }
+
+            // TODO: infer the type of site running 
+            // e.g. if jekyll site -> bake again, listen to file changes and serve _site
+
             //Bake
             oven.Engines = Engines;
             oven.OnImportsSatisfied();
