@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using NDesk.Options;
 using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Templating;
 
 namespace Pretzel.Commands
 {
@@ -12,6 +13,12 @@ namespace Pretzel.Commands
     {
         public int Port { get; private set; }
         public bool Debug { get; private set; }
+        public string Path { get; private set; }
+
+        [ImportMany]
+        private Lazy<ISiteEngine, ISiteEngineInfo>[] Engines { get; set; }
+
+        private readonly BakeCommand oven = new BakeCommand();
 
         private OptionSet Settings
         {
@@ -20,6 +27,7 @@ namespace Pretzel.Commands
                 return new OptionSet
                            {
                                {"p|port=", "The server port number.", v => Port = int.Parse(v)},
+                               {"d|path=", "The path to site directory", p => Path = p },
                                {"debug", "Enable debugging", v => Debug = true}
                            };
             }
@@ -38,7 +46,18 @@ namespace Pretzel.Commands
             Tracing.Info("Debug: " + Debug);
 
             var f = new FileContentProvider();
-            var w = new WebHost(Directory.GetCurrentDirectory(), f);
+            if (string.IsNullOrWhiteSpace(Path))
+            {
+                Path = Directory.GetCurrentDirectory();
+            }
+            //Bake
+            oven.Engines = Engines;
+            oven.OnImportsSatisfied();
+            oven.Engine = string.Empty;
+            oven.Execute(arguments);
+            
+            //Setup webserver
+            var w = new WebHost(Path, f);
             w.Start();
 			
 			Tracing.Info("Press 'Q' to stop the process");

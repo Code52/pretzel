@@ -89,6 +89,8 @@ namespace Pretzel
         {
             string requestString = (string)env[OwinConstants.RequestPath];
 
+            Tracing.Info(requestString);
+
             var request = new Gate.Request(env);
             var response = new Gate.Response(result);
 
