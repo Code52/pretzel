@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Pretzel.Logic.Templating.Jekyll
+namespace Pretzel.Logic.Templating.Context
 {
     public class Tag
     {

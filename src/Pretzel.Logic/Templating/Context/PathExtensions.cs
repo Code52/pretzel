@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 
-namespace Pretzel.Logic.Templating.Jekyll
+namespace Pretzel.Logic.Templating
 {
-    public static class JekyllExtensions
+    public static class PathExtensions
     {
         private static readonly string[] MarkdownFiles = new[] { ".md", ".mdown", ".markdown" };
         private static readonly string[] ImageFiles = new[] { ".png", ".gif", ".jpg" };

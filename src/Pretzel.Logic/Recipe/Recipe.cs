@@ -28,41 +28,38 @@ namespace Pretzel.Logic
 
                 if (string.Equals("Razor", engine, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    Tracing.Info("Razor templating hasn't been implemented yet");
+                    CreateDirectories();
+
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"rss.xml"), Properties.Razor.Rss);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"atom.xml"), Properties.Razor.Atom);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\layout.html"), Properties.Razor.Layout);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\post.html"), Properties.Razor.Post);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"index.html"), Properties.Razor.Index);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"about.html"), Properties.Razor.About);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, string.Format(@"_posts\{0}-myfirstpost.html", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Razor.FirstPost);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"css\style.css"), Properties.Resources.Style);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Razor.Config);
+
+                    CreateImages();
+
+                    Tracing.Info("Pretzel site template has been created");
                 }
 
                 if (string.Equals("Jekyll", engine, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"_posts"));
-                    fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"_layouts"));
-                    fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"css"));
-                    fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"img"));
+                    CreateDirectories();
 
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"rss.xml"), Properties.Resources.Rss);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"atom.xml"), Properties.Resources.Atom);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\layout.html"), Properties.Resources.Layout);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\post.html"), Properties.Resources.Post);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"index.md"), Properties.Resources.Index);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"about.md"), Properties.Resources.About);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, string.Format(@"_posts\{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Resources.FirstPost);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"rss.xml"), Properties.Jeckyll.Rss);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"atom.xml"), Properties.Jeckyll.Atom);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\layout.html"), Properties.Jeckyll.Layout);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\post.html"), Properties.Jeckyll.Post);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"index.md"), Properties.Jeckyll.Index);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"about.md"), Properties.Jeckyll.About);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, string.Format(@"_posts\{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Jeckyll.FirstPost);
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"css\style.css"), Properties.Resources.Style);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Resources.Config);
-					
-                    var ms = new MemoryStream();
-                    Properties.Resources._25.Save(ms, ImageFormat.Png);
-                    fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img\25.png"), ms.ToArray());
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Jeckyll.Config);
 
-                    ms = new MemoryStream();
-                    Properties.Resources.faviconpng.Save(ms, ImageFormat.Png);
-                    fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img\favicon.png"), ms.ToArray());
-
-                    ms = new MemoryStream();
-                    Properties.Resources.logo.Save(ms, ImageFormat.Png);
-                    fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img\logo.png"), ms.ToArray());
-
-                    ms = new MemoryStream();
-                    Properties.Resources.faviconico.Save(ms);
-                    fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img\favicon.ico"), ms.ToArray());
+                    CreateImages();
 
                     Tracing.Info("Pretzel site template has been created");
                 }
@@ -75,6 +72,33 @@ namespace Pretzel.Logic
             {
                 Tracing.Error(string.Format("Error trying to create template: {0}", ex));
             }
+        }
+
+        private void CreateImages()
+        {
+            var ms = new MemoryStream();
+            Properties.Resources._25.Save(ms, ImageFormat.Png);
+            fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img\25.png"), ms.ToArray());
+
+            ms = new MemoryStream();
+            Properties.Resources.faviconpng.Save(ms, ImageFormat.Png);
+            fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img\favicon.png"), ms.ToArray());
+
+            ms = new MemoryStream();
+            Properties.Resources.logo.Save(ms, ImageFormat.Png);
+            fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img\logo.png"), ms.ToArray());
+
+            ms = new MemoryStream();
+            Properties.Resources.faviconico.Save(ms);
+            fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img\favicon.ico"), ms.ToArray());
+        }
+
+        private void CreateDirectories()
+        {
+            fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"_posts"));
+            fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"_layouts"));
+            fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"css"));
+            fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"img"));
         }
     }
 }

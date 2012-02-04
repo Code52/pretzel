@@ -1,6 +1,7 @@
 ﻿using System.IO.Abstractions.TestingHelpers;
 using Pretzel.Logic.Templating.Jekyll;
 using Xunit;
+using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Tests.Templating.Jekyll
 {
