@@ -16,10 +16,10 @@ namespace Pretzel.Commands
         private Dictionary<string, ISiteEngine> engineMap;
 
         [ImportMany]
-        private Lazy<ISiteEngine, ISiteEngineInfo>[] Engines { get; set; }
+        public Lazy<ISiteEngine, ISiteEngineInfo>[] Engines { get; set; }
 
         public string Path { get; private set; }
-        public string Engine { get; private set; }
+        public string Engine { get; set; }
         public bool Debug { get; private set; }
 
         private OptionSet Settings
