@@ -12,12 +12,10 @@ namespace Pretzel.Commands
 {
     [PartCreationPolicy(CreationPolicy.Shared)]
     [CommandInfo(CommandName = "bake")]
-    public sealed class BakeCommand : ICommand, IPartImportsSatisfiedNotification
+    public sealed class BakeCommand : ICommand
     {
-        private Dictionary<string, ISiteEngine> engineMap;
-
-        [ImportMany]
-        public Lazy<ISiteEngine, ISiteEngineInfo>[] Engines { get; set; }
+        [Import]
+        private TemplateEngineCollection templateEngines;
 
         public string Path { get; private set; }
         public string Engine { get; set; }
@@ -39,7 +37,7 @@ namespace Pretzel.Commands
             Tracing.Info("bake - transforming content into a website");
 
             Settings.Parse(arguments);
-            
+
             if (string.IsNullOrWhiteSpace(Path))
             {
                 Path = Directory.GetCurrentDirectory();
@@ -50,9 +48,8 @@ namespace Pretzel.Commands
                 Engine = InferEngineFromDirectory(Path);
             }
 
-            ISiteEngine engine;
-
-            if (engineMap.TryGetValue(Engine, out engine))
+            var engine = templateEngines[Engine];
+            if (engine != null)
             {
                 var watch = new Stopwatch();
                 watch.Start();
@@ -70,7 +67,7 @@ namespace Pretzel.Commands
 
         private string InferEngineFromDirectory(string path)
         {
-            foreach(var engine in engineMap)
+            foreach (var engine in templateEngines.Engines)
             {
                 if (!engine.Value.CanProcess(path)) continue;
                 Tracing.Info(String.Format("Recommended engine for directory: '{0}'", engine.Key));
@@ -83,17 +80,6 @@ namespace Pretzel.Commands
         public void WriteHelp(TextWriter writer)
         {
             Settings.WriteOptionDescriptions(writer);
-        }
-
-        public void OnImportsSatisfied()
-        {
-            engineMap = new Dictionary<string, ISiteEngine>(Engines.Length, StringComparer.OrdinalIgnoreCase);
-
-            foreach (var command in Engines)
-            {
-                if (!engineMap.ContainsKey(command.Metadata.Engine))
-                    engineMap.Add(command.Metadata.Engine, command.Value);
-            }
         }
     }
 }

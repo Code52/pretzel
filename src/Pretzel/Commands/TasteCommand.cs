@@ -12,17 +12,16 @@ namespace Pretzel.Commands
 {
     [PartCreationPolicy(CreationPolicy.Shared)]
     [CommandInfo(CommandName = "taste")]
-    public sealed class TasteCommand : ICommand, IPartImportsSatisfiedNotification
+    public sealed class TasteCommand : ICommand
     {
-        private Dictionary<string, ISiteEngine> engineMap;
         private string Engine { get; set; }
         public int Port { get; private set; }
         public string Path { get; private set; }
 
         private ISiteEngine engine;
 
-        [ImportMany]
-        private Lazy<ISiteEngine, ISiteEngineInfo>[] Engines { get; set; }
+        [Import]
+        private TemplateEngineCollection templateEngines;
 
         private OptionSet Settings
         {
@@ -56,12 +55,14 @@ namespace Pretzel.Commands
                 Engine = InferEngineFromDirectory(Path);
             }
 
-            if (engineMap.TryGetValue(Engine, out engine))
-            {
-                var context = new SiteContext { Folder = Path };
-                engine.Initialize();
-                engine.Process(context);
-            }
+            engine = templateEngines[Engine];
+
+            if (engine == null)
+                return;
+
+            var context = new SiteContext { Folder = Path };
+            engine.Initialize();
+            engine.Process(context);
 
             var watcher = new SimpleFileSystemWatcher();
             watcher.OnChange(Path, WatcherOnChanged);
@@ -88,7 +89,7 @@ namespace Pretzel.Commands
 
         private string InferEngineFromDirectory(string path)
         {
-            foreach (var engine in engineMap)
+            foreach (var engine in templateEngines.Engines)
             {
                 if (!engine.Value.CanProcess(path)) continue;
                 Tracing.Info(String.Format("Recommended engine for directory: '{0}'", engine.Key));
@@ -96,17 +97,6 @@ namespace Pretzel.Commands
             }
 
             return string.Empty;
-        }
-
-        public void OnImportsSatisfied()
-        {
-            engineMap = new Dictionary<string, ISiteEngine>(Engines.Length, StringComparer.OrdinalIgnoreCase);
-
-            foreach (var command in Engines)
-            {
-                if (!engineMap.ContainsKey(command.Metadata.Engine))
-                    engineMap.Add(command.Metadata.Engine, command.Value);
-            }
         }
 
         public void WriteHelp(TextWriter writer)
