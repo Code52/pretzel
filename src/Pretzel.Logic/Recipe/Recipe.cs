@@ -49,15 +49,15 @@ namespace Pretzel.Logic
                 {
                     CreateDirectories();
 
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"rss.xml"), Properties.Jeckyll.Rss);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"atom.xml"), Properties.Jeckyll.Atom);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\layout.html"), Properties.Jeckyll.Layout);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\post.html"), Properties.Jeckyll.Post);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"index.md"), Properties.Jeckyll.Index);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"about.md"), Properties.Jeckyll.About);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, string.Format(@"_posts\{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Jeckyll.FirstPost);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"rss.xml"), Properties.Jekyll.Rss);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"atom.xml"), Properties.Jekyll.Atom);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\layout.html"), Properties.Jekyll.Layout);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\post.html"), Properties.Jekyll.Post);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"index.md"), Properties.Jekyll.Index);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"about.md"), Properties.Jekyll.About);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, string.Format(@"_posts\{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Jekyll.FirstPost);
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"css\style.css"), Properties.Resources.Style);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Jeckyll.Config);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Jekyll.Config);
 
                     CreateImages();
 

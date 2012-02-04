@@ -80,10 +80,10 @@
     <Compile Include="Minification\FileSystemExtensions.cs" />
     <Compile Include="Minification\JsMinifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Jeckyll1.Designer.cs">
+    <Compile Include="Properties\Jekyll.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Jeckyll.resx</DependentUpon>
+      <DependentUpon>Jekyll.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\Razor.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -119,10 +119,10 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Razor.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Jeckyll.resx">
+    <EmbeddedResource Include="Properties\Jekyll.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
-      <LastGenOutput>Jeckyll1.Designer.cs</LastGenOutput>
+      <LastGenOutput>Jekyll.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
