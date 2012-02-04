@@ -14,10 +14,13 @@ namespace Pretzel.Commands
     [CommandInfo(CommandName = "create")]
     public sealed class RecipeCommand : ICommand
     {
-        readonly static List<string> Engines = new List<string>(new[] { "Liquid", "Razor", "Jekyll" });
+        readonly static List<string> TemplateEngines = new List<string>(new[] { "Liquid", "Razor" });
 
         public string Path { get; private set; }
         public string Engine { get; private set; }
+
+        [Import] 
+        private IFileSystem fileSystem;
 
         private OptionSet Settings
         {
@@ -25,7 +28,7 @@ namespace Pretzel.Commands
             {
                 return new OptionSet
                            {
-                               { "e|engine=", "The render engine", v => Engine = v },
+                               { "t|templates=", "The templates to use for the site", v => Engine = v },
                                { "p|path=", "The path to site directory", p => Path = p },
                            };
             }
@@ -42,16 +45,16 @@ namespace Pretzel.Commands
                              : Path;
 
             var engine = String.IsNullOrWhiteSpace(Engine)
-                             ? "Jekyll"
+                             ? TemplateEngines.First()
                              : Engine;
 
-            if (!Engines.Any(e => String.Equals(e, engine, StringComparison.InvariantCultureIgnoreCase)))
+            if (!TemplateEngines.Any(e => String.Equals(e, engine, StringComparison.InvariantCultureIgnoreCase)))
             {
-                Tracing.Info(String.Format("Requested Render Engine not found: {0}", engine));
+                Tracing.Info(String.Format("Requested templating engine not found: {0}", engine));
                 return;
             }
 
-            var recipe = new Recipe(new FileSystem(), engine, path);
+            var recipe = new Recipe(fileSystem, engine, path);
             recipe.Create();
         }
 

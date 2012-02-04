@@ -38,7 +38,6 @@ namespace Pretzel.Logic.Templating.Jekyll
                 foreach (var file in FileSystem.Directory.GetFiles(postsFolder, "*.*", SearchOption.AllDirectories))
                 {
                     var relativePath = GetPathWithTimestamp(outputDirectory, file);
-                    //ProcessFile(outputDirectory, file, relativePath);
                     posts.Add(file, relativePath);
 
                     // TODO: more parsing of data
@@ -169,20 +168,6 @@ namespace Pretzel.Logic.Templating.Jekyll
             var template = Template.Parse(inputFile);
             var output = template.Render(data);
             FileSystem.File.WriteAllText(outputPath, output);
-        }
-
-        // TODO: Merge Page and PostContext together
-        private static Hash CreatePageData(SiteContext context, PageContext pageContext, Page page)
-        {
-            var title = string.IsNullOrWhiteSpace(pageContext.Title) ? context.Title : pageContext.Title;
-            var drop = new SiteContextDrop(context);
-
-            return Hash.FromAnonymousObject(new
-            {
-                site = drop,
-                page = new { title, date = page.Date, },
-                content = pageContext.Content
-            });
         }
 
         private static Hash CreatePageData(SiteContext context, PageContext pageContext)

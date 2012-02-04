@@ -21,7 +21,6 @@ namespace Pretzel.Commands
 
         public string Path { get; private set; }
         public string Engine { get; set; }
-        public bool Debug { get; private set; }
 
         private OptionSet Settings
         {
@@ -31,7 +30,6 @@ namespace Pretzel.Commands
                            {
                                { "e|engine=", "The render engine", v => Engine = v },
                                { "p|path=", "The path to site directory", p => Path = p },
-                               { "debug", "Enable debugging", p => Debug = true}
                            };
             }
         }

@@ -56,11 +56,6 @@ namespace Pretzel.Commands
                 Engine = InferEngineFromDirectory(Path);
             }
 
-            if (string.IsNullOrWhiteSpace(Engine))
-            {
-                Engine = InferEngineFromDirectory(Path);
-            }
-
             if (engineMap.TryGetValue(Engine, out engine))
             {
                 var context = new SiteContext { Folder = Path };
