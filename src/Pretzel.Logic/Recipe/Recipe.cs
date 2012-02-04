@@ -26,7 +26,7 @@ namespace Pretzel.Logic
                 if (!fileSystem.Directory.Exists(directory))
                     fileSystem.Directory.CreateDirectory(directory);
 
-                if (string.Equals("Razor", engine, StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals("razor", engine, StringComparison.InvariantCultureIgnoreCase))
                 {
                     CreateDirectories();
 
@@ -45,19 +45,19 @@ namespace Pretzel.Logic
                     Tracing.Info("Pretzel site template has been created");
                 }
 
-                if (string.Equals("Jekyll", engine, StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals("liquid", engine, StringComparison.InvariantCultureIgnoreCase))
                 {
                     CreateDirectories();
 
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"rss.xml"), Properties.Jekyll.Rss);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"atom.xml"), Properties.Jekyll.Atom);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\layout.html"), Properties.Jekyll.Layout);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\post.html"), Properties.Jekyll.Post);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"index.md"), Properties.Jekyll.Index);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"about.md"), Properties.Jekyll.About);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, string.Format(@"_posts\{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Jekyll.FirstPost);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"rss.xml"), Properties.Liquid.Rss);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"atom.xml"), Properties.Liquid.Atom);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\layout.html"), Properties.Liquid.Layout);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\post.html"), Properties.Liquid.Post);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"index.md"), Properties.Liquid.Index);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"about.md"), Properties.Liquid.About);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, string.Format(@"_posts\{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Liquid.FirstPost);
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"css\style.css"), Properties.Resources.Style);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Jekyll.Config);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Liquid.Config);
 
                     CreateImages();
 
