@@ -96,8 +96,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Templating\Razor\RazorEngine.cs" />
-    <Compile Include="Templating\Razor\PageContext.cs" />
-    <Compile Include="Templating\Razor\SiteContext.cs" />
     <Compile Include="Templating\SiteEngineInfoAttribute.cs" />
     <Compile Include="Templating\ISiteEngineInfo.cs" />
     <Compile Include="Templating\ISiteEngine.cs" />
