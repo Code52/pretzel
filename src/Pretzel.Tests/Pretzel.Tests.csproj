@@ -33,6 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="dotless.Core, Version=1.2.2.0, Culture=neutral, PublicKeyToken=96b446c9e63eae34, processorArchitecture=MSIL" />
     <Reference Include="DotLiquid, Version=1.6.1.0, Culture=neutral, PublicKeyToken=82e46016ecf9f07c, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,6 +55,9 @@
   <ItemGroup>
     <Compile Include="Minification\CssMinificationTests.cs" />
     <Compile Include="Minification\JsMinificationTests.cs" />
+    <Compile Include="Minification\TestContainerFactory.cs" />
+    <Compile Include="Minification\TestFileReader.cs" />
+    <Compile Include="Minification\TestPathResolver.cs" />
     <Compile Include="PretzelContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recipe\RecipeTests.cs" />
