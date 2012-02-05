@@ -44,8 +44,7 @@ namespace Pretzel.Logic
 
                     Tracing.Info("Pretzel site template has been created");
                 }
-
-                if (string.Equals("liquid", engine, StringComparison.InvariantCultureIgnoreCase))
+                else if (string.Equals("liquid", engine, StringComparison.InvariantCultureIgnoreCase))
                 {
                     CreateDirectories();
 
