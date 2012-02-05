@@ -5,6 +5,7 @@ using System.Text;
 using Xunit;
 using System.IO.Abstractions.TestingHelpers;
 using Pretzel.Logic.Import;
+using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Tests.Import
 {
@@ -106,7 +107,12 @@ namespace Pretzel.Tests.Import
             var wordpressImporter = new WordpressImport(fileSystem, BaseSite, ImportFile);
             wordpressImporter.Import();
 
+            Assert.True(fileSystem.File.Exists(BaseSite + "_posts\\2010-02-06-hello-world.md"));            
 
+            var postContent = fileSystem.File.ReadAllText(BaseSite + "_posts\\2010-02-06-hello-world.md");
+            var header = postContent.YamlHeader();
+
+            Assert.Equal("Hello world!", header["Title"].ToString());
         }
     }
 }
