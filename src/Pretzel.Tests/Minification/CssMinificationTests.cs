@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-using System.IO.Abstractions.TestingHelpers;
-using Pretzel.Logic.Minification;
+﻿using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions.TestingHelpers;
+using System.Text;
+using Pretzel.Logic.Minification;
+using Xunit;
 
 namespace Pretzel.Tests.Minification
 {
     public class CssMinificationTests
     {
         private const string _outputPath = @"c:\css\output.css";
-
-        public CssMinificationTests()
-        {
-
-        }
 
         [Fact]
         public void Should_Minify_Single_File()
@@ -27,9 +20,12 @@ namespace Pretzel.Tests.Minification
                 { filepath, new MockFileData("a { color: Red; }") }
             });
 
-            var files = new List<FileInfo>() { new FileInfo(filepath) };
+            var files = new List<FileInfo> { new FileInfo(filepath) };
 
-            var minifier = new CssMinifier(fileSystem, files, _outputPath);
+            var factory = new TestContainerFactory();
+            var engine = factory.GetEngine(fileSystem, @"c:\css");
+
+            var minifier = new CssMinifier(fileSystem, files, _outputPath, () => engine);
 
             var result = minifier.ProcessCss(new FileInfo(filepath));
 
@@ -57,9 +53,12 @@ namespace Pretzel.Tests.Minification
                 { filepath, new MockFileData(lessContent) }
             });
 
-            var files = new List<FileInfo>() { new FileInfo(filepath) };
+            var files = new List<FileInfo> { new FileInfo(filepath) };
 
-            var minifier = new CssMinifier(fileSystem, files, _outputPath);
+            var factory = new TestContainerFactory();
+            var engine = factory.GetEngine(fileSystem, @"c:\css");
+
+            var minifier = new CssMinifier(fileSystem, files, _outputPath, () => engine);
             var minified = minifier.ProcessCss(new FileInfo(filepath));
 
             Assert.Equal(lessOutput, minified);
@@ -76,7 +75,10 @@ namespace Pretzel.Tests.Minification
 
             var files = new List<FileInfo>() { new FileInfo(filepath) };
 
-            var minifier = new CssMinifier(fileSystem, files, _outputPath);
+            var factory = new TestContainerFactory();
+            var engine = factory.GetEngine(fileSystem, @"c:\css");
+
+            var minifier = new CssMinifier(fileSystem, files, _outputPath, () => engine);
             minifier.Minify();
 
             var minifiedFile = fileSystem.File.ReadAllText(_outputPath, Encoding.UTF8);
@@ -96,9 +98,12 @@ namespace Pretzel.Tests.Minification
                 { filepath2, new MockFileData("a { color: Blue; }") }
             });
 
-            var files = new List<FileInfo>() { new FileInfo(filepath1), new FileInfo(filepath2) };
+            var files = new List<FileInfo> { new FileInfo(filepath1), new FileInfo(filepath2) };
 
-            var minifier = new CssMinifier(fileSystem, files, _outputPath);
+            var factory = new TestContainerFactory();
+            var engine = factory.GetEngine(fileSystem, @"c:\css");
+
+            var minifier = new CssMinifier(fileSystem, files, _outputPath, () => engine);
             minifier.Minify();
 
             var expectedOutput = @"a{color:Red}a{color:Blue}";
@@ -131,7 +136,10 @@ namespace Pretzel.Tests.Minification
 
             var files = new List<FileInfo>() { new FileInfo(filepath) };
 
-            var minifier = new CssMinifier(fileSystem, files, _outputPath);
+            var factory = new TestContainerFactory();
+            var engine = factory.GetEngine(fileSystem, @"c:\css");
+
+            var minifier = new CssMinifier(fileSystem, files, _outputPath, () => engine);
             minifier.Minify();
 
             var minifiedFile = fileSystem.File.ReadAllText(_outputPath, Encoding.UTF8);
@@ -151,11 +159,14 @@ namespace Pretzel.Tests.Minification
                 { filepath2, new MockFileData("@import \"style.less\"; a { color: @brand_color; }") }
             });
 
-            var files = new List<FileInfo>() { new FileInfo(filepath1), new FileInfo(filepath2) };
+            var files = new List<FileInfo> { new FileInfo(filepath1), new FileInfo(filepath2) };
 
-            var minifier = new CssMinifier(fileSystem, files, _outputPath);
+            var factory = new TestContainerFactory();
+            var engine = factory.GetEngine(fileSystem, @"c:\css");
 
-            var expectedOutput = @"a{color:#4D926F}";
+            var minifier = new CssMinifier(fileSystem, files, _outputPath, () => engine);
+
+            var expectedOutput = @"a{color:#4d926f}";
 
             var minifiedFile = minifier.ProcessCss(new FileInfo(filepath2));
 

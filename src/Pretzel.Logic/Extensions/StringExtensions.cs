@@ -543,5 +543,13 @@ namespace Pretzel.Logic.Extensions
             }
             return false;
         }
+
+        public static DateTime Datestamp(this string file)
+        {
+            var fileName = file.Substring(file.LastIndexOf("\\"));
+            var tokens = fileName.Split('-');
+            var timestamp = string.Join("-", tokens.Take(3)).Trim('\\');
+            return DateTime.Parse(timestamp);
+        }
     }
 }
