@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
@@ -42,14 +43,17 @@ namespace Pretzel.Logic.Templating.Jekyll
 
                     // TODO: more parsing of data
                     var contents = FileSystem.File.ReadAllText(file);
+                    var header = contents.YamlHeader();
                     var post = new Page
                                    {
-                                       Title = "This is a post",
+                                       Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
+                                       Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
                                        Content = Markdown.Transform(contents.ExcludeHeader())
                                    };
                     context.Posts.Add(post);
                 }
 
+                context.Posts = context.Posts.OrderByDescending(p => p.Date).ToList();
                 foreach (var p in posts)
                 {
                     ProcessFile(outputDirectory, p.Key, p.Value);
@@ -166,7 +170,10 @@ namespace Pretzel.Logic.Templating.Jekyll
         {
             var data = CreatePageData(context);
             var template = Template.Parse(inputFile);
+            Template.FileSystem = new Includes(context.Folder);
+
             var output = template.Render(data);
+            var x = template.Errors;
             FileSystem.File.WriteAllText(outputPath, output);
         }
 
@@ -195,9 +202,11 @@ namespace Pretzel.Logic.Templating.Jekyll
             });
         }
 
-        private static string RenderTemplate(string templateContents, Hash data)
+        private string RenderTemplate(string templateContents, Hash data)
         {
             var template = Template.Parse(templateContents);
+            Template.FileSystem = new Includes(context.Folder);
+
             return template.Render(data);
         }
 
