@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using YamlDotNet.RepresentationModel;
 using System.IO;
+using YamlDotNet.RepresentationModel.Serialization;
 
 namespace Pretzel.Logic.Extensions
 {
@@ -36,6 +37,16 @@ namespace Pretzel.Logic.Extensions
             }
 
             return results;
+        }
+
+        public static string ToYaml<T>(this T model)
+        {
+            var serializer = new YamlSerializer(typeof(T));
+            var stringWriter = new StringWriter();
+
+            serializer.Serialize(stringWriter, model);
+
+            return stringWriter.ToString();
         }
 
         public static string ExcludeHeader(this string text)
