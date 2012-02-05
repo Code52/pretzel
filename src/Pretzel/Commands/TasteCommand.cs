@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using NDesk.Options;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
+using Pretzel.Logic.Templating.Context;
+using Pretzel.Modules;
 
 namespace Pretzel.Commands
 {
@@ -11,14 +14,14 @@ namespace Pretzel.Commands
     [CommandInfo(CommandName = "taste")]
     public sealed class TasteCommand : ICommand
     {
+        private string Engine { get; set; }
         public int Port { get; private set; }
-        public bool Debug { get; private set; }
         public string Path { get; private set; }
 
-        [ImportMany]
-        private Lazy<ISiteEngine, ISiteEngineInfo>[] Engines { get; set; }
+        private ISiteEngine engine;
 
-        private readonly BakeCommand oven = new BakeCommand();
+        [Import]
+        private TemplateEngineCollection templateEngines;
 
         private OptionSet Settings
         {
@@ -28,22 +31,18 @@ namespace Pretzel.Commands
                            {
                                {"p|port=", "The server port number.", v => Port = int.Parse(v)},
                                {"d|path=", "The path to site directory", p => Path = p },
-                               {"debug", "Enable debugging", v => Debug = true}
                            };
             }
         }
 
         public void Execute(string[] arguments)
         {
-			Tracing.Info("taste - testing a site locally");
+            Tracing.Info("taste - testing a site locally");
             Settings.Parse(arguments);
             if (Port == 0)
             {
                 Port = 8080;
             }
-
-            Tracing.Info("Port: " + Port);
-            Tracing.Info("Debug: " + Debug);
 
             var f = new FileContentProvider();
             if (string.IsNullOrWhiteSpace(Path))
@@ -51,26 +50,53 @@ namespace Pretzel.Commands
                 Path = Directory.GetCurrentDirectory();
             }
 
-            // TODO: infer the type of site running 
-            // e.g. if jekyll site -> bake again, listen to file changes and serve _site
+            if (string.IsNullOrWhiteSpace(Engine))
+            {
+                Engine = InferEngineFromDirectory(Path);
+            }
 
-            //Bake
-            oven.Engines = Engines;
-            oven.OnImportsSatisfied();
-            oven.Engine = string.Empty;
-            oven.Execute(arguments);
-            
-            //Setup webserver
-            var w = new WebHost(Path, f);
+            engine = templateEngines[Engine];
+
+            if (engine == null)
+                return;
+
+            var context = new SiteContext { Folder = Path };
+            engine.Initialize();
+            engine.Process(context);
+
+            var watcher = new SimpleFileSystemWatcher();
+            watcher.OnChange(Path, WatcherOnChanged);
+
+            var w = new WebHost(engine.GetOutputDirectory(Path), f);
             w.Start();
-			
-			Tracing.Info("Press 'Q' to stop the process");
+
+            Tracing.Info("Press 'Q' to stop the web host...");
             ConsoleKeyInfo key;
             do
             {
                 key = Console.ReadKey();
-            } 
+            }
             while (key.Key != ConsoleKey.Q);
+        }
+
+        private void WatcherOnChanged(string file)
+        {
+            Tracing.Info(string.Format("File change: {0}", file));
+
+            var context = new SiteContext { Folder = Path };
+            engine.Process(context);
+        }
+
+        private string InferEngineFromDirectory(string path)
+        {
+            foreach (var engine in templateEngines.Engines)
+            {
+                if (!engine.Value.CanProcess(path)) continue;
+                Tracing.Info(String.Format("Recommended engine for directory: '{0}'", engine.Key));
+                return engine.Key;
+            }
+
+            return string.Empty;
         }
 
         public void WriteHelp(TextWriter writer)

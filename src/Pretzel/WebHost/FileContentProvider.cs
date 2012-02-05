@@ -9,7 +9,6 @@ namespace Pretzel
     public class FileContentProvider : IWebContent
     {
         private string basePath;
-        private const string siteDirectory = "_site";
 
         /// <summary>
         /// Set a base path to work from
@@ -17,16 +16,7 @@ namespace Pretzel
         /// <param name="path">Base path</param>
         public void SetBasePath(string path)
         {
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                // No path specified, get working directory
-                this.basePath = Path.Combine(Directory.GetCurrentDirectory(), siteDirectory);
-            }
-            else
-            {
-                // Get an absolute path for the directory
-                this.basePath = Path.Combine(Path.GetFullPath(path), siteDirectory);
-            }
+            this.basePath = string.IsNullOrWhiteSpace(path) ? Directory.GetCurrentDirectory() : Path.GetFullPath(path);
         }
 
         /// <summary>
@@ -42,15 +32,8 @@ namespace Pretzel
             }
 
             // Tell caller whether the file exists or not
-            string file = GetRequestedPage(request);
-            if (File.Exists(file))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            var file = GetRequestedPage(request);
+            return File.Exists(file);
         }
 
         /// <summary>

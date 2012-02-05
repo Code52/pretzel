@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Composition;
+using System.IO;
 using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Logic.Templating.Razor
@@ -20,6 +21,11 @@ namespace Pretzel.Logic.Templating.Razor
         public void Process(SiteContext context)
         {
             
+        }
+
+        public string GetOutputDirectory(string path)
+        {
+            return Path.Combine(path, "_site");
         }
     }
 }
