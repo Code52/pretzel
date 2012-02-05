@@ -170,7 +170,10 @@ namespace Pretzel.Logic.Templating.Jekyll
         {
             var data = CreatePageData(context);
             var template = Template.Parse(inputFile);
+            Template.FileSystem = new Includes(context.Folder);
+
             var output = template.Render(data);
+            var x = template.Errors;
             FileSystem.File.WriteAllText(outputPath, output);
         }
 
@@ -199,9 +202,11 @@ namespace Pretzel.Logic.Templating.Jekyll
             });
         }
 
-        private static string RenderTemplate(string templateContents, Hash data)
+        private string RenderTemplate(string templateContents, Hash data)
         {
             var template = Template.Parse(templateContents);
+            Template.FileSystem = new Includes(context.Folder);
+
             return template.Render(data);
         }
 
