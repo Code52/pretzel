@@ -1,11 +1,14 @@
-using System.IO.Abstractions;
+using System.ComponentModel.Composition;
 using Pretzel.Logic.Templating.Jekyll;
+using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Logic.Templating
 {
+    [InheritedExport]
     public interface ISiteEngine
     {
-        void Initialize(IFileSystem fileSystem, SiteContext context);
-        void Process();
+        bool CanProcess(string directory);
+        void Initialize();
+        void Process(SiteContext context);
     }
 }

@@ -1,18 +1,11 @@
 ﻿using System.IO.Abstractions.TestingHelpers;
 using Pretzel.Logic.Templating.Jekyll;
 using Xunit;
+using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Tests.Templating.Jekyll
 {
-    public static class TestExtensions
-    {
-        public static string RemoveWhiteSpace(this string s)
-        {
-            return s.Replace("\r\n", "").Replace("\n", "");
-        }
-    }
-
-    public class LiquidEngineTests
+    public class JekyllEngineTests
     {
         public class When_Recieving_A_Folder_Containing_One_File : BakingEnvironment<JekyllEngine>
         {
@@ -27,8 +20,8 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 var context = new SiteContext {Folder = @"C:\website\"};
                 FileSystem.AddFile(@"C:\website\index.html", new MockFileData(FileContents));
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -50,7 +43,6 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
         }
 
-
         public class When_Recieving_A_Folder_Without_A_Trailing_Slash : BakingEnvironment<JekyllEngine>
         {
             const string FileContents = "<html><head></head><body></body></html>";
@@ -64,8 +56,8 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 var context = new SiteContext { Folder = @"C:\website" };
                 FileSystem.AddFile(@"C:\website\index.html", new MockFileData(FileContents));
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -88,8 +80,8 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 var context = new SiteContext { Folder = @"C:\website\" };
                 FileSystem.AddFile(@"C:\website\content\index.html", new MockFileData(FileContents));
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -124,8 +116,8 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
                 FileSystem.AddFile(@"C:\website\index.html", new MockFileData(FileContents));
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -151,8 +143,8 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -187,8 +179,8 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
 
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -217,8 +209,8 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -245,8 +237,8 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
@@ -269,14 +261,38 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\.gems\file.txt", new MockFileData(PageContents));
                 var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
-                Subject.Initialize(FileSystem, context);
-                Subject.Process();
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
             [Fact]
             public void The_Folder_Should_Be_Ignored()
             {
                 Assert.False(FileSystem.File.Exists(@"C:\website\_site\.gems\file.txt"));
+            }
+        }
+
+        public class When_Aeoth_Tests_The_Edge_Cases_Of_Handling_YAML_Front_Matter : BakingEnvironment<JekyllEngine>
+        {
+            const string PageContents = "---\n---";
+
+            public override JekyllEngine Given()
+            {
+                return new JekyllEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\file.txt", new MockFileData(PageContents));
+                var context = new SiteContext { Folder = @"C:\website\", Title = "My Web Site" };
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Yaml_Matter_Should_Be_Cleared()
+            {
+                Assert.Equal("", FileSystem.File.ReadAllText(@"C:\website\_site\file.txt"));
             }
         }
     }

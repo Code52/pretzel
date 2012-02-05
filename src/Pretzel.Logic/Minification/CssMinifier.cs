@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.IO;
 using dotless.Core;
 using System.IO.Abstractions;
@@ -11,20 +9,21 @@ namespace Pretzel.Logic.Minification
 {
     public class CssMinifier
     {
-        private readonly IFileSystem _fileSystem;
-        private IEnumerable<FileInfo> _files;
-        private string _outputPath;
+
+        private readonly IFileSystem fileSystem;
+        private readonly IEnumerable<FileInfo> files;
+        private readonly string outputPath;
 
         public CssMinifier(IFileSystem fileSystem, IEnumerable<FileInfo> files, string outputPath)
         {
-            _files = files;
-            _outputPath = outputPath;
-            _fileSystem = fileSystem;
+            this.files = files;
+            this.outputPath = outputPath;
+            this.fileSystem = fileSystem;
         }
 
         public void Minify()
         {
-            var bundled = _fileSystem.BundleFiles(_files);
+            var bundled = fileSystem.BundleFiles(files);
 
             //todo resolve imports
             //_fileSystem.Directory.SetCurrentDirectory("");
@@ -34,22 +33,20 @@ namespace Pretzel.Logic.Minification
             engineFactory.Configuration.MinifyOutput = true;
 
             var engine = engineFactory.GetEngine();
-            var minified = engine.TransformToCss(bundled, _files.First().FullName);
+            var minified = engine.TransformToCss(bundled, files.First().FullName);
 
             //build file
-            _fileSystem.File.WriteAllText(_outputPath, minified);
+            fileSystem.File.WriteAllText(outputPath, minified);
         }
 
         public string ProcessCss(FileInfo file)
         {
-            var content = _fileSystem.File.ReadAllText(file.FullName);
+            var content = fileSystem.File.ReadAllText(file.FullName);
 
             //todo resolve imports
             //_fileSystem.Directory.SetCurrentDirectory("");
-
             var engineFactory = new EngineFactory();
             engineFactory.Configuration.MinifyOutput = true;
-
             var engine = engineFactory.GetEngine();
             
             return engine.TransformToCss(content, file.FullName);

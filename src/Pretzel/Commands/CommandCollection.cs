@@ -5,6 +5,7 @@ using System.ComponentModel.Composition;
 namespace Pretzel.Commands
 {
     [Export]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     public sealed class CommandCollection : IPartImportsSatisfiedNotification
     {
         [ImportMany]

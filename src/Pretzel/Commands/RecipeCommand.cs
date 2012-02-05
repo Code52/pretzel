@@ -6,18 +6,15 @@ using System.IO.Abstractions;
 using System.Linq;
 using NDesk.Options;
 using Pretzel.Logic;
+using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Commands
 {
     [PartCreationPolicy(CreationPolicy.Shared)]
-    [CommandInfo(CommandName = "recipe")]
+    [CommandInfo(CommandName = "create")]
     public sealed class RecipeCommand : ICommand
     {
-        private readonly static List<string> Engines = new List<string>(new[]
-                                                                            {
-                                                                                "Liquid",
-                                                                                "Razor"
-                                                                            });
+        readonly static List<string> Engines = new List<string>(new[] { "Liquid", "Razor", "Jekyll" });
 
         public string Path { get; private set; }
         public string Engine { get; private set; }
@@ -36,6 +33,8 @@ namespace Pretzel.Commands
 
         public void Execute(string[] arguments)
         {
+            Tracing.Info("create - configure a new site");
+
             Settings.Parse(arguments);
 
             var path = String.IsNullOrWhiteSpace(Path)
@@ -43,18 +42,17 @@ namespace Pretzel.Commands
                              : Path;
 
             var engine = String.IsNullOrWhiteSpace(Engine)
-                             ? "Liquid"
+                             ? "Jekyll"
                              : Engine;
 
             if (!Engines.Any(e => String.Equals(e, engine, StringComparison.InvariantCultureIgnoreCase)))
             {
-                Console.WriteLine(String.Format("Requested Render Engine not found: {0}", engine));
+                Tracing.Info(String.Format("Requested Render Engine not found: {0}", engine));
                 return;
             }
 
-            var createResponse = new Recipe(new FileSystem(), engine, path).Create();
-
-            Console.WriteLine(createResponse);
+            var recipe = new Recipe(new FileSystem(), engine, path);
+            recipe.Create();
         }
 
         public void WriteHelp(TextWriter writer)

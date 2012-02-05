@@ -9,6 +9,7 @@ namespace Pretzel
     public class FileContentProvider : IWebContent
     {
         private string basePath;
+        private const string siteDirectory = "_site";
 
         /// <summary>
         /// Set a base path to work from
@@ -19,12 +20,12 @@ namespace Pretzel
             if (string.IsNullOrWhiteSpace(path))
             {
                 // No path specified, get working directory
-                this.basePath = Directory.GetCurrentDirectory();
+                this.basePath = Path.Combine(Directory.GetCurrentDirectory(), siteDirectory);
             }
             else
             {
                 // Get an absolute path for the directory
-                this.basePath = Path.GetFullPath(path);
+                this.basePath = Path.Combine(Path.GetFullPath(path), siteDirectory);
             }
         }
 
@@ -68,6 +69,30 @@ namespace Pretzel
             using (StreamReader reader = new StreamReader(GetRequestedPage(request)))
             {
                 fileContents = reader.ReadToEnd();
+            }
+
+            return fileContents;
+        }
+
+        /// <summary>
+        /// Read file
+        /// </summary>
+        /// <param name="request">Request string</param>
+        /// <returns>Filecontents</returns>
+        public byte[] GetBinaryContent(string request)
+        {
+            string fileName = GetRequestedPage(request);
+
+            if (string.IsNullOrEmpty(basePath))
+            {
+                throw new InvalidOperationException("basePath required");
+            }
+
+            byte[] fileContents;
+            using (BinaryReader reader = new BinaryReader(File.Open(fileName, FileMode.Open)))
+            {
+                FileInfo fileInfo = new FileInfo(fileName);
+                fileContents = reader.ReadBytes((int)fileInfo.Length);
             }
 
             return fileContents;

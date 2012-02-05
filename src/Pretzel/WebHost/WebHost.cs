@@ -7,18 +7,17 @@ using Owin;
 using System.Threading;
 using System.IO;
 using Pretzel.Logic.Extensions;
+using Gate;
 
 namespace Pretzel
 {
     public class WebHost : IDisposable
     {
-        private string basePath;
-
         IDisposable host;
         IWebContent content;
 
         public int Port { get; private set; }
-        public bool IsRunning { get; set; }
+        public bool IsRunning { get; private set; }
 
         /// <summary>
         /// Constructor
@@ -88,19 +87,33 @@ namespace Pretzel
         /// <param name="fault"></param>
         private void ServerCallback(IDictionary<string, object> env, ResultDelegate result, Action<Exception> fault)
         {
-            string request = (string)env[OwinConstants.RequestPath];
+            string requestString = (string)env[OwinConstants.RequestPath];
 
-            if (!content.IsAvailable(request))
+            Tracing.Info(requestString);
+
+            var request = new Gate.Request(env);
+            var response = new Gate.Response(result);
+
+            if (!content.IsAvailable(requestString))
             {
                 // File not found
-                SendText(result, "404 Not Found", "text/plain", "Page not found: " + request);
+                SendText(result, env, "Page not found: " + requestString);
                 return;
             }
             else
             {
                 // Send page back
-                string fileContents = content.GetContent(request);
-                SendText(result, "200 OK", request.MimeType(), fileContents);
+                if (requestString.MimeType().IsBinaryMime())
+                {
+                    byte[] fileContents = content.GetBinaryContent(requestString);
+                    SendData(result, env, fileContents);
+                }
+                else
+                {
+                    string fileContents = content.GetContent(requestString);
+                    SendText(result, env, fileContents);
+                }
+
                 return;
             }
         }
@@ -110,21 +123,40 @@ namespace Pretzel
         /// </summary>
         /// <param name="result">Result delegate from server-callback</param>
         /// <param name="bytes">byte-array to send</param>
-        private void SendText(ResultDelegate result, string header, string contenttype, string text)
+        private void SendText(ResultDelegate result, IDictionary<string, object> env, string text, int httpCode = 200)
         {
-            result(
-                header,
-                new Dictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase)
-                    {
-                        {"Content-Type", new[] {contenttype }}
-                    },
-                (Func<ArraySegment<byte>, bool> write, Func<Action, bool> flush, Action<Exception> end, CancellationToken cancellationToken) =>
-                {
-                    write(new ArraySegment<byte>(Encoding.Default.GetBytes(text)));
-                    end(null);
-                });
+            Response response = new Response(result);
+            Request request = new Request(env);
+
+            string requestString = (string)env[OwinConstants.RequestPath];
+
+            response.ContentType = requestString.MimeType();
+
+            response.Write(text);
+
+            response.End();
         }
 
+        /// <summary>
+        /// Send data back to the user
+        /// </summary>
+        /// <param name="result">Result delegate from server-callback</param>
+        /// <param name="bytes">byte-array to send</param>
+        private void SendData(ResultDelegate result, IDictionary<string, object> env, byte[] data)
+        {
+            Response response = new Response(result);
+            Request request = new Request(env);
+
+            string requestString = (string)env[OwinConstants.RequestPath];
+
+            response.ContentType = requestString.MimeType();
+            response.Headers["Content-Range"] = new string[] { "bytes 0-" + (data.Length - 1).ToString() };
+            response.Headers["Content-Length"] = new string[] { data.Length.ToString() };
+
+            response.Write(new ArraySegment<byte>(data));
+
+            response.End();
+        }
         #region IDisposable
         private bool isDisposed = false;
 

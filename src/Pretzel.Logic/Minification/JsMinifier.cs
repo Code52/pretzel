@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.IO;
 using Microsoft.Ajax.Utilities;
@@ -10,15 +7,15 @@ namespace Pretzel.Logic.Minification
 {
     public class JsMinifier
     {
-        private readonly IFileSystem _fileSystem;
-        private IEnumerable<FileInfo> _files;
-        private string _outputPath;
+        private readonly IFileSystem fileSystem;
+        private readonly IEnumerable<FileInfo> files;
+        private readonly string outputPath;
 
         public JsMinifier(IFileSystem fileSystem, IEnumerable<FileInfo> files, string outputPath)
         {
-            _files = files;
-            _outputPath = outputPath;
-            _fileSystem = fileSystem;
+            this.files = files;
+            this.outputPath = outputPath;
+            this.fileSystem = fileSystem;
         }
 
         public void Minify()
@@ -26,10 +23,10 @@ namespace Pretzel.Logic.Minification
             var minifer = new Minifier();
             var codeSettings = new CodeSettings();
 
-            var content = _fileSystem.BundleFiles(_files);
+            var content = fileSystem.BundleFiles(files);
             var minified =  minifer.MinifyJavaScript(content, codeSettings);
 
-            _fileSystem.File.WriteAllText(_outputPath, minified);
+            fileSystem.File.WriteAllText(outputPath, minified);
         }
     }
 }

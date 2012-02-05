@@ -1,4 +1,4 @@
-﻿using Pretzel.Logic.Templating.Jekyll;
+﻿using Pretzel.Logic.Templating;
 using Xunit;
 
 namespace Pretzel.Tests.Templating.Jekyll
