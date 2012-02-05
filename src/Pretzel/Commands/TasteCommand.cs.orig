@@ -1,0 +1,94 @@
+﻿using System;
+using System.ComponentModel.Composition;
+using System.IO;
+using NDesk.Options;
+using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Templating;
+
+namespace Pretzel.Commands
+{
+    [PartCreationPolicy(CreationPolicy.Shared)]
+    [CommandInfo(CommandName = "taste")]
+    public sealed class TasteCommand : ICommand
+    {
+        public int Port { get; private set; }
+        public bool Debug { get; private set; }
+        public string Path { get; private set; }
+<<<<<<< HEAD
+=======
+
+        [ImportMany]
+        private Lazy<ISiteEngine, ISiteEngineInfo>[] Engines { get; set; }
+
+        private readonly BakeCommand oven = new BakeCommand();
+>>>>>>> 44888745339f782ff5c23b7eb7d211800083a04d
+
+        private OptionSet Settings
+        {
+            get
+            {
+                return new OptionSet
+                           {
+                               {"p|port=", "The server port number.", v => Port = int.Parse(v)},
+<<<<<<< HEAD
+                               {"path=", "The path to site directory", p => Path = p },
+=======
+                               {"d|path=", "The path to site directory", p => Path = p },
+>>>>>>> 44888745339f782ff5c23b7eb7d211800083a04d
+                               {"debug", "Enable debugging", v => Debug = true}
+                           };
+            }
+        }
+
+        public void Execute(string[] arguments)
+        {
+			Tracing.Info("taste - testing a site locally");
+            Settings.Parse(arguments);
+            if (Port == 0)
+            {
+                Port = 8080;
+            }
+
+            Tracing.Info("Port: " + Port);
+            Tracing.Info("Debug: " + Debug);
+
+            Path = Path ?? Directory.GetCurrentDirectory();
+            Console.WriteLine("Path: " + Path);
+
+            var f = new FileContentProvider();
+<<<<<<< HEAD
+=======
+            if (string.IsNullOrWhiteSpace(Path))
+            {
+                Path = Directory.GetCurrentDirectory();
+            }
+
+            // TODO: infer the type of site running 
+            // e.g. if jekyll site -> bake again, listen to file changes and serve _site
+
+            //Bake
+            oven.Engines = Engines;
+            oven.OnImportsSatisfied();
+            oven.Engine = string.Empty;
+            oven.Execute(arguments);
+            
+            //Setup webserver
+>>>>>>> 44888745339f782ff5c23b7eb7d211800083a04d
+            var w = new WebHost(Path, f);
+            w.Start();
+			
+			Tracing.Info("Press 'Q' to stop the process");
+            ConsoleKeyInfo key;
+            do
+            {
+                key = Console.ReadKey();
+            } 
+            while (key.Key != ConsoleKey.Q);
+        }
+
+        public void WriteHelp(TextWriter writer)
+        {
+            Settings.WriteOptionDescriptions(writer);
+        }
+    }
+}
