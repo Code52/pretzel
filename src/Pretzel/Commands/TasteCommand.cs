@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using NDesk.Options;
+using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
@@ -13,62 +14,40 @@ namespace Pretzel.Commands
     [CommandInfo(CommandName = "taste")]
     public sealed class TasteCommand : ICommand
     {
-        private string Engine { get; set; }
-        public int Port { get; private set; }
-        public string Path { get; private set; }
-
         private ISiteEngine engine;
-
+#pragma warning disable 649
         [Import] TemplateEngineCollection templateEngines;
         [Import] SiteContextGenerator Generator { get; set; }
+        [Import] CommandParameters parameters;
+#pragma warning restore 649
 
-        private OptionSet Settings
-        {
-            get
-            {
-                return new OptionSet
-                           {
-                               {"p|port=", "The server port number.", v => Port = int.Parse(v)},
-                               {"d|path=", "The path to site directory", p => Path = p },
-                           };
-            }
-        }
-
-        public void Execute(string[] arguments)
+        public void Execute(IEnumerable<string> arguments)
         {
             Tracing.Info("taste - testing a site locally");
-            Settings.Parse(arguments);
-            if (Port == 0)
+
+            parameters.Parse(arguments);
+
+            if (string.IsNullOrWhiteSpace(parameters.Template))
             {
-                Port = 8080;
+                parameters.DetectFromDirectory(templateEngines.Engines);
             }
 
-            var f = new FileContentProvider();
-            if (string.IsNullOrWhiteSpace(Path))
-            {
-                Path = Directory.GetCurrentDirectory();
-            }
-
-            if (string.IsNullOrWhiteSpace(Engine))
-            {
-                Engine = InferEngineFromDirectory(Path);
-            }
-
-            engine = templateEngines[Engine];
+            engine = templateEngines[parameters.Template];
 
             if (engine == null)
                 return;
 
-            var context = Generator.BuildContext(Path);
+            var context = Generator.BuildContext(parameters.Path);
             engine.Initialize();
             engine.Process(context);
 
             var watcher = new SimpleFileSystemWatcher();
-            watcher.OnChange(Path, WatcherOnChanged);
+            watcher.OnChange(parameters.Path, WatcherOnChanged);
 
-            var w = new WebHost(engine.GetOutputDirectory(Path), f);
+            var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider());
             w.Start();
 
+            Tracing.Info(string.Format("Browse to http://localhost:{0}/ to test the site.", parameters.Port));
             Tracing.Info("Press 'Q' to stop the web host...");
             ConsoleKeyInfo key;
             do
@@ -82,25 +61,13 @@ namespace Pretzel.Commands
         {
             Tracing.Info(string.Format("File change: {0}", file));
 
-            var context = Generator.BuildContext(Path);
+            var context = Generator.BuildContext(parameters.Path);
             engine.Process(context);
-        }
-
-        private string InferEngineFromDirectory(string path)
-        {
-            foreach (var engine in templateEngines.Engines)
-            {
-                if (!engine.Value.CanProcess(path)) continue;
-                Tracing.Info(String.Format("Recommended engine for directory: '{0}'", engine.Key));
-                return engine.Key;
-            }
-
-            return string.Empty;
         }
 
         public void WriteHelp(TextWriter writer)
         {
-            Settings.WriteOptionDescriptions(writer);
+            parameters.WriteOptions(writer);  // TODO: output relevant messages (not all of them)
         }
     }
 }

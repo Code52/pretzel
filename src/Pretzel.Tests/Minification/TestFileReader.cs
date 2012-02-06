@@ -1,5 +1,6 @@
-using System.IO.Abstractions;
-using dotless.Core.Input;
+using IFileSystem = System.IO.Abstractions.IFileSystem;
+using IPathResolver = dotless.Core.Input.IPathResolver;
+using IFileReader = dotless.Core.Input.IFileReader;
 
 namespace Pretzel.Tests.Minification
 {

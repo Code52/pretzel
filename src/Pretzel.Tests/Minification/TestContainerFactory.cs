@@ -1,4 +1,4 @@
-using System.IO.Abstractions;
+using IFileSystem = System.IO.Abstractions.IFileSystem;
 using dotless.Core;
 using dotless.Core.Importers;
 using dotless.Core.Input;

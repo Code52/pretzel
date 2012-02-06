@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 
 namespace Pretzel.Commands
@@ -6,7 +7,7 @@ namespace Pretzel.Commands
     [InheritedExport]
     public interface ICommand
     {
-        void Execute(string[] arguments);
-        void WriteHelp(TextWriter writer);
+        void Execute(IEnumerable<string> arguments);
+        void WriteHelp(TextWriter writer); // TODO: obsolete this?
     }
 }
