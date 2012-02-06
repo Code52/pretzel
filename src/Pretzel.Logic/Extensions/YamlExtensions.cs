@@ -31,7 +31,7 @@ namespace Pretzel.Logic.Extensions
                     var node = entry.Key as YamlScalarNode;
                     if (node != null)
                     {
-                        results.Add(node.Value, entry.Value);    
+                        results.Add(node.Value, entry.Value.ToString());    
                     }
                 }
             }

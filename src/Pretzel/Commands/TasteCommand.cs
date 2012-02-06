@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using NDesk.Options;
@@ -20,8 +19,8 @@ namespace Pretzel.Commands
 
         private ISiteEngine engine;
 
-        [Import]
-        private TemplateEngineCollection templateEngines;
+        [Import] TemplateEngineCollection templateEngines;
+        [Import] SiteContextGenerator Generator { get; set; }
 
         private OptionSet Settings
         {
@@ -60,7 +59,7 @@ namespace Pretzel.Commands
             if (engine == null)
                 return;
 
-            var context = new SiteContext { Folder = Path };
+            var context = Generator.BuildContext(Path);
             engine.Initialize();
             engine.Process(context);
 
@@ -83,7 +82,7 @@ namespace Pretzel.Commands
         {
             Tracing.Info(string.Format("File change: {0}", file));
 
-            var context = new SiteContext { Folder = Path };
+            var context = Generator.BuildContext(Path);
             engine.Process(context);
         }
 

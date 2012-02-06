@@ -7,7 +7,7 @@ namespace Pretzel.Logic.Templating.Context
     {
         public string Title { get; set; }
         public string OutputPath { get; set; }
-
+        public IDictionary<string, object> Bag { get; set; }
         public string Content { get; set; }
 
         public static PageContext FromDictionary(IDictionary<string, object> metadata, string outputPath, string defaultOutputPath)
@@ -27,6 +27,8 @@ namespace Pretzel.Logic.Templating.Context
             {
                 context.Title = metadata["title"].ToString();
             }
+
+            context.Bag = metadata;
 
             return context;
         }
