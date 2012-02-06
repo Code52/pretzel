@@ -91,7 +91,7 @@ namespace Pretzel.Commands
                     var header = contents.YamlHeader();
                     var post = new Page
                     {
-                        Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
+                        Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post", // should this be the Site title?
                         Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
                         Content = Markdown.Transform(contents.ExcludeHeader()),
                         Filepath =  GetPathWithTimestamp(context.OutputFolder, file),

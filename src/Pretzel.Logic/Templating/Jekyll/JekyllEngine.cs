@@ -140,6 +140,19 @@ namespace Pretzel.Logic.Templating.Jekyll
         {
             var drop = new SiteContextDrop(context);
             var y = Hash.FromDictionary(pageContext.Bag);
+
+            if (y.ContainsKey("title"))
+            {
+                if (string.IsNullOrWhiteSpace(y["title"].ToString()))
+                {
+                    y["title"] = context.Title;
+                }
+            }
+            else
+            {
+                y.Add("title", context.Title);
+            }
+            
             var x = Hash.FromAnonymousObject(new
             {
                 site = drop,
