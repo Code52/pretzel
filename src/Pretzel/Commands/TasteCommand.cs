@@ -60,7 +60,7 @@ namespace Pretzel.Commands
             if (engine == null)
                 return;
 
-            var context = new SiteContext { Folder = Path };
+            var context = new SiteContext { SourceFolder = Path };
             engine.Initialize();
             engine.Process(context);
 
@@ -83,7 +83,7 @@ namespace Pretzel.Commands
         {
             Tracing.Info(string.Format("File change: {0}", file));
 
-            var context = new SiteContext { Folder = Path };
+            var context = new SiteContext { SourceFolder = Path };
             engine.Process(context);
         }
 
