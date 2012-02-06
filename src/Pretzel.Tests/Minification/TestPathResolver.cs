@@ -1,5 +1,5 @@
 using System.IO;
-using dotless.Core.Input;
+using IPathResolver = dotless.Core.Input.IPathResolver;
 
 namespace Pretzel.Tests.Minification
 {

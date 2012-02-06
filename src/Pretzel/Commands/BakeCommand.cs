@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
-using NDesk.Options;
+using System.Linq;
+using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
-using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Commands
@@ -14,46 +14,27 @@ namespace Pretzel.Commands
     [CommandInfo(CommandName = "bake")]
     public sealed class BakeCommand : ICommand
     {
-        [Import]
-        private TemplateEngineCollection templateEngines;
+        [Import] TemplateEngineCollection templateEngines;
 
-        public string Path { get; private set; }
-        public string Engine { get; set; }
+        [Import] CommandParameters parameters;
 
-        private OptionSet Settings
-        {
-            get
-            {
-                return new OptionSet
-                           {
-                               { "e|engine=", "The render engine", v => Engine = v },
-                               { "p|path=", "The path to site directory", p => Path = p },
-                           };
-            }
-        }
-
-        public void Execute(string[] arguments)
+        public void Execute(IEnumerable<string> arguments)
         {
             Tracing.Info("bake - transforming content into a website");
 
-            Settings.Parse(arguments);
+            parameters.Parse(arguments);
 
-            if (string.IsNullOrWhiteSpace(Path))
+            if (string.IsNullOrWhiteSpace(parameters.Template))
             {
-                Path = Directory.GetCurrentDirectory();
+                parameters.Template = DetectEngineFromPath(parameters.Path);
             }
 
-            if (string.IsNullOrWhiteSpace(Engine))
-            {
-                Engine = InferEngineFromDirectory(Path);
-            }
-
-            var engine = templateEngines[Engine];
+            var engine = templateEngines[parameters.Template];
             if (engine != null)
             {
                 var watch = new Stopwatch();
                 watch.Start();
-                var context = new SiteContext { Folder = Path };
+                var context = new SiteContext { Folder = parameters.Path };
                 engine.Initialize();
                 engine.Process(context);
                 watch.Stop();
@@ -61,11 +42,11 @@ namespace Pretzel.Commands
             }
             else
             {
-                Tracing.Info(String.Format("Cannot find engine for input: '{0}'", Engine));
+                Tracing.Info(String.Format("Cannot find engine for input: '{0}'", parameters.Template));
             }
         }
 
-        private string InferEngineFromDirectory(string path)
+        private string DetectEngineFromPath(string path)
         {
             foreach (var engine in templateEngines.Engines)
             {
@@ -79,7 +60,7 @@ namespace Pretzel.Commands
 
         public void WriteHelp(TextWriter writer)
         {
-            Settings.WriteOptionDescriptions(writer);
+            parameters.WriteOptions(writer);
         }
     }
 }
