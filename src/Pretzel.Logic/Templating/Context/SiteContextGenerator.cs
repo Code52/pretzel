@@ -16,7 +16,8 @@ namespace Pretzel.Logic.Templating.Context
     {
         private static readonly Markdown Markdown = new Markdown();
 
-        [Import] IFileSystem fileSystem;
+        [Import]
+        IFileSystem fileSystem;
 
         public SiteContext BuildContext(string path)
         {
@@ -24,7 +25,8 @@ namespace Pretzel.Logic.Templating.Context
             {
                 SourceFolder = path,
                 OutputFolder = Path.Combine(path, "_site"),
-                Posts = new List<Page>()
+                Posts = new List<Page>(),
+                Pages = new List<Page>(),
             };
 
             var postsFolder = Path.Combine(context.SourceFolder, "_posts");
@@ -49,8 +51,52 @@ namespace Pretzel.Logic.Templating.Context
                 context.Posts = context.Posts.OrderByDescending(p => p.Date).ToList();
             }
 
+            foreach (var file in fileSystem.Directory.GetFiles(context.SourceFolder, "*.*", SearchOption.AllDirectories))
+            {
+                var relativePath = MapToOutputPath(context, file);
+                if (relativePath.StartsWith("_"))
+                    continue;
+
+                if (relativePath.StartsWith("."))
+                    continue;
+
+                using (var reader = new StreamReader(file))
+                {
+                    var x = reader.ReadLine();
+                    if (!x.StartsWith("---"))
+                    {
+                        context.Pages.Add(new NonProcessedPage
+                                              {
+                                                  File = file, 
+                                                  Filepath = Path.Combine(context.OutputFolder, file)
+                                              });
+                        continue;
+                    }
+                }
+
+                var contents = fileSystem.File.ReadAllText(file);
+                var header = contents.YamlHeader();
+                var page = new Page
+                {
+                    Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post", // should this be the Site title?
+                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : DateTime.Now,
+                    Content = Markdown.Transform(contents.ExcludeHeader()),
+                    Filepath = GetPathWithTimestamp(context.OutputFolder, file),
+                    File = file,
+                    Bag = header,
+                };
+
+                context.Pages.Add(page);
+            }
+
             return context;
         }
+
+        private string MapToOutputPath(SiteContext context, string file)
+        {
+            return file.Replace(context.SourceFolder, "").TrimStart('\\');
+        }
+
 
         private string GetPathWithTimestamp(string outputDirectory, string file)
         {

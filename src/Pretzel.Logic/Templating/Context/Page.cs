@@ -16,4 +16,8 @@ namespace Pretzel.Logic.Templating.Context
         public IDictionary<string, object> Bag { get; set; }
         public string File { get; set; }
     }
+
+    public class NonProcessedPage : Page
+    {
+    }
 }
