@@ -102,6 +102,7 @@
     </Compile>
     <Compile Include="Templating\Context\Page.cs" />
     <Compile Include="Templating\Context\Post.cs" />
+    <Compile Include="Templating\Context\SiteContextGenerator.cs" />
     <Compile Include="Templating\Context\Tag.cs" />
     <Compile Include="Templating\Jekyll\Includes.cs" />
     <Compile Include="Templating\Jekyll\Liquid\PostDrop.cs" />

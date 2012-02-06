@@ -15,6 +15,7 @@ namespace Pretzel.Commands
     {
 #pragma warning disable 649
         [Import] TemplateEngineCollection templateEngines;
+        [Import] SiteContextGenerator Generator { get; set; }
         [Import] CommandParameters parameters;
 #pragma warning restore 649
 
@@ -26,7 +27,7 @@ namespace Pretzel.Commands
 
             if (string.IsNullOrWhiteSpace(parameters.Template))
             {
-                parameters.Template = DetectEngineFromPath(parameters.Path);
+                parameters.DetectFromDirectory(templateEngines.Engines);
             }
 
             var engine = templateEngines[parameters.Template];
@@ -34,9 +35,9 @@ namespace Pretzel.Commands
             {
                 var watch = new Stopwatch();
                 watch.Start();
-                var context = new SiteContext { Folder = parameters.Path };
                 engine.Initialize();
-                engine.Process(context);
+                var c = Generator.BuildContext(parameters.Path);
+                engine.Process(c);
                 watch.Stop();
                 Tracing.Info(string.Format("done - took {0}ms", watch.ElapsedMilliseconds));
             }
@@ -44,18 +45,6 @@ namespace Pretzel.Commands
             {
                 Tracing.Info(String.Format("Cannot find engine for input: '{0}'", parameters.Template));
             }
-        }
-
-        private string DetectEngineFromPath(string path)
-        {
-            foreach (var engine in templateEngines.Engines)
-            {
-                if (!engine.Value.CanProcess(path)) continue;
-                Tracing.Info(String.Format("Recommended engine for directory: '{0}'", engine.Key));
-                return engine.Key;
-            }
-
-            return string.Empty;
         }
 
         public void WriteHelp(TextWriter writer)

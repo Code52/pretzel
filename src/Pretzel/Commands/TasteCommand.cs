@@ -17,6 +17,7 @@ namespace Pretzel.Commands
         private ISiteEngine engine;
 #pragma warning disable 649
         [Import] TemplateEngineCollection templateEngines;
+        [Import] SiteContextGenerator Generator { get; set; }
         [Import] CommandParameters parameters;
 #pragma warning restore 649
 
@@ -36,7 +37,7 @@ namespace Pretzel.Commands
             if (engine == null)
                 return;
 
-            var context = new SiteContext { Folder = parameters.Path };
+            var context = Generator.BuildContext(parameters.Path);
             engine.Initialize();
             engine.Process(context);
 
@@ -46,7 +47,7 @@ namespace Pretzel.Commands
             var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider());
             w.Start();
 
-            Tracing.Info(string.Format("Browser to http://localhost:{0}/ to test the site.", parameters.Port));
+            Tracing.Info(string.Format("Browse to http://localhost:{0}/ to test the site.", parameters.Port));
             Tracing.Info("Press 'Q' to stop the web host...");
             ConsoleKeyInfo key;
             do
@@ -60,7 +61,7 @@ namespace Pretzel.Commands
         {
             Tracing.Info(string.Format("File change: {0}", file));
 
-            var context = new SiteContext { Folder = parameters.Path };
+            var context = Generator.BuildContext(parameters.Path);
             engine.Process(context);
         }
 

@@ -56,10 +56,11 @@ namespace Pretzel.Logic.Import
         {
             var header = new
             {
-                Title = p.Title,
-                Layout = "post",
-                Categories = p.Categories,
-                Tags = p.Tags
+                title = p.Title,
+                date = p.Published,
+                layout = "post",
+                categories = p.Categories,
+                tags = p.Tags
             };
 
             var yamlHeader = string.Format("---\r\n{0}---\r\n\r\n", header.ToYaml());

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
-using System.Linq;
 using DotLiquid;
 using MarkdownDeep;
 using Pretzel.Logic.Templating.Context;
@@ -25,42 +23,14 @@ namespace Pretzel.Logic.Templating.Jekyll
         public void Process(SiteContext siteContext)
         {
             context = siteContext;
-            context.Posts = new List<Page>();
+            var outputDirectory = Path.Combine(context.SourceFolder, "_site");
 
-            var outputDirectory = Path.Combine(context.Folder, "_site");
-            Tracing.Debug(string.Format("generating the site contents at {0}", outputDirectory));
-            FileSystem.Directory.CreateDirectory(outputDirectory);
-
-            IDictionary<string, string> posts = new Dictionary<string, string>();
-
-            var postsFolder = Path.Combine(context.Folder, "_posts");
-            if (FileSystem.Directory.Exists(postsFolder))
+            foreach (var p in siteContext.Posts)
             {
-                foreach (var file in FileSystem.Directory.GetFiles(postsFolder, "*.*", SearchOption.AllDirectories))
-                {
-                    var relativePath = GetPathWithTimestamp(outputDirectory, file);
-                    posts.Add(file, relativePath);
-
-                    // TODO: more parsing of data
-                    var contents = FileSystem.File.ReadAllText(file);
-                    var header = contents.YamlHeader();
-                    var post = new Page
-                                   {
-                                       Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
-                                       Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
-                                       Content = Markdown.Transform(contents.ExcludeHeader())
-                                   };
-                    context.Posts.Add(post);
-                }
-
-                context.Posts = context.Posts.OrderByDescending(p => p.Date).ToList();
-                foreach (var p in posts)
-                {
-                    ProcessFile(outputDirectory, p.Key, p.Value);
-                }
+                ProcessFile(outputDirectory, p.File, p.Filepath);
             }
 
-            foreach (var file in FileSystem.Directory.GetFiles(context.Folder, "*.*", SearchOption.AllDirectories))
+            foreach (var file in FileSystem.Directory.GetFiles(context.SourceFolder, "*.*", SearchOption.AllDirectories))
             {
                 var relativePath = MapToOutputPath(file);
                 if (relativePath.StartsWith("_")) continue;
@@ -73,17 +43,6 @@ namespace Pretzel.Logic.Templating.Jekyll
         public string GetOutputDirectory(string path)
         {
             return Path.Combine(path, "_site");
-        }
-
-        private string GetPathWithTimestamp(string outputDirectory, string file)
-        {
-            // TODO: detect mode from site config
-            var fileName = file.Substring(file.LastIndexOf("\\"));
-
-            var tokens = fileName.Split('-');
-            var timestamp = string.Join("\\", tokens.Take(3)).Trim('\\');
-            var title = string.Join("-", tokens.Skip(3));
-            return Path.Combine(outputDirectory, timestamp, title);
         }
 
         private void ProcessFile(string outputDirectory, string file, string relativePath = "")
@@ -131,7 +90,7 @@ namespace Pretzel.Logic.Templating.Jekyll
 
         private string MapToOutputPath(string file)
         {
-            return file.Replace(context.Folder, "").TrimStart('\\');
+            return file.Replace(context.SourceFolder, "").TrimStart('\\');
         }
 
         private PageContext ProcessMarkdownPage(string fileContents, string outputPath, string outputDirectory)
@@ -145,7 +104,7 @@ namespace Pretzel.Logic.Templating.Jekyll
 
             while (metadata.ContainsKey("layout"))
             {
-                var path = Path.Combine(context.Folder, "_layouts", metadata["layout"] + ".html");
+                var path = Path.Combine(context.SourceFolder, "_layouts", metadata["layout"] + ".html");
 
                 if (!FileSystem.File.Exists(path))
                     continue;
@@ -170,7 +129,7 @@ namespace Pretzel.Logic.Templating.Jekyll
         {
             var data = CreatePageData(context);
             var template = Template.Parse(inputFile);
-            Template.FileSystem = new Includes(context.Folder);
+            Template.FileSystem = new Includes(context.SourceFolder);
 
             var output = template.Render(data);
             var x = template.Errors;
@@ -179,16 +138,29 @@ namespace Pretzel.Logic.Templating.Jekyll
 
         private static Hash CreatePageData(SiteContext context, PageContext pageContext)
         {
-            var title = string.IsNullOrWhiteSpace(pageContext.Title) ? context.Title : pageContext.Title;
-
             var drop = new SiteContextDrop(context);
+            var y = Hash.FromDictionary(pageContext.Bag);
 
-            return Hash.FromAnonymousObject(new
+            if (y.ContainsKey("title"))
+            {
+                if (string.IsNullOrWhiteSpace(y["title"].ToString()))
+                {
+                    y["title"] = context.Title;
+                }
+            }
+            else
+            {
+                y.Add("title", context.Title);
+            }
+            
+            var x = Hash.FromAnonymousObject(new
             {
                 site = drop,
-                page = new { title },
+                page = y,
                 content = pageContext.Content
             });
+
+            return x;
         }
 
         private static Hash CreatePageData(SiteContext context)
@@ -205,7 +177,7 @@ namespace Pretzel.Logic.Templating.Jekyll
         private string RenderTemplate(string templateContents, Hash data)
         {
             var template = Template.Parse(templateContents);
-            Template.FileSystem = new Includes(context.Folder);
+            Template.FileSystem = new Includes(context.SourceFolder);
 
             return template.Render(data);
         }
