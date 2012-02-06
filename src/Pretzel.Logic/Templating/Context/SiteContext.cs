@@ -5,6 +5,12 @@ namespace Pretzel.Logic.Templating.Context
 {
     public class SiteContext
     {
+        public SiteContext()
+        {
+            Tags = new List<Tag>();
+            Posts = new List<Page>();
+        }
+
         public string SourceFolder { get; set; }
         public string OutputFolder { get; set; }
         public string Title { get; set; }
