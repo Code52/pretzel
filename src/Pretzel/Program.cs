@@ -23,11 +23,21 @@ namespace Pretzel
             Tracing.Logger.AddCategory("error");
 
             var debug = false;
-            var defaultSet = new OptionSet { { "debug", "Enable debugging", p => debug = true } };
+            var help = false;
+            var defaultSet = new OptionSet
+                                 {
+                                 { "help", "Display help mode", p => help = true },
+                                 { "debug", "Enable debugging", p => debug = true }
+                                 };
             defaultSet.Parse(args);
 
             if (debug)
                 Tracing.Logger.AddCategory("debug");
+
+            if (help)
+            {
+                // TODO: a more consistent help output
+            }
 
             new Program().Run(args);
         }
@@ -54,7 +64,7 @@ namespace Pretzel
                 return;
             }
 
-            Commands[commandName].Execute(commandArgs);
+            Commands[commandName].Execute(commandArgs.Skip(1));
             WaitForClose();
         }
 

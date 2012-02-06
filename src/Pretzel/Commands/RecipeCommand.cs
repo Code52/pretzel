@@ -4,8 +4,8 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using NDesk.Options;
 using Pretzel.Logic;
+using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Commands
@@ -16,37 +16,20 @@ namespace Pretzel.Commands
     {
         readonly static List<string> TemplateEngines = new List<string>(new[] { "Liquid", "Razor" });
 
-        public string Path { get; private set; }
-        public string Engine { get; private set; }
+#pragma warning disable 649
+        [Import] IFileSystem fileSystem;
+        [Import] CommandParameters parameters;
+#pragma warning restore 649
 
-        [Import] 
-        private IFileSystem fileSystem;
-
-        private OptionSet Settings
-        {
-            get
-            {
-                return new OptionSet
-                           {
-                               { "t|templates=", "The templates to use for the site", v => Engine = v },
-                               { "p|path=", "The path to site directory", p => Path = p },
-                           };
-            }
-        }
-
-        public void Execute(string[] arguments)
+        public void Execute(IEnumerable<string> arguments)
         {
             Tracing.Info("create - configure a new site");
 
-            Settings.Parse(arguments);
+            parameters.Parse(arguments);
 
-            var path = String.IsNullOrWhiteSpace(Path)
-                             ? Directory.GetCurrentDirectory()
-                             : Path;
-
-            var engine = String.IsNullOrWhiteSpace(Engine)
+            var engine = String.IsNullOrWhiteSpace(parameters.Template)
                              ? TemplateEngines.First()
-                             : Engine;
+                             : parameters.Template;
 
             if (!TemplateEngines.Any(e => String.Equals(e, engine, StringComparison.InvariantCultureIgnoreCase)))
             {
@@ -54,13 +37,13 @@ namespace Pretzel.Commands
                 return;
             }
 
-            var recipe = new Recipe(fileSystem, engine, path);
+            var recipe = new Recipe(fileSystem, engine, parameters.Path);
             recipe.Create();
         }
 
         public void WriteHelp(TextWriter writer)
         {
-            Settings.WriteOptionDescriptions(writer);
+            parameters.WriteOptions(writer);  // TODO: output relevant messages (not all of them)
         }
     }
 }
