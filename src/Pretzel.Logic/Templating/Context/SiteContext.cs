@@ -9,6 +9,7 @@ namespace Pretzel.Logic.Templating.Context
         {
             Tags = new List<Tag>();
             Posts = new List<Page>();
+            Pages = new List<Page>();
         }
 
         public string SourceFolder { get; set; }
@@ -17,5 +18,7 @@ namespace Pretzel.Logic.Templating.Context
         public IEnumerable<Tag> Tags { get; set; }
         public IList<Page> Posts { get; set; }
         public DateTime Time { get; set; }
+
+        public List<Page> Pages { get; set; }
     }
 }

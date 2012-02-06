@@ -3,7 +3,6 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using DotLiquid;
-using MarkdownDeep;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Jekyll.Liquid;
@@ -14,8 +13,8 @@ namespace Pretzel.Logic.Templating.Jekyll
     [SiteEngineInfo(Engine = "jekyll")]
     public class JekyllEngine : ISiteEngine
     {
-        private static readonly Markdown Markdown = new Markdown();
         private SiteContext context;
+        private SiteContextDrop contextDrop;
 
         [Import]
         public IFileSystem FileSystem { get; set; }
@@ -23,20 +22,18 @@ namespace Pretzel.Logic.Templating.Jekyll
         public void Process(SiteContext siteContext)
         {
             context = siteContext;
+            contextDrop = new SiteContextDrop(context);
+
             var outputDirectory = Path.Combine(context.SourceFolder, "_site");
 
             foreach (var p in siteContext.Posts)
             {
-                ProcessFile(outputDirectory, p.File, p.Filepath);
+                ProcessFile(outputDirectory, p, p.Filepath);
             }
 
-            foreach (var file in FileSystem.Directory.GetFiles(context.SourceFolder, "*.*", SearchOption.AllDirectories))
+            foreach (var p in siteContext.Pages)
             {
-                var relativePath = MapToOutputPath(file);
-                if (relativePath.StartsWith("_")) continue;
-                if (relativePath.StartsWith(".")) continue;
-
-                ProcessFile(outputDirectory, file, relativePath);
+                ProcessFile(outputDirectory, p);
             }
         }
 
@@ -45,10 +42,10 @@ namespace Pretzel.Logic.Templating.Jekyll
             return Path.Combine(path, "_site");
         }
 
-        private void ProcessFile(string outputDirectory, string file, string relativePath = "")
+        private void ProcessFile(string outputDirectory, Page page, string relativePath = "")
         {
             if (string.IsNullOrWhiteSpace(relativePath))
-                relativePath = MapToOutputPath(file);
+                relativePath = MapToOutputPath(page.File);
 
             var outputFile = Path.Combine(outputDirectory, relativePath);
 
@@ -56,62 +53,39 @@ namespace Pretzel.Logic.Templating.Jekyll
             if (!FileSystem.Directory.Exists(directory))
                 FileSystem.Directory.CreateDirectory(directory);
 
-            var extension = Path.GetExtension(file);
-            if (extension.IsImageFormat())
+            var extension = Path.GetExtension(page.File);
+            if (extension.IsImageFormat() || page is NonProcessedPage)
             {
-                FileSystem.File.Copy(file, outputFile, true);
+                FileSystem.File.Copy(page.File, outputFile, true);
                 return;
             }
-
-            var inputFile = FileSystem.File.ReadAllText(file);
-            if (!inputFile.StartsWith("---"))
-            {
-                FileSystem.File.WriteAllText(outputFile, inputFile);
-                return;
-            }
-
-            // TODO: refine this step
-            // markdown file should not be treated differently
-            // output from markdown file should be sent to template pipeline
 
             if (extension.IsMarkdownFile())
-            {
                 outputFile = outputFile.Replace(extension, ".html");
 
-                var pageContext = ProcessMarkdownPage(inputFile, outputFile, outputDirectory);
-
-                FileSystem.File.WriteAllText(pageContext.OutputPath, pageContext.Content);
-            }
-            else
+            var pageContext = PageContext.FromPage(page, outputDirectory, outputFile);
+            var metadata = page.Bag;
+            while (metadata.ContainsKey("layout"))
             {
-                RenderTemplate(inputFile.ExcludeHeader(), outputFile);
+                if (metadata["layout"] == "nil" || metadata["layout"] == null)
+                    break;
+
+                var path = Path.Combine(context.SourceFolder, "_layouts", metadata["layout"] + ".html");
+
+                if (!FileSystem.File.Exists(path))
+                    break;
+
+                metadata = ProcessTemplate(pageContext, path);
             }
+
+            pageContext.Content = RenderTemplate(pageContext.Content, CreatePageData(pageContext));
+
+            FileSystem.File.WriteAllText(pageContext.OutputPath, pageContext.Content);
         }
 
         private string MapToOutputPath(string file)
         {
             return file.Replace(context.SourceFolder, "").TrimStart('\\');
-        }
-
-        private PageContext ProcessMarkdownPage(string fileContents, string outputPath, string outputDirectory)
-        {
-            var metadata = fileContents.YamlHeader();
-            var pageContext = PageContext.FromDictionary(metadata, outputDirectory, outputPath);
-            pageContext.Content = Markdown.Transform(fileContents.ExcludeHeader());
-
-            var data = CreatePageData(context, pageContext);
-            pageContext.Content = RenderTemplate(pageContext.Content, data);
-
-            while (metadata.ContainsKey("layout"))
-            {
-                var path = Path.Combine(context.SourceFolder, "_layouts", metadata["layout"] + ".html");
-
-                if (!FileSystem.File.Exists(path))
-                    continue;
-
-                metadata = ProcessTemplate(pageContext, path);
-            }
-            return pageContext;
         }
 
         private IDictionary<string, object> ProcessTemplate(PageContext pageContext, string path)
@@ -120,25 +94,13 @@ namespace Pretzel.Logic.Templating.Jekyll
             var metadata = templateFile.YamlHeader();
             var templateContent = templateFile.ExcludeHeader();
 
-            var data = CreatePageData(context, pageContext);
+            var data = CreatePageData(pageContext);
             pageContext.Content = RenderTemplate(templateContent, data);
             return metadata;
         }
-
-        private void RenderTemplate(string inputFile, string outputPath)
+        
+        private Hash CreatePageData(PageContext pageContext)
         {
-            var data = CreatePageData(context);
-            var template = Template.Parse(inputFile);
-            Template.FileSystem = new Includes(context.SourceFolder);
-
-            var output = template.Render(data);
-            var x = template.Errors;
-            FileSystem.File.WriteAllText(outputPath, output);
-        }
-
-        private static Hash CreatePageData(SiteContext context, PageContext pageContext)
-        {
-            var drop = new SiteContextDrop(context);
             var y = Hash.FromDictionary(pageContext.Bag);
 
             if (y.ContainsKey("title"))
@@ -155,23 +117,12 @@ namespace Pretzel.Logic.Templating.Jekyll
             
             var x = Hash.FromAnonymousObject(new
             {
-                site = drop,
+                site = contextDrop,
                 page = y,
                 content = pageContext.Content
             });
 
             return x;
-        }
-
-        private static Hash CreatePageData(SiteContext context)
-        {
-            var drop = new SiteContextDrop(context);
-
-            return Hash.FromAnonymousObject(new
-            {
-                site = drop,
-                page = new { title = context.Title }
-            });
         }
 
         private string RenderTemplate(string templateContents, Hash data)
