@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using NDesk.Options;
 using Pretzel.Logic.Extensions;
-using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Commands
@@ -14,8 +12,8 @@ namespace Pretzel.Commands
     [CommandInfo(CommandName = "bake")]
     public sealed class BakeCommand : ICommand
     {
-        [Import]
-        private TemplateEngineCollection templateEngines;
+        [Import] TemplateEngineCollection templateEngines;
+        [Import] SiteContextGenerator Generator { get; set; }
 
         public string Path { get; private set; }
         public string Engine { get; set; }
@@ -53,9 +51,9 @@ namespace Pretzel.Commands
             {
                 var watch = new Stopwatch();
                 watch.Start();
-                var context = new SiteContext { Folder = Path };
                 engine.Initialize();
-                engine.Process(context);
+                var c = Generator.BuildContext(Path);
+                engine.Process(c);
                 watch.Stop();
                 Tracing.Info(string.Format("done - took {0}ms", watch.ElapsedMilliseconds));
             }
