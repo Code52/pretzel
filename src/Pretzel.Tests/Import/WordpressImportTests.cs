@@ -112,7 +112,7 @@ namespace Pretzel.Tests.Import
             var postContent = fileSystem.File.ReadAllText(BaseSite + "_posts\\2010-02-06-hello-world.md");
             var header = postContent.YamlHeader();
 
-            Assert.Equal("Hello world!", header["Title"].ToString());
+            Assert.Equal("Hello world!", header["title"].ToString());
         }
     }
 }
