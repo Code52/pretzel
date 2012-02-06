@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
@@ -27,11 +26,9 @@ namespace Pretzel.Commands
 
             parameters.Parse(arguments);
 
-            var f = new FileContentProvider();
-
             if (string.IsNullOrWhiteSpace(parameters.Template))
             {
-                parameters.InferEngineFromDirectory(templateEngines.Engines);
+                parameters.DetectFromDirectory(templateEngines.Engines);
             }
 
             engine = templateEngines[parameters.Template];
@@ -46,7 +43,7 @@ namespace Pretzel.Commands
             var watcher = new SimpleFileSystemWatcher();
             watcher.OnChange(parameters.Path, WatcherOnChanged);
 
-            var w = new WebHost(engine.GetOutputDirectory(parameters.Path), f);
+            var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider());
             w.Start();
 
             Tracing.Info("Press 'Q' to stop the web host...");
