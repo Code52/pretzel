@@ -70,7 +70,7 @@ namespace Pretzel.Logic.Commands
             }
         }
 
-        public void InferEngineFromDirectory(IDictionary<string, ISiteEngine> engines)
+        public void DetectFromDirectory(IDictionary<string, ISiteEngine> engines)
         {
             foreach (var engine in engines)
             {
@@ -81,7 +81,6 @@ namespace Pretzel.Logic.Commands
                 return;
             }
         }
-
 
         public void WriteOptions(TextWriter writer)
         {

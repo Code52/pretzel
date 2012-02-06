@@ -46,6 +46,7 @@ namespace Pretzel.Commands
             var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider());
             w.Start();
 
+            Tracing.Info(string.Format("Browser to http://localhost:{0}/ to test the site.", parameters.Port));
             Tracing.Info("Press 'Q' to stop the web host...");
             ConsoleKeyInfo key;
             do
