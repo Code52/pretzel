@@ -5,6 +5,13 @@ namespace Pretzel.Logic.Templating.Context
 {
     public class Page
     {
+        public Page()
+        {
+            Bag = new Dictionary<string, object>();
+            Categories = new List<string>();
+            Tags = new List<string>();
+        }
+
         public string Title { get; set; }
         public string Url { get; set; }
         public DateTime Date { get; set; }
