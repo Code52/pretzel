@@ -15,10 +15,10 @@ namespace Pretzel.Commands
     public sealed class TasteCommand : ICommand
     {
         private ISiteEngine engine;
-
+#pragma warning disable 649
         [Import] TemplateEngineCollection templateEngines;
-
         [Import] CommandParameters parameters;
+#pragma warning restore 649
 
         public void Execute(IEnumerable<string> arguments)
         {

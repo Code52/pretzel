@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
@@ -14,9 +13,10 @@ namespace Pretzel.Commands
     [CommandInfo(CommandName = "bake")]
     public sealed class BakeCommand : ICommand
     {
+#pragma warning disable 649
         [Import] TemplateEngineCollection templateEngines;
-
         [Import] CommandParameters parameters;
+#pragma warning restore 649
 
         public void Execute(IEnumerable<string> arguments)
         {

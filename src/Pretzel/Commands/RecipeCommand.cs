@@ -16,8 +16,10 @@ namespace Pretzel.Commands
     {
         readonly static List<string> TemplateEngines = new List<string>(new[] { "Liquid", "Razor" });
 
+#pragma warning disable 649
         [Import] IFileSystem fileSystem;
         [Import] CommandParameters parameters;
+#pragma warning restore 649
 
         public void Execute(IEnumerable<string> arguments)
         {
