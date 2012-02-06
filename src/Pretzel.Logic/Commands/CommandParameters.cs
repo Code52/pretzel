@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Linq;
 using NDesk.Options;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
@@ -15,13 +16,20 @@ namespace Pretzel.Logic.Commands
     {
         public CommandParameters()
         {
-            var attributes = TypeDescriptor.GetProperties(this)["Port"].Attributes;
-            var myAttribute = (DefaultValueAttribute)attributes[typeof(DefaultValueAttribute)];
-            decimal.TryParse(myAttribute.Value.ToString(), out port);
+            GetDefaultValue("Port", s => decimal.TryParse(s, out port));
+        }
+
+        private void GetDefaultValue(string propertyName, Action<string> converter)
+        {
+            var attributes = TypeDescriptor.GetProperties(this)[propertyName].Attributes;
+            var myAttribute = (DefaultValueAttribute) attributes[typeof (DefaultValueAttribute)];
+            converter(myAttribute.Value.ToString());
         }
 
         public string Path { get; private set; }
         public string Template { get; set; }
+        public string ImportPath { get; private set; }
+        public string ImportType { get; set; }
 
         private decimal port;
 
@@ -31,10 +39,6 @@ namespace Pretzel.Logic.Commands
             get { return port; }
             set { port = value; }
         }
-
-        public string ImportPath { get; private set; }
-        public string ImportType { get; set; }
-
 
         private OptionSet Settings
         {
@@ -54,6 +58,11 @@ namespace Pretzel.Logic.Commands
         public void Parse(IEnumerable<string> arguments)
         {
             Settings.Parse(arguments);
+
+            if (arguments.Count() == 1)
+            {
+                Path = arguments.First();
+            }
 
             if (string.IsNullOrWhiteSpace(Path))
             {
