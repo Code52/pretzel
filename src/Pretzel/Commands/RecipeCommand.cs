@@ -43,7 +43,7 @@ namespace Pretzel.Commands
 
         public void WriteHelp(TextWriter writer)
         {
-            parameters.WriteOptions(writer);
+            parameters.WriteOptions(writer);  // TODO: output relevant messages (not all of them)
         }
     }
 }

@@ -8,6 +8,6 @@ namespace Pretzel.Commands
     public interface ICommand
     {
         void Execute(IEnumerable<string> arguments);
-        void WriteHelp(TextWriter writer);
+        void WriteHelp(TextWriter writer); // TODO: obsolete this?
     }
 }
