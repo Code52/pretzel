@@ -63,7 +63,7 @@ namespace Pretzel.Logic.Templating.Context
                 using (var reader = new StreamReader(file))
                 {
                     var x = reader.ReadLine();
-                    if (!x.StartsWith("---"))
+                    if (x == null || !x.StartsWith("---"))
                     {
                         context.Pages.Add(new NonProcessedPage
                                               {

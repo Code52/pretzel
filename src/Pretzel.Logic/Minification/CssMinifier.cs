@@ -10,19 +10,15 @@ namespace Pretzel.Logic.Minification
     public class CssMinifier
     {
         private readonly IFileSystem fileSystem;
-        private readonly IEnumerable<FileInfo> files;
-        private readonly string outputPath;
         private readonly Func<ILessEngine> getEngine;
 
-        public CssMinifier(IFileSystem fileSystem, IEnumerable<FileInfo> files, string outputPath, Func<ILessEngine> getEngine)
+        public CssMinifier(IFileSystem fileSystem, Func<ILessEngine> getEngine)
         {
-            this.files = files;
-            this.outputPath = outputPath;
             this.getEngine = getEngine;
             this.fileSystem = fileSystem;
         }
 
-        public void Minify()
+        public void Minify( IEnumerable<FileInfo> files, string outputPath)
         {
             var bundled = fileSystem.BundleFiles(files);
             var engine = getEngine();
@@ -30,11 +26,11 @@ namespace Pretzel.Logic.Minification
             fileSystem.File.WriteAllText(outputPath, minified);
         }
 
-        public string ProcessCss(FileInfo file)
+        public string ProcessCss(string filePath)
         {
-            var content = fileSystem.File.ReadAllText(file.FullName);
+            var content = fileSystem.File.ReadAllText(filePath);
             var engine = getEngine();
-            return engine.TransformToCss(content, file.FullName);
+            return engine.TransformToCss(content, filePath);
         }
     }
 }
