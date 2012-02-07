@@ -9,14 +9,23 @@ namespace Pretzel.Logic.Extensions
     public static class YamlExtensions
     {
         static readonly Regex r = new Regex(@"^---([\d\D\w\W\s\S]+)---", RegexOptions.Multiline);
-        public static IDictionary<string, object> YamlHeader(this string text)
+        public static IDictionary<string, object> YamlHeader(this string text, bool skipHeader = false)
         {
+            StringReader input;
             var results = new Dictionary<string, object>();
-            var m = r.Matches(text);
-            if (m.Count == 0)
-                return results;
 
-            var input = new StringReader(m[0].Groups[1].Value);
+            if (!skipHeader)
+            {
+                var m = r.Matches(text);
+                if (m.Count == 0)
+                    return results;
+
+                input = new StringReader(m[0].Groups[1].Value);
+            }
+            else
+            {
+                input = new StringReader(text);
+            }
 
             var yaml = new YamlStream();
             yaml.Load(input);

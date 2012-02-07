@@ -36,6 +36,7 @@ namespace Pretzel.Commands
                 var watch = new Stopwatch();
                 watch.Start();
                 engine.Initialize();
+
                 var c = Generator.BuildContext(parameters.Path);
                 engine.Process(c);
                 watch.Stop();

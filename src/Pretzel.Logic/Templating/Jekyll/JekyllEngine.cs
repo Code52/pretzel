@@ -84,7 +84,7 @@ namespace Pretzel.Logic.Templating.Jekyll
             var metadata = page.Bag;
             while (metadata.ContainsKey("layout"))
             {
-                if (metadata["layout"] == "nil" || metadata["layout"] == null)
+                if ((string) metadata["layout"] == "nil" || metadata["layout"] == null)
                     break;
 
                 var path = Path.Combine(context.SourceFolder, "_layouts", metadata["layout"] + ".html");

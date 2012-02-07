@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Globalization;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Text;
 using MarkdownDeep;
 using Pretzel.Logic.Extensions;
 using ImportAttribute = System.ComponentModel.Composition.ImportAttribute;
@@ -21,6 +23,13 @@ namespace Pretzel.Logic.Templating.Context
 
         public SiteContext BuildContext(string path)
         {
+            var config = new Dictionary<string, object>();
+            if (File.Exists(Path.Combine(path, "_config.yml")))
+                config = (Dictionary<string, object>)File.ReadAllText(Path.Combine(path, "_config.yml")).YamlHeader(true);
+
+            if (!config.ContainsKey("permalink"))
+                config.Add("permalink", "/:year/:month/:day/:title.html");
+
             var context = new SiteContext
             {
                 SourceFolder = path,
@@ -45,6 +54,16 @@ namespace Pretzel.Logic.Templating.Context
                         File = file,
                         Bag = header,
                     };
+
+                    if (header.ContainsKey("permalink"))
+                        post.Url = EvaluatePermalink(header["permalink"].ToString(), post);
+                    else if (config.ContainsKey("permalink"))
+                        post.Url = EvaluatePermalink(config["permalink"].ToString(), post);
+
+                    if (string.IsNullOrEmpty(post.Url))
+                    {
+                        Tracing.Info("whaaa");
+                    }
                     context.Posts.Add(post);
                 }
 
@@ -91,6 +110,43 @@ namespace Pretzel.Logic.Templating.Context
 
             return context;
         }
+        //https://github.com/mojombo/jekyll/wiki/permalinks
+        private string EvaluatePermalink(string permalink, Page page)
+        {
+            permalink = permalink.Replace(":year", page.Date.Year.ToString(CultureInfo.InvariantCulture));
+            permalink = permalink.Replace(":month", page.Date.ToString("MM"));
+            permalink = permalink.Replace(":day", page.Date.ToString("dd"));
+            permalink = permalink.Replace(":title", GetTitle(page.File));
+
+            return permalink;
+        }
+
+        private string SanitizeTitle(string title)
+        {
+            title = title.Replace(" ", "_");
+            title = title.Replace(":", "");
+            title = RemoveDiacritics(title);
+
+            return title;
+        }
+
+        //http://stackoverflow.com/questions/6716832/sanitizing-string-to-url-safe-format
+        public static string RemoveDiacritics(string strThis)
+        {
+            if (strThis == null)
+                return null;
+
+            strThis = strThis.ToLowerInvariant();
+
+            var sb = new StringBuilder();
+
+            foreach (char c in strThis.Normalize(NormalizationForm.FormD))
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                    sb.Append(c);
+            }
+            return sb.ToString();
+        }
 
         private string MapToOutputPath(SiteContext context, string file)
         {
@@ -107,6 +163,16 @@ namespace Pretzel.Logic.Templating.Context
             var timestamp = string.Join("\\", tokens.Take(3)).Trim('\\');
             var title = string.Join("-", tokens.Skip(3));
             return System.IO.Path.Combine(outputDirectory, timestamp, title);
+        }
+        private string GetTitle(string file)
+        {
+            // TODO: detect mode from site config
+            var fileName = file.Substring(file.LastIndexOf("\\"));
+
+            var tokens = fileName.Split('-');
+            var title = string.Join("-", tokens.Skip(3));
+            title = title.Substring(0, title.LastIndexOf("."));
+            return title;
         }
     }
 }
