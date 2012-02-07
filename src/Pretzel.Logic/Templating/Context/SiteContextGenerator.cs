@@ -21,8 +21,15 @@ namespace Pretzel.Logic.Templating.Context
         [Import]
         IFileSystem fileSystem;
 
-        public SiteContext BuildContext(string path, Dictionary<string, object> config)
+        public SiteContext BuildContext(string path)
         {
+            var config = new Dictionary<string, object>();
+            if (File.Exists(Path.Combine(path, "_config.yml")))
+                config = (Dictionary<string, object>)File.ReadAllText(Path.Combine(path, "_config.yml")).YamlHeader(true);
+
+            if (!config.ContainsKey("permalink"))
+                config.Add("permalink", "/:year/:month/:day/:title.html");
+
             var context = new SiteContext
             {
                 SourceFolder = path,
@@ -106,11 +113,10 @@ namespace Pretzel.Logic.Templating.Context
         //https://github.com/mojombo/jekyll/wiki/permalinks
         private string EvaluatePermalink(string permalink, Page page)
         {
-
             permalink = permalink.Replace(":year", page.Date.Year.ToString(CultureInfo.InvariantCulture));
-            permalink = permalink.Replace(":month", page.Date.Month.ToString(CultureInfo.InvariantCulture));
-            permalink = permalink.Replace(":day", page.Date.Day.ToString(CultureInfo.InvariantCulture));
-            permalink = permalink.Replace(":title", SanitizeTitle(page.Title));
+            permalink = permalink.Replace(":month", page.Date.ToString("MM"));
+            permalink = permalink.Replace(":day", page.Date.ToString("dd"));
+            permalink = permalink.Replace(":title", GetTitle(page.File));
 
             return permalink;
         }
@@ -157,6 +163,16 @@ namespace Pretzel.Logic.Templating.Context
             var timestamp = string.Join("\\", tokens.Take(3)).Trim('\\');
             var title = string.Join("-", tokens.Skip(3));
             return System.IO.Path.Combine(outputDirectory, timestamp, title);
+        }
+        private string GetTitle(string file)
+        {
+            // TODO: detect mode from site config
+            var fileName = file.Substring(file.LastIndexOf("\\"));
+
+            var tokens = fileName.Split('-');
+            var title = string.Join("-", tokens.Skip(3));
+            title = title.Substring(0, title.LastIndexOf("."));
+            return title;
         }
     }
 }
