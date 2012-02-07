@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Globalization;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Text;
 using MarkdownDeep;
 using Pretzel.Logic.Extensions;
 using ImportAttribute = System.ComponentModel.Composition.ImportAttribute;
@@ -19,7 +21,7 @@ namespace Pretzel.Logic.Templating.Context
         [Import]
         IFileSystem fileSystem;
 
-        public SiteContext BuildContext(string path)
+        public SiteContext BuildContext(string path, Dictionary<string, object> config)
         {
             var context = new SiteContext
             {
@@ -45,6 +47,16 @@ namespace Pretzel.Logic.Templating.Context
                         File = file,
                         Bag = header,
                     };
+
+                    if (header.ContainsKey("permalink"))
+                        post.Url = EvaluatePermalink(header["permalink"].ToString(), post);
+                    else if (config.ContainsKey("permalink"))
+                        post.Url = EvaluatePermalink(config["permalink"].ToString(), post);
+
+                    if (string.IsNullOrEmpty(post.Url))
+                    {
+                        Tracing.Info("whaaa");
+                    }
                     context.Posts.Add(post);
                 }
 
@@ -90,6 +102,44 @@ namespace Pretzel.Logic.Templating.Context
             }
 
             return context;
+        }
+        //https://github.com/mojombo/jekyll/wiki/permalinks
+        private string EvaluatePermalink(string permalink, Page page)
+        {
+
+            permalink = permalink.Replace(":year", page.Date.Year.ToString(CultureInfo.InvariantCulture));
+            permalink = permalink.Replace(":month", page.Date.Month.ToString(CultureInfo.InvariantCulture));
+            permalink = permalink.Replace(":day", page.Date.Day.ToString(CultureInfo.InvariantCulture));
+            permalink = permalink.Replace(":title", SanitizeTitle(page.Title));
+
+            return permalink;
+        }
+
+        private string SanitizeTitle(string title)
+        {
+            title = title.Replace(" ", "_");
+            title = title.Replace(":", "");
+            title = RemoveDiacritics(title);
+
+            return title;
+        }
+
+        //http://stackoverflow.com/questions/6716832/sanitizing-string-to-url-safe-format
+        public static string RemoveDiacritics(string strThis)
+        {
+            if (strThis == null)
+                return null;
+
+            strThis = strThis.ToLowerInvariant();
+
+            var sb = new StringBuilder();
+
+            foreach (char c in strThis.Normalize(NormalizationForm.FormD))
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                    sb.Append(c);
+            }
+            return sb.ToString();
         }
 
         private string MapToOutputPath(SiteContext context, string file)

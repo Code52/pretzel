@@ -33,15 +33,17 @@ namespace Pretzel.Logic.Templating.Context
 
         public static PageContext FromPage(Page page, string outputPath, string defaultOutputPath)
         {
-            var context = new PageContext
-                              {
-                                  OutputPath =
-                                      page.Bag.ContainsKey("permalink")
-                                          ? Path.Combine(outputPath, page.Bag["permalink"].ToString().ToRelativeFile())
-                                          : defaultOutputPath
-                              };
+            var context = new PageContext();
 
-
+            if (page.Bag.ContainsKey("permalink"))
+            {
+                context.OutputPath = Path.Combine(outputPath, page.Url.ToRelativeFile());
+            }
+            else
+            {
+                context.OutputPath = defaultOutputPath;
+                page.Bag.Add("permalink", page.File);
+            }
             if (page.Bag.ContainsKey("title"))
             {
                 context.Title = page.Bag["title"].ToString();
@@ -49,7 +51,8 @@ namespace Pretzel.Logic.Templating.Context
 
             context.Content = page.Content;
             context.Bag = page.Bag;
-
+            context.Bag.Add("id", page.Id);
+            context.Bag.Add("url", page.Url);
             return context;
         }
     }
