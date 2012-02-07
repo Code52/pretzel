@@ -30,6 +30,9 @@ namespace Pretzel.Logic.Extensions
             var yaml = new YamlStream();
             yaml.Load(input);
 
+            if (yaml.Documents.Count == 0)
+                return results;
+
             var root = yaml.Documents[0].RootNode;
 
             var collection = root as YamlMappingNode;
