@@ -15,6 +15,7 @@ namespace Pretzel.Commands
     public sealed class TasteCommand : ICommand
     {
         private ISiteEngine engine;
+        private Dictionary<string, object> config = new Dictionary<string, object>();
 #pragma warning disable 649
         [Import] TemplateEngineCollection templateEngines;
         [Import] SiteContextGenerator Generator { get; set; }
@@ -37,7 +38,11 @@ namespace Pretzel.Commands
             if (engine == null)
                 return;
 
-            var context = Generator.BuildContext(parameters.Path);
+
+            if (File.Exists(Path.Combine(parameters.Path, "_config.yml")))
+                config = (Dictionary<string, object>)File.ReadAllText(Path.Combine(parameters.Path, "_config.yml")).YamlHeader(true);
+
+            var context = Generator.BuildContext(parameters.Path, config);
             engine.Initialize();
             engine.Process(context);
 
@@ -61,7 +66,7 @@ namespace Pretzel.Commands
         {
             Tracing.Info(string.Format("File change: {0}", file));
 
-            var context = Generator.BuildContext(parameters.Path);
+            var context = Generator.BuildContext(parameters.Path, config);
             engine.Process(context);
         }
 
