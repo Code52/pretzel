@@ -3,8 +3,9 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using DotLiquid;
-using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Minification;
+using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Jekyll.Liquid;
 
 namespace Pretzel.Logic.Templating.Jekyll
@@ -16,8 +17,10 @@ namespace Pretzel.Logic.Templating.Jekyll
         private SiteContext context;
         private SiteContextDrop contextDrop;
 
-        [Import]
+        [Import] 
         public IFileSystem FileSystem { get; set; }
+        [Import] 
+        FileTransforms transforms;
 
         public void Process(SiteContext siteContext)
         {
@@ -54,7 +57,21 @@ namespace Pretzel.Logic.Templating.Jekyll
                 FileSystem.Directory.CreateDirectory(directory);
 
             var extension = Path.GetExtension(page.File);
-            if (extension.IsImageFormat() || page is NonProcessedPage)
+            if (transforms.CanProcess(extension))
+            {
+                var contents = transforms.Process(page.File);
+                outputFile = transforms.MapFile(page.File);
+                FileSystem.File.WriteAllText(outputFile, contents);
+                return;
+            }
+            
+            if (extension.IsImageFormat())
+            {
+                FileSystem.File.Copy(page.File, outputFile, true);
+                return;
+            }
+
+            if (page is NonProcessedPage)
             {
                 FileSystem.File.Copy(page.File, outputFile, true);
                 return;
