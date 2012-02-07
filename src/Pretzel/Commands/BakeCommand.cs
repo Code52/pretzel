@@ -37,11 +37,7 @@ namespace Pretzel.Commands
                 watch.Start();
                 engine.Initialize();
 
-                var config = new Dictionary<string, object>();
-                if (File.Exists(Path.Combine(parameters.Path, "_config.yml")))
-                    config = (Dictionary<string, object>)File.ReadAllText(Path.Combine(parameters.Path, "_config.yml")).YamlHeader(true);
-
-                var c = Generator.BuildContext(parameters.Path, config);
+                var c = Generator.BuildContext(parameters.Path);
                 engine.Process(c);
                 watch.Stop();
                 Tracing.Info(string.Format("done - took {0}ms", watch.ElapsedMilliseconds));
