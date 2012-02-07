@@ -28,10 +28,19 @@ namespace Pretzel.Modules
 
         private void WatcherOnChanged(object sender, FileSystemEventArgs args)
         {
+
             if (args.FullPath.Contains("_site"))
                 return;
 
-            callback(args.FullPath);
+            try
+            {
+                watcher.EnableRaisingEvents = true;
+                callback(args.FullPath);
+            }
+            finally
+            {
+                watcher.EnableRaisingEvents = false;
+            }
         }
     }
 }
