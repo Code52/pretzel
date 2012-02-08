@@ -18,10 +18,12 @@ namespace Pretzel.Logic.Templating.Context
     {
         private static readonly Markdown Markdown = new Markdown();
 
-        [Import]
+#pragma warning disable 0649
+		[Import]
         IFileSystem fileSystem;
+#pragma warning restore 0649
 
-        public SiteContext BuildContext(string path)
+		public SiteContext BuildContext(string path)
         {
             var config = new Dictionary<string, object>();
             if (File.Exists(Path.Combine(path, "_config.yml")))
@@ -153,7 +155,6 @@ namespace Pretzel.Logic.Templating.Context
             return file.Replace(context.SourceFolder, "").TrimStart('\\');
         }
 
-
         private string GetPathWithTimestamp(string outputDirectory, string file)
         {
             // TODO: detect mode from site config
@@ -162,8 +163,9 @@ namespace Pretzel.Logic.Templating.Context
             var tokens = fileName.Split('-');
             var timestamp = string.Join("\\", tokens.Take(3)).Trim('\\');
             var title = string.Join("-", tokens.Skip(3));
-            return System.IO.Path.Combine(outputDirectory, timestamp, title);
+            return Path.Combine(outputDirectory, timestamp, title);
         }
+
         private string GetTitle(string file)
         {
             // TODO: detect mode from site config

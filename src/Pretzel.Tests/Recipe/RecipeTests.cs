@@ -12,8 +12,8 @@ namespace Pretzel.Tests.Recipe
     {
         const string BaseSite = @"c:\site\";
         MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-        StringBuilder sb = new StringBuilder();
-        TextWriter writer;
+		readonly StringBuilder sb = new StringBuilder();
+		readonly TextWriter writer;
 
         public RecipeTests()
         {
