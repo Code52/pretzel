@@ -155,7 +155,6 @@ namespace Pretzel.Logic.Templating.Context
             return file.Replace(context.SourceFolder, "").TrimStart('\\');
         }
 
-
         private string GetPathWithTimestamp(string outputDirectory, string file)
         {
             // TODO: detect mode from site config
@@ -164,8 +163,9 @@ namespace Pretzel.Logic.Templating.Context
             var tokens = fileName.Split('-');
             var timestamp = string.Join("\\", tokens.Take(3)).Trim('\\');
             var title = string.Join("-", tokens.Skip(3));
-            return System.IO.Path.Combine(outputDirectory, timestamp, title);
+            return Path.Combine(outputDirectory, timestamp, title);
         }
+
         private string GetTitle(string file)
         {
             // TODO: detect mode from site config

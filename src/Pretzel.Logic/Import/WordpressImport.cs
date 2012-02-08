@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.IO.Abstractions;
 using System.Xml.Linq;
 using Pretzel.Logic.Extensions;
 using System.IO;
-using System.Xml;
 
 namespace Pretzel.Logic.Import
 {
     public class WordpressImport
     {
-        private IFileSystem fileSystem;
-        private string pathToSite;
-        private string pathToImportFile;
+		private readonly IFileSystem fileSystem;
+		private readonly string pathToSite;
+		private readonly string pathToImportFile;
 
         public WordpressImport(IFileSystem fileSystem, string pathToSite, string pathToImportFile)
         {
