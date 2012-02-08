@@ -18,10 +18,12 @@ namespace Pretzel.Logic.Templating.Context
     {
         private static readonly Markdown Markdown = new Markdown();
 
-        [Import]
+#pragma warning disable 0649
+		[Import]
         IFileSystem fileSystem;
+#pragma warning restore 0649
 
-        public SiteContext BuildContext(string path)
+		public SiteContext BuildContext(string path)
         {
             var config = new Dictionary<string, object>();
             if (File.Exists(Path.Combine(path, "_config.yml")))

@@ -19,10 +19,13 @@ namespace Pretzel.Logic.Templating.Jekyll
 
         [Import] 
         public IFileSystem FileSystem { get; set; }
-        [Import] 
-        FileTransforms transforms;
 
-        public void Process(SiteContext siteContext)
+#pragma warning disable 0649
+		[Import] 
+        FileTransforms transforms;
+#pragma warning restore 0649
+		
+		public void Process(SiteContext siteContext)
         {
             context = siteContext;
             contextDrop = new SiteContextDrop(context);

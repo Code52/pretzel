@@ -12,9 +12,12 @@ namespace Pretzel.Logic.Minification
 {
     [Export]
     public class FileTransforms : IPartImportsSatisfiedNotification
-    {
-        [Import] IFileSystem fileSystem;
-        CssMinifier minifier;
+	{
+#pragma warning disable 0649
+		[Import] IFileSystem fileSystem;
+#pragma warning restore 0649
+
+		CssMinifier minifier;
         string filePath;
 
         public bool CanProcess(string extension)
