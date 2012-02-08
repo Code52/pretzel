@@ -44,7 +44,7 @@ namespace Pretzel.Commands
             var watcher = new SimpleFileSystemWatcher();
             watcher.OnChange(parameters.Path, WatcherOnChanged);
 
-            var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider());
+            var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider(),Convert.ToInt32(parameters.Port));
             w.Start();
 
             Tracing.Info(string.Format("Browse to http://localhost:{0}/ to test the site.", parameters.Port));
