@@ -31,7 +31,13 @@ namespace Pretzel
 
             var commandName = args[0];
             var commandArgs = args.Skip(1).ToArray();
-            Commands[commandName].Execute(commandArgs);
+            var command = Commands[commandName];
+            if (command == null)
+            {
+                Commands.WriteInvalidCommand(commandName);
+                return;
+            }
+            command.Execute(commandArgs);
             WaitForClose();
         }
 

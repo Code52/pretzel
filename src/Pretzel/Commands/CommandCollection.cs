@@ -43,5 +43,12 @@ namespace Pretzel.Commands
                 command.Value.WriteHelp(Console.Out);
             }
         }
+
+        public void WriteInvalidCommand(string commandName)
+        {
+            Console.Error.WriteLine("'{0}' is not a valid command", commandName);
+            Console.WriteLine();
+            WriteHelp();
+        }
     }
 }
