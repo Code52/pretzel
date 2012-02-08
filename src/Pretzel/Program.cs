@@ -64,7 +64,7 @@ namespace Pretzel
                 return;
             }
 
-            Commands[commandName].Execute(commandArgs.Skip(1));
+            Commands[commandName].Execute(commandArgs);
             WaitForClose();
         }
 
