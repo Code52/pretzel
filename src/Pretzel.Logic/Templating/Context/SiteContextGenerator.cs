@@ -43,7 +43,7 @@ namespace Pretzel.Logic.Templating.Context
             {
                 foreach (var file in fileSystem.Directory.GetFiles(postsFolder, "*.*", SearchOption.AllDirectories))
                 {
-                    var contents = fileSystem.File.ReadAllText(file);
+                    var contents = SafeReadContents(file);
                     var header = contents.YamlHeader();
                     var post = new Page
                     {
@@ -79,21 +79,18 @@ namespace Pretzel.Logic.Templating.Context
                 if (relativePath.StartsWith("."))
                     continue;
 
-                using (var reader = new StreamReader(file))
+                var postFirstLine = SafeReadLine(file);
+                if (postFirstLine == null || !postFirstLine.StartsWith("---"))
                 {
-                    var x = reader.ReadLine();
-                    if (x == null || !x.StartsWith("---"))
-                    {
-                        context.Pages.Add(new NonProcessedPage
-                                              {
-                                                  File = file, 
-                                                  Filepath = Path.Combine(context.OutputFolder, file)
-                                              });
-                        continue;
-                    }
+                    context.Pages.Add(new NonProcessedPage
+                                            {
+                                                File = file, 
+                                                Filepath = Path.Combine(context.OutputFolder, file)
+                                            });
+                    continue;
                 }
 
-                var contents = fileSystem.File.ReadAllText(file);
+                var contents = SafeReadContents(file);
                 var header = contents.YamlHeader();
                 var page = new Page
                 {
@@ -110,6 +107,61 @@ namespace Pretzel.Logic.Templating.Context
 
             return context;
         }
+
+        private string SafeReadLine(string file)
+        {
+            string postFirstLine;
+            try
+            {
+                using (var reader = fileSystem.File.OpenText(file))
+                {
+                    postFirstLine = reader.ReadLine();
+                }
+            }
+            catch (IOException)
+            {
+                var fileInfo = fileSystem.FileInfo.FromFileName(file);
+                var tempFile = Path.Combine(Path.GetTempPath(), fileInfo.Name);
+                try
+                {
+                    fileInfo.CopyTo(tempFile, true);
+                    using(var streamReader = fileSystem.File.OpenText(tempFile))
+                    {
+                        return streamReader.ReadLine();
+                    }
+                }
+                finally
+                {
+                    if (fileSystem.File.Exists(tempFile))
+                        fileSystem.File.Delete(tempFile);
+                }
+            }
+            return postFirstLine;
+        }
+
+        private string SafeReadContents(string file)
+        {
+            try
+            {
+                return fileSystem.File.ReadAllText(file);
+            }
+            catch (IOException)
+            {
+                var fileInfo = fileSystem.FileInfo.FromFileName(file);
+                var tempFile = Path.Combine(Path.GetTempPath(), fileInfo.Name);
+                try
+                {
+                    fileInfo.CopyTo(tempFile, true);
+                    return fileSystem.File.ReadAllText(tempFile);
+                }
+                finally
+                {
+                    if (fileSystem.File.Exists(tempFile))
+                        fileSystem.File.Delete(tempFile);                    
+                }
+            }
+        }
+
         //https://github.com/mojombo/jekyll/wiki/permalinks
         private string EvaluatePermalink(string permalink, Page page)
         {
