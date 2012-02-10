@@ -38,37 +38,7 @@ namespace Pretzel.Logic.Templating.Context
                 Pages = new List<Page>(),
             };
 
-            var postsFolder = Path.Combine(context.SourceFolder, "_posts");
-            if (fileSystem.Directory.Exists(postsFolder))
-            {
-                foreach (var file in fileSystem.Directory.GetFiles(postsFolder, "*.*", SearchOption.AllDirectories))
-                {
-                    var contents = SafeReadContents(file);
-                    var header = contents.YamlHeader();
-                    var post = new Page
-                    {
-                        Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post", // should this be the Site title?
-                        Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
-                        Content = Markdown.Transform(contents.ExcludeHeader()),
-                        Filepath = GetPathWithTimestamp(context.OutputFolder, file),
-                        File = file,
-                        Bag = header,
-                    };
-
-                    if (header.ContainsKey("permalink"))
-                        post.Url = EvaluatePermalink(header["permalink"].ToString(), post);
-                    else if (config.ContainsKey("permalink"))
-                        post.Url = EvaluatePermalink(config["permalink"].ToString(), post);
-
-                    if (string.IsNullOrEmpty(post.Url))
-                    {
-                        Tracing.Info("whaaa");
-                    }
-                    context.Posts.Add(post);
-                }
-
-                context.Posts = context.Posts.OrderByDescending(p => p.Date).ToList();
-            }
+            BuildPosts(config, context);
 
             foreach (var file in fileSystem.Directory.GetFiles(context.SourceFolder, "*.*", SearchOption.AllDirectories))
             {
@@ -106,6 +76,45 @@ namespace Pretzel.Logic.Templating.Context
             }
 
             return context;
+        }
+
+        private void BuildPosts(Dictionary<string, object> config, SiteContext context)
+        {
+            var postsFolder = Path.Combine(context.SourceFolder, "_posts");
+            if (fileSystem.Directory.Exists(postsFolder))
+            {
+                foreach (var file in fileSystem.Directory.GetFiles(postsFolder, "*.*", SearchOption.AllDirectories))
+                {
+                    var contents = SafeReadContents(file);
+                    var header = contents.YamlHeader();
+                    var post = new Page
+                                   {
+                                       Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
+                                       // should this be the Site title?
+                                       Date =
+                                           header.ContainsKey("date")
+                                               ? DateTime.Parse(header["date"].ToString())
+                                               : file.Datestamp(),
+                                       Content = Markdown.Transform(contents.ExcludeHeader()),
+                                       Filepath = GetPathWithTimestamp(context.OutputFolder, file),
+                                       File = file,
+                                       Bag = header,
+                                   };
+
+                    if (header.ContainsKey("permalink"))
+                        post.Url = EvaluatePermalink(header["permalink"].ToString(), post);
+                    else if (config.ContainsKey("permalink"))
+                        post.Url = EvaluatePermalink(config["permalink"].ToString(), post);
+
+                    if (string.IsNullOrEmpty(post.Url))
+                    {
+                        Tracing.Info("whaaa");
+                    }
+                    context.Posts.Add(post);
+                }
+
+                context.Posts = context.Posts.OrderByDescending(p => p.Date).ToList();
+            }
         }
 
         private string SafeReadLine(string file)
