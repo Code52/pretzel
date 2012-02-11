@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Pretzel.Logic.Extensions
 {
     public static class StringExtensions
     {
         /// From http://robobunny.com/wp/2011/09/24/c-mime-types/
-        private static Dictionary<String, String> types = new Dictionary<String, String>()
-		{
+        private static readonly Dictionary<String, String> types = new Dictionary<String, String>
+                                                                   	{
 			{      "ez", "application/andrew-inset" },
 			{      "anx", "application/annodex" },
 			{     "atom", "application/atom+xml" },
@@ -501,8 +500,8 @@ namespace Pretzel.Logic.Extensions
 			{      "vrm", "x-world/x-vrml" }
 		};
 
-        private static List<string> binaryTypes = new List<string>()
-        {
+		private static readonly List<string> binaryTypes = new List<string>
+		                                                   	{
             "image",
             "video",
             "application",
@@ -537,7 +536,7 @@ namespace Pretzel.Logic.Extensions
 
         public static bool IsBinaryMime(this string mime)
         {
-            if (binaryTypes.Any(m => mime.StartsWith(m)))
+            if (binaryTypes.Any(mime.StartsWith))
             {
                 return true;
             }

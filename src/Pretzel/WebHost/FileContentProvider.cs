@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 
 namespace Pretzel
@@ -16,7 +13,7 @@ namespace Pretzel
         /// <param name="path">Base path</param>
         public void SetBasePath(string path)
         {
-            this.basePath = string.IsNullOrWhiteSpace(path) ? Directory.GetCurrentDirectory() : Path.GetFullPath(path);
+            basePath = string.IsNullOrWhiteSpace(path) ? Directory.GetCurrentDirectory() : Path.GetFullPath(path);
         }
 
         /// <summary>
@@ -49,7 +46,7 @@ namespace Pretzel
             }
 
             string fileContents;
-            using (StreamReader reader = new StreamReader(GetRequestedPage(request)))
+            using (var reader = new StreamReader(GetRequestedPage(request)))
             {
                 fileContents = reader.ReadToEnd();
             }
@@ -72,25 +69,23 @@ namespace Pretzel
             }
 
             byte[] fileContents;
-            using (BinaryReader reader = new BinaryReader(File.Open(fileName, FileMode.Open)))
+            using (var reader = new BinaryReader(File.Open(fileName, FileMode.Open)))
             {
-                FileInfo fileInfo = new FileInfo(fileName);
+                var fileInfo = new FileInfo(fileName);
                 fileContents = reader.ReadBytes((int)fileInfo.Length);
             }
 
             return fileContents;
         }
 
-        /// <summary>
-        /// Get the path for the page to send to the user
-        /// </summary>
-        /// <param name="env">env-dictionary as sent from the server-callback</param>
-        /// <returns>Path to file</returns>
-        private string GetRequestedPage(string request)
+    	/// <summary>
+    	/// Get the path for the page to send to the user
+    	/// </summary>
+    	/// <param name="request"> </param>
+    	/// <returns>Path to file</returns>
+    	private string GetRequestedPage(string request)
         {
-            string requestString;
-
-            requestString = basePath + request;
+			string requestString = basePath + request;
 
             if (requestString.EndsWith("/", StringComparison.Ordinal))
             {

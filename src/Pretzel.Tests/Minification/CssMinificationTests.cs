@@ -69,7 +69,7 @@ namespace Pretzel.Tests.Minification
                 { filepath, new MockFileData("a { color: Red; }") }
             });
 
-            var files = new List<FileInfo>() { new FileInfo(filepath) };
+            var files = new List<FileInfo> { new FileInfo(filepath) };
 
             var factory = new TestContainerFactory();
             var engine = factory.GetEngine(fileSystem, @"c:\css");
@@ -130,7 +130,7 @@ namespace Pretzel.Tests.Minification
                 { filepath, new MockFileData(lessContent) }
             });
 
-            var files = new List<FileInfo>() { new FileInfo(filepath) };
+            var files = new List<FileInfo> { new FileInfo(filepath) };
 
             var factory = new TestContainerFactory();
             var engine = factory.GetEngine(fileSystem, @"c:\css");

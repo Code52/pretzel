@@ -17,7 +17,6 @@ namespace Pretzel.Logic.Templating.Context
     public class SiteContextGenerator
     {
         private static readonly Markdown Markdown = new Markdown();
-
 #pragma warning disable 0649
         [Import] IFileSystem fileSystem;
 #pragma warning restore 0649
@@ -215,7 +214,7 @@ namespace Pretzel.Logic.Templating.Context
             var tokens = fileName.Split('-');
             var timestamp = string.Join("\\", tokens.Take(3)).Trim('\\');
             var title = string.Join("-", tokens.Skip(3));
-            return System.IO.Path.Combine(outputDirectory, timestamp, title);
+            return Path.Combine(outputDirectory, timestamp, title);
         }
         private string GetTitle(string file)
         {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO.Abstractions.TestingHelpers;
 using System.IO;
@@ -24,7 +23,7 @@ namespace Pretzel.Tests.Minification
                 { filepath, new MockFileData(script) }
             });
 
-            var files = new List<FileInfo>() { new FileInfo(filepath) };
+            var files = new List<FileInfo> { new FileInfo(filepath) };
 
             var minifier = new JsMinifier(fileSystem, files, _outputPath);
             minifier.Minify();
@@ -51,7 +50,7 @@ document.write('<p>This is another paragraph.</p>');";
                 { filepath2, new MockFileData(script2) }
             });
 
-            var files = new List<FileInfo>() { new FileInfo(filepath1), new FileInfo(filepath2) };
+            var files = new List<FileInfo> { new FileInfo(filepath1), new FileInfo(filepath2) };
 
             var minifier = new JsMinifier(fileSystem, files, _outputPath);
             minifier.Minify();
