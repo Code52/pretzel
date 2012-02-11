@@ -18,8 +18,9 @@ namespace Pretzel.Logic.Templating.Context
     {
         private static readonly Markdown Markdown = new Markdown();
 
-        [Import]
-        IFileSystem fileSystem;
+#pragma warning disable 0649
+        [Import] IFileSystem fileSystem;
+#pragma warning restore 0649
 
         public SiteContext BuildContext(string path)
         {
@@ -88,18 +89,18 @@ namespace Pretzel.Logic.Templating.Context
                     var contents = SafeReadContents(file);
                     var header = contents.YamlHeader();
                     var post = new Page
-                                   {
-                                       Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
-                                       // should this be the Site title?
-                                       Date =
-                                           header.ContainsKey("date")
-                                               ? DateTime.Parse(header["date"].ToString())
-                                               : file.Datestamp(),
-                                       Content = Markdown.Transform(contents.ExcludeHeader()),
-                                       Filepath = GetPathWithTimestamp(context.OutputFolder, file),
-                                       File = file,
-                                       Bag = header,
-                                   };
+                    {
+                        Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
+                        // NOTE: should this be the Site title?
+                        Date =
+                            header.ContainsKey("date")
+                                ? DateTime.Parse(header["date"].ToString())
+                                : file.Datestamp(),
+                        Content = Markdown.Transform(contents.ExcludeHeader()),
+                        Filepath = GetPathWithTimestamp(context.OutputFolder, file),
+                        File = file,
+                        Bag = header,
+                    };
 
                     if (header.ContainsKey("permalink"))
                         post.Url = EvaluatePermalink(header["permalink"].ToString(), post);
@@ -171,7 +172,7 @@ namespace Pretzel.Logic.Templating.Context
             }
         }
 
-        //https://github.com/mojombo/jekyll/wiki/permalinks
+        // https://github.com/mojombo/jekyll/wiki/permalinks
         private string EvaluatePermalink(string permalink, Page page)
         {
             permalink = permalink.Replace(":year", page.Date.Year.ToString(CultureInfo.InvariantCulture));
@@ -182,16 +183,7 @@ namespace Pretzel.Logic.Templating.Context
             return permalink;
         }
 
-        private string SanitizeTitle(string title)
-        {
-            title = title.Replace(" ", "_");
-            title = title.Replace(":", "");
-            title = RemoveDiacritics(title);
-
-            return title;
-        }
-
-        //http://stackoverflow.com/questions/6716832/sanitizing-string-to-url-safe-format
+        // http://stackoverflow.com/questions/6716832/sanitizing-string-to-url-safe-format
         public static string RemoveDiacritics(string strThis)
         {
             if (strThis == null)

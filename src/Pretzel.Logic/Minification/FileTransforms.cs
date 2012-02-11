@@ -13,7 +13,9 @@ namespace Pretzel.Logic.Minification
     [Export]
     public class FileTransforms : IPartImportsSatisfiedNotification
     {
+#pragma warning disable 0649
         [Import] IFileSystem fileSystem;
+#pragma warning restore 0649
         CssMinifier minifier;
         string filePath;
 

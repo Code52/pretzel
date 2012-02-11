@@ -14,13 +14,13 @@ namespace Pretzel.Logic.Templating.Jekyll
     [SiteEngineInfo(Engine = "jekyll")]
     public class JekyllEngine : ISiteEngine
     {
-        private SiteContext context;
-        private SiteContextDrop contextDrop;
+        SiteContext context;
+        SiteContextDrop contextDrop;
 
-        [Import] 
-        public IFileSystem FileSystem { get; set; }
-        [Import] 
-        FileTransforms transforms;
+#pragma warning disable 0649
+        [Import] public IFileSystem FileSystem { get; set; }
+        [Import] FileTransforms transforms;
+#pragma warning restore 0649
 
         public void Process(SiteContext siteContext)
         {
