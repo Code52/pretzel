@@ -5,6 +5,8 @@ namespace Pretzel.Logic.Templating.Context
 {
     public class SiteContext
     {
+        public IDictionary<string, object> Config;
+
         public SiteContext()
         {
             Tags = new List<Tag>();

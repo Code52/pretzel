@@ -121,10 +121,10 @@ namespace Pretzel.Logic.Templating.Jekyll
             {
                 y.Add("title", context.Title);
             }
-            
+
             var x = Hash.FromAnonymousObject(new
             {
-                site = contextDrop,
+                site = contextDrop.ToHash(),
                 page = y,
                 content = pageContext.Content
             });

@@ -36,6 +36,7 @@ namespace Pretzel.Logic.Templating.Context
                 OutputFolder = Path.Combine(path, "_site"),
                 Posts = new List<Page>(),
                 Pages = new List<Page>(),
+                Config = config,
             };
 
             BuildPosts(config, context);

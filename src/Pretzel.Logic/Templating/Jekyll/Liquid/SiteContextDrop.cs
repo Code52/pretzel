@@ -36,5 +36,17 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
             p.Add("Content", page.Content);
             return p;
         }
+
+        public Hash ToHash()
+        {
+            var x = Hash.FromDictionary(context.Config);
+            x.Add("posts", Posts);
+            x.Add("pages", context.Pages);
+            x.Add("title", context.Title);
+            x.Add("tags", context.Tags);
+            x.Add("time", context.Time);
+
+            return x;
+        }
     }
 }
