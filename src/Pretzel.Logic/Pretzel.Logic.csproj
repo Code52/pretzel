@@ -42,6 +42,9 @@
     <Reference Include="DotLiquid, Version=1.6.1.0, Culture=neutral, PublicKeyToken=82e46016ecf9f07c, processorArchitecture=MSIL">
       <HintPath>..\packages\DotLiquid.1.6.1.0\lib\NET40\DotLiquid.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.3\lib\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="MarkdownDeep">
       <HintPath>..\packages\MarkdownDeep.NET.1.4\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
     </Reference>
@@ -81,9 +84,9 @@
     <Compile Include="Extensions\Tracing.cs" />
     <Compile Include="Extensions\YamlExtensions.cs" />
     <Compile Include="Import\WordpressImport.cs" />
-    <Compile Include="Minification\CssMinifier.cs" />
     <Compile Include="Minification\FileSystemExtensions.cs" />
-    <Compile Include="Minification\FileTransforms.cs" />
+    <Compile Include="Minification\LessTransform.cs" />
+    <Compile Include="Minification\ITransform.cs" />
     <Compile Include="Minification\JsMinifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Liquid.Designer.cs">
