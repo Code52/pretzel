@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Minification;
 using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Commands
@@ -17,6 +18,7 @@ namespace Pretzel.Commands
         [Import] TemplateEngineCollection templateEngines;
         [Import] SiteContextGenerator Generator { get; set; }
         [Import] CommandParameters parameters;
+        [ImportMany] private IEnumerable<ITransform> transforms;
 #pragma warning restore 649
 
         public void Execute(IEnumerable<string> arguments)
@@ -36,9 +38,10 @@ namespace Pretzel.Commands
                 var watch = new Stopwatch();
                 watch.Start();
                 engine.Initialize();
-
                 var c = Generator.BuildContext(parameters.Path);
                 engine.Process(c);
+                foreach (var t in transforms)
+                    t.Transform(c);
                 watch.Stop();
                 Tracing.Info(string.Format("done - took {0}ms", watch.ElapsedMilliseconds));
             }
