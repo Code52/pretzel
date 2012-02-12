@@ -129,6 +129,10 @@ namespace Pretzel.Logic.Templating.Jekyll
                 content = pageContext.Content
             });
 
+            if (context.Config.ContainsKey("paginate") && pageContext.OutputPath.EndsWith("index.html"))
+            {
+                x.Add("paginator", new Paginator(context));
+            }
             return x;
         }
 
