@@ -16,16 +16,23 @@ namespace Pretzel.Logic.Minification
     public class LessTransform : ITransform
     {
         #pragma warning disable 0649
-        [Import] IFileSystem fileSystem;
+        private readonly IFileSystem fileSystem;
         #pragma warning restore 0649
+
+        [ImportingConstructor]
+        public LessTransform(IFileSystem fileSystem)
+        {
+            this.fileSystem = fileSystem;
+        }
 
         private string filePath = string.Empty;
 
         private ILessEngine GetEngine()
         {
-            var importer = new Importer(new FileReader(new CustomPathResolver(filePath)));
+            var importer = new Importer(new CustomFileReader(fileSystem, filePath));
             var parser = new Parser(new PlainStylizer(), importer);
             var engine = new LessEngine(parser);
+            engine.Compress = true;
             return engine;
         }
 
@@ -38,7 +45,8 @@ namespace Pretzel.Logic.Minification
             foreach (var file in siteContext.Pages.Where(p => p.OutputFile.EndsWith(".html")))
             {
                 var doc = new HtmlDocument();
-                doc.Load(file.OutputFile);
+                var fileContents = fileSystem.File.ReadAllText(file.OutputFile);
+                doc.LoadHtml(fileContents);
 
                 var nodes = doc.DocumentNode.SelectNodes("/html/head/link[@rel='stylesheet']");
                 if (nodes != null)
@@ -77,19 +85,37 @@ namespace Pretzel.Logic.Minification
             return engine.TransformToCss(content, file);
         }
 
-        class CustomPathResolver : IPathResolver
+        class CustomFileReader : IFileReader
         {
-            readonly string filePath;
+            private readonly IFileSystem fileSystem;
+            private readonly string currentDirectory;
 
-            public CustomPathResolver(string filePath)
+            public CustomFileReader(IFileSystem fileSystem, string currentDirectory )
             {
-                this.filePath = filePath;
+                this.fileSystem = fileSystem;
+                this.currentDirectory = Path.GetDirectoryName(currentDirectory);
             }
 
-            public string GetFullPath(string path)
+            public string GetFileContents(string fileName)
             {
-                var currentDirectory = Path.GetDirectoryName(filePath);
-                return Path.Combine(currentDirectory, path);
+                return fileSystem.File.ReadAllText(MapToFullPath(fileName));
+            }
+
+            public bool DoesFileExist(string fileName)
+            {
+                return fileSystem.File.Exists(MapToFullPath(fileName));
+            }
+
+            private string MapToFullPath(string fileName)
+            {
+                var fullPath = fileName;
+
+                if (!Path.IsPathRooted(fileName))
+                {
+                    fullPath = Path.Combine(currentDirectory, fileName);
+                }
+
+                return fullPath;
             }
         }
     }
