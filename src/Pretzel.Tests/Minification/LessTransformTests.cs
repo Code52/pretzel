@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Pretzel.Tests.Minification
 {
-    public class CssMinificationTests
+    public class LessTransformTests
     {
         private const string HtmlFilePath = @"c:\index.html";
         private const string PageContent = @"<html><head><link rel='stylesheet' href='css\style.css' /></head><body></body></html>";
