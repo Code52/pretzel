@@ -19,6 +19,12 @@ namespace Pretzel.Logic.Templating.Jekyll
         [Import] public IFileSystem FileSystem { get; set; }
 #pragma warning restore 0649
 
+        public JekyllEngine()
+        {
+            DotLiquid.Liquid.UseRubyDateFormat = true;
+
+        }
+
         public void Process(SiteContext siteContext)
         {
             context = siteContext;

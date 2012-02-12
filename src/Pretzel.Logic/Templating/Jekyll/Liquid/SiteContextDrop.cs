@@ -13,7 +13,10 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
         private IList<Hash> posts;
         public DateTime Time
         {
-            get { return context.Time; }
+            get
+            {
+                return context.Time;
+            }
         }
 
         public IList<Hash> Posts
@@ -38,7 +41,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
             x.Add("pages", context.Pages);
             x.Add("title", context.Title);
             x.Add("tags", context.Tags);
-            x.Add("time", context.Time);
+            x.Add("time", Time);
 
             return x;
         }
