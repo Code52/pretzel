@@ -55,7 +55,7 @@
   <ItemGroup>
     <Compile Include="CommandParameterTests.cs" />
     <Compile Include="Import\WordpressImportTests.cs" />
-    <Compile Include="Minification\CssMinificationTests.cs" />
+    <Compile Include="Minification\LessTransformTests.cs" />
     <Compile Include="Minification\JsMinificationTests.cs" />
     <Compile Include="Minification\TestContainerFactory.cs" />
     <Compile Include="Minification\TestFileReader.cs" />
