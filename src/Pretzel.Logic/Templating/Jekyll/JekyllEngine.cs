@@ -4,7 +4,6 @@ using System.IO;
 using System.IO.Abstractions;
 using DotLiquid;
 using Pretzel.Logic.Extensions;
-using Pretzel.Logic.Minification;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Jekyll.Liquid;
 
@@ -18,7 +17,6 @@ namespace Pretzel.Logic.Templating.Jekyll
         SiteContextDrop contextDrop;
 #pragma warning disable 0649
         [Import] public IFileSystem FileSystem { get; set; }
-        [Import] FileTransforms transforms;
 #pragma warning restore 0649
 
         public void Process(SiteContext siteContext)
@@ -49,37 +47,30 @@ namespace Pretzel.Logic.Templating.Jekyll
             if (string.IsNullOrWhiteSpace(relativePath))
                 relativePath = MapToOutputPath(page.File);
 
-            var outputFile = Path.Combine(outputDirectory, relativePath);
+            page.OutputFile = Path.Combine(outputDirectory, relativePath);
 
-            var directory = Path.GetDirectoryName(outputFile);
+            var directory = Path.GetDirectoryName(page.OutputFile);
             if (!FileSystem.Directory.Exists(directory))
                 FileSystem.Directory.CreateDirectory(directory);
 
             var extension = Path.GetExtension(page.File);
-            if (transforms.CanProcess(extension))
-            {
-                var contents = transforms.Process(page.File);
-                outputFile = transforms.MapFile(page.File);
-                FileSystem.File.WriteAllText(outputFile, contents);
-                return;
-            }
-            
+
             if (extension.IsImageFormat())
             {
-                FileSystem.File.Copy(page.File, outputFile, true);
+                FileSystem.File.Copy(page.File, page.OutputFile, true);
                 return;
             }
 
             if (page is NonProcessedPage)
             {
-                FileSystem.File.Copy(page.File, outputFile, true);
+                FileSystem.File.Copy(page.File, page.OutputFile, true);
                 return;
             }
 
             if (extension.IsMarkdownFile())
-                outputFile = outputFile.Replace(extension, ".html");
+                page.OutputFile = page.OutputFile.Replace(extension, ".html");
 
-            var pageContext = PageContext.FromPage(page, outputDirectory, outputFile);
+            var pageContext = PageContext.FromPage(page, outputDirectory, page.OutputFile);
             var metadata = page.Bag;
             while (metadata.ContainsKey("layout"))
             {
