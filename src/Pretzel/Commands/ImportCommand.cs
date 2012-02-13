@@ -27,7 +27,6 @@ namespace Pretzel.Commands
 
             parameters.Parse(arguments);
 
-            
             if (!Importers.Any(e => String.Equals(e, parameters.ImportType, StringComparison.InvariantCultureIgnoreCase)))
             {
                 Tracing.Info(String.Format("Requested import type not found: {0}", parameters.ImportType));
@@ -45,7 +44,7 @@ namespace Pretzel.Commands
 
         public void WriteHelp(TextWriter writer)
         {
-            parameters.WriteOptions(writer);  // TODO: output relevant messages (not all of them)
+            parameters.WriteOptions(writer, "-i", "-f");
         }
     }
 }
