@@ -190,7 +190,7 @@ namespace Pretzel.Logic.Templating.Context
             permalink = permalink.Replace(":year", page.Date.Year.ToString(CultureInfo.InvariantCulture));
             permalink = permalink.Replace(":month", page.Date.ToString("MM"));
             permalink = permalink.Replace(":day", page.Date.ToString("dd"));
-            permalink = permalink.Replace(":title", page.Title ?? GetTitle(page.File));
+            permalink = permalink.Replace(":title", GetTitle(page.File));
 
             return permalink;
         }
@@ -235,6 +235,10 @@ namespace Pretzel.Logic.Templating.Context
             var fileName = file.Substring(file.LastIndexOf("\\"));
 
             var tokens = fileName.Split('-');
+            if (tokens.Length < 3)
+            {
+                return fileName.Substring(1, fileName.LastIndexOf(".") - 1);
+            }
             var title = string.Join("-", tokens.Skip(3));
             title = title.Substring(0, title.LastIndexOf("."));
             return title;
