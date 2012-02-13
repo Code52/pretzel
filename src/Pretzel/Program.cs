@@ -34,20 +34,26 @@ namespace Pretzel
             if (debug)
                 Tracing.Logger.AddCategory("debug");
 
+            var program = new Program();
+            Tracing.Info("starting pretzel...");
+            program.Compose();
+
             if (help)
             {
-                // TODO: a more consistent help output
+                program.ShowHelp();
+                return;
             }
 
-            new Program().Run(args);
+            program.Run(args);
+        }
+
+        private void ShowHelp()
+        {
+            Commands.WriteHelp();
         }
 
         public void Run(string[] args)
         {
-            Tracing.Info("starting pretzel...");
-
-            Compose();
-
             if (!args.Any())
             {
                 Commands.WriteHelp();
