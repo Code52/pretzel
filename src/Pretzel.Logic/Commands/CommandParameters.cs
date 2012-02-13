@@ -82,9 +82,27 @@ namespace Pretzel.Logic.Commands
             }
         }
 
-        public void WriteOptions(TextWriter writer)
+        public void WriteOptions(TextWriter writer, params string[] args)
         {
-            Settings.WriteOptionDescriptions(writer);
+            if (args.Length == 0)
+                Settings.WriteOptionDescriptions(writer);
+            else
+                WriteSubset(writer, args);
+        }
+
+        private void WriteSubset(TextWriter writer, string[] args)
+        {
+            var textWriter = new StringWriter();
+            Settings.WriteOptionDescriptions(textWriter);
+            var output = textWriter.ToString();
+
+            foreach (var line in output.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (args.Any(line.Contains))
+                {
+                    writer.WriteLine(line);
+                }
+            }
         }
     }
 }
