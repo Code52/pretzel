@@ -38,7 +38,7 @@ namespace Pretzel
             Tracing.Info("starting pretzel...");
             program.Compose();
 
-            if (help)
+            if (help || !args.Any())
             {
                 program.ShowHelp();
                 return;
@@ -54,12 +54,6 @@ namespace Pretzel
 
         public void Run(string[] args)
         {
-            if (!args.Any())
-            {
-                Commands.WriteHelp();
-                return;
-            }
-
             var commandName = args[0];
             var commandArgs = args.Skip(1).ToArray();
 
