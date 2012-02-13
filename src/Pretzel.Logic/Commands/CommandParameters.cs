@@ -48,7 +48,7 @@ namespace Pretzel.Logic.Commands
                            {
                                { "t|template=", "The templating engine to use", v => Template = v },
                                { "d|directory=", "The path to site directory", p => Path = p },
-                               { "p|port=", "The path to site directory", p => decimal.TryParse(p, out port) },
+                               { "p|port=", "The port to test the site locally", p => decimal.TryParse(p, out port) },
                                { "i|import=", "The import type", v => ImportType = v }, // TODO: necessary?
                                { "f|file=", "Path to import file", v => ImportPath = v },
                            };
