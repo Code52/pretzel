@@ -44,6 +44,14 @@ namespace Pretzel.Logic.Templating.Context
                 context.OutputPath = defaultOutputPath;
                 page.Bag.Add("permalink", page.File);
             }
+
+            if (context.OutputPath.EndsWith("\\"))
+            {
+                context.OutputPath = Path.Combine(context.OutputPath, "index.html");
+            }
+
+            page.OutputFile = context.OutputPath;
+
             if (page.Bag.ContainsKey("title"))
             {
                 context.Title = page.Bag["title"].ToString();

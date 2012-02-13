@@ -43,6 +43,13 @@ namespace Pretzel.Logic.Templating.Context
 
             BuildPosts(config, context);
 
+            BuildPages(config, context);
+
+            return context;
+        }
+
+        private void BuildPages(Dictionary<string, object> config, SiteContext context)
+        {
             foreach (var file in fileSystem.Directory.GetFiles(context.SourceFolder, "*.*", SearchOption.AllDirectories))
             {
                 var relativePath = MapToOutputPath(context, file);
@@ -56,10 +63,10 @@ namespace Pretzel.Logic.Templating.Context
                 if (postFirstLine == null || !postFirstLine.StartsWith("---"))
                 {
                     context.Pages.Add(new NonProcessedPage
-                                            {
-                                                File = file, 
-                                                Filepath = Path.Combine(context.OutputFolder, file)
-                                            });
+                    {
+                        File = file,
+                        Filepath = Path.Combine(context.OutputFolder, file)
+                    });
                     continue;
                 }
 
@@ -75,10 +82,13 @@ namespace Pretzel.Logic.Templating.Context
                     Bag = header,
                 };
 
+                if (header.ContainsKey("permalink"))
+                {
+                    page.Url = EvaluatePermalink(header["permalink"].ToString(), page);
+                }
+
                 context.Pages.Add(page);
             }
-
-            return context;
         }
 
         private void BuildPosts(Dictionary<string, object> config, SiteContext context)
@@ -180,7 +190,7 @@ namespace Pretzel.Logic.Templating.Context
             permalink = permalink.Replace(":year", page.Date.Year.ToString(CultureInfo.InvariantCulture));
             permalink = permalink.Replace(":month", page.Date.ToString("MM"));
             permalink = permalink.Replace(":day", page.Date.ToString("dd"));
-            permalink = permalink.Replace(":title", GetTitle(page.File));
+            permalink = permalink.Replace(":title", page.Title ?? GetTitle(page.File));
 
             return permalink;
         }

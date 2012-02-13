@@ -48,21 +48,19 @@ namespace Pretzel.Logic.Templating.Jekyll
                 relativePath = MapToOutputPath(page.File);
 
             page.OutputFile = Path.Combine(outputDirectory, relativePath);
-
-            var directory = Path.GetDirectoryName(page.OutputFile);
-            if (!FileSystem.Directory.Exists(directory))
-                FileSystem.Directory.CreateDirectory(directory);
-
+            
             var extension = Path.GetExtension(page.File);
 
             if (extension.IsImageFormat())
             {
+                CheckDirectory(page.OutputFile);
                 FileSystem.File.Copy(page.File, page.OutputFile, true);
                 return;
             }
 
             if (page is NonProcessedPage)
             {
+                CheckDirectory(page.OutputFile);
                 FileSystem.File.Copy(page.File, page.OutputFile, true);
                 return;
             }
@@ -87,7 +85,16 @@ namespace Pretzel.Logic.Templating.Jekyll
 
             pageContext.Content = RenderTemplate(pageContext.Content, CreatePageData(pageContext));
 
+            CheckDirectory(pageContext.OutputPath);
+
             FileSystem.File.WriteAllText(pageContext.OutputPath, pageContext.Content);
+        }
+
+        private void CheckDirectory(string outputPath)
+        {
+            var directory = Path.GetDirectoryName(outputPath);
+            if (!FileSystem.Directory.Exists(directory))
+                FileSystem.Directory.CreateDirectory(directory);
         }
 
         private string MapToOutputPath(string file)
