@@ -6,6 +6,7 @@ using System.IO.Abstractions;
 using System.Xml.Linq;
 using Pretzel.Logic.Extensions;
 using System.IO;
+using System.Xml;
 
 namespace Pretzel.Logic.Import
 {
@@ -43,7 +44,6 @@ namespace Pretzel.Logic.Import
             //       <author><name /></author>
             //    <entry>
 
-            // <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#comment'/><title type='text'>Hi Mark, I use your excellent  library on my open ...</title><content type='html'>Hi Mark, I use your excellent  library on my open source project ispy - &lt;br /&gt;&lt;br /&gt;https://sourceforge.net/projects/ispysoftware/&lt;br /&gt;&lt;br /&gt;any chance of adding a link to my website from your project page?&lt;br /&gt;&lt;br /&gt;http://www.ispyconnect.com&lt;br /&gt;&lt;br /&gt;Thanks and great work!&lt;br /&gt;&lt;br /&gt;I went to Southampton Uni at the same time as you by the way - studied Aero/Astro Eng.&lt;br /&gt;&lt;br /&gt;Sean</content>
             XNamespace atom = "http://www.w3.org/2005/Atom";
             var count = root.Descendants(atom + "entry").Count();
 
@@ -55,11 +55,11 @@ namespace Pretzel.Logic.Import
                             //PostName = e.Element(wp + "post_name").Value,
                             Published = Convert.ToDateTime(e.Element(atom + "published").Value),
                             Updated = Convert.ToDateTime(e.Element(atom + "updated").Value),
-                            Content = e.Element(atom + "content").Value,
+                            Content = ConvertToMarkdown(e.Element(atom + "content").Value),
                             /*Tags = from t in e.Elements(atom + "category")
                                    where t.Attribute("domain").Value == "post_tag"
                                    select t.Value,*/
-                            // blogger categories are more like
+                            // blogger categories are more like tags
                             Tags = from t in e.Elements(atom + "category")
                                          where t.Attribute("scheme").Value == "http://www.blogger.com/atom/ns#"
                                          select t.Value
@@ -69,6 +69,25 @@ namespace Pretzel.Logic.Import
             {
                 ImportPost(p);
             }
+        }
+
+        private string ConvertToMarkdown(string content)
+        {
+            string markdown = "";
+            try
+            {
+                markdown = XhtmlToMarkdownConverter.Convert("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\"><head><title>blah</title></head><body>" + content + "</body></html>");
+            }
+            catch (XmlException)
+            {
+                // don't worry about it - just means our content isn't valid xhtml
+            }
+            if (markdown.Length == 0)
+            {
+                // something went wrong, just return the content as is
+                return content;
+            }
+            return markdown;
         }
 
         private void ImportPost(BloggerPost p)
@@ -83,14 +102,13 @@ namespace Pretzel.Logic.Import
             };
 
             var yamlHeader = string.Format("---\r\n{0}---\r\n\r\n", header.ToYaml());
-            var postContent = yamlHeader + p.Content; //todo would be nice to convert to proper md
+            var postContent = yamlHeader + p.Content;
             var slug = p.Title.Replace(' ', '-');
             slug = p.Title.Replace("\"", "");
             var fileName = string.Format(@"_posts\{0}-{1}.md", p.Published.ToString("yyyy-MM-dd"), slug); //not sure about post name
 
             fileSystem.File.WriteAllText(Path.Combine(pathToSite, fileName), postContent);
         }
-
 
         protected class BloggerPost
         {
