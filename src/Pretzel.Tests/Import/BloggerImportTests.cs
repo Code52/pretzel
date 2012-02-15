@@ -29,7 +29,7 @@ namespace Pretzel.Tests.Import
             var bloggerImporter = new BloggerImport(fileSystem, BaseSite, ImportFile);
             bloggerImporter.Import();
 
-            string expectedPost = @"_posts\2012-01-27-Handling multi-channel audio in NAudio.md";
+            string expectedPost = @"_posts\2012-01-27-Handling-multi-channel-audio-in-NAudio.md";
             Assert.True(fileSystem.File.Exists(BaseSite + expectedPost));
 
             var postContent = fileSystem.File.ReadAllText(BaseSite + expectedPost);

@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using Pretzel.Logic.Extensions;
 using System.IO;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace Pretzel.Logic.Import
 {
@@ -62,7 +63,7 @@ namespace Pretzel.Logic.Import
                             // blogger categories are more like tags
                             Tags = from t in e.Elements(atom + "category")
                                          where t.Attribute("scheme").Value == "http://www.blogger.com/atom/ns#"
-                                         select t.Value
+                                         select t.Attribute("term").Value
                         };
 
             foreach (var p in posts)
@@ -84,30 +85,45 @@ namespace Pretzel.Logic.Import
             }
             if (markdown.Length == 0)
             {
-                // something went wrong, just return the content as is
-                return content;
+                // something went wrong, use the other converter
+                var converter = new HtmlToMarkdownConverter();
+                return converter.Convert(content);
             }
             return markdown;
         }
 
-        private void ImportPost(BloggerPost p)
+        private void ImportPost(BloggerPost post)
         {
             var header = new
             {
-                title = p.Title,
-                date = p.Published,
+                title = post.Title,
+                date = post.Published,
                 layout = "post",
-                categories = p.Categories,
-                tags = p.Tags
+                categories = post.Categories,
+                tags = post.Tags
             };
 
             var yamlHeader = string.Format("---\r\n{0}---\r\n\r\n", header.ToYaml());
-            var postContent = yamlHeader + p.Content;
-            var slug = p.Title.Replace(' ', '-');
-            slug = p.Title.Replace("\"", "");
-            var fileName = string.Format(@"_posts\{0}-{1}.md", p.Published.ToString("yyyy-MM-dd"), slug); //not sure about post name
+            var postContent = yamlHeader + post.Content;
 
-            fileSystem.File.WriteAllText(Path.Combine(pathToSite, fileName), postContent);
+            string fileName = string.Format(@"{0}-{1}.md", post.Published.ToString("yyyy-MM-dd"), post.Title); //not sure about post name
+            foreach (char c in System.IO.Path.GetInvalidFileNameChars())
+            {
+                fileName = fileName.Replace(c, '_');
+            }
+            // replace some valid ones too
+            fileName = fileName.Replace(' ', '-'); 
+            fileName = fileName.Replace('\u00A0', '-');
+
+            try
+            {
+                fileSystem.File.WriteAllText(Path.Combine(pathToSite, Path.Combine("_posts", fileName)), postContent);
+            }
+            catch (Exception e)
+            {
+                Tracing.Info(String.Format("Failed to write out {0}", fileName));
+                Tracing.Debug(e.Message);
+            }
         }
 
         protected class BloggerPost
