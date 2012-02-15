@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using HtmlAgilityPack;
 using System.Text.RegularExpressions;
+using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Logic.Import
 {
@@ -27,8 +28,9 @@ namespace Pretzel.Logic.Import
             | RegexOptions.IgnorePatternWhitespace
             | RegexOptions.Compiled);
 
+        private int listNestingLevel;
 
-        private static void ProcessNodes(StringBuilder markdown, IEnumerable<HtmlNode> htmlNodes)
+        private void ProcessNodes(StringBuilder markdown, IEnumerable<HtmlNode> htmlNodes)
         {
             foreach (var htmlNode in htmlNodes)
             {
@@ -52,14 +54,22 @@ namespace Pretzel.Logic.Import
                         break;
                     case "ul":
                         markdown.AppendLine();
+                        listNestingLevel++;
                         ProcessNodes(markdown, htmlNode.ChildNodes);
+                        listNestingLevel--;
+                        if (listNestingLevel < 0) listNestingLevel = 0;
                         markdown.AppendLine();
                         break;
                     case "li":
                         // n.b. don't yet support nested lists:
                         markdown.AppendLine();
-                        markdown.Append("* ");
+                        if (listNestingLevel == 0) // missing ul
+                            listNestingLevel = 1;
+                        markdown.AppendFormat("{0}* ", new string(' ', 4 * (listNestingLevel - 1)));
+                        listNestingLevel++;
                         ProcessNodes(markdown, htmlNode.ChildNodes);
+                        listNestingLevel--;
+                        if (listNestingLevel < 0) listNestingLevel = 0;
                         break;
                     case "p":
                         markdown.AppendLine();
@@ -68,7 +78,14 @@ namespace Pretzel.Logic.Import
                         break;
                     case "b":
                     case "strong":
-                        markdown.AppendFormat("**{0}**", htmlNode.InnerText);
+                        var boldText = htmlNode.InnerText;
+                        bool addSpace = false;
+                        if (boldText.EndsWith(" "))
+                        {
+                            boldText = boldText.Substring(0, boldText.Length - 1);
+                            addSpace = true;
+                        }
+                        markdown.AppendFormat("**{0}**{1}", htmlNode.InnerText, addSpace ? " " : "");
                         break;
                     case "i":
                     case "em":
@@ -88,6 +105,9 @@ namespace Pretzel.Logic.Import
                     case "object":
                     case "table":
                     case "div":
+                    case "span":
+                    case "iframe":
+                    case "embed":
                         // leave html unchanged
                         markdown.Append(htmlNode.OuterHtml);
                         break;
@@ -104,7 +124,7 @@ namespace Pretzel.Logic.Import
                         break;
                     default:
                         ProcessNodes(markdown, htmlNode.ChildNodes);
-                        Console.WriteLine("{0}, {1} child nodes", htmlNode.Name, htmlNode.ChildNodes.Count);
+                        Tracing.Info(String.Format("{0}", htmlNode.OuterHtml));
                         break;
                 }
             }

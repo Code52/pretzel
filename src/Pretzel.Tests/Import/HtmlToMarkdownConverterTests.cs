@@ -61,6 +61,27 @@ namespace Pretzel.Tests.Import
         }
 
         [Fact]
+        public void Unordered_lists_are_converted()
+        {
+            string markdown = converter.Convert("<ul><li>first</li><li>second</li></ul>");
+            Assert.Equal(Environment.NewLine  + Environment.NewLine + "* first" + Environment.NewLine + "* second" + Environment.NewLine, markdown);
+        }
+        
+        [Fact]
+        public void Unordered_lists_can_be_nested()
+        {
+            string markdown = converter.Convert("<ul><li>first</li><li>second</li><ul><li>second nested</li></ul></ul>");
+            Assert.Contains(Environment.NewLine + "    * second nested" + Environment.NewLine, markdown);
+        }
+
+        [Fact]
+        public void Unordered_lists_can_be_nested_inside_li()
+        {
+            string markdown = converter.Convert("<ul><li>first</li><li>second<li>second nested</li></li></ul>");
+            Assert.Contains(Environment.NewLine + "    * second nested" + Environment.NewLine, markdown);
+        }
+
+        [Fact]
         public void Code_blocks_with_new_lines_are_converted()
         {
             string markdown = converter.Convert("<pre>hello" + Environment.NewLine + "world</pre>");
