@@ -22,14 +22,14 @@ namespace Pretzel.Tests.Import
         public void H1_headings_are_converted()
         {
             string markdown = converter.Convert("<h1>hello world</h1>");
-            Assert.Equal("# hello world" + Environment.NewLine, markdown);
+            Assert.Equal(Environment.NewLine + "# hello world" + Environment.NewLine, markdown);
         }
         
         [Fact]
         public void H2_headings_are_converted()
         {
             string markdown = converter.Convert("<h2>heading 2</h2>");
-            Assert.Equal("## heading 2" + Environment.NewLine, markdown);
+            Assert.Equal(Environment.NewLine + "## heading 2" + Environment.NewLine, markdown);
         }
 
         [Fact]

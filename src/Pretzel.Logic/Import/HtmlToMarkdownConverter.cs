@@ -34,19 +34,20 @@ namespace Pretzel.Logic.Import
             {
                 switch (htmlNode.Name)
                 {
+                    case "#comment":
+                        break;
                     case "#text":
                         markdown.Append(htmlNode.InnerText);
                         break;
                     case "h1":
-                        markdown.AppendFormat("# {0}", htmlNode.InnerText);
-                        markdown.AppendLine();
-                        break;
                     case "h2":
-                        markdown.AppendFormat("## {0}", htmlNode.InnerText);
-                        markdown.AppendLine();
-                        break;
                     case "h3":
-                        markdown.AppendFormat("### {0}", htmlNode.InnerText);
+                    case "h4":
+                    case "h5":
+                    case "h6":
+                        string hashes = new string('#', htmlNode.Name[1] - '0');
+                        markdown.AppendLine();
+                        markdown.AppendFormat("{0} {1}", hashes, htmlNode.InnerText);
                         markdown.AppendLine();
                         break;
                     case "ul":
@@ -55,6 +56,7 @@ namespace Pretzel.Logic.Import
                         markdown.AppendLine();
                         break;
                     case "li":
+                        // n.b. don't yet support nested lists:
                         markdown.AppendLine();
                         markdown.Append("* ");
                         ProcessNodes(markdown, htmlNode.ChildNodes);
@@ -79,7 +81,14 @@ namespace Pretzel.Logic.Import
                         markdown.AppendFormat("[{0}]({1})", htmlNode.InnerText, htmlNode.Attributes["href"].Value);
                         break;
                     case "img":
-                        // leave unchanged
+                    case "blockquote":
+                        // leave html unchanged for now, maybe revisit later
+                        markdown.Append(htmlNode.OuterHtml);
+                        break;
+                    case "object":
+                    case "table":
+                    case "div":
+                        // leave html unchanged
                         markdown.Append(htmlNode.OuterHtml);
                         break;
                     case "pre":
