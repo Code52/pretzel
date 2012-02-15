@@ -27,9 +27,6 @@ namespace Pretzel.Logic.Import
                 xslTransform.Transform(xReader, null, sWriter);
                 return sWriter.ToString();
             }
-            // n.b. could also try this, if XSLT approach is not suitable
-            // http://htmlagilitypack.codeplex.com/
-
         }
 
         public static Stream GetEmbeddedResourceStream(string resourceName)
