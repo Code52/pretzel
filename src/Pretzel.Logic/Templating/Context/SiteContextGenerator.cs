@@ -88,36 +88,67 @@ namespace Pretzel.Logic.Templating.Context
             {
                 foreach (var file in fileSystem.Directory.GetFiles(postsFolder, "*.*", SearchOption.AllDirectories))
                 {
-                    var contents = SafeReadContents(file);
-                    var header = contents.YamlHeader();
-                    var post = new Page
-                    {
-                        Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
-                        // NOTE: should this be the Site title?
-                        Date =
-                            header.ContainsKey("date")
-                                ? DateTime.Parse(header["date"].ToString())
-                                : file.Datestamp(),
-                        Content = Markdown.Transform(contents.ExcludeHeader()),
-                        Filepath = GetPathWithTimestamp(context.OutputFolder, file),
-                        File = file,
-                        Bag = header,
-                    };
-
-                    if (header.ContainsKey("permalink"))
-                        post.Url = EvaluatePermalink(header["permalink"].ToString(), post);
-                    else if (config.ContainsKey("permalink"))
-                        post.Url = EvaluatePermalink(config["permalink"].ToString(), post);
-
-                    if (string.IsNullOrEmpty(post.Url))
-                    {
-                        Tracing.Info("whaaa");
-                    }
-                    context.Posts.Add(post);
+                    BuildPost(config, context, file);
                 }
 
                 context.Posts = context.Posts.OrderByDescending(p => p.Date).ToList();
             }
+        }
+
+        private void BuildPost(Dictionary<string, object> config, SiteContext context, string file)
+        {
+            try
+            {
+                var contents = SafeReadContents(file);
+                var header = contents.YamlHeader();
+                var post = new Page
+                {
+                    Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
+                    // NOTE: should this be the Site title?
+                    Date =
+                        header.ContainsKey("date")
+                            ? DateTime.Parse(header["date"].ToString())
+                            : file.Datestamp(),
+                    Content = GetContent(file, contents),
+                    Filepath = GetPathWithTimestamp(context.OutputFolder, file),
+                    File = file,
+                    Bag = header,
+                };
+
+                if (header.ContainsKey("permalink"))
+                    post.Url = EvaluatePermalink(header["permalink"].ToString(), post);
+                else if (config.ContainsKey("permalink"))
+                    post.Url = EvaluatePermalink(config["permalink"].ToString(), post);
+
+                if (string.IsNullOrEmpty(post.Url))
+                {
+                    Tracing.Info("whaaa");
+                }
+                context.Posts.Add(post);
+            }
+            catch (Exception e)
+            {
+                Tracing.Info(String.Format("Failed to build post from File: {0}", file));
+                Tracing.Info(e.Message);
+                Tracing.Debug(e.ToString());
+            }
+
+        }
+
+        private static string GetContent(string file, string contents)
+        {
+            string html;
+            try
+            {
+                html = Markdown.Transform(contents.ExcludeHeader());
+            }
+            catch (Exception e)
+            {
+                Tracing.Info(String.Format("Error ({0}) converting {1}", e.Message, file));
+                Tracing.Debug(e.ToString());
+                html = String.Format("<p><b>Error converting markdown</b></p><pre>{0}</pre>", contents);
+            }
+            return html;
         }
 
         private string SafeReadLine(string file)
