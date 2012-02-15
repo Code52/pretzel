@@ -56,6 +56,7 @@
     <Compile Include="CommandParameterOutputTests.cs" />
     <Compile Include="CommandParameterTests.cs" />
     <Compile Include="Import\BloggerImportTests.cs" />
+    <Compile Include="Import\XhtmlToMarkdownConverterTests.cs" />
     <Compile Include="Import\WordpressImportTests.cs" />
     <Compile Include="Minification\LessTransformTests.cs" />
     <Compile Include="Minification\JsMinificationTests.cs" />
