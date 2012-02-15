@@ -74,22 +74,8 @@ namespace Pretzel.Logic.Import
 
         private string ConvertToMarkdown(string content)
         {
-            string markdown = "";
-            try
-            {
-                markdown = XhtmlToMarkdownConverter.Convert("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\"><head><title>blah</title></head><body>" + content + "</body></html>");
-            }
-            catch (XmlException)
-            {
-                // don't worry about it - just means our content isn't valid xhtml
-            }
-            if (markdown.Length == 0)
-            {
-                // something went wrong, use the other converter
-                var converter = new HtmlToMarkdownConverter();
-                return converter.Convert(content);
-            }
-            return markdown;
+            var converter = new HtmlToMarkdownConverter();
+            return converter.Convert(content);
         }
 
         private void ImportPost(BloggerPost post)
