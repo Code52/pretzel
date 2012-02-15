@@ -59,7 +59,8 @@ namespace Pretzel.Logic.Import
                             /*Tags = from t in e.Elements(atom + "category")
                                    where t.Attribute("domain").Value == "post_tag"
                                    select t.Value,*/
-                            Categories = from t in e.Elements(atom + "category")
+                            // blogger categories are more like
+                            Tags = from t in e.Elements(atom + "category")
                                          where t.Attribute("scheme").Value == "http://www.blogger.com/atom/ns#"
                                          select t.Value
                         };
