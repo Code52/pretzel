@@ -85,7 +85,6 @@
     <Compile Include="Extensions\YamlExtensions.cs" />
     <Compile Include="Import\BloggerImport.cs" />
     <Compile Include="Import\HtmlToMarkdownConverter.cs" />
-    <Compile Include="Import\XhtmlToMarkdownConverter.cs" />
     <Compile Include="Import\WordpressImport.cs" />
     <Compile Include="Minification\FileSystemExtensions.cs" />
     <Compile Include="Minification\LessTransform.cs" />
@@ -186,7 +185,6 @@
     <None Include="Resources\Razor\Layout.cshtml" />
     <None Include="Resources\Razor\Post.cshtml" />
     <None Include="Resources\Razor\Rss.cshtml" />
-    <EmbeddedResource Include="Import\markdown.xsl" />
     <Content Include="Resources\Style.css" />
   </ItemGroup>
   <ItemGroup>
