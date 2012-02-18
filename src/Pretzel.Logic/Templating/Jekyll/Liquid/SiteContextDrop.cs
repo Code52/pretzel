@@ -36,12 +36,15 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
 
         public Hash ToHash()
         {
+            if (!context.Config.ContainsKey("date"))
+                context.Config.Add("date", "2012-01-01");
             var x = Hash.FromDictionary(context.Config);
             x.Add("posts", Posts);
             x.Add("pages", context.Pages);
             x.Add("title", context.Title);
             x.Add("tags", context.Tags);
-            x.Add("time", Time);
+            //x.Add("time", Time);
+            x.Add("ftime", context.Posts.First().Date);
 
             return x;
         }

@@ -68,7 +68,7 @@ namespace Pretzel.Logic.Templating.Context
                 {
                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post", // should this be the Site title?
                     Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : DateTime.Now,
-                    Content = Markdown.Transform(contents.ExcludeHeader()),
+                    Content = contents.ExcludeHeader(), 
                     Filepath = GetPathWithTimestamp(context.OutputFolder, file),
                     File = file,
                     Bag = header,
