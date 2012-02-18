@@ -53,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandParameterOutputTests.cs" />
     <Compile Include="CommandParameterTests.cs" />
     <Compile Include="Import\WordpressImportTests.cs" />
     <Compile Include="Minification\LessTransformTests.cs" />
@@ -80,7 +81,9 @@
       <Name>Pretzel.Logic</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Commands\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
