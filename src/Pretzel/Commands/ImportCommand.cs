@@ -14,7 +14,7 @@ namespace Pretzel.Commands
     [CommandInfo(CommandName = "import")]
     class ImportCommand : ICommand
     {
-        readonly static List<string> Importers = new List<string>(new[] { "wordpress" });
+        readonly static List<string> Importers = new List<string>(new[] { "wordpress", "blogger" });
 
 #pragma warning disable 649
         [Import] IFileSystem fileSystem;
@@ -37,6 +37,11 @@ namespace Pretzel.Commands
             {
                 var wordpressImporter = new WordpressImport(fileSystem, parameters.Path, parameters.ImportPath);
                 wordpressImporter.Import();
+            }
+            else if (string.Equals("blogger", parameters.ImportType, StringComparison.InvariantCultureIgnoreCase))
+            {
+                var bloggerImporter = new BloggerImport(fileSystem, parameters.Path, parameters.ImportPath);
+                bloggerImporter.Import();
             }
 
             Tracing.Info("Import complete");
