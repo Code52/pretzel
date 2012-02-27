@@ -84,7 +84,7 @@ namespace Pretzel.Logic.Templating.Context
 
                 if (header.ContainsKey("permalink"))
                 {
-                    page.Url = EvaluatePermalink(header["permalink"].ToString(), page);
+                    page.Url = EvaluatePagePermalink(header["permalink"].ToString(), page);
                 }
 
                 context.Pages.Add(page);
@@ -226,6 +226,16 @@ namespace Pretzel.Logic.Templating.Context
             return permalink;
         }
 
+        private string EvaluatePagePermalink(string permalink, Page page)
+        {
+            permalink = permalink.Replace(":year", page.Date.Year.ToString(CultureInfo.InvariantCulture));
+            permalink = permalink.Replace(":month", page.Date.ToString("MM"));
+            permalink = permalink.Replace(":day", page.Date.ToString("dd"));
+            permalink = permalink.Replace(":title", GetPageTitle(page.File));
+
+            return permalink;
+        }
+
         // http://stackoverflow.com/questions/6716832/sanitizing-string-to-url-safe-format
         public static string RemoveDiacritics(string strThis)
         {
@@ -273,6 +283,16 @@ namespace Pretzel.Logic.Templating.Context
             var title = string.Join("-", tokens.Skip(3));
             title = title.Substring(0, title.LastIndexOf("."));
             return title;
+        }
+        private string GetPageTitle(string file)
+        {
+            //Page title dont have dates in them so use the full filename as the title
+            if (file.Contains("."))
+            {
+                return file.Substring(0, file.LastIndexOf("."));
+            }
+            //Something better here?
+            return file;
         }
     }
 }
