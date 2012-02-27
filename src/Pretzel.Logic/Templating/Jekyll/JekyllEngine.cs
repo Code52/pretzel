@@ -135,7 +135,7 @@ namespace Pretzel.Logic.Templating.Jekyll
                 site = contextDrop.ToHash(),
                 wtftime = Hash.FromAnonymousObject(new { date = DateTime.Now }),
                 page = y,
-                content = Markdown.Transform(pageContext.Content)//Markdown.Transform(contents.ExcludeHeader()),
+                content = pageContext.Content,//)//Markdown.Transform(contents.ExcludeHeader()),
             });
 
             if (context.Config.ContainsKey("paginate") && pageContext.OutputPath.EndsWith("index.html"))
