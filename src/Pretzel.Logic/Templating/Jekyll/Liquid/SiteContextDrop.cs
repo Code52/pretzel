@@ -21,7 +21,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
 
         public IList<Hash> Posts
         {
-            get { return posts ?? (posts = context.Posts.Select(p => p.ToHash()).ToList()); }
+            get { return context.Posts.Select(p => p.ToHash()).ToList(); }
         }
 
         public string Title
@@ -43,8 +43,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
             x.Add("pages", context.Pages);
             x.Add("title", context.Title);
             x.Add("tags", context.Tags);
-            //x.Add("time", Time);
-            x.Add("ftime", context.Posts.First().Date);
+            x.Add("time", Time);
 
             return x;
         }

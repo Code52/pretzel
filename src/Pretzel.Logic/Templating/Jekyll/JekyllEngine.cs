@@ -24,7 +24,7 @@ namespace Pretzel.Logic.Templating.Jekyll
 
         public JekyllEngine()
         {
-            DotLiquid.Liquid.UseRubyDateFormat = false;
+            DotLiquid.Liquid.UseRubyDateFormat = true;
         }
 
         public void Process(SiteContext siteContext)

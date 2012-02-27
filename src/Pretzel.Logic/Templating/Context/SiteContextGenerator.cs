@@ -70,7 +70,7 @@ namespace Pretzel.Logic.Templating.Context
                 var page = new Page
                 {
                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post", // should this be the Site title?
-                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : DateTime.Now,
+                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
                     Content = contents.ExcludeHeader(), 
                     Filepath = GetPathWithTimestamp(context.OutputFolder, file),
                     File = file,
@@ -106,11 +106,7 @@ namespace Pretzel.Logic.Templating.Context
                 var post = new Page
                 {
                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
-                    // NOTE: should this be the Site title?
-                    Date =
-                        header.ContainsKey("date")
-                            ? DateTime.Parse(header["date"].ToString())
-                            : file.Datestamp(),
+                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
                     Content = GetContent(file, contents),
                     Filepath = GetPathWithTimestamp(context.OutputFolder, file),
                     File = file,
