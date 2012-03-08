@@ -59,9 +59,13 @@ namespace Pretzel.Logic.Commands
         {
             Settings.Parse(arguments);
 
-            if (arguments.Count() == 1)
+            var firstArgument = arguments.FirstOrDefault();
+
+            if (firstArgument != null && !firstArgument.StartsWith("-"))
             {
-                Path = arguments.First();
+                Path = System.IO.Path.IsPathRooted(firstArgument) 
+                    ? firstArgument
+                    : System.IO.Path.Combine(Directory.GetCurrentDirectory(), firstArgument);
             }
 
             if (string.IsNullOrWhiteSpace(Path))
