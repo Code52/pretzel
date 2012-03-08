@@ -23,9 +23,6 @@ namespace Pretzel.Logic.Templating.Context
 
         public SiteContext BuildContext(string path)
         {
-            if (!Path.IsPathRooted(path))
-                path = Path.Combine(Environment.CurrentDirectory, path);
-
             var config = new Dictionary<string, object>();
             if (File.Exists(Path.Combine(path, "_config.yml")))
                 config = (Dictionary<string, object>)File.ReadAllText(Path.Combine(path, "_config.yml")).YamlHeader(true);
