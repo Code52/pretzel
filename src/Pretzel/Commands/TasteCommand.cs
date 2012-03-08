@@ -29,9 +29,10 @@ namespace Pretzel.Commands
 
             parameters.Parse(arguments);
 
+            var context = Generator.BuildContext(parameters.Path);
             if (string.IsNullOrWhiteSpace(parameters.Template))
             {
-                parameters.DetectFromDirectory(templateEngines.Engines);
+                parameters.DetectFromDirectory(templateEngines.Engines, context);
             }
 
             engine = templateEngines[parameters.Template];
@@ -39,7 +40,6 @@ namespace Pretzel.Commands
             if (engine == null)
                 return;
 
-            var context = Generator.BuildContext(parameters.Path);
             engine.Initialize();
             engine.Process(context);
             foreach (var t in transforms)

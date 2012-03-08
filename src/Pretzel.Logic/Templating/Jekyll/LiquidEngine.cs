@@ -7,12 +7,12 @@ using Pretzel.Logic.Templating.Jekyll.Liquid;
 namespace Pretzel.Logic.Templating.Jekyll
 {
     [PartCreationPolicy(CreationPolicy.Shared)]
-    [SiteEngineInfo(Engine = "jekyll")]
-    public class JekyllEngine : SiteEngineBase
+    [SiteEngineInfo(Engine = "liquid")]
+    public class LiquidEngine : JekyllEngineBase
     {
         SiteContextDrop contextDrop;
 
-        public JekyllEngine()
+        public LiquidEngine()
         {
             DotLiquid.Liquid.UseRubyDateFormat = true;
         }

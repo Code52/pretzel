@@ -6,6 +6,7 @@ namespace Pretzel.Logic.Templating.Context
     public class SiteContext
     {
         public IDictionary<string, object> Config;
+        private string engine;
 
         public SiteContext()
         {
@@ -22,5 +23,28 @@ namespace Pretzel.Logic.Templating.Context
         public DateTime Time { get; set; }
 
         public List<Page> Pages { get; set; }
+
+        public string Engine
+        {
+            get
+            { 
+                if (engine == null)
+                {
+                    if (!Config.ContainsKey("pretzel"))
+                    {
+                        engine = string.Empty;
+                        return engine;
+                    }
+
+                    var pretzelSettings = Config["pretzel"] as Dictionary<string, object>;
+                    if (pretzelSettings != null && pretzelSettings.ContainsKey("engine"))
+                        engine = (string) pretzelSettings["engine"];
+                    else
+                        engine = string.Empty;
+                }
+
+                return engine;
+            }
+        }
     }
 }

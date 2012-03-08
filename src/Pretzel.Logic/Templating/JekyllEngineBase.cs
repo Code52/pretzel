@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
+using System.Linq;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
 using System.ComponentModel.Composition;
 
 namespace Pretzel.Logic.Templating
 {
-    public abstract class SiteEngineBase : ISiteEngine
+    public abstract class JekyllEngineBase : ISiteEngine
     {
         protected SiteContext Context;
 
@@ -107,10 +108,11 @@ namespace Pretzel.Logic.Templating
             return file.Replace(Context.SourceFolder, "").TrimStart('\\');
         }
 
-        public bool CanProcess(string directory)
+        public bool CanProcess(SiteContext context)
         {
-            var configPath = Path.Combine(directory, "_config.yml");
-            return FileSystem.File.Exists(configPath);
+            var engineInfo = GetType().GetCustomAttributes(typeof (SiteEngineInfoAttribute), true).SingleOrDefault() as SiteEngineInfoAttribute;
+            if (engineInfo == null) return false;
+            return context.Engine == engineInfo.Engine;
         }
     }
 }

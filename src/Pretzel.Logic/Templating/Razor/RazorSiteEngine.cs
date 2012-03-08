@@ -1,30 +1,23 @@
 ﻿using System.ComponentModel.Composition;
-using System.IO;
 using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Logic.Templating.Razor
 {
     [PartCreationPolicy(CreationPolicy.Shared)]
     [SiteEngineInfo(Engine = "razor")]
-    public class RazorSiteEngine : ISiteEngine
+    public class RazorSiteEngine : JekyllEngineBase
     {
-        public bool CanProcess(string directory)
-        {
-            return false;
-        }
-
-        public void Initialize()
-        {
-            
-        }
-
-        public void Process(SiteContext context)
+        public override void Initialize()
         {
         }
 
-        public string GetOutputDirectory(string path)
+        protected override void PreProcess()
         {
-            return Path.Combine(path, "_site");
+        }
+
+        protected override string RenderTemplate(string content, PageContext pageData)
+        {
+            return RazorEngine.Razor.Parse(content, pageData);
         }
     }
 }

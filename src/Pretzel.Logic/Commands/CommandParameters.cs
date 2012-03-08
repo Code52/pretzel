@@ -7,6 +7,7 @@ using System.Linq;
 using NDesk.Options;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
+using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Logic.Commands
 {
@@ -74,16 +75,19 @@ namespace Pretzel.Logic.Commands
             }
         }
 
-        public void DetectFromDirectory(IDictionary<string, ISiteEngine> engines)
+        public void DetectFromDirectory(IDictionary<string, ISiteEngine> engines, SiteContext context)
         {
             foreach (var engine in engines)
             {
-                if (!engine.Value.CanProcess(Path)) continue;
+                if (!engine.Value.CanProcess(context)) continue;
 
                 Tracing.Info(String.Format("Recommended engine for directory: '{0}'", engine.Key));
                 Template = engine.Key;
                 return;
             }
+
+            if (Template == null)
+                Template = "liquid";
         }
 
         public void WriteOptions(TextWriter writer, params string[] args)

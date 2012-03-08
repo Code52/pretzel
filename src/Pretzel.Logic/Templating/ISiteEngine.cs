@@ -6,8 +6,8 @@ namespace Pretzel.Logic.Templating
     [InheritedExport]
     public interface ISiteEngine
     {
-        bool CanProcess(string directory);
         void Initialize();
+        bool CanProcess(SiteContext context);
         void Process(SiteContext context);
         string GetOutputDirectory(string path);
     }
