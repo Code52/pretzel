@@ -3,49 +3,61 @@ layout : layout
 title : SiteName
 ---
 
+
 <ul class="posts">
-    {% for post in site.posts  limit:5 %}
-		<li>
-			<div class="idea">
-				{% if forloop.first and post.layout == "post" %}
-					<h1><a href="{{ post.url }}">{{ post.title }}</a></h1>
-					
-					<div class="postdate">{{ post.date | date: "%e %B, %Y"  }}
-						<ul>
-						{% for tag in post.tags %}
-							<li><a href="/tag/{{ tag }}">{{ tag }}</a></li>
-						{% endfor %}
-						</ul>
-					</div>
-					
-					{{ post.content }}
-					<br />
-					<a href="{{ post.url}}#disqus_thread">Comments</a>
-				{% else %}
-					<h2><a class="postlink" href="{{ post.url }}">{{ post.title }}</a></h2>
-					<div class="postdate">{{ post.date | date: "%e %B, %Y"  }}
-						<ul>
-						{% for tag in post.tags %}
-							<li><a href="/tag/{{ tag }}">{{ tag }}</a></li>
-						{% endfor %}
-						</ul>
-					</div>
-					{{ post.content }}
-					
-					<a href="{{ post.url }}#disqus_thread">Comments</a>
-				{% endif %}
-			</div>
-		</li>
-    {% endfor %}
+@{
+    var numberPosts = 5;
+}
+    @for (var i = 0; i < numberPosts; i++)
+    {
+        var post = site.posts[i];
+        <li>
+            <div class="idea">
+                @if (i == 0 && post.layout == "post")
+                {
+                    <h1><a href="{{ post.url }}">@post.title</a></h1>
+
+                    <div class="postdate">@post.date.ToString("d M, YYYY")
+                        <ul>
+                            @foreach(var tag in post.tags)
+                            {
+                                <li><a href="/tag/@tag">@tag</a></li>
+                            }
+                        </ul>
+                    </div>
+                    @post.content
+                    <br />
+                    <a href="@post.url#disqus_thread">Comments</a>
+                }
+                else
+                {
+                    <h2><a class="postlink" href="@post.url">@post.title</a></h2>
+                    <div class="postdate">@post.date.ToString("d M, YYYY")
+                        <ul>
+                            @foreach (var tag in post.tags)
+                            {
+                                <li><a href="/tag/@tag">@tag</a></li>
+
+                            }
+                        </ul>
+                    </div>
+                    @post.content
+
+                    <a href="@post.url#disqus_thread">Comments</a>
+                }
+            </div>
+        </li>
+    }
 </ul>
 
 <h3>OLDER</h3>
 <ul class="postArchive">
-{% for post in site.posts offset:5 %}
-	<li>
-		<span class="olderpostdate"> {{ post.date | date: "%d %b"  }} </span> <a class="postlink" href="{{ post.id }}">{{ post.title }}</a>
-	</li>
-{% endfor %}
+@foreach(var post in site.posts.Skip(5))
+{
+    <li>
+        <span class="olderpostdate">@post.date.ToString("d m")</span> <a class="postlink" href="@post.id">@post.title</a>
+    </li>
+}
 </ul>
 
 <script type="text/javascript">

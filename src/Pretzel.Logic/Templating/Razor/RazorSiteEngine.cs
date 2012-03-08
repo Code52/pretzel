@@ -6,7 +6,7 @@ namespace Pretzel.Logic.Templating.Razor
 {
     [PartCreationPolicy(CreationPolicy.Shared)]
     [SiteEngineInfo(Engine = "razor")]
-    public class RazorEngine : ISiteEngine
+    public class RazorSiteEngine : ISiteEngine
     {
         public bool CanProcess(string directory)
         {
@@ -20,7 +20,6 @@ namespace Pretzel.Logic.Templating.Razor
 
         public void Process(SiteContext context)
         {
-            
         }
 
         public string GetOutputDirectory(string path)

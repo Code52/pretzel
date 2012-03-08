@@ -115,7 +115,8 @@
     <Compile Include="Templating\Jekyll\Liquid\PostDrop.cs" />
     <Compile Include="Templating\Jekyll\Liquid\SiteContextDrop.cs" />
     <Compile Include="Templating\Jekyll\Paginator.cs" />
-    <Compile Include="Templating\Razor\RazorEngine.cs" />
+    <Compile Include="Templating\Razor\RazorSiteEngine.cs" />
+    <Compile Include="Templating\SiteEngineBase.cs" />
     <Compile Include="Templating\SiteEngineInfoAttribute.cs" />
     <Compile Include="Templating\ISiteEngineInfo.cs" />
     <Compile Include="Templating\ISiteEngine.cs" />
