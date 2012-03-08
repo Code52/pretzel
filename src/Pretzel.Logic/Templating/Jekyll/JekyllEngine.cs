@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using DotLiquid;
+using MarkdownDeep;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Jekyll.Liquid;
@@ -13,11 +15,17 @@ namespace Pretzel.Logic.Templating.Jekyll
     [SiteEngineInfo(Engine = "jekyll")]
     public class JekyllEngine : ISiteEngine
     {
+        private static readonly Markdown Markdown = new Markdown();
         SiteContext context;
         SiteContextDrop contextDrop;
 #pragma warning disable 0649
         [Import] public IFileSystem FileSystem { get; set; }
 #pragma warning restore 0649
+
+        public JekyllEngine()
+        {
+            DotLiquid.Liquid.UseRubyDateFormat = true;
+        }
 
         public void Process(SiteContext siteContext)
         {
@@ -121,14 +129,19 @@ namespace Pretzel.Logic.Templating.Jekyll
             {
                 y.Add("title", context.Title);
             }
-            
+
             var x = Hash.FromAnonymousObject(new
             {
-                site = contextDrop,
+                site = contextDrop.ToHash(),
+                wtftime = Hash.FromAnonymousObject(new { date = DateTime.Now }),
                 page = y,
-                content = pageContext.Content
+                content = pageContext.Content,//)//Markdown.Transform(contents.ExcludeHeader()),
             });
 
+            if (context.Config.ContainsKey("paginate") && pageContext.OutputPath.EndsWith("index.html"))
+            {
+                x.Add("paginator", new Paginator(context));
+            }
             return x;
         }
 
@@ -136,7 +149,6 @@ namespace Pretzel.Logic.Templating.Jekyll
         {
             var template = Template.Parse(templateContents);
             Template.FileSystem = new Includes(context.SourceFolder);
-
             return template.Render(data);
         }
 

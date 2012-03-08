@@ -48,7 +48,7 @@ namespace Pretzel.Logic.Commands
                            {
                                { "t|template=", "The templating engine to use", v => Template = v },
                                { "d|directory=", "The path to site directory", p => Path = p },
-                               { "p|port=", "The path to site directory", p => decimal.TryParse(p, out port) },
+                               { "p|port=", "The port to test the site locally", p => decimal.TryParse(p, out port) },
                                { "i|import=", "The import type", v => ImportType = v }, // TODO: necessary?
                                { "f|file=", "Path to import file", v => ImportPath = v },
                            };
@@ -86,9 +86,27 @@ namespace Pretzel.Logic.Commands
             }
         }
 
-        public void WriteOptions(TextWriter writer)
+        public void WriteOptions(TextWriter writer, params string[] args)
         {
-            Settings.WriteOptionDescriptions(writer);
+            if (args.Length == 0)
+                Settings.WriteOptionDescriptions(writer);
+            else
+                WriteSubset(writer, args);
+        }
+
+        private void WriteSubset(TextWriter writer, string[] args)
+        {
+            var textWriter = new StringWriter();
+            Settings.WriteOptionDescriptions(textWriter);
+            var output = textWriter.ToString();
+
+            foreach (var line in output.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (args.Any(line.Contains))
+                {
+                    writer.WriteLine(line);
+                }
+            }
         }
     }
 }

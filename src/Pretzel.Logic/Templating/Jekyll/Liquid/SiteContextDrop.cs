@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DotLiquid;
 using Pretzel.Logic.Templating.Context;
+using Pretzel.Logic.Templating.Jekyll.Extensions;
 
 namespace Pretzel.Logic.Templating.Jekyll.Liquid
 {
@@ -12,12 +13,15 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
         private IList<Hash> posts;
         public DateTime Time
         {
-            get { return context.Time; }
+            get
+            {
+                return context.Time;
+            }
         }
 
         public IList<Hash> Posts
         {
-            get { return posts ?? (posts = context.Posts.Select(ToHash).ToList()); }
+            get { return context.Posts.Select(p => p.ToHash()).ToList(); }
         }
 
         public string Title
@@ -30,11 +34,18 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
             this.context = context;
         }
 
-        private Hash ToHash(Page page)
+        public Hash ToHash()
         {
-            var p = Hash.FromDictionary(page.Bag);
-            p.Add("Content", page.Content);
-            return p;
+            if (!context.Config.ContainsKey("date"))
+                context.Config.Add("date", "2012-01-01");
+            var x = Hash.FromDictionary(context.Config);
+            x.Add("posts", Posts);
+            x.Add("pages", context.Pages);
+            x.Add("title", context.Title);
+            x.Add("tags", context.Tags);
+            x.Add("time", Time);
+
+            return x;
         }
     }
 }
