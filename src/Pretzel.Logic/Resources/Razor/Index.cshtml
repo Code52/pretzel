@@ -2,48 +2,48 @@
 layout : layout
 title : SiteName
 ---
-
+@model Pretzel.Logic.Templating.Context.PageContext
 
 <ul class="posts">
 @{
     var numberPosts = 5;
 }
-    @for (var i = 0; i < numberPosts; i++)
+    @for (var i = 0; i < numberPosts && i < Model.Site.Posts.Count; i++)
     {
-        var post = site.posts[i];
+        var post = Model.Site.Posts[i];
         <li>
             <div class="idea">
-                @if (i == 0 && post.layout == "post")
+                @if (i == 0 && post.Layout == "post")
                 {
-                    <h1><a href="{{ post.url }}">@post.title</a></h1>
+                    <h1><a href="@post.Url">@post.Title</a></h1>
 
-                    <div class="postdate">@post.date.ToString("d M, YYYY")
+                    <div class="postdate">@post.Date.ToString("d M, YYYY")
                         <ul>
-                            @foreach(var tag in post.tags)
+                            @foreach(var tag in post.Tags)
                             {
                                 <li><a href="/tag/@tag">@tag</a></li>
                             }
                         </ul>
                     </div>
-                    @post.content
+                    @post.Content
                     <br />
-                    <a href="@post.url#disqus_thread">Comments</a>
+                    <a href="@post.Url#disqus_thread">Comments</a>
                 }
                 else
                 {
-                    <h2><a class="postlink" href="@post.url">@post.title</a></h2>
-                    <div class="postdate">@post.date.ToString("d M, YYYY")
+                    <h2><a class="postlink" href="@post.Url">@post.Title</a></h2>
+                    <div class="postdate">@post.Date.ToString("d M, YYYY")
                         <ul>
-                            @foreach (var tag in post.tags)
+                            @foreach (var tag in post.Tags)
                             {
                                 <li><a href="/tag/@tag">@tag</a></li>
 
                             }
                         </ul>
                     </div>
-                    @post.content
+                    @post.Content
 
-                    <a href="@post.url#disqus_thread">Comments</a>
+                    <a href="@post.Url#disqus_thread">Comments</a>
                 }
             </div>
         </li>
@@ -52,23 +52,23 @@ title : SiteName
 
 <h3>OLDER</h3>
 <ul class="postArchive">
-@foreach(var post in site.posts.Skip(5))
+@foreach(var post in Model.Site.Posts.Skip(5))
 {
     <li>
-        <span class="olderpostdate">@post.date.ToString("d m")</span> <a class="postlink" href="@post.id">@post.title</a>
+        <span class="olderpostdate">@post.Date.ToString("d m")</span> <a class="postlink" href="@post.Id">@post.Title</a>
     </li>
 }
 </ul>
 
 <script type="text/javascript">
 //<![CDATA[
-(function() {
+(function () {
     var links = document.getElementsByTagName('a');
     var query = '?';
-    for(var i = 0; i < links.length; i++) {
-    if(links[i].href.indexOf('#disqus_thread') >= 0) {
-        query += 'url' + i + '=' + encodeURIComponent(links[i].href) + '&';
-    }
+    for (var i = 0; i < links.length; i++) {
+        if (links[i].href.indexOf('#disqus_thread') >= 0) {
+            query += 'url' + i + '=' + encodeURIComponent(links[i].href) + '&';
+        }
     }
     document.write('<script charset="utf-8" type="text/javascript" src="http://disqus.com/forums/DISQUS_NAME/get_num_replies.js' + query + '"></' + 'script>');
 })();

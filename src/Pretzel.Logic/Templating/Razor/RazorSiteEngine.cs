@@ -15,6 +15,11 @@ namespace Pretzel.Logic.Templating.Razor
         {
         }
 
+        protected override string LayoutExtension
+        {
+            get { return ".cshtml"; }
+        }
+
         protected override string RenderTemplate(string content, PageContext pageData)
         {
             return RazorEngine.Razor.Parse(content, pageData);

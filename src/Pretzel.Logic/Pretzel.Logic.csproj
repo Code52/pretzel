@@ -149,28 +149,28 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Jeckyll\Rss.liquid" />
+    <None Include="Resources\Liquid\Rss.liquid" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Jeckyll\Layout.liquid" />
+    <None Include="Resources\Liquid\Layout.liquid" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Jeckyll\Post.liquid" />
+    <None Include="Resources\Liquid\Post.liquid" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\25.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Jeckyll\Atom.liquid" />
+    <None Include="Resources\Liquid\Atom.liquid" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Jeckyll\About.liquid" />
+    <None Include="Resources\Liquid\About.liquid" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Jeckyll\Index.liquid" />
+    <None Include="Resources\Liquid\Index.liquid" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Jeckyll\FirstPost.liquid" />
+    <None Include="Resources\Liquid\FirstPost.liquid" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\favicon.ico" />
@@ -196,7 +196,7 @@
     <Folder Include="Templating\Plugins\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Jeckyll\Config.liquid" />
+    <None Include="Resources\Liquid\Config.liquid" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

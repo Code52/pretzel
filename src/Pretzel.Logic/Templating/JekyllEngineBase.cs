@@ -28,15 +28,31 @@ namespace Pretzel.Logic.Templating
 
             var outputDirectory = Path.Combine(Context.SourceFolder, "_site");
 
-            foreach (var p in siteContext.Posts)
+            for (int index = 0; index < siteContext.Posts.Count; index++)
             {
-                ProcessFile(outputDirectory, p, p.Filepath);
+                var p = siteContext.Posts[index];
+                var previous = GetPrevious(siteContext.Posts, index);
+                var next = GetNext(siteContext.Posts, index);
+                ProcessFile(outputDirectory, p, previous, next, p.Filepath);
             }
 
-            foreach (var p in siteContext.Pages)
+            for (int index = 0; index < siteContext.Pages.Count; index++)
             {
-                ProcessFile(outputDirectory, p);
+                var p = siteContext.Pages[index];
+                var previous = GetPrevious(siteContext.Pages, index);
+                var next = GetNext(siteContext.Pages, index);
+                ProcessFile(outputDirectory, p, previous, next);
             }
+        }
+
+        private static Page GetNext(IList<Page> pages, int index)
+        {
+            return index < pages.Count - 1 ? pages[index + 1] : null;
+        }
+
+        private static Page GetPrevious(IList<Page> pages, int index)
+        {
+            return index >= 1 ? pages[index - 1] : null;
         }
 
         public virtual string GetOutputDirectory(string path)
@@ -44,7 +60,7 @@ namespace Pretzel.Logic.Templating
             return Path.Combine(path, "_site");
         }
 
-        private void ProcessFile(string outputDirectory, Page page, string relativePath = "")
+        private void ProcessFile(string outputDirectory, Page page, Page previous, Page next, string relativePath = "")
         {
             if (string.IsNullOrWhiteSpace(relativePath))
                 relativePath = MapToOutputPath(page.File);
@@ -69,17 +85,19 @@ namespace Pretzel.Logic.Templating
                 return;
             }
 
-            if (extension.IsMarkdownFile())
+            if (extension.IsMarkdownFile() || extension.IsRazorFile())
                 page.OutputFile = page.OutputFile.Replace(extension, ".html");
 
-            var pageContext = PageContext.FromPage(page, outputDirectory, page.OutputFile);
+            var pageContext = PageContext.FromPage(Context, page, outputDirectory, page.OutputFile);
+            pageContext.Previous = previous;
+            pageContext.Next = next;
             var metadata = page.Bag;
             while (metadata.ContainsKey("layout"))
             {
                 if ((string)metadata["layout"] == "nil" || metadata["layout"] == null)
                     break;
 
-                var path = Path.Combine(Context.SourceFolder, "_layouts", metadata["layout"] + ".html");
+                var path = Path.Combine(Context.SourceFolder, "_layouts", metadata["layout"] + LayoutExtension);
 
                 if (!FileSystem.File.Exists(path))
                     break;
@@ -90,6 +108,11 @@ namespace Pretzel.Logic.Templating
             pageContext.Content = RenderTemplate(pageContext.Content, pageContext);
 
             FileSystem.File.WriteAllText(pageContext.OutputPath, pageContext.Content);
+        }
+
+        protected virtual string LayoutExtension
+        {
+            get { return ".html"; }
         }
 
         private IDictionary<string, object> ProcessTemplate(PageContext pageContext, string path)
