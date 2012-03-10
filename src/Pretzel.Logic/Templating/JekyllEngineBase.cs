@@ -93,7 +93,7 @@ namespace Pretzel.Logic.Templating
                 page.OutputFile = page.OutputFile.Replace(extension, ".html");
 
             var pageContext = PageContext.FromPage(Context, page, outputDirectory, page.OutputFile);
-            pageContext.Content = markdown.Transform(pageContext.Content);
+            //pageContext.Content = markdown.Transform(pageContext.Content);
             pageContext.Previous = previous;
             pageContext.Next = next;
             var metadata = page.Bag;
