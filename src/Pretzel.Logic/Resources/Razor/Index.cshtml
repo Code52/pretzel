@@ -25,7 +25,7 @@ title : SiteName
                             }
                         </ul>
                     </div>
-                    @post.Content
+                    @Raw(post.Content)
                     <br />
                     <a href="@post.Url#disqus_thread">Comments</a>
                 }
@@ -41,7 +41,7 @@ title : SiteName
                             }
                         </ul>
                     </div>
-                    @post.Content
+                    @Raw(post.Content)
 
                     <a href="@post.Url#disqus_thread">Comments</a>
                 }

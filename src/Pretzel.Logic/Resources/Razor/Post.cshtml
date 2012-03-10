@@ -12,17 +12,17 @@ layout: layout
                 <li><a href="/tag/@tag">@tag</a></li>
 			}
 		</span>
-		@(new HtmlString(Model.Content))
+		@Raw(Model.Content)
 	</div>
 </div>
 <div id="page-navigation"> 
 	<div class="left">@if (Model.Previous != null)
                       {
-                          <a href="@Model.Previous.Url" title="Previous Post: @Model.Previous.Title}}">&larr; @Model.Previous.Title}}</a>
+                          <a href="@Model.Previous.Url" title="Previous Post: @Model.Previous.Title">&larr; @Model.Previous.Title</a>
                       }</div> 
 	<div class="right">@if (Model.Next != null)
                        {
-                           <a href="@Model.Next.Url" title="next Post: @Model.Next.Title">@Model.Next.Title}} &rarr; </a>
+                           <a href="@Model.Next.Url" title="next Post: @Model.Next.Title">@Model.Next.Title &rarr; </a>
                        }</div> 
 	<div class="clear">&nbsp;</div>
 </div> 
