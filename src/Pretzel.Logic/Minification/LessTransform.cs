@@ -31,8 +31,7 @@ namespace Pretzel.Logic.Minification
         {
             var importer = new Importer(new CustomFileReader(fileSystem, filePath));
             var parser = new Parser(new PlainStylizer(), importer);
-            var engine = new LessEngine(parser);
-            engine.Compress = true;
+            var engine = new LessEngine(parser) {Compress = true};
             return engine;
         }
 

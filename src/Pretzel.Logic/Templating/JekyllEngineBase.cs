@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using MarkdownDeep;
 using Pretzel.Logic.Exceptions;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
@@ -13,6 +14,7 @@ namespace Pretzel.Logic.Templating
     public abstract class JekyllEngineBase : ISiteEngine
     {
         protected SiteContext Context;
+        private readonly Markdown markdown = new Markdown();
 
 #pragma warning disable 0649
         [Import] public IFileSystem FileSystem { get; set; }
@@ -91,6 +93,7 @@ namespace Pretzel.Logic.Templating
                 page.OutputFile = page.OutputFile.Replace(extension, ".html");
 
             var pageContext = PageContext.FromPage(Context, page, outputDirectory, page.OutputFile);
+            pageContext.Content = markdown.Transform(pageContext.Content);
             pageContext.Previous = previous;
             pageContext.Next = next;
             var metadata = page.Bag;
@@ -141,7 +144,6 @@ namespace Pretzel.Logic.Templating
             pageContext.Content = RenderTemplate(templateContent, pageContext);
             return metadata;
         }
-
 
         private string MapToOutputPath(string file)
         {
