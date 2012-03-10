@@ -72,6 +72,9 @@ namespace Pretzel.Logic.Templating.Context
                 context.Title = page.Bag["title"].ToString();
             }
 
+            if (string.IsNullOrEmpty(context.Title))
+                context.Title = siteContext.Title;
+
             context.Content = page.Content;
             context.Bag = page.Bag;
             context.Bag.Add("id", page.Id);

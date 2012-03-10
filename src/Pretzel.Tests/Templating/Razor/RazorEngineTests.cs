@@ -18,35 +18,34 @@ namespace Pretzel.Tests.Templating.Razor
         {
         }
 
-        private void ProcessContents(string template, string content, Dictionary<string, object> bag)
+        private void ProcessContents(string layout, string content, Dictionary<string, object> bag)
         {
+            FileSystem.AddFile(@"C:\website\_layouts\Test.cshtml", new MockFileData(layout));
             var context = new SiteContext { SourceFolder = @"C:\website\", Title = "My Web Site" };
+            bag.Add("layout", "Test");
             context.Posts.Add(new Page { File = "index.cshtml", Content = content, OutputFile = @"C:\website\_site\index.html", Bag = bag });
-            FileSystem.AddFile(@"C:\website\index.cshtml", new MockFileData(template));
-            var subject = Subject;
-            subject.FileSystem = FileSystem;
-            subject.Process(context);
+            FileSystem.AddFile(@"C:\website\index.cshtml", new MockFileData(layout));
+            Subject.FileSystem = FileSystem;
+            Subject.Process(context);
         }
 
         [Fact]
         public void File_with_no_replacements_is_unaltered()
         {
-            string FileContents = "<html><head><title></title></head><body></body></html>";
-            ProcessContents(string.Empty, FileContents, new Dictionary<string,object>());
-            string expected = FileContents;
-            Assert.Equal(expected, FileSystem.File.ReadAllText(@"C:\website\_site\index.html"));
+            const string fileContents = "<html><head><title></title></head><body></body></html>";
+            ProcessContents(fileContents, string.Empty, new Dictionary<string, object>());
+            Assert.Equal(fileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html"));
         }
 
         [Fact]
         public void File_with_title_is_processed()
         {
-            string FileContents = "<html><head><title>@Model.Title</title></head><body></body></html>";
-            string Title = "This is the title!";
+            const string fileContents = "<html><head><title>@Model.Title</title></head><body></body></html>";
+            const string title = "This is the title!";
 
-            var bag = new Dictionary<string, object>();
-            bag.Add("title", Title);
-            ProcessContents(string.Empty, FileContents, bag);
-            string expected = FileContents.Replace(@"@Model.Title", Title);
+            var bag = new Dictionary<string, object> {{"title", title}};
+            ProcessContents(fileContents, string.Empty, bag);
+            string expected = fileContents.Replace(@"@Model.Title", title);
             string output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
             Assert.Equal(expected, output);
         }
@@ -54,49 +53,13 @@ namespace Pretzel.Tests.Templating.Razor
         [Fact]
         public void File_with_content_is_processed()
         {
-            string TemplateContents = "<html><head><title></title></head><body>@Model.Content</body></html>";
-            string PageContents = "<h1>Hello World!</h1>";
-            string ExpectedfileContents = "<html><head><title>My Web Site</title></head><body><h1>Hello World!</h1></body></html>";
+            const string templateContents = "<html><head><title>@Model.Title</title></head><body>@Raw(Model.Content)</body></html>";
+            const string pageContents = "<h1>Hello World!</h1>";
+            const string expectedfileContents = "<html><head><title>My Web Site</title></head><body><h1>Hello World!</h1></body></html>";
 
-            var bag = new Dictionary<string, object>();
-            bag.Add("Content", PageContents);
-            ProcessContents(PageContents, TemplateContents, bag);
-            string expected = TemplateContents.Replace(@"@Model.Content", PageContents);
+            ProcessContents(templateContents, pageContents, new Dictionary<string, object> { { "title", "My Web Site" } });
             string output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
-            Assert.Equal(expected, output);
-        }
-    }
-
-    public class When_Recieving_A_Razor_File : BakingEnvironment<RazorSiteEngine>
-    {
-        const string TemplateContents = "<html><head><title>@Model.Title</title></head><body>@Model.Content</body></html>";
-        const string PageContents = "<h1>Hello World!</h1>";
-        const string ExpectedfileContents = "<html><head><title>My Web Site</title></head><body><h1>Hello World!</h1></body></html>";
-
-        public override RazorSiteEngine Given()
-        {
-            return new RazorSiteEngine();
-        }
-
-        public override void When()
-        {
-            FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
-            FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-            var context = new SiteContext { SourceFolder = @"C:\website\", Title = "My Web Site" };
-            Subject.FileSystem = FileSystem;
-            Subject.Process(context);
-        }
-
-        [Fact]
-        public void The_File_Is_Applies_Data_To_The_Template()
-        {
-            Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
-        }
-
-        [Fact]
-        public void Does_Not_Copy_Template_To_Output()
-        {
-            Assert.False(FileSystem.File.Exists(@"C:\website\_site\_layouts\default.html"));
+            Assert.Equal(expectedfileContents, output);
         }
     }
 }
