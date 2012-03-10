@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CommandParameters.cs" />
+    <Compile Include="Exceptions\PageProcessingException.cs" />
     <Compile Include="Extensions\Logger.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\Tracing.cs" />

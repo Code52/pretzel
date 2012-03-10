@@ -22,7 +22,7 @@ namespace Pretzel.Logic.Templating.Context
 
         public bool Comments
         {
-            get { return Bag.ContainsKey("comments") ? bool.Parse(Bag["comments"].ToString()) : false; }
+            get { return Bag.ContainsKey("comments") && bool.Parse(Bag["comments"].ToString()); }
         }
 
         //public static PageContext FromDictionary(SiteContext siteContext, IDictionary<string, object> metadata, string outputPath, string defaultOutputPath)

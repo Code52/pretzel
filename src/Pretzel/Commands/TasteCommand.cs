@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.IO;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
@@ -50,7 +51,16 @@ namespace Pretzel.Commands
             var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider(),Convert.ToInt32(parameters.Port));
             w.Start();
 
-            Tracing.Info(string.Format("Browse to http://localhost:{0}/ to test the site.", parameters.Port));
+            
+            Tracing.Info(string.Format("Launching http://localhost:{0}/ to test the site.", parameters.Port));
+            try
+            {
+                Process.Start(string.Format("http://localhost:{0}", parameters.Port));
+            }
+            catch (Exception)
+            {
+                Tracing.Info(string.Format("Failed to Launch http://localhost:{0}/.", parameters.Port));
+            }
             Tracing.Info("Press 'Q' to stop the web host...");
             ConsoleKeyInfo key;
             do
@@ -58,6 +68,7 @@ namespace Pretzel.Commands
                 key = Console.ReadKey();
             }
             while (key.Key != ConsoleKey.Q);
+            Console.WriteLine();
         }
 
         private void WatcherOnChanged(string file)

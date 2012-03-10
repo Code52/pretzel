@@ -1,29 +1,32 @@
 ---
 layout: nil
 ---
+@model Pretzel.Logic.Templating.Context.PageContext
+
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Feed Name</title>
   <link href="http://domain/"/>
   <link type="application/atom+xml" rel="self" href="http://domain/atom.xml"/>
-  <updated>{{ site.time | date_to_xmlschema }}</updated>
+  <updated>@Model.Site.Time.ToString("s")</updated>
   <id>http://domain/</id>
   <author>
     <name>Author</name>
     <email>Email</email>
   </author>
 
-  {% for post in site.posts %}
-  <entry>
-    <id>http://domain/{{ post.url }}</id>
-    <link type="text/html" rel="alternate" href="http://domain/{{ post.url }}"/>
-    <title>{{ post.title | xml_escape }}</title>
-    <updated>{{ post.date | date_to_xmlschema }}</updated>
-    <author>
-      <name>Author</name>
-      <uri>http://domain/</uri>
-    </author>
-    <content type="html">{{ post.content | xml_escape }}</content>
-  </entry>
-  {% endfor %}
+  @foreach (var post in Model.Site.Posts)
+  {
+      <entry>
+          <id>http://domain/{{ post.url }}</id>
+          <link type="text/html" rel="alternate" href="http://domain/@post.Url"/>
+          <title>@post.Title</title>
+          <updated>@post.Date.ToString("s")</updated>
+          <author>
+              <name>Author</name>
+              <uri>http://domain/</uri>
+          </author>
+          <content type="html">@post.Content</content>
+      </entry>
+  }
 </feed>

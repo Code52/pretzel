@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using Pretzel.Logic.Exceptions;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
 using System.ComponentModel.Composition;
@@ -94,18 +96,33 @@ namespace Pretzel.Logic.Templating
             var metadata = page.Bag;
             while (metadata.ContainsKey("layout"))
             {
-                if ((string)metadata["layout"] == "nil" || metadata["layout"] == null)
+                var layout = metadata["layout"];
+                if ((string)layout == "nil" || layout == null)
                     break;
 
-                var path = Path.Combine(Context.SourceFolder, "_layouts", metadata["layout"] + LayoutExtension);
+                var path = Path.Combine(Context.SourceFolder, "_layouts", layout + LayoutExtension);
 
                 if (!FileSystem.File.Exists(path))
                     break;
 
-                metadata = ProcessTemplate(pageContext, path);
+                try
+                {
+                    metadata = ProcessTemplate(pageContext, path);
+                }
+                catch (Exception ex)
+                {
+                    throw new PageProcessingException(string.Format("Failed to process layout {0} for {1}, see inner exception for more details", layout, pageContext.OutputPath), ex);
+                }
             }
 
-            pageContext.Content = RenderTemplate(pageContext.Content, pageContext);
+            try
+            {
+                pageContext.Content = RenderTemplate(pageContext.Content, pageContext);
+            }
+            catch (Exception ex)
+            {
+                throw new PageProcessingException(string.Format("Failed to process {0}, see inner exception for more details", pageContext.OutputPath), ex);
+            }
 
             FileSystem.File.WriteAllText(pageContext.OutputPath, pageContext.Content);
         }
