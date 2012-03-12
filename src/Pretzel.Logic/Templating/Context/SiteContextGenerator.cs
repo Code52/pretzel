@@ -146,7 +146,7 @@ namespace Pretzel.Logic.Templating.Context
             try
             {
                 var contentsWithoutHeader = contents.ExcludeHeader();
-                html = !header.ContainsKey("content") || !string.Equals((string)header["content"], "none", StringComparison.InvariantCultureIgnoreCase)
+                html = string.Equals(Path.GetExtension(file), ".md", StringComparison.InvariantCultureIgnoreCase)
                        ? Markdown.Transform(contentsWithoutHeader)
                        : contentsWithoutHeader;
             }
