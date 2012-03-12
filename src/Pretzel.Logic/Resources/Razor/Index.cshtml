@@ -17,7 +17,7 @@ title : SiteName
                 {
                     <h1><a href="@post.Url">@post.Title</a></h1>
 
-                    <div class="postdate">@post.Date.ToString("d MMM, Y")
+                    <div class="postdate">@post.Date.ToString("d MMM, yyyy")
                         <ul>
                             @foreach(var tag in post.Tags)
                             {
@@ -32,7 +32,7 @@ title : SiteName
                 else
                 {
                     <h2><a class="postlink" href="@post.Url">@post.Title</a></h2>
-                    <div class="postdate">@post.Date.ToString("d MMM, Y")
+                    <div class="postdate">@post.Date.ToString("d MMM, yyyy")
                         <ul>
                             @foreach (var tag in post.Tags)
                             {

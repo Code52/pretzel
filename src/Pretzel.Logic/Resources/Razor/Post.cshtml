@@ -6,7 +6,7 @@ layout: layout
 <div class="entry-container">
 	<div class='entry'>
 		<h1>@Model.Title</h1>
-		<span class="postdate">@Model.Page.Date.ToString("d MMM, Y")
+		<span class="postdate">@Model.Page.Date.ToString("d MMM, yyyy")
 			@foreach(var tag in Model.Page.Tags)
 			{	
                 <li><a href="/tag/@tag">@tag</a></li>

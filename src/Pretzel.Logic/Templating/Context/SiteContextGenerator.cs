@@ -75,7 +75,7 @@ namespace Pretzel.Logic.Templating.Context
                 {
                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post", // should this be the Site title?
                     Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
-                    Content = contents.ExcludeHeader(), 
+                    Content = RenderContent(file, contents, header), 
                     Filepath = GetPathWithTimestamp(context.OutputFolder, file),
                     File = file,
                     Bag = header,
@@ -114,7 +114,7 @@ namespace Pretzel.Logic.Templating.Context
                 {
                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
                     Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
-                    Content = GetContent(file, contents),
+                    Content = RenderContent(file, contents, header),
                     Filepath = GetPathWithTimestamp(context.OutputFolder, file),
                     File = file,
                     Bag = header,
@@ -140,12 +140,15 @@ namespace Pretzel.Logic.Templating.Context
 
         }
 
-        private static string GetContent(string file, string contents)
+        private static string RenderContent(string file, string contents, IDictionary<string, object> header)
         {
             string html;
             try
             {
-                html = Markdown.Transform(contents.ExcludeHeader());
+                var contentsWithoutHeader = contents.ExcludeHeader();
+                html = !header.ContainsKey("content") || !string.Equals((string)header["content"], "none", StringComparison.InvariantCultureIgnoreCase)
+                       ? Markdown.Transform(contentsWithoutHeader)
+                       : contentsWithoutHeader;
             }
             catch (Exception e)
             {
