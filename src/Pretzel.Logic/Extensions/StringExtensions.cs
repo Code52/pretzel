@@ -547,6 +547,9 @@ namespace Pretzel.Logic.Extensions
         {
             var fileName = file.Substring(file.LastIndexOf("\\"));
             var tokens = fileName.Split('-');
+            if (tokens.Count() < 3)
+                return DateTime.Now;
+
             var timestamp = string.Join("-", tokens.Take(3)).Trim('\\');
             return DateTime.Parse(timestamp);
         }

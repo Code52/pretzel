@@ -1,6 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
-namespace Pretzel.Logic.Templating
+namespace Pretzel.Logic.Templating.Context
 {
     public static class PathExtensions
     {
@@ -10,6 +11,11 @@ namespace Pretzel.Logic.Templating
         public static bool IsMarkdownFile(this string extension)
         {
             return MarkdownFiles.Contains(extension.ToLower());
+        }
+
+        public static bool IsRazorFile(this string extension)
+        {
+            return string.Equals(extension, ".cshtml", StringComparison.InvariantCultureIgnoreCase);
         }
 
         public static string ToRelativeFile(this string path)

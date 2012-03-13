@@ -27,9 +27,10 @@ namespace Pretzel.Commands
 
             parameters.Parse(arguments);
 
+            var siteContext = Generator.BuildContext(parameters.Path);
             if (string.IsNullOrWhiteSpace(parameters.Template))
             {
-                parameters.DetectFromDirectory(templateEngines.Engines);
+                parameters.DetectFromDirectory(templateEngines.Engines, siteContext);
             }
 
             var engine = templateEngines[parameters.Template];
@@ -38,10 +39,9 @@ namespace Pretzel.Commands
                 var watch = new Stopwatch();
                 watch.Start();
                 engine.Initialize();
-                var c = Generator.BuildContext(parameters.Path);
-                engine.Process(c);
+                engine.Process(siteContext);
                 foreach (var t in transforms)
-                    t.Transform(c);
+                    t.Transform(siteContext);
                 watch.Stop();
                 Tracing.Info(string.Format("done - took {0}ms", watch.ElapsedMilliseconds));
             }

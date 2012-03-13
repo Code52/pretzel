@@ -63,11 +63,11 @@ namespace Pretzel.Tests.Recipe
 
             Assert.True(fileSystem.File.Exists(BaseSite + "rss.xml"));
             Assert.True(fileSystem.File.Exists(BaseSite + "atom.xml"));
-            Assert.True(fileSystem.File.Exists(BaseSite + @"_layouts\layout.html"));
-            Assert.True(fileSystem.File.Exists(BaseSite + @"_layouts\post.html"));
-            Assert.True(fileSystem.File.Exists(BaseSite + "index.html"));
-            Assert.True(fileSystem.File.Exists(BaseSite + "about.html"));
-            Assert.True(fileSystem.File.Exists(BaseSite + string.Format(@"_posts\{0}-myfirstpost.html", DateTime.Today.ToString("yyyy-MM-dd"))));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"_layouts\layout.cshtml"));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"_layouts\post.cshtml"));
+            Assert.True(fileSystem.File.Exists(BaseSite + "index.md"));
+            Assert.True(fileSystem.File.Exists(BaseSite + "about.md"));
+            Assert.True(fileSystem.File.Exists(BaseSite + string.Format(@"_posts\{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))));
             Assert.True(fileSystem.File.Exists(BaseSite + @"css\style.css"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"img\25.png"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"img\favicon.png"));
