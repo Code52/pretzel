@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>pretzel</id>
+    <version>0.1.0</version>
+    <title>Pretzel</title>
+    <authors>Code52</authors>
+    <owners>Code52</owners>
+    <projectUrl>https://github.com/Code52/pretzel</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A simple, pluggable site generation tool for .NET developers and Windows users</description>
+    <tags>Jekyll Liquid Razor Markdown</tags>
+  </metadata>
+</package>
