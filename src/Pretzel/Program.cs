@@ -71,6 +71,7 @@ namespace Pretzel
         [Conditional("DEBUG")]
         public void WaitForClose()
         {
+            Console.WriteLine("Press any key to continue...");
             Console.ReadLine();
         }
 

@@ -43,12 +43,33 @@ namespace Pretzel.Logic.Extensions
                     var node = entry.Key as YamlScalarNode;
                     if (node != null)
                     {
-                        results.Add(node.Value, entry.Value.ToString());    
+                        results.Add(node.Value, GetValue(entry.Value));    
                     }
                 }
             }
 
             return results;
+        }
+
+        private static object GetValue(YamlNode value)
+        {
+            var collection = value as YamlMappingNode;
+            if (collection != null)
+            {
+                var results = new Dictionary<string, object>();
+                foreach (var entry in collection.Children)
+                {
+                    var node = entry.Key as YamlScalarNode;
+                    if (node != null)
+                    {
+                        results.Add(node.Value, GetValue(entry.Value));
+                    }
+                }
+
+                return results;
+            }
+
+            return value.ToString();
         }
 
         public static string ToYaml<T>(this T model)
