@@ -26,7 +26,7 @@
       <NuGet Include="$(MSBuildProjectDirectory)\src\.Nuget\NuGet.exe" />
     </ItemGroup>
     <MakeDir Directories="$(MSBuildProjectDirectory)\build" />
-    <Exec Command='"@(NuGet)" pack "$(MSBuildProjectDirectory)\tools\chocolatey\pretzel.nuspec" -OutputDirectory "$(MSBuildProjectDirectory)\build"' />
+    <Exec Command='"@(NuGet)" pack "$(MSBuildProjectDirectory)\tools\chocolatey\pretzel.nuspec" -OutputDirectory "$(MSBuildProjectDirectory)\build" -NoPackageAnalysis' />
   </Target>
 
 </Project>
