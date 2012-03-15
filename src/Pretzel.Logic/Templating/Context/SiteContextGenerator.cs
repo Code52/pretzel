@@ -284,13 +284,7 @@ namespace Pretzel.Logic.Templating.Context
         }
         private string GetPageTitle(string file)
         {
-            //Page title dont have dates in them so use the full filename as the title
-            if (file.Contains("."))
-            {
-                return file.Substring(0, file.LastIndexOf("."));
-            }
-            //Something better here?
-            return file;
+			  return Path.GetFileNameWithoutExtension(file);
         }
     }
 }
