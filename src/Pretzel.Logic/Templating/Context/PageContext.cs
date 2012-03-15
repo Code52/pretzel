@@ -5,35 +5,50 @@ namespace Pretzel.Logic.Templating.Context
 {
     public class PageContext
     {
+        public PageContext(SiteContext context, Page page)
+        {
+            Site = context;
+            Page = page;
+        }
+
         public string Title { get; set; }
         public string OutputPath { get; set; }
         public IDictionary<string, object> Bag { get; set; }
         public string Content { get; set; }
+        public SiteContext Site { get; private set; }
+        public Page Page { get; set; }
+        public Page Previous { get; set; }
+        public Page Next { get; set; }
 
-        public static PageContext FromDictionary(IDictionary<string, object> metadata, string outputPath, string defaultOutputPath)
+        public bool Comments
         {
-            var context = new PageContext
-                              {
-                                  OutputPath =
-                                      metadata.ContainsKey("permalink")
-                                          ? Path.Combine(outputPath, metadata["permalink"].ToString().ToRelativeFile())
-                                          : defaultOutputPath
-                              };
-
-
-            if (metadata.ContainsKey("title"))
-            {
-                context.Title = metadata["title"].ToString();
-            }
-
-            context.Bag = metadata;
-
-            return context;
+            get { return Bag.ContainsKey("comments") && bool.Parse(Bag["comments"].ToString()); }
         }
 
-        public static PageContext FromPage(Page page, string outputPath, string defaultOutputPath)
+        //public static PageContext FromDictionary(SiteContext siteContext, IDictionary<string, object> metadata, string outputPath, string defaultOutputPath)
+        //{
+        //    var context = new PageContext(siteContext, TODO)
+        //                      {
+        //                          OutputPath =
+        //                              metadata.ContainsKey("permalink")
+        //                                  ? Path.Combine(outputPath, metadata["permalink"].ToString().ToRelativeFile())
+        //                                  : defaultOutputPath
+        //                      };
+
+
+        //    if (metadata.ContainsKey("title"))
+        //    {
+        //        context.Title = metadata["title"].ToString();
+        //    }
+
+        //    context.Bag = metadata;
+
+        //    return context;
+        //}
+
+        public static PageContext FromPage(SiteContext siteContext, Page page, string outputPath, string defaultOutputPath)
         {
-            var context = new PageContext();
+            var context = new PageContext(siteContext, page);
 
             if (page.Bag.ContainsKey("permalink"))
             {
@@ -56,6 +71,9 @@ namespace Pretzel.Logic.Templating.Context
             {
                 context.Title = page.Bag["title"].ToString();
             }
+
+            if (string.IsNullOrEmpty(context.Title))
+                context.Title = siteContext.Title;
 
             context.Content = page.Content;
             context.Bag = page.Bag;

@@ -15,3 +15,5 @@ artifacts/
 post-build*
 _ReSharper.*
 deploy-to-ec2*
+TestResults/
+build/

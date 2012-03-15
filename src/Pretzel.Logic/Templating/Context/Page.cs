@@ -23,6 +23,11 @@ namespace Pretzel.Logic.Templating.Context
         public IDictionary<string, object> Bag { get; set; }
         public string File { get; set; }
         public string OutputFile { get; set; }
+
+        public string Layout
+        {
+            get { return (string)Bag["layout"]; }
+        }
     }
 
     public class NonProcessedPage : Page

@@ -1,5 +1,5 @@
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  
+<Project ToolsVersion="4.0" DefaultTargets="Chocolatey" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
   <!-- TODO: mono build -->
   <!-- TODO: package step to merge code into one binary -->
 
@@ -10,15 +10,23 @@
     <MSBuild Projects="./src/Pretzel.sln" Properties="Configuration=$(Configuration)" />
   </Target>
 
- <Target Name="Test" DependsOnTargets="Compile">
+  <Target Name="Test" DependsOnTargets="Compile">
 
-  	<Message Text="===========Tests===========" Importance="High" />
+    <Message Text="===========Tests===========" Importance="High" />
 
-  	<ItemGroup>
-  		<TestFiles Include=".\**\bin\$(Configuration)\*Tests.dll" />
-	</ItemGroup>
+    <ItemGroup>
+      <TestFiles Include=".\**\bin\$(Configuration)\*Tests.dll" />
+    </ItemGroup>
 
     <xunit Assembly="@(TestFiles)" />
+  </Target>
+
+  <Target Name="Chocolatey" DependsOnTargets="Test">
+    <ItemGroup>
+      <NuGet Include="$(MSBuildProjectDirectory)\src\.Nuget\NuGet.exe" />
+    </ItemGroup>
+    <MakeDir Directories="$(MSBuildProjectDirectory)\build" />
+    <Exec Command='"@(NuGet)" pack "$(MSBuildProjectDirectory)\tools\chocolatey\pretzel.nuspec" -OutputDirectory "$(MSBuildProjectDirectory)\build" -NoPackageAnalysis' />
   </Target>
 
 </Project>

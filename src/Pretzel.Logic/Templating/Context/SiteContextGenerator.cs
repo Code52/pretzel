@@ -23,9 +23,6 @@ namespace Pretzel.Logic.Templating.Context
 
         public SiteContext BuildContext(string path)
         {
-            if (!Path.IsPathRooted(path))
-                path = Path.Combine(Environment.CurrentDirectory, path);
-
             var config = new Dictionary<string, object>();
             if (File.Exists(Path.Combine(path, "_config.yml")))
                 config = (Dictionary<string, object>)File.ReadAllText(Path.Combine(path, "_config.yml")).YamlHeader(true);
@@ -39,6 +36,8 @@ namespace Pretzel.Logic.Templating.Context
                 OutputFolder = Path.Combine(path, "_site"),
                 Posts = new List<Page>(),
                 Pages = new List<Page>(),
+                Config = config,
+                Time = DateTime.Now,
             };
 
             BuildPosts(config, context);
@@ -75,8 +74,8 @@ namespace Pretzel.Logic.Templating.Context
                 var page = new Page
                 {
                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post", // should this be the Site title?
-                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : DateTime.Now,
-                    Content = Markdown.Transform(contents.ExcludeHeader()),
+                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
+                    Content = RenderContent(file, contents, header), 
                     Filepath = GetPathWithTimestamp(context.OutputFolder, file),
                     File = file,
                     Bag = header,
@@ -114,12 +113,8 @@ namespace Pretzel.Logic.Templating.Context
                 var post = new Page
                 {
                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
-                    // NOTE: should this be the Site title?
-                    Date =
-                        header.ContainsKey("date")
-                            ? DateTime.Parse(header["date"].ToString())
-                            : file.Datestamp(),
-                    Content = GetContent(file, contents),
+                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
+                    Content = RenderContent(file, contents, header),
                     Filepath = GetPathWithTimestamp(context.OutputFolder, file),
                     File = file,
                     Bag = header,
@@ -145,12 +140,15 @@ namespace Pretzel.Logic.Templating.Context
 
         }
 
-        private static string GetContent(string file, string contents)
+        private static string RenderContent(string file, string contents, IDictionary<string, object> header)
         {
             string html;
             try
             {
-                html = Markdown.Transform(contents.ExcludeHeader());
+                var contentsWithoutHeader = contents.ExcludeHeader();
+                html = string.Equals(Path.GetExtension(file), ".md", StringComparison.InvariantCultureIgnoreCase)
+                       ? Markdown.Transform(contentsWithoutHeader)
+                       : contentsWithoutHeader;
             }
             catch (Exception e)
             {
