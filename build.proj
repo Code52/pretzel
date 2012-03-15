@@ -22,10 +22,10 @@
   </Target>
 
   <Target Name="Chocolatey" DependsOnTargets="Test">
-    <Message Text="$(MSBuildProjectDirectory)\src\Packages\NuGet.CommandLine.*\tools\NuGet.exe" />
     <ItemGroup>
-      <NuGet Include="$(MSBuildProjectDirectory)\src\Packages\NuGet.CommandLine.*\tools\NuGet.exe" />
+      <NuGet Include="$(MSBuildProjectDirectory)\src\.Nuget\NuGet.exe" />
     </ItemGroup>
+    <MakeDir Directories="$(MSBuildProjectDirectory)\build" />
     <Exec Command='"@(NuGet)" pack "$(MSBuildProjectDirectory)\tools\chocolatey\pretzel.nuspec" -OutputDirectory "$(MSBuildProjectDirectory)\build"' />
   </Target>
 
