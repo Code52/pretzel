@@ -42,7 +42,7 @@ namespace Pretzel.Tests.Extensions
         }
 
         [Fact]
-        public void Datestamp_ForSpeicificCases_ReturnsExpectedValues()
+        public void Datestamp_WhenFullPathIncluded_ReturnsExpectedValues()
         {
             var output = "C:\\SomeWebsite\\2012-01-02-hello-world.md".Datestamp();
             Assert.Equal(2012, output.Year);
@@ -51,7 +51,32 @@ namespace Pretzel.Tests.Extensions
         }
 
         [Fact]
-        public void Datestamp_WithoutDirectory_ThrowsException()
+        public void Datestamp_WhenRelativePathIncluded_ReturnsExpectedValues()
+        {
+            var output = "SomeWebsite\\2012-01-02-hello-world.md".Datestamp();
+            Assert.Equal(2012, output.Year);
+            Assert.Equal(1, output.Month);
+            Assert.Equal(2, output.Day);
+        }
+
+        [Fact]
+        public void Datestamp_WhenNoDateTimeSet_ReturnsDateTimeNow()
+        {
+            var now = DateTime.Now;
+            var output = "SomeWebsite\\hello-world.md".Datestamp();
+            Assert.Equal(now.Year, output.Year);
+            Assert.Equal(now.Month, output.Month);
+            Assert.Equal(now.Day, output.Day);
+        }
+
+        [Fact]
+        public void Datestamp_WithIncorrectFormat_ThrowsException()
+        {
+            Assert.Throws<FormatException>(() => "C:\\SomeWebsite\\2012-01-hello.md".Datestamp());
+        }
+
+        [Fact]
+        public void Datestamp_WithoutDirectorySet_ThrowsException()
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => "2012-01-02-hello-world.md".Datestamp());
         }
