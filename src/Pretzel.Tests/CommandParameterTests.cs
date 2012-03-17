@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using NSubstitute;
 using Pretzel.Logic.Commands;
+using Pretzel.Logic.Templating;
+using Pretzel.Logic.Templating.Context;
 using Xunit;
 
 namespace Pretzel.Tests
@@ -95,7 +98,7 @@ namespace Pretzel.Tests
         [Fact]
         public void Parse_WhenSpecifyingPathUsingFullParameterSingleDash_MapsToPath()
         {
-            var args = new List<string> { "-directory", ExpectedPath};
+            var args = new List<string> { "-directory", ExpectedPath };
             subject.Parse(args);
             Assert.Equal(ExpectedPath, subject.Path);
         }
@@ -202,5 +205,26 @@ namespace Pretzel.Tests
             Assert.Equal(ExpectedImportType, subject.ImportType);
         }
 
+        [Fact]
+        public void DetectFromDirectory_WithNoEngines_SetsTemplateToLiquid()
+        {
+            subject.DetectFromDirectory(new Dictionary<string, ISiteEngine>(), new SiteContext());
+            Assert.Equal("liquid", subject.Template);
+        }
+
+        [Fact]
+        public void DetectFromDirectory_WithMatchingEngines_SetsTemplateToCustomValue()
+        {
+            // arrange
+            const string key = "foo";
+            var engine = Substitute.For<ISiteEngine>();
+            engine.CanProcess(Arg.Any<SiteContext>()).Returns(true);
+            var engines = new Dictionary<string, ISiteEngine> { { key, engine } };
+
+            // act 
+            subject.DetectFromDirectory(engines, new SiteContext());
+
+            Assert.Equal(key, subject.Template);
+        }
     }
 }
