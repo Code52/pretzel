@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Commands\CommandParameterOutputTests.cs" />
     <Compile Include="Commands\CommandParameterTests.cs" />
+    <Compile Include="Exceptions\PageProcessingExceptionTests.cs" />
     <Compile Include="Import\BloggerImportTests.cs" />
     <Compile Include="Import\HtmlToMarkdownConverterTests.cs" />
     <Compile Include="Import\WordpressImportTests.cs" />
