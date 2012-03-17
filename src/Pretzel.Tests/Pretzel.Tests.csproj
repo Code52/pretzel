@@ -68,7 +68,7 @@
     <Compile Include="Minification\TestContainerFactory.cs" />
     <Compile Include="Minification\TestFileReader.cs" />
     <Compile Include="Minification\TestPathResolver.cs" />
-    <Compile Include="PretzelContext.cs" />
+    <Compile Include="SpecificationFor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recipe\RecipeTests.cs" />
     <Compile Include="Templating\Jekyll\BakingEnvironment.cs" />
@@ -78,7 +78,7 @@
     <Compile Include="Templating\Plugins\TagCloudTests.cs" />
     <Compile Include="Templating\Razor\RazorEngineTests.cs" />
     <Compile Include="Templating\Razor\When_Recieving_A_Razor_File.cs" />
-    <Compile Include="YamlExtensionsTests.cs" />
+    <Compile Include="Extensions\YamlExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
