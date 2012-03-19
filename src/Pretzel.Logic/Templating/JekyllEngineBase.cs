@@ -70,21 +70,18 @@ namespace Pretzel.Logic.Templating
                 relativePath = MapToOutputPath(page.File);
 
             page.OutputFile = Path.Combine(outputDirectory, relativePath);
-
-            var directory = Path.GetDirectoryName(page.OutputFile);
-            if (!FileSystem.Directory.Exists(directory))
-                FileSystem.Directory.CreateDirectory(directory);
-
             var extension = Path.GetExtension(page.File);
 
             if (extension.IsImageFormat())
             {
+                CreateOutputDirectory(page.OutputFile);
                 FileSystem.File.Copy(page.File, page.OutputFile, true);
                 return;
             }
 
             if (page is NonProcessedPage)
             {
+                CreateOutputDirectory(page.OutputFile);
                 FileSystem.File.Copy(page.File, page.OutputFile, true);
                 return;
             }
@@ -127,10 +124,18 @@ namespace Pretzel.Logic.Templating
                 throw new PageProcessingException(string.Format("Failed to process {0}, see inner exception for more details", pageContext.OutputPath), ex);
             }
 
+				CreateOutputDirectory(pageContext.OutputPath);
             FileSystem.File.WriteAllText(pageContext.OutputPath, pageContext.Content);
         }
 
-        protected virtual string LayoutExtension
+		  private void CreateOutputDirectory(string outputFile)
+		  {
+			  var directory = Path.GetDirectoryName(outputFile);
+			  if (!FileSystem.Directory.Exists(directory))
+				  FileSystem.Directory.CreateDirectory(directory);
+		  }
+
+    	protected virtual string LayoutExtension
         {
             get { return ".html"; }
         }
