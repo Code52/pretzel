@@ -2,12 +2,18 @@
 
   <!-- TODO: mono build -->
   <!-- TODO: package step to merge code into one binary -->
+  <Import Project="$(MSBuildProjectDirectory)\tools\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+  
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)'==''">Release</Configuration>
+    <Version Condition="'$(Version)'==''">0.0.0.1</Version>
+  </PropertyGroup>
 
   <UsingTask AssemblyFile=".\tools\xunit\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
 
   <Target Name="Compile">
     <Message Text=" ===========Building Project===========" Importance="High" />
-    <MSBuild Projects="./src/Pretzel.sln" Properties="Configuration=$(Configuration)" />
+    <MSBuild Projects="$(MSBuildProjectDirectory)/src/Pretzel.sln" Properties="Configuration=$(Configuration)" />
   </Target>
 
   <Target Name="Test" DependsOnTargets="Compile">
@@ -15,18 +21,31 @@
     <Message Text="===========Tests===========" Importance="High" />
 
     <ItemGroup>
-      <TestFiles Include=".\**\bin\$(Configuration)\*Tests.dll" />
+      <TestFiles Include="$(MSBuildProjectDirectory)\**\bin\$(Configuration)\*Tests.dll" />
     </ItemGroup>
 
-    <xunit Assembly="@(TestFiles)" />
+    <xunit Assemblies="@(TestFiles)" />
   </Target>
 
   <Target Name="Chocolatey" DependsOnTargets="Test">
     <ItemGroup>
       <NuGet Include="$(MSBuildProjectDirectory)\src\.Nuget\NuGet.exe" />
     </ItemGroup>
-    <MakeDir Directories="$(MSBuildProjectDirectory)\build" />
-    <Exec Command='"@(NuGet)" pack "$(MSBuildProjectDirectory)\tools\chocolatey\pretzel.nuspec" -OutputDirectory "$(MSBuildProjectDirectory)\build" -NoPackageAnalysis' />
+    <PropertyGroup>
+      <ChocolateyInstall>$(MSBuildProjectDirectory)\build\chocolatey\tools\chocolateyInstall.ps1</ChocolateyInstall>
+    </PropertyGroup>
+    <MakeDir Directories="$(MSBuildProjectDirectory)\build\chocolatey\tools" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\tools\chocolatey\pretzel.nuspec"
+          DestinationFiles="$(MSBuildProjectDirectory)\build\chocolatey\pretzel.nuspec" />
+
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\tools\chocolatey\chocolateyInstall.ps1"
+          DestinationFiles="$(ChocolateyInstall)" />
+    
+    <FileUpdate Files="$(ChocolateyInstall)"
+                Regex="{{version}}"
+                ReplacementText="$(Version)"/>
+    
+    <Exec Command='"@(NuGet)" pack "$(MSBuildProjectDirectory)\build\chocolatey\pretzel.nuspec" -OutputDirectory "$(MSBuildProjectDirectory)\build" -Version $(Version) -NoPackageAnalysis' />
   </Target>
 
 </Project>
