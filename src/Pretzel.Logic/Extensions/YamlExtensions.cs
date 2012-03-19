@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
 using YamlDotNet.RepresentationModel;
-using System.IO;
 using YamlDotNet.RepresentationModel.Serialization;
 
 namespace Pretzel.Logic.Extensions
@@ -14,17 +14,17 @@ namespace Pretzel.Logic.Extensions
             StringReader input;
             var results = new Dictionary<string, object>();
 
-            if (!skipHeader)
+            if (skipHeader)
+            {
+                input = new StringReader(text);
+            }
+            else
             {
                 var m = r.Matches(text);
                 if (m.Count == 0)
                     return results;
 
                 input = new StringReader(m[0].Groups[1].Value);
-            }
-            else
-            {
-                input = new StringReader(text);
             }
 
             var yaml = new YamlStream();
