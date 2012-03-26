@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using MarkdownDeep;
 using Pretzel.Logic.Extensions;
-using ImportAttribute = System.ComponentModel.Composition.ImportAttribute;
 
 namespace Pretzel.Logic.Templating.Context
 {
@@ -17,9 +16,13 @@ namespace Pretzel.Logic.Templating.Context
     public class SiteContextGenerator
     {
         private static readonly Markdown Markdown = new Markdown();
-#pragma warning disable 0649
-        [Import] IFileSystem fileSystem;
-#pragma warning restore 0649
+        readonly IFileSystem fileSystem;
+        
+        [ImportingConstructor]
+        public SiteContextGenerator(IFileSystem fileSystem)
+        {
+            this.fileSystem = fileSystem;
+        }
 
         public SiteContext BuildContext(string path)
         {
