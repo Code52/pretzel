@@ -72,24 +72,10 @@ namespace Pretzel.Logic.Templating.Context
                     continue;
                 }
 
-                var contents = SafeReadContents(file);
-                var header = contents.YamlHeader();
-                var page = new Page
-                {
-                    Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post", // should this be the Site title?
-                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
-                    Content = RenderContent(file, contents, header), 
-                    Filepath = GetPathWithTimestamp(context.OutputFolder, file),
-                    File = file,
-                    Bag = header,
-                };
+                var page = CreatePage(context, config, file);
 
-                if (header.ContainsKey("permalink"))
-                {
-                    page.Url = EvaluatePagePermalink(header["permalink"].ToString(), page);
-                }
-
-                context.Pages.Add(page);
+                if (page != null)
+                    context.Pages.Add(page);
             }
         }
 
@@ -109,30 +95,33 @@ namespace Pretzel.Logic.Templating.Context
 
         private void BuildPost(Dictionary<string, object> config, SiteContext context, string file)
         {
+            var post = CreatePage(context, config, file);
+            if (post != null)
+                context.Posts.Add(post);
+        }
+
+        private Page CreatePage(SiteContext context, IDictionary<string, object> config, string file)
+        {
             try
             {
                 var contents = SafeReadContents(file);
                 var header = contents.YamlHeader();
                 var post = new Page
-                {
-                    Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
-                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
-                    Content = RenderContent(file, contents, header),
-                    Filepath = GetPathWithTimestamp(context.OutputFolder, file),
-                    File = file,
-                    Bag = header,
-                };
+                                {
+                                    Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
+                                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
+                                    Content = RenderContent(file, contents, header),
+                                    Filepath = GetPathWithTimestamp(context.OutputFolder, file),
+                                    File = file,
+                                    Bag = header,
+                                };
 
                 if (header.ContainsKey("permalink"))
                     post.Url = EvaluatePermalink(header["permalink"].ToString(), post);
                 else if (config.ContainsKey("permalink"))
                     post.Url = EvaluatePermalink(config["permalink"].ToString(), post);
-
-                if (string.IsNullOrEmpty(post.Url))
-                {
-                    Tracing.Info("whaaa");
-                }
-                context.Posts.Add(post);
+                
+                return post;
             }
             catch (Exception e)
             {
@@ -141,6 +130,7 @@ namespace Pretzel.Logic.Templating.Context
                 Tracing.Debug(e.ToString());
             }
 
+            return null;
         }
 
         private static string RenderContent(string file, string contents, IDictionary<string, object> header)
@@ -223,16 +213,6 @@ namespace Pretzel.Logic.Templating.Context
             permalink = permalink.Replace(":month", page.Date.ToString("MM"));
             permalink = permalink.Replace(":day", page.Date.ToString("dd"));
             permalink = permalink.Replace(":title", GetTitle(page.File));
-
-            return permalink;
-        }
-
-        private string EvaluatePagePermalink(string permalink, Page page)
-        {
-            permalink = permalink.Replace(":year", page.Date.Year.ToString(CultureInfo.InvariantCulture));
-            permalink = permalink.Replace(":month", page.Date.ToString("MM"));
-            permalink = permalink.Replace(":day", page.Date.ToString("dd"));
-            permalink = permalink.Replace(":title", GetPageTitle(page.File));
 
             return permalink;
         }
