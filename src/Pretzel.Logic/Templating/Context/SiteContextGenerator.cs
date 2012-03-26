@@ -17,7 +17,7 @@ namespace Pretzel.Logic.Templating.Context
     {
         private static readonly Markdown Markdown = new Markdown();
         readonly IFileSystem fileSystem;
-        
+
         [ImportingConstructor]
         public SiteContextGenerator(IFileSystem fileSystem)
         {
@@ -43,60 +43,65 @@ namespace Pretzel.Logic.Templating.Context
                 Time = DateTime.Now,
             };
 
-            BuildPosts(config, context);
+            context.Posts = BuildPosts(config, context).OrderByDescending(p => p.Date).ToList();
 
-            BuildPages(config, context);
+            context.Pages = BuildPages(config, context).ToList();
 
             return context;
         }
 
-        private void BuildPages(Dictionary<string, object> config, SiteContext context)
+        private IEnumerable<Page> BuildPages(Dictionary<string, object> config, SiteContext context)
         {
-            foreach (var file in fileSystem.Directory.GetFiles(context.SourceFolder, "*.*", SearchOption.AllDirectories))
+            var files = from file in fileSystem.Directory.GetFiles(context.SourceFolder, "*.*", SearchOption.AllDirectories)
+                        let relativePath = MapToOutputPath(context, file)
+                        where !IsSpecialPath(relativePath)
+                        select file;
+
+            foreach (var file in files)
             {
-                var relativePath = MapToOutputPath(context, file);
-
-                if (relativePath.StartsWith("_") || relativePath.StartsWith("."))
-                    continue;
-
-                var postFirstLine = SafeReadLine(file);
-                if (postFirstLine == null || !postFirstLine.StartsWith("---"))
+                if (!ContainsYamlFrontMatter(file))
                 {
-                    context.Pages.Add(new NonProcessedPage
-                    {
-                        File = file,
-                        Filepath = Path.Combine(context.OutputFolder, file)
-                    });
-                    continue;
+                    yield return new NonProcessedPage
+                                     {
+                                         File = file,
+                                         Filepath = Path.Combine(context.OutputFolder, file)
+                                     };
                 }
 
                 var page = CreatePage(context, config, file);
 
                 if (page != null)
-                    context.Pages.Add(page);
+                    yield return page;
             }
         }
 
-        private void BuildPosts(Dictionary<string, object> config, SiteContext context)
+        private IEnumerable<Page> BuildPosts(Dictionary<string, object> config, SiteContext context)
         {
             var postsFolder = Path.Combine(context.SourceFolder, "_posts");
             if (fileSystem.Directory.Exists(postsFolder))
             {
-                foreach (var file in fileSystem.Directory.GetFiles(postsFolder, "*.*", SearchOption.AllDirectories))
-                {
-                    BuildPost(config, context, file);
-                }
-
-                context.Posts = context.Posts.OrderByDescending(p => p.Date).ToList();
+                return fileSystem.Directory
+                    .GetFiles(postsFolder, "*.*", SearchOption.AllDirectories)
+                    .Select(file => CreatePage(context, config, file))
+                    .Where(post => post != null);
             }
+
+            return Enumerable.Empty<Page>();
         }
 
-        private void BuildPost(Dictionary<string, object> config, SiteContext context, string file)
+        private bool ContainsYamlFrontMatter(string file)
         {
-            var post = CreatePage(context, config, file);
-            if (post != null)
-                context.Posts.Add(post);
+            var postFirstLine = SafeReadLine(file);
+
+            return postFirstLine != null && postFirstLine.StartsWith("---");
         }
+
+        private static bool IsSpecialPath(string relativePath)
+        {
+            return relativePath.StartsWith("_") || relativePath.StartsWith(".");
+        }
+
+
 
         private Page CreatePage(SiteContext context, IDictionary<string, object> config, string file)
         {
@@ -118,7 +123,7 @@ namespace Pretzel.Logic.Templating.Context
                     post.Url = EvaluatePermalink(header["permalink"].ToString(), post);
                 else if (config.ContainsKey("permalink"))
                     post.Url = EvaluatePermalink(config["permalink"].ToString(), post);
-                
+
                 return post;
             }
             catch (Exception e)
@@ -167,7 +172,7 @@ namespace Pretzel.Logic.Templating.Context
                 try
                 {
                     fileInfo.CopyTo(tempFile, true);
-                    using(var streamReader = fileSystem.File.OpenText(tempFile))
+                    using (var streamReader = fileSystem.File.OpenText(tempFile))
                     {
                         return streamReader.ReadLine();
                     }
@@ -199,7 +204,7 @@ namespace Pretzel.Logic.Templating.Context
                 finally
                 {
                     if (fileSystem.File.Exists(tempFile))
-                        fileSystem.File.Delete(tempFile);                    
+                        fileSystem.File.Delete(tempFile);
                 }
             }
         }
