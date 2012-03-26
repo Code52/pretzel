@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using MarkdownDeep;
 using Pretzel.Logic.Extensions;
-using ImportAttribute = System.ComponentModel.Composition.ImportAttribute;
 
 namespace Pretzel.Logic.Templating.Context
 {
@@ -16,77 +15,127 @@ namespace Pretzel.Logic.Templating.Context
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class SiteContextGenerator
     {
-        private static readonly Markdown Markdown = new Markdown();
-#pragma warning disable 0649
-        [Import] IFileSystem fileSystem;
-#pragma warning restore 0649
+        readonly Dictionary<string, Page> pageCache = new Dictionary<string, Page>();
+        static readonly Markdown Markdown = new Markdown();
+        readonly IFileSystem fileSystem;
+        bool building;
+
+        [ImportingConstructor]
+        public SiteContextGenerator(IFileSystem fileSystem)
+        {
+            this.fileSystem = fileSystem;
+        }
 
         public SiteContext BuildContext(string path)
         {
-            var config = new Dictionary<string, object>();
-            if (File.Exists(Path.Combine(path, "_config.yml")))
-                config = (Dictionary<string, object>)File.ReadAllText(Path.Combine(path, "_config.yml")).YamlHeader(true);
+            if (building)
+                throw new InvalidOperationException("Already building a site context");
+            building = true;
 
-            if (!config.ContainsKey("permalink"))
-                config.Add("permalink", "/:year/:month/:day/:title.html");
-
-            var context = new SiteContext
+            try
             {
-                SourceFolder = path,
-                OutputFolder = Path.Combine(path, "_site"),
-                Posts = new List<Page>(),
-                Pages = new List<Page>(),
-                Config = config,
-                Time = DateTime.Now,
-            };
+                var config = new Dictionary<string, object>();
+                if (fileSystem.File.Exists(Path.Combine(path, "_config.yml")))
+                    config = (Dictionary<string, object>)fileSystem.File.ReadAllText(Path.Combine(path, "_config.yml")).YamlHeader(true);
 
-            BuildPosts(config, context);
+                if (!config.ContainsKey("permalink"))
+                    config.Add("permalink", "/:year/:month/:day/:title.html");
 
-            BuildPages(config, context);
+                var context = new SiteContext
+                {
+                    SourceFolder = path,
+                    OutputFolder = Path.Combine(path, "_site"),
+                    Posts = new List<Page>(),
+                    Pages = new List<Page>(),
+                    Config = config,
+                    Time = DateTime.Now,
+                };
 
-            return context;
+                BuildPosts(config, context);
+
+                BuildPages(config, context);
+
+                return context;
+            }
+            finally
+            {
+                building = false;
+                pageCache.Clear();
+            }
         }
 
         private void BuildPages(Dictionary<string, object> config, SiteContext context)
         {
             foreach (var file in fileSystem.Directory.GetFiles(context.SourceFolder, "*.*", SearchOption.AllDirectories))
             {
-                var relativePath = MapToOutputPath(context, file);
-                if (relativePath.StartsWith("_"))
+                Page page;
+                if (!ProgessPage(context, file, out page)) 
                     continue;
-
-                if (relativePath.StartsWith("."))
-                    continue;
-
-                var postFirstLine = SafeReadLine(file);
-                if (postFirstLine == null || !postFirstLine.StartsWith("---"))
-                {
-                    context.Pages.Add(new NonProcessedPage
-                    {
-                        File = file,
-                        Filepath = Path.Combine(context.OutputFolder, file)
-                    });
-                    continue;
-                }
-
-                var contents = SafeReadContents(file);
-                var header = contents.YamlHeader();
-                var page = new Page
-                {
-                    Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post", // should this be the Site title?
-                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
-                    Content = RenderContent(file, contents, header), 
-                    Filepath = GetPathWithTimestamp(context.OutputFolder, file),
-                    File = file,
-                    Bag = header,
-                };
-
-                if (header.ContainsKey("permalink"))
-                {
-                    page.Url = EvaluatePagePermalink(header["permalink"].ToString(), page);
-                }
 
                 context.Pages.Add(page);
+            }
+        }
+
+        private bool ProgessPage(SiteContext context, string file, out Page page)
+        {
+            if (pageCache.ContainsKey(file))
+            {
+                page = pageCache[file];
+                return true;
+            }
+            page = null;
+            var relativePath = MapToOutputPath(context, file);
+            if (relativePath.StartsWith("_"))
+                return false;
+
+            if (relativePath.StartsWith("."))
+                return false;
+
+            var postFirstLine = SafeReadLine(file);
+            if (postFirstLine == null || !postFirstLine.StartsWith("---"))
+            {
+                context.Pages.Add(new NonProcessedPage
+                                      {
+                                          File = file,
+                                          Filepath = Path.Combine(context.OutputFolder, file)
+                                      });
+                return false;
+            }
+
+            var contents = SafeReadContents(file);
+            var header = contents.YamlHeader();
+            page = new Page
+                       {
+                           Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
+                           // should this be the Site title?
+                           Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
+                           Content = RenderContent(file, contents, header),
+                           Filepath = GetPathWithTimestamp(context.OutputFolder, file),
+                           File = file,
+                           Bag = header
+                       };
+
+            pageCache.Add(file, page);
+            
+            //Add directory pages after adding to cache, otherwise it will be fully recursive (stack overflow)
+            page.DirectoryPages = GetDirectoryPages(Path.GetDirectoryName(file), context).ToList();
+
+            if (header.ContainsKey("permalink"))
+            {
+                page.Url = EvaluatePagePermalink(header["permalink"].ToString(), page);
+            }
+            return false;
+        }
+
+        private IEnumerable<Page> GetDirectoryPages(string forDirectory, SiteContext context)
+        {
+            foreach (var file in fileSystem.Directory.GetFiles(forDirectory, "*.*", SearchOption.TopDirectoryOnly))
+            {
+                Page page;
+                if (!ProgessPage(context, file, out page))
+                    continue;
+
+                yield return page;
             }
         }
 
@@ -118,6 +167,7 @@ namespace Pretzel.Logic.Templating.Context
                     Filepath = GetPathWithTimestamp(context.OutputFolder, file),
                     File = file,
                     Bag = header,
+                    DirectoryPages = GetDirectoryPages(Path.GetDirectoryName(file), context).ToList()
                 };
 
                 if (header.ContainsKey("permalink"))
@@ -137,7 +187,6 @@ namespace Pretzel.Logic.Templating.Context
                 Tracing.Info(e.Message);
                 Tracing.Debug(e.ToString());
             }
-
         }
 
         private static string RenderContent(string file, string contents, IDictionary<string, object> header)

@@ -28,6 +28,8 @@ namespace Pretzel.Logic.Templating.Context
         {
             get { return (string)Bag["layout"]; }
         }
+
+        public IEnumerable<Page> DirectoryPages { get; set; }
     }
 
     public class NonProcessedPage : Page
