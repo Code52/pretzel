@@ -55,6 +55,46 @@ namespace Pretzel.Tests.Templating.Context
             Assert.Equal(0, siteContext.Posts.Count);
         }
 
+        [Fact]
+        public void posts_without_front_matter_get_processed()
+        {
+
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData("# Title"));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite");
+
+            // assert
+            Assert.Equal(1, siteContext.Posts.Count);
+        }
+
+        [Fact]
+        public void pages_without_front_matter_do_not_get_processed()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\SubFolder\SomeFile.md", new MockFileData("# Title"));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite");
+
+            // assert
+            Assert.IsType<NonProcessedPage>(siteContext.Pages[0]);
+        }
+
+        [Fact]
+        public void pages_with_front_matter_do_not_get_processed()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\SubFolder\SomeFile.md", new MockFileData(ToPageContent("# Title")));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite");
+
+            // assert
+            Assert.IsType<Page>(siteContext.Pages[0]);
+        }
+
         private static string ToPageContent(string content)
         {
             return @"---

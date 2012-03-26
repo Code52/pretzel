@@ -55,10 +55,8 @@ namespace Pretzel.Logic.Templating.Context
             foreach (var file in fileSystem.Directory.GetFiles(context.SourceFolder, "*.*", SearchOption.AllDirectories))
             {
                 var relativePath = MapToOutputPath(context, file);
-                if (relativePath.StartsWith("_"))
-                    continue;
 
-                if (relativePath.StartsWith("."))
+                if (relativePath.StartsWith("_") || relativePath.StartsWith("."))
                     continue;
 
                 var postFirstLine = SafeReadLine(file);
