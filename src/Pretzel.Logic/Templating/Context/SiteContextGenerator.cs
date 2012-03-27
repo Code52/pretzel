@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using MarkdownDeep;
 using Pretzel.Logic.Extensions;
-using ImportAttribute = System.ComponentModel.Composition.ImportAttribute;
 
 namespace Pretzel.Logic.Templating.Context
 {
@@ -17,9 +16,13 @@ namespace Pretzel.Logic.Templating.Context
     public class SiteContextGenerator
     {
         private static readonly Markdown Markdown = new Markdown();
-#pragma warning disable 0649
-        [Import] IFileSystem fileSystem;
-#pragma warning restore 0649
+        readonly IFileSystem fileSystem;
+
+        [ImportingConstructor]
+        public SiteContextGenerator(IFileSystem fileSystem)
+        {
+            this.fileSystem = fileSystem;
+        }
 
         public SiteContext BuildContext(string path)
         {
@@ -40,96 +43,88 @@ namespace Pretzel.Logic.Templating.Context
                 Time = DateTime.Now,
             };
 
-            BuildPosts(config, context);
+            context.Posts = BuildPosts(config, context).OrderByDescending(p => p.Date).ToList();
 
-            BuildPages(config, context);
+            context.Pages = BuildPages(config, context).ToList();
 
             return context;
         }
 
-        private void BuildPages(Dictionary<string, object> config, SiteContext context)
+        private IEnumerable<Page> BuildPages(Dictionary<string, object> config, SiteContext context)
         {
-            foreach (var file in fileSystem.Directory.GetFiles(context.SourceFolder, "*.*", SearchOption.AllDirectories))
+            var files = from file in fileSystem.Directory.GetFiles(context.SourceFolder, "*.*", SearchOption.AllDirectories)
+                        let relativePath = MapToOutputPath(context, file)
+                        where !IsSpecialPath(relativePath)
+                        select file;
+
+            foreach (var file in files)
             {
-                var relativePath = MapToOutputPath(context, file);
-                if (relativePath.StartsWith("_"))
-                    continue;
-
-                if (relativePath.StartsWith("."))
-                    continue;
-
-                var postFirstLine = SafeReadLine(file);
-                if (postFirstLine == null || !postFirstLine.StartsWith("---"))
+                if (!ContainsYamlFrontMatter(file))
                 {
-                    context.Pages.Add(new NonProcessedPage
-                    {
-                        File = file,
-                        Filepath = Path.Combine(context.OutputFolder, file)
-                    });
-                    continue;
+                    yield return new NonProcessedPage
+                                     {
+                                         File = file,
+                                         Filepath = Path.Combine(context.OutputFolder, file)
+                                     };
                 }
 
-                var contents = SafeReadContents(file);
-                var header = contents.YamlHeader();
-                var page = new Page
-                {
-                    Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post", // should this be the Site title?
-                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
-                    Content = RenderContent(file, contents, header), 
-                    Filepath = GetPathWithTimestamp(context.OutputFolder, file),
-                    File = file,
-                    Bag = header,
-                };
+                var page = CreatePage(context, config, file);
 
-                if (header.ContainsKey("permalink"))
-                {
-                    page.Url = EvaluatePagePermalink(header["permalink"].ToString(), page);
-                }
-
-                context.Pages.Add(page);
+                if (page != null)
+                    yield return page;
             }
         }
 
-        private void BuildPosts(Dictionary<string, object> config, SiteContext context)
+        private IEnumerable<Page> BuildPosts(Dictionary<string, object> config, SiteContext context)
         {
             var postsFolder = Path.Combine(context.SourceFolder, "_posts");
             if (fileSystem.Directory.Exists(postsFolder))
             {
-                foreach (var file in fileSystem.Directory.GetFiles(postsFolder, "*.*", SearchOption.AllDirectories))
-                {
-                    BuildPost(config, context, file);
-                }
-
-                context.Posts = context.Posts.OrderByDescending(p => p.Date).ToList();
+                return fileSystem.Directory
+                    .GetFiles(postsFolder, "*.*", SearchOption.AllDirectories)
+                    .Select(file => CreatePage(context, config, file))
+                    .Where(post => post != null);
             }
+
+            return Enumerable.Empty<Page>();
         }
 
-        private void BuildPost(Dictionary<string, object> config, SiteContext context, string file)
+        private bool ContainsYamlFrontMatter(string file)
+        {
+            var postFirstLine = SafeReadLine(file);
+
+            return postFirstLine != null && postFirstLine.StartsWith("---");
+        }
+
+        private static bool IsSpecialPath(string relativePath)
+        {
+            return relativePath.StartsWith("_") || relativePath.StartsWith(".");
+        }
+
+
+
+        private Page CreatePage(SiteContext context, IDictionary<string, object> config, string file)
         {
             try
             {
                 var contents = SafeReadContents(file);
                 var header = contents.YamlHeader();
                 var post = new Page
-                {
-                    Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
-                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
-                    Content = RenderContent(file, contents, header),
-                    Filepath = GetPathWithTimestamp(context.OutputFolder, file),
-                    File = file,
-                    Bag = header,
-                };
+                                {
+                                    Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
+                                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
+                                    Content = RenderContent(file, contents, header),
+                                    Filepath = GetPathWithTimestamp(context.OutputFolder, file),
+                                    File = file,
+                                    Bag = header,
+                                };
 
                 if (header.ContainsKey("permalink"))
                     post.Url = EvaluatePermalink(header["permalink"].ToString(), post);
                 else if (config.ContainsKey("permalink"))
                     post.Url = EvaluatePermalink(config["permalink"].ToString(), post);
 
-                if (string.IsNullOrEmpty(post.Url))
-                {
-                    Tracing.Info("whaaa");
-                }
-                context.Posts.Add(post);
+                return post;
             }
             catch (Exception e)
             {
@@ -138,6 +133,7 @@ namespace Pretzel.Logic.Templating.Context
                 Tracing.Debug(e.ToString());
             }
 
+            return null;
         }
 
         private static string RenderContent(string file, string contents, IDictionary<string, object> header)
@@ -176,7 +172,7 @@ namespace Pretzel.Logic.Templating.Context
                 try
                 {
                     fileInfo.CopyTo(tempFile, true);
-                    using(var streamReader = fileSystem.File.OpenText(tempFile))
+                    using (var streamReader = fileSystem.File.OpenText(tempFile))
                     {
                         return streamReader.ReadLine();
                     }
@@ -208,7 +204,7 @@ namespace Pretzel.Logic.Templating.Context
                 finally
                 {
                     if (fileSystem.File.Exists(tempFile))
-                        fileSystem.File.Delete(tempFile);                    
+                        fileSystem.File.Delete(tempFile);
                 }
             }
         }
@@ -220,16 +216,6 @@ namespace Pretzel.Logic.Templating.Context
             permalink = permalink.Replace(":month", page.Date.ToString("MM"));
             permalink = permalink.Replace(":day", page.Date.ToString("dd"));
             permalink = permalink.Replace(":title", GetTitle(page.File));
-
-            return permalink;
-        }
-
-        private string EvaluatePagePermalink(string permalink, Page page)
-        {
-            permalink = permalink.Replace(":year", page.Date.Year.ToString(CultureInfo.InvariantCulture));
-            permalink = permalink.Replace(":month", page.Date.ToString("MM"));
-            permalink = permalink.Replace(":day", page.Date.ToString("dd"));
-            permalink = permalink.Replace(":title", GetPageTitle(page.File));
 
             return permalink;
         }
