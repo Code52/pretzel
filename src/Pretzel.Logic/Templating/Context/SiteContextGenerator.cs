@@ -101,8 +101,6 @@ namespace Pretzel.Logic.Templating.Context
             return relativePath.StartsWith("_") || relativePath.StartsWith(".");
         }
 
-
-
         private Page CreatePage(SiteContext context, IDictionary<string, object> config, string file)
         {
             try
@@ -243,7 +241,6 @@ namespace Pretzel.Logic.Templating.Context
             return file.Replace(context.SourceFolder, "").TrimStart('\\');
         }
 
-
         private string GetPathWithTimestamp(string outputDirectory, string file)
         {
             // TODO: detect mode from site config
@@ -254,6 +251,7 @@ namespace Pretzel.Logic.Templating.Context
             var title = string.Join("-", tokens.Skip(3));
             return Path.Combine(outputDirectory, timestamp, title);
         }
+
         private string GetTitle(string file)
         {
             // TODO: detect mode from site config
@@ -267,16 +265,6 @@ namespace Pretzel.Logic.Templating.Context
             var title = string.Join("-", tokens.Skip(3));
             title = title.Substring(0, title.LastIndexOf("."));
             return title;
-        }
-        private string GetPageTitle(string file)
-        {
-            //Page title dont have dates in them so use the full filename as the title
-            if (file.Contains("."))
-            {
-                return file.Substring(0, file.LastIndexOf("."));
-            }
-            //Something better here?
-            return file;
         }
     }
 }
