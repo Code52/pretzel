@@ -10,7 +10,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
     public class SiteContextDrop : Drop
     {
         private readonly SiteContext context;
-        private IList<Hash> posts;
+        //private IList<Hash> posts;
         public DateTime Time
         {
             get

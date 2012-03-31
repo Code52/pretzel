@@ -72,7 +72,7 @@ namespace Pretzel
         public void WaitForClose()
         {
             Console.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            Console.ReadKey();
         }
 
         public void Compose()
