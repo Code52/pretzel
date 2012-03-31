@@ -10,15 +10,15 @@ layout: nil
     <atom:link href="http://domain/rss.xml" rel="self" type="application/rss+xml" />
     <description></description>
     <language>en-au</language>
-    <pubDate>@Model.Site.Time.ToString("ddd, dd MMM Y H:mm:ss K")</pubDate>
-    <lastBuildDate>@Model.Site.Time.ToString("ddd, dd MMM Y H:mm:ss K")</lastBuildDate>
+    <pubDate>@Model.Site.Time.ToString("ddd, dd MMM yyyy H:mm:ss K")</pubDate>
+    <lastBuildDate>@Model.Site.Time.ToString("ddd, dd MMM yyyy H:mm:ss K")</lastBuildDate>
 
     @foreach (var post in Model.Site.Posts)
     {
         <item>
             <title>@post.Title</title>
             <link>http://domain@post.Url</link>
-            <pubDate>@post.Date.ToString("ddd, dd MMM Y H:mm:ss K")</pubDate>
+            <pubDate>@post.Date.ToString("ddd, dd MMM yyyy H:mm:ss K")</pubDate>
             <author>Author</author>
             <guid>http://domain@post.Url</guid>
             <description>@post.Content</description>

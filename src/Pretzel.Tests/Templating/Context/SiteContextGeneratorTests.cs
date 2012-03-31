@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
 using Pretzel.Logic.Templating.Context;
 using Xunit;
 
@@ -67,6 +69,37 @@ namespace Pretzel.Tests.Templating.Context
 
             // assert
             Assert.Equal(1, siteContext.Posts.Count);
+        }
+
+        [Fact]
+        public void posts_without_front_matter_uses_convention_to_render_folder()
+        {
+            fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData("# Title"));
+
+            var outputPath = string.Format("/{0}/{1}", DateTime.Now.ToString("yyyy/MM/dd"), "SomeFile.html");
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite");
+
+            var firstPost = siteContext.Posts.First();
+
+            Assert.Equal(outputPath, firstPost.Url);
+        }
+
+        [Fact]
+        public void posts_without_front_matter_and_override_config_renders_folder()
+        {
+            fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData("# Title"));
+            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData("permalink: /blog/:year/:month/:day/:title.html"));
+
+            var outputPath = string.Format("/blog/{0}/{1}", DateTime.Now.ToString("yyyy/MM/dd"), "SomeFile.html");
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite");
+
+            var firstPost = siteContext.Posts.First();
+
+            Assert.Equal(outputPath, firstPost.Url);
         }
 
         [Fact]

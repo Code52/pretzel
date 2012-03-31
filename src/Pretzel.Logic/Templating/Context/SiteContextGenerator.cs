@@ -27,8 +27,9 @@ namespace Pretzel.Logic.Templating.Context
         public SiteContext BuildContext(string path)
         {
             var config = new Dictionary<string, object>();
-            if (File.Exists(Path.Combine(path, "_config.yml")))
-                config = (Dictionary<string, object>)File.ReadAllText(Path.Combine(path, "_config.yml")).YamlHeader(true);
+            var configPath = Path.Combine(path, "_config.yml");
+            if (fileSystem.File.Exists(configPath))
+                config = (Dictionary<string, object>)fileSystem.File.ReadAllText(configPath).YamlHeader(true);
 
             if (!config.ContainsKey("permalink"))
                 config.Add("permalink", "/:year/:month/:day/:title.html");
@@ -265,6 +266,10 @@ namespace Pretzel.Logic.Templating.Context
             var title = string.Join("-", tokens.Skip(3));
             title = title.Substring(0, title.LastIndexOf("."));
             return title;
+        }
+        private string GetPageTitle(string file)
+        {
+			  return Path.GetFileNameWithoutExtension(file);
         }
     }
 }
