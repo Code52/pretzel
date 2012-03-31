@@ -34,7 +34,7 @@ namespace Pretzel.Logic.Import
                         {
                             Title = e.Element("title").Value,
                             PostName = e.Element(wp + "post_name").Value,
-                            Published = Convert.ToDateTime(e.Element("pubDate").Value),
+                            Published = DateTimeOffset.Parse(e.Element("pubDate").Value),
                             Content = e.Element(content + "encoded").Value,
                             Tags = from t in e.Elements("category")
                                    where t.Attribute("domain").Value == "post_tag"
@@ -79,7 +79,7 @@ namespace Pretzel.Logic.Import
         {
             public string Title { get; set; }
             public string PostName { get; set; }
-            public DateTime Published { get; set; }
+            public DateTimeOffset Published { get; set; }
             public string Content { get; set; }
             public IEnumerable<string> Tags { get; set; }
             public IEnumerable<string> Categories { get; set; }
