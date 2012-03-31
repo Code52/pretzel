@@ -18,10 +18,14 @@ namespace Pretzel.Commands
     {
         private ISiteEngine engine;
 #pragma warning disable 649
-        [Import] TemplateEngineCollection templateEngines;
-        [Import] SiteContextGenerator Generator { get; set; }
-        [Import] CommandParameters parameters;
-        [ImportMany] private IEnumerable<ITransform> transforms;
+        [Import]
+        TemplateEngineCollection templateEngines;
+        [Import]
+        SiteContextGenerator Generator { get; set; }
+        [Import]
+        CommandParameters parameters;
+        [ImportMany]
+        private IEnumerable<ITransform> transforms;
 #pragma warning restore 649
 
         public void Execute(IEnumerable<string> arguments)
@@ -39,7 +43,13 @@ namespace Pretzel.Commands
             engine = templateEngines[parameters.Template];
 
             if (engine == null)
+            {
+                Tracing.Info(string.Format("template engine {0} not found - (engines: {1})", parameters.Template,
+                                           string.Join(", ", templateEngines.Engines.Keys)));
+
                 return;
+            }
+
 
             engine.Initialize();
             engine.Process(context);
@@ -48,10 +58,10 @@ namespace Pretzel.Commands
             var watcher = new SimpleFileSystemWatcher();
             watcher.OnChange(parameters.Path, WatcherOnChanged);
 
-            var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider(),Convert.ToInt32(parameters.Port));
+            var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider(), Convert.ToInt32(parameters.Port));
             w.Start();
 
-            
+
             Tracing.Info(string.Format("Launching http://localhost:{0}/ to test the site.", parameters.Port));
             try
             {
