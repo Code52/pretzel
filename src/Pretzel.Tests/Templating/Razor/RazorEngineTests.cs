@@ -61,5 +61,19 @@ namespace Pretzel.Tests.Templating.Razor
             string output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
             Assert.Equal(expectedfileContents, output);
         }
+
+        [Fact]
+        public void File_with_include_is_processed()
+        {
+            const string templateContents = "<html><head><title>@Model.Title</title></head><body>@Raw(Model.Content)</body></html>";
+            const string pageContents = "<i>@Include(\"TestInclude\")</i>";
+            const string layoutContents = "<b>Included!</b>";
+            const string expectedfileContents = "<html><head><title>My Web Site</title></head><body><i><b>Included!</b></i></body></html>";
+
+            FileSystem.AddFile(@"C:\website\_includes\TestInclude.cshtml", new MockFileData(layoutContents));
+            ProcessContents(templateContents, pageContents, new Dictionary<string, object> { { "title", "My Web Site" } });
+            string output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
+            Assert.Equal(expectedfileContents, output);
+        }
     }
 }

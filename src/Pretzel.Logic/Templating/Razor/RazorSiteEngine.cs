@@ -1,6 +1,9 @@
 ﻿using System.ComponentModel.Composition;
+using System.IO;
 using System.Text.RegularExpressions;
 using Pretzel.Logic.Templating.Context;
+using RazorEngine.Configuration;
+using RazorEngine.Templating;
 
 namespace Pretzel.Logic.Templating.Razor
 {
@@ -23,9 +26,13 @@ namespace Pretzel.Logic.Templating.Razor
 
         protected override string RenderTemplate(string content, PageContext pageData)
         {
-            content = Regex.Replace(content, "<p>(@model .*?)</p>", "$1");
+           var includesPath = Path.Combine(pageData.Site.SourceFolder, "_includes");
+           var serviceConfig = new TemplateServiceConfiguration { Resolver = new IncludesResolver(FileSystem, includesPath) };
+           RazorEngine.Razor.SetTemplateService(new TemplateService(serviceConfig));
 
-            return RazorEngine.Razor.Parse(content, pageData);
+           content = Regex.Replace(content, "<p>(@model .*?)</p>", "$1");
+
+           return RazorEngine.Razor.Parse(content, pageData);
         }
     }
 }
