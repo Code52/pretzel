@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using Xunit;
 using System.IO.Abstractions.TestingHelpers;
-using Pretzel.Logic.Import;
 using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Import;
+using Xunit;
 
 namespace Pretzel.Tests.Import
 {
     public class WordpressImportTests
     {
+        readonly MockFileSystem fileSystem;
+        readonly DateTimeOffset publishedTimeStamp;
+        readonly WordpressImport wordpressImporter;
+        readonly string outputFileName;
+
         const string BaseSite = @"c:\site\";
         const string ImportFile = @"c:\import.xml";
         const string ImportContent = @"<?xml version=""1.0"" encoding=""UTF-8"" ?>
@@ -24,7 +29,7 @@ namespace Pretzel.Tests.Import
 	<title>test blog</title>
 	<link>http://lobsterino.wordpress.com</link>
 	<description>Just another WordPress.com weblog</description>
-	<pubDate>Sun, 05 Feb 2012 01:45:31 +0000</pubDate>
+	<pubDate>{0}</pubDate>
 	<language>en</language>
 	<wp:wxr_version>1.1</wp:wxr_version>
 	<wp:base_site_url>http://wordpress.com/</wp:base_site_url>
@@ -91,23 +96,34 @@ namespace Pretzel.Tests.Import
 
         public WordpressImportTests()
         {
+            publishedTimeStamp = new DateTimeOffset(2010, 02, 06, 11, 22, 38, TimeSpan.Zero);
 
+            var datePublished = publishedTimeStamp.ToString("ddd, dd MMM yyyy hh:mm:ss zzzzz");
+
+            outputFileName = string.Format("{0}_posts\\{1}-hello-world.md", BaseSite, publishedTimeStamp.ToString("yyyy-MM-dd"));
+
+            fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                { ImportFile, new MockFileData(string.Format(ImportContent, datePublished)) }
+            });
+
+            wordpressImporter = new WordpressImport(fileSystem, BaseSite, ImportFile);
         }
 
         [Fact]
         public void Posts_Are_Imported()
         {
-            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
-            {
-                { ImportFile, new MockFileData(ImportContent) }
-            });
-
-            var wordpressImporter = new WordpressImport(fileSystem, BaseSite, ImportFile);
             wordpressImporter.Import();
 
-            Assert.True(fileSystem.File.Exists(BaseSite + "_posts\\2010-02-06-hello-world.md"));            
+            Assert.True(fileSystem.File.Exists(outputFileName));
+        }
 
-            var postContent = fileSystem.File.ReadAllText(BaseSite + "_posts\\2010-02-06-hello-world.md");
+        [Fact]
+        public void imported_post_has_correct_title()
+        {
+            wordpressImporter.Import();
+
+            var postContent = fileSystem.File.ReadAllText(outputFileName);
             var header = postContent.YamlHeader();
 
             Assert.Equal("Hello world!", header["title"].ToString());
