@@ -76,7 +76,7 @@ namespace Pretzel.Tests.Templating.Context
         {
             fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData("# Title"));
 
-            var outputPath = string.Format("/{0}/{1}", DateTime.Now.ToString("yyyy/MM/dd"), "SomeFile.html");
+            var outputPath = string.Format("/{0}/{1}", DateTime.Now.ToString("yyyy'/'MM'/'dd"), "SomeFile.html");
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite");
@@ -92,7 +92,7 @@ namespace Pretzel.Tests.Templating.Context
             fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData("# Title"));
             fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData("permalink: /blog/:year/:month/:day/:title.html"));
 
-            var outputPath = string.Format("/blog/{0}/{1}", DateTime.Now.ToString("yyyy/MM/dd"), "SomeFile.html");
+            var outputPath = string.Format("/blog/{0}/{1}", DateTime.Now.ToString("yyyy'/'MM'/'dd"), "SomeFile.html");
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite");

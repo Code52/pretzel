@@ -44,12 +44,9 @@ namespace Pretzel.Logic.Templating.Jekyll
                 wtftime = Hash.FromAnonymousObject(new { date = DateTime.Now }),
                 page = y,
                 content = pageContext.Content,
+                paginator = pageContext.Paginator, 
             });
 
-            if (Context.Config.ContainsKey("paginate") && pageContext.OutputPath.EndsWith("index.html"))
-            {
-                x.Add("paginator", new Paginator(Context));
-            }
             return x;
         }
 
