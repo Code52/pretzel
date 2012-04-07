@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
 using Pretzel.Logic.Exceptions;
 using Pretzel.Logic.Templating.Context;
@@ -86,6 +87,52 @@ namespace Pretzel.Tests.Templating.Razor
             Assert.ThrowsDelegate action = () => ProcessContents(templateContents, pageContents, new Dictionary<string, object> {{"title", "My Web Site"}});
 
             Assert.Throws<PageProcessingException>(action);
+        }
+    }
+
+    public class When_Paginate_Razor : BakingEnvironment<RazorSiteEngine>
+    {
+        const string TemplateContents = "@model Pretzel.Logic.Templating.Context.PageContext \r\n<html><body>@Raw(Model.Content)</body></html>";
+        const string PostContents = "---\r\n layout: default \r\n title: 'Post'\r\n---\r\n<h1>Post{0}</h1>";
+        const string IndexContents = "---\r\n layout: default \r\n paginate: 2 \r\n paginate_link: /blog/page:page/index.html \r\n---\r\n @model Pretzel.Logic.Templating.Context.PageContext \r\n @foreach(var post in Model.Paginator.Posts) { @Raw(post.Content) }";
+        const string ExpectedfileContents = "<html><body><p><h1>Post{0}</h1><h1>Post{1}</h1></p></body></html>";
+        const string ExpectedLastFileContents = "<html><body><p><h1>Post{0}</h1></p></body></html>";
+
+        public override RazorSiteEngine Given()
+        {
+            return new RazorSiteEngine();
+        }
+
+        public override void When()
+        {
+            FileSystem.AddFile(@"C:\website\_layouts\default.cshtml", new MockFileData(TemplateContents));
+            FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
+
+            for (var i = 1; i <= 7; i++)
+            {
+                FileSystem.AddFile(String.Format(@"C:\website\_posts\2012-02-0{0}-p{0}.md", i), new MockFileData(String.Format(PostContents, i)));
+            }
+
+            var generator = new SiteContextGenerator(FileSystem);
+            var context = generator.BuildContext(@"C:\website\");
+            Subject.FileSystem = FileSystem;
+            Subject.Process(context);
+        }
+
+        [Fact]
+        public void Posts_Properly_Paginated()
+        {
+            Assert.Equal(String.Format(ExpectedfileContents, 7, 6),
+                         FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+
+            Assert.Equal(String.Format(ExpectedfileContents, 5, 4),
+                         FileSystem.File.ReadAllText(@"C:\website\_site\blog\page2\index.html").RemoveWhiteSpace());
+
+            Assert.Equal(String.Format(ExpectedfileContents, 3, 2),
+                         FileSystem.File.ReadAllText(@"C:\website\_site\blog\page3\index.html").RemoveWhiteSpace());
+
+            Assert.Equal(String.Format(ExpectedLastFileContents, 1),
+                         FileSystem.File.ReadAllText(@"C:\website\_site\blog\page4\index.html").RemoveWhiteSpace());
         }
     }
 }
