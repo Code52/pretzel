@@ -69,11 +69,13 @@ namespace Pretzel.Logic.Templating.Context
                                      };
                     continue;
                 }
+                else
+                {
+                    var page = CreatePage(context, config, file);
 
-                var page = CreatePage(context, config, file);
-
-                if (page != null)
-                    yield return page;
+                    if (page != null)
+                        yield return page;
+                }
             }
         }
 
