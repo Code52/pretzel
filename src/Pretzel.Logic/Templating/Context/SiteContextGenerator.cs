@@ -68,11 +68,13 @@ namespace Pretzel.Logic.Templating.Context
                                          Filepath = Path.Combine(context.OutputFolder, file)
                                      };
                 }
+                else
+                {
+                    var page = CreatePage(context, config, file);
 
-                var page = CreatePage(context, config, file);
-
-                if (page != null)
-                    yield return page;
+                    if (page != null)
+                        yield return page;
+                }
             }
         }
 
