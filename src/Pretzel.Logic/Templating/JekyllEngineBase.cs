@@ -1,25 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using MarkdownDeep;
 using Pretzel.Logic.Exceptions;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
-using System.ComponentModel.Composition;
 
 namespace Pretzel.Logic.Templating
 {
     public abstract class JekyllEngineBase : ISiteEngine
     {
         protected SiteContext Context;
-        private readonly Markdown markdown = new Markdown();
 
 #pragma warning disable 0649
         [Import] public IFileSystem FileSystem { get; set; }
 #pragma warning restore 0649
-
 
         public abstract void Initialize();
         protected abstract void PreProcess();

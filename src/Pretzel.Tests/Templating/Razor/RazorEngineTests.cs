@@ -1,9 +1,10 @@
-﻿using System.IO.Abstractions.TestingHelpers;
+﻿using System.Collections.Generic;
+using System.IO.Abstractions.TestingHelpers;
+using Pretzel.Logic.Exceptions;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Razor;
 using Pretzel.Tests.Templating.Jekyll;
 using Xunit;
-using System.Collections.Generic;
 
 namespace Pretzel.Tests.Templating.Razor
 {
@@ -45,8 +46,8 @@ namespace Pretzel.Tests.Templating.Razor
 
             var bag = new Dictionary<string, object> {{"title", title}};
             ProcessContents(fileContents, string.Empty, bag);
-            string expected = fileContents.Replace(@"@Model.Title", title);
-            string output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
+            var expected = fileContents.Replace(@"@Model.Title", title);
+            var output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
             Assert.Equal(expected, output);
         }
 
@@ -58,7 +59,7 @@ namespace Pretzel.Tests.Templating.Razor
             const string expectedfileContents = "<html><head><title>My Web Site</title></head><body><h1>Hello World!</h1></body></html>";
 
             ProcessContents(templateContents, pageContents, new Dictionary<string, object> { { "title", "My Web Site" } });
-            string output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
+            var output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
             Assert.Equal(expectedfileContents, output);
         }
 
@@ -74,6 +75,17 @@ namespace Pretzel.Tests.Templating.Razor
             ProcessContents(templateContents, pageContents, new Dictionary<string, object> { { "title", "My Web Site" } });
             string output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
             Assert.Equal(expectedfileContents, output);
+        }
+
+        [Fact]
+        public void File_with_include_but_missing_is_processed()
+        {
+            const string templateContents = "<html><head><title>@Model.Title</title></head><body>@Raw(Model.Content)</body></html>";
+            const string pageContents = "<i>@Include(\"TestInclude\")</i>";
+
+            Assert.ThrowsDelegate action = () => ProcessContents(templateContents, pageContents, new Dictionary<string, object> {{"title", "My Web Site"}});
+
+            Assert.Throws<PageProcessingException>(action);
         }
     }
 }
