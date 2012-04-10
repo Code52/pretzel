@@ -126,8 +126,8 @@ namespace Pretzel.Logic.Templating.Context
                 }
             }
 
-            context.Tags = tags.Select(x => new Tag {Name = x.Key, Posts = x.Value}).ToList();
-            context.Categories = categories.Select(x => new Category { Name = x.Key, Posts = x.Value }).ToList();
+            context.Tags = tags.Select(x => new Tag { Name = x.Key, Posts = x.Value }).OrderBy(x => x.Name).ToList();
+            context.Categories = categories.Select(x => new Category { Name = x.Key, Posts = x.Value }).OrderBy(x=>x.Name).ToList();
         }
 
         private bool ContainsYamlFrontMatter(string file)
