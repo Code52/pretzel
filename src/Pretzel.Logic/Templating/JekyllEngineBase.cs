@@ -90,39 +90,75 @@ namespace Pretzel.Logic.Templating
             //pageContext.Content = markdown.Transform(pageContext.Content);
             pageContext.Previous = previous;
             pageContext.Next = next;
-            var metadata = page.Bag;
-            while (metadata.ContainsKey("layout"))
+
+            var pageContexts = new List<PageContext> {pageContext};
+            object paginateObj;
+            if (page.Bag.TryGetValue("paginate", out paginateObj))
             {
-                var layout = metadata["layout"];
-                if ((string)layout == "nil" || layout == null)
-                    break;
+                var paginate = Convert.ToInt32(paginateObj);
+                var totalPages = (int)Math.Ceiling(Context.Posts.Count / Convert.ToDouble(paginateObj));
+                var paginator = new Paginator(Context, totalPages, paginate, 1);
+                pageContext.Paginator = paginator;
 
-                var path = Path.Combine(Context.SourceFolder, "_layouts", layout + LayoutExtension);
+                var paginateLink = "/page/:page/index.html";
+                if (page.Bag.ContainsKey("paginate_link"))
+                    paginateLink = Convert.ToString(page.Bag["paginate_link"]);
 
-                if (!FileSystem.File.Exists(path))
-                    break;
+                var prevLink = page.Url;
+                for (var i = 2; i <= totalPages; i++)
+                {
+                    var newPaginator = new Paginator(Context, totalPages, paginate, i) {PreviousPageUrl = prevLink};
+                    var link = paginateLink.Replace(":page", Convert.ToString(i));
+                    paginator.NextPageUrl = link;
+                    
+                    paginator = newPaginator;
+                    prevLink = link;
+
+                    var path = Path.Combine(outputDirectory, link.ToRelativeFile());
+                    pageContexts.Add(new PageContext(pageContext) {Paginator = newPaginator, OutputPath = path});
+                }
+            }
+
+            foreach (var context in pageContexts)
+            {
+                var metadata = page.Bag;
+                while (metadata.ContainsKey("layout"))
+                {
+                    var layout = metadata["layout"];
+                    if ((string) layout == "nil" || layout == null)
+                        break;
+
+                    var path = Path.Combine(Context.SourceFolder, "_layouts", layout + LayoutExtension);
+
+                    if (!FileSystem.File.Exists(path))
+                        break;
+
+                    try
+                    {
+                        metadata = ProcessTemplate(context, path);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new PageProcessingException(
+                            string.Format("Failed to process layout {0} for {1}, see inner exception for more details",
+                                          layout, context.OutputPath), ex);
+                    }
+                }
 
                 try
                 {
-                    metadata = ProcessTemplate(pageContext, path);
+                    context.Content = RenderTemplate(context.Content, context);
                 }
                 catch (Exception ex)
                 {
-                    throw new PageProcessingException(string.Format("Failed to process layout {0} for {1}, see inner exception for more details", layout, pageContext.OutputPath), ex);
+                    throw new PageProcessingException(
+                        string.Format("Failed to process {0}, see inner exception for more details",
+                                      context.OutputPath), ex);
                 }
-            }
 
-            try
-            {
-                pageContext.Content = RenderTemplate(pageContext.Content, pageContext);
+                CreateOutputDirectory(context.OutputPath);
+                FileSystem.File.WriteAllText(context.OutputPath, context.Content);
             }
-            catch (Exception ex)
-            {
-                throw new PageProcessingException(string.Format("Failed to process {0}, see inner exception for more details", pageContext.OutputPath), ex);
-            }
-
-				CreateOutputDirectory(pageContext.OutputPath);
-            FileSystem.File.WriteAllText(pageContext.OutputPath, pageContext.Content);
         }
 
 		  private void CreateOutputDirectory(string outputFile)

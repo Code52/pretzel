@@ -1,4 +1,5 @@
-﻿using System.IO.Abstractions.TestingHelpers;
+﻿using System;
+using System.IO.Abstractions.TestingHelpers;
 using Pretzel.Logic.Templating.Jekyll;
 using Xunit;
 using Pretzel.Logic.Templating.Context;
@@ -293,6 +294,133 @@ namespace Pretzel.Tests.Templating.Jekyll
             public void The_Yaml_Matter_Should_Be_Cleared()
             {
                 Assert.Equal("", FileSystem.File.ReadAllText(@"C:\website\_site\file.txt"));
+            }
+        }
+
+        public class When_Paginate_With_No_Posts : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            const string IndexContents = "---\r\n layout: default \r\n paginate: 5 \r\n paginate_link: /blog/page:page/index.html \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
+            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
+
+                var generator = new SiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\website\");
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Index_Is_Generated()
+            {
+                const string fileName = @"C:\website\_site\index.html";
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(fileName).RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void No_Pages_Should_Be_Generated()
+            {
+                Assert.False(FileSystem.File.Exists(@"C:\website\_site\page1\index.html"));
+                Assert.False(FileSystem.File.Exists(@"C:\website\_site\page2\index.html"));
+            }
+        }
+
+        public class When_Paginate_With_Default_Pagelink : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            const string PostContents = "---\r\n layout: default \r\n title: 'Post'\r\n---\r\n\r\n## Hello World!";
+            const string IndexContents = "---\r\n layout: default \r\n paginate: 1 \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
+            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
+
+                for (var i = 1; i <= 5; i++)
+                {
+                    FileSystem.AddFile(String.Format(@"C:\website\_posts\2012-02-0{0}-p{0}.md", i), new MockFileData(PostContents));
+                }
+
+                var generator = new SiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\website\");
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Four_Pages_Should_Be_Generated()
+            {
+                for (var i = 2; i <= 5; i++)
+                {
+                    var fileName = String.Format(@"C:\website\_site\page\{0}\index.html", i);
+                    Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(fileName).RemoveWhiteSpace());
+                }
+            }
+
+            [Fact]
+            public void Page1_Is_Not_Generated()
+            {
+                Assert.False(FileSystem.File.Exists(@"C:\website\_site\page\1\index.html"));
+            }
+        }
+
+        public class When_Paginate_With_Custom_Pagelink : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            const string PostContents = "---\r\n layout: default \r\n title: 'Post'\r\n---\r\n\r\n## Hello World!";
+            const string IndexContents = "---\r\n layout: default \r\n paginate: 2 \r\n paginate_link: /blog/page:page/index.html \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
+            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
+
+                for (var i = 1; i <= 7; i++)
+                {
+                    FileSystem.AddFile(String.Format(@"C:\website\_posts\2012-02-0{0}-p{0}.md", i), new MockFileData(PostContents));
+                }
+
+                var generator = new SiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\website\");
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Four_Pages_Should_Be_Generated()
+            {
+                for (var i = 2; i <= 4; i++)
+                {
+                    var fileName = String.Format(@"C:\website\_site\blog\page{0}\index.html", i);
+                    Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(fileName).RemoveWhiteSpace());
+                }
+            }
+
+            [Fact]
+            public void Page1_Is_Not_Generated()
+            {
+                Assert.False(FileSystem.File.Exists(@"C:\website\_site\blog\page1\index.html"));
             }
         }
     }

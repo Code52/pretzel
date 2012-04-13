@@ -43,6 +43,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
             x.Add("pages", context.Pages);
             x.Add("title", context.Title);
             x.Add("tags", context.Tags);
+            x.Add("categories", context.Categories);
             x.Add("time", Time);
 
             return x;

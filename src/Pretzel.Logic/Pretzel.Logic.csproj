@@ -108,7 +108,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Templating\Context\Category.cs" />
     <Compile Include="Templating\Context\Page.cs" />
+    <Compile Include="Templating\Context\Paginator.cs" />
     <Compile Include="Templating\Context\Post.cs" />
     <Compile Include="Templating\Context\SiteContextGenerator.cs" />
     <Compile Include="Templating\Context\Tag.cs" />
@@ -116,7 +118,6 @@
     <Compile Include="Templating\Jekyll\Includes.cs" />
     <Compile Include="Templating\Jekyll\PostDrop.cs" />
     <Compile Include="Templating\Jekyll\SiteContextDrop.cs" />
-    <Compile Include="Templating\Jekyll\Paginator.cs" />
     <Compile Include="Templating\Razor\IncludesResolver.cs" />
     <Compile Include="Templating\Razor\RazorSiteEngine.cs" />
     <Compile Include="Templating\JekyllEngineBase.cs" />

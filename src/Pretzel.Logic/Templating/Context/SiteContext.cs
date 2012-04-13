@@ -11,6 +11,7 @@ namespace Pretzel.Logic.Templating.Context
         public SiteContext()
         {
             Tags = new List<Tag>();
+            Categories = new List<Category>();
             Posts = new List<Page>();
             Pages = new List<Page>();
         }
@@ -19,6 +20,7 @@ namespace Pretzel.Logic.Templating.Context
         public string OutputFolder { get; set; }
         public string Title { get; set; }
         public IEnumerable<Tag> Tags { get; set; }
+        public IEnumerable<Category> Categories { get; set; }
         public IList<Page> Posts { get; set; }
         public DateTime Time { get; set; }
 

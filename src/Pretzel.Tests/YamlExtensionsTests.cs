@@ -1,4 +1,5 @@
-﻿using Pretzel.Logic.Extensions;
+﻿using System.Collections.Generic;
+using Pretzel.Logic.Extensions;
 using Xunit;
 
 namespace Pretzel.Tests
@@ -31,7 +32,12 @@ namespace Pretzel.Tests
                 Assert.Equal("This is a test jekyll document", result["title"].ToString());
                 Assert.Equal("2012-01-30", result["date"].ToString());
                 Assert.Equal("TEST ALL THE THINGS", result["description"].ToString());
-                Assert.Equal("[ test, alsotest, lasttest ]", result["tags"].ToString());
+                
+                var tags = result["tags"] as IList<string>;
+                Assert.Equal(3, tags.Count);
+                Assert.Equal("test", tags[0]);
+                Assert.Equal("alsotest", tags[1]);
+                Assert.Equal("lasttest", tags[2]);
             }
 
             [Fact]
