@@ -67,6 +67,7 @@ namespace Pretzel.Logic.Templating.Context
                                          File = file,
                                          Filepath = Path.Combine(context.OutputFolder, file)
                                      };
+                    continue;
                 }
 
                 var page = CreatePage(context, config, file);
