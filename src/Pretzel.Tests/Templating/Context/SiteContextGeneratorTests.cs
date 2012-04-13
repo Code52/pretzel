@@ -112,11 +112,12 @@ namespace Pretzel.Tests.Templating.Context
             var siteContext = generator.BuildContext(@"C:\TestSite");
 
             // assert
+            Assert.Equal(1, siteContext.Pages.Count);
             Assert.IsType<NonProcessedPage>(siteContext.Pages[0]);
         }
 
         [Fact]
-        public void pages_with_front_matter_do_not_get_processed()
+        public void pages_with_front_matter_get_processed()
         {
             // arrange
             fileSystem.AddFile(@"C:\TestSite\SubFolder\SomeFile.md", new MockFileData(ToPageContent("# Title")));
@@ -125,6 +126,7 @@ namespace Pretzel.Tests.Templating.Context
             var siteContext = generator.BuildContext(@"C:\TestSite");
 
             // assert
+            Assert.Equal(1, siteContext.Pages.Count);
             Assert.IsType<Page>(siteContext.Pages[0]);
         }
 
