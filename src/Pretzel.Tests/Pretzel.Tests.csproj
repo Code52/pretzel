@@ -71,7 +71,7 @@
     <Compile Include="SampleTest.cs" />
     <Compile Include="Templating\Context\SiteContextGeneratorTests.cs" />
     <Compile Include="Templating\Jekyll\BakingEnvironment.cs" />
-    <Compile Include="Templating\Jekyll\JekyllEngineTests.cs" />
+    <Compile Include="Templating\Jekyll\LiquidEngineTests.cs" />
     <Compile Include="Templating\Jekyll\LiquidExtensionsTests.cs" />
     <Compile Include="Templating\Jekyll\StringTestExtensions.cs" />
     <Compile Include="Templating\Plugins\TagCloudTests.cs" />

@@ -39,27 +39,6 @@ namespace Pretzel.Logic.Templating.Context
             get { return Bag.ContainsKey("comments") && bool.Parse(Bag["comments"].ToString()); }
         }
 
-        //public static PageContext FromDictionary(SiteContext siteContext, IDictionary<string, object> metadata, string outputPath, string defaultOutputPath)
-        //{
-        //    var context = new PageContext(siteContext, TODO)
-        //                      {
-        //                          OutputPath =
-        //                              metadata.ContainsKey("permalink")
-        //                                  ? Path.Combine(outputPath, metadata["permalink"].ToString().ToRelativeFile())
-        //                                  : defaultOutputPath
-        //                      };
-
-
-        //    if (metadata.ContainsKey("title"))
-        //    {
-        //        context.Title = metadata["title"].ToString();
-        //    }
-
-        //    context.Bag = metadata;
-
-        //    return context;
-        //}
-
         public static PageContext FromPage(SiteContext siteContext, Page page, string outputPath, string defaultOutputPath)
         {
             var context = new PageContext(siteContext, page);

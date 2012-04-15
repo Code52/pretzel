@@ -14,6 +14,7 @@ namespace Pretzel.Logic.Templating.Context
             Categories = new List<Category>();
             Posts = new List<Page>();
             Pages = new List<Page>();
+            Config = new Dictionary<string, object>();
         }
 
         public string SourceFolder { get; set; }
