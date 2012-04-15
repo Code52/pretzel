@@ -6,7 +6,7 @@
   
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)'==''">Release</Configuration>
-    <Version Condition="'$(Version)'==''">0.0.0.1</Version>
+    <Version Condition="'$(Version)'==''">0.0.0.2</Version>
   </PropertyGroup>
 
   <UsingTask AssemblyFile=".\tools\xunit\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
