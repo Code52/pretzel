@@ -147,7 +147,7 @@ namespace Pretzel.Logic.Templating.Context
             {
                 var contents = SafeReadContents(file);
                 var header = contents.YamlHeader();
-                var post = new Page
+                var page = new Page
                                 {
                                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
                                     Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
@@ -158,19 +158,19 @@ namespace Pretzel.Logic.Templating.Context
                                 };
 
                 if (header.ContainsKey("permalink"))
-                    post.Url = EvaluatePermalink(header["permalink"].ToString(), post);
+                    page.Url = EvaluatePermalink(header["permalink"].ToString(), page);
                 else if (config.ContainsKey("permalink"))
-                    post.Url = EvaluatePermalink(config["permalink"].ToString(), post);
+                    page.Url = EvaluatePermalink(config["permalink"].ToString(), page);
 
                 if (isPost)
                 {
                     if (header.ContainsKey("categories"))
-                        post.Categories = header["categories"] as IEnumerable<string>;
+                        page.Categories = header["categories"] as IEnumerable<string>;
 
                     if (header.ContainsKey("tags"))
-                        post.Tags = header["tags"] as IEnumerable<string>;
+                        page.Tags = header["tags"] as IEnumerable<string>;
                 }
-                return post;
+                return page;
             }
             catch (Exception e)
             {
