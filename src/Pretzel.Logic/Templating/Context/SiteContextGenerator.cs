@@ -27,30 +27,37 @@ namespace Pretzel.Logic.Templating.Context
 
         public SiteContext BuildContext(string path)
         {
-            var config = new Dictionary<string, object>();
-            var configPath = Path.Combine(path, "_config.yml");
-            if (fileSystem.File.Exists(configPath))
-                config = (Dictionary<string, object>)fileSystem.File.ReadAllText(configPath).YamlHeader(true);
-
-            if (!config.ContainsKey("permalink"))
-                config.Add("permalink", "/:year/:month/:day/:title.html");
-
-            var context = new SiteContext
+            try
             {
-                SourceFolder = path,
-                OutputFolder = Path.Combine(path, "_site"),
-                Posts = new List<Page>(),
-                Pages = new List<Page>(),
-                Config = config,
-                Time = DateTime.Now,
-            };
+                var config = new Dictionary<string, object>();
+                var configPath = Path.Combine(path, "_config.yml");
+                if (fileSystem.File.Exists(configPath))
+                    config = (Dictionary<string, object>)fileSystem.File.ReadAllText(configPath).YamlHeader(true);
 
-            context.Posts = BuildPosts(config, context).OrderByDescending(p => p.Date).ToList();
-            BuildTagsAndCategories(context);
+                if (!config.ContainsKey("permalink"))
+                    config.Add("permalink", "/:year/:month/:day/:title.html");
 
-            context.Pages = BuildPages(config, context).ToList();
+                var context = new SiteContext
+                {
+                    SourceFolder = path,
+                    OutputFolder = Path.Combine(path, "_site"),
+                    Posts = new List<Page>(),
+                    Pages = new List<Page>(),
+                    Config = config,
+                    Time = DateTime.Now,
+                };
 
-            return context;
+                context.Posts = BuildPosts(config, context).OrderByDescending(p => p.Date).ToList();
+                BuildTagsAndCategories(context);
+
+                context.Pages = BuildPages(config, context).ToList();
+
+                return context;
+            }
+            finally
+            {
+                pageCache.Clear();
+            }
         }
 
         private IEnumerable<Page> BuildPages(Dictionary<string, object> config, SiteContext context)
