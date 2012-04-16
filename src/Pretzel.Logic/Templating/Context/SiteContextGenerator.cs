@@ -15,7 +15,8 @@ namespace Pretzel.Logic.Templating.Context
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class SiteContextGenerator
     {
-        private static readonly Markdown Markdown = new Markdown();
+        readonly Dictionary<string, Page> pageCache = new Dictionary<string, Page>();
+        static readonly Markdown Markdown = new Markdown();
         readonly IFileSystem fileSystem;
 
         [ImportingConstructor]
@@ -26,30 +27,37 @@ namespace Pretzel.Logic.Templating.Context
 
         public SiteContext BuildContext(string path)
         {
-            var config = new Dictionary<string, object>();
-            var configPath = Path.Combine(path, "_config.yml");
-            if (fileSystem.File.Exists(configPath))
-                config = (Dictionary<string, object>)fileSystem.File.ReadAllText(configPath).YamlHeader(true);
-
-            if (!config.ContainsKey("permalink"))
-                config.Add("permalink", "/:year/:month/:day/:title.html");
-
-            var context = new SiteContext
+            try
             {
-                SourceFolder = path,
-                OutputFolder = Path.Combine(path, "_site"),
-                Posts = new List<Page>(),
-                Pages = new List<Page>(),
-                Config = config,
-                Time = DateTime.Now,
-            };
+                var config = new Dictionary<string, object>();
+                var configPath = Path.Combine(path, "_config.yml");
+                if (fileSystem.File.Exists(configPath))
+                    config = (Dictionary<string, object>)fileSystem.File.ReadAllText(configPath).YamlHeader(true);
 
-            context.Posts = BuildPosts(config, context).OrderByDescending(p => p.Date).ToList();
-            BuildTagsAndCategories(context);
+                if (!config.ContainsKey("permalink"))
+                    config.Add("permalink", "/:year/:month/:day/:title.html");
 
-            context.Pages = BuildPages(config, context).ToList();
+                var context = new SiteContext
+                {
+                    SourceFolder = path,
+                    OutputFolder = Path.Combine(path, "_site"),
+                    Posts = new List<Page>(),
+                    Pages = new List<Page>(),
+                    Config = config,
+                    Time = DateTime.Now,
+                };
 
-            return context;
+                context.Posts = BuildPosts(config, context).OrderByDescending(p => p.Date).ToList();
+                BuildTagsAndCategories(context);
+
+                context.Pages = BuildPages(config, context).ToList();
+
+                return context;
+            }
+            finally
+            {
+                pageCache.Clear();
+            }
         }
 
         private IEnumerable<Page> BuildPages(Dictionary<string, object> config, SiteContext context)
@@ -145,9 +153,11 @@ namespace Pretzel.Logic.Templating.Context
         {
             try
             {
+                if (pageCache.ContainsKey(file))
+                    return pageCache[file];
                 var contents = SafeReadContents(file);
                 var header = contents.YamlHeader();
-                var post = new Page
+                var page = new Page
                                 {
                                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
                                     Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
@@ -158,19 +168,23 @@ namespace Pretzel.Logic.Templating.Context
                                 };
 
                 if (header.ContainsKey("permalink"))
-                    post.Url = EvaluatePermalink(header["permalink"].ToString(), post);
+                    page.Url = EvaluatePermalink(header["permalink"].ToString(), page);
                 else if (config.ContainsKey("permalink"))
-                    post.Url = EvaluatePermalink(config["permalink"].ToString(), post);
+                    page.Url = EvaluatePermalink(config["permalink"].ToString(), page);
+
+                // The GetDirectoryPage method is reentrant, we need a cache to stop a stack overflow :)
+                pageCache.Add(file, page);
+                page.DirectoryPages = GetDirectoryPages(context, config, Path.GetDirectoryName(file), isPost).ToList();
 
                 if (isPost)
                 {
                     if (header.ContainsKey("categories"))
-                        post.Categories = header["categories"] as IEnumerable<string>;
+                        page.Categories = header["categories"] as IEnumerable<string>;
 
                     if (header.ContainsKey("tags"))
-                        post.Tags = header["tags"] as IEnumerable<string>;
+                        page.Tags = header["tags"] as IEnumerable<string>;
                 }
-                return post;
+                return page;
             }
             catch (Exception e)
             {
@@ -180,6 +194,15 @@ namespace Pretzel.Logic.Templating.Context
             }
 
             return null;
+        }
+
+        private IEnumerable<Page> GetDirectoryPages(SiteContext context, IDictionary<string, object> config, string forDirectory, bool isPost)
+        {
+            return fileSystem
+                .Directory
+                .GetFiles(forDirectory, "*.*", SearchOption.TopDirectoryOnly)
+                .Select(file => CreatePage(context, config, file, isPost))
+                .Where(page => page != null);
         }
 
         private static string RenderContent(string file, string contents, IDictionary<string, object> header)
