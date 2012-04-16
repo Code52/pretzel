@@ -29,8 +29,4 @@ namespace Pretzel.Logic.Templating.Context
             get { return (string)Bag["layout"]; }
         }
     }
-
-    public class NonProcessedPage : Page
-    {
-    }
 }
