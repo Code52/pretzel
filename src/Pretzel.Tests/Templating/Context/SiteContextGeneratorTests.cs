@@ -130,6 +130,20 @@ namespace Pretzel.Tests.Templating.Context
             Assert.IsType<Page>(siteContext.Pages[0]);
         }
 
+        [Fact]
+        public void site_context_includes_pages_in_same_folder()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\SubFolder\SomeFile.md", new MockFileData(ToPageContent("# Title")));
+            fileSystem.AddFile(@"C:\TestSite\SubFolder\SomeFile2.md", new MockFileData(ToPageContent("# Title")));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite");
+
+            // assert
+            Assert.Equal(2, siteContext.Pages[0].DirectoryPages.ToArray().Length);
+        }
+
         private static string ToPageContent(string content)
         {
             return @"---

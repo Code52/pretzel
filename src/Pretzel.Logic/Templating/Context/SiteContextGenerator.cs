@@ -15,7 +15,8 @@ namespace Pretzel.Logic.Templating.Context
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class SiteContextGenerator
     {
-        private static readonly Markdown Markdown = new Markdown();
+        readonly Dictionary<string, Page> pageCache = new Dictionary<string, Page>();
+        static readonly Markdown Markdown = new Markdown();
         readonly IFileSystem fileSystem;
 
         [ImportingConstructor]
@@ -145,6 +146,8 @@ namespace Pretzel.Logic.Templating.Context
         {
             try
             {
+                if (pageCache.ContainsKey(file))
+                    return pageCache[file];
                 var contents = SafeReadContents(file);
                 var header = contents.YamlHeader();
                 var page = new Page
@@ -161,6 +164,10 @@ namespace Pretzel.Logic.Templating.Context
                     page.Url = EvaluatePermalink(header["permalink"].ToString(), page);
                 else if (config.ContainsKey("permalink"))
                     page.Url = EvaluatePermalink(config["permalink"].ToString(), page);
+
+                // The GetDirectoryPage method is reentrant, we need a cache to stop a stack overflow :)
+                pageCache.Add(file, page);
+                page.DirectoryPages = GetDirectoryPages(context, config, Path.GetDirectoryName(file), isPost).ToList();
 
                 if (isPost)
                 {
@@ -180,6 +187,15 @@ namespace Pretzel.Logic.Templating.Context
             }
 
             return null;
+        }
+
+        private IEnumerable<Page> GetDirectoryPages(SiteContext context, IDictionary<string, object> config, string forDirectory, bool isPost)
+        {
+            return fileSystem
+                .Directory
+                .GetFiles(forDirectory, "*.*", SearchOption.TopDirectoryOnly)
+                .Select(file => CreatePage(context, config, file, isPost))
+                .Where(page => page != null);
         }
 
         private static string RenderContent(string file, string contents, IDictionary<string, object> header)

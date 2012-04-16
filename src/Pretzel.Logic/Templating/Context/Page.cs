@@ -21,6 +21,7 @@ namespace Pretzel.Logic.Templating.Context
         public string Content { get; set; }
         public string Filepath { get; set; }
         public IDictionary<string, object> Bag { get; set; }
+        public IEnumerable<Page> DirectoryPages { get; set; }
         public string File { get; set; }
         public string OutputFile { get; set; }
 
