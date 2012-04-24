@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
+using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Templating.Jekyll;
 using Xunit;
 using Pretzel.Logic.Templating.Context;
@@ -195,7 +197,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
 
-                var generator = new SiteContextGenerator(FileSystem);
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
                 var context = generator.BuildContext(@"C:\website\");
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -238,7 +240,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                     FileSystem.AddFile(String.Format(@"C:\website\_posts\2012-02-0{0}-p{0}.md", i), new MockFileData(PostContents));
                 }
 
-                var generator = new SiteContextGenerator(FileSystem);
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
                 var context = generator.BuildContext(@"C:\website\");
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -283,7 +285,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                     FileSystem.AddFile(String.Format(@"C:\website\_posts\2012-02-0{0}-p{0}.md", i), new MockFileData(PostContents));
                 }
 
-                var generator = new SiteContextGenerator(FileSystem);
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
                 var context = generator.BuildContext(@"C:\website\");
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -348,7 +350,7 @@ namespace Pretzel.Tests.Templating.Jekyll
 
             public override SiteContextGenerator Given()
             {
-                return new SiteContextGenerator(FileSystem);
+                return new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
             }
 
             public override void When()
