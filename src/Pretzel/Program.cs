@@ -7,6 +7,8 @@ using System.Linq;
 using System.Reflection;
 using NDesk.Options;
 using Pretzel.Commands;
+using Pretzel.Logic.Extensibility;
+using Pretzel.Logic.Extensibility.Extensions;
 using Pretzel.Logic.Extensions;
 
 namespace Pretzel
@@ -82,6 +84,7 @@ namespace Pretzel
 
             var batch = new CompositionBatch();
             batch.AddExportedValue<IFileSystem>(new FileSystem());
+            batch.AddExportedValue<IContentTransform>(new WebSequenceDiagrams());
             batch.AddPart(this);
             container.Compose(batch);
         }

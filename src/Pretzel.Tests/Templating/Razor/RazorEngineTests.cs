@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
 using Pretzel.Logic.Exceptions;
+using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Razor;
 using Pretzel.Tests.Templating.Jekyll;
@@ -113,7 +115,7 @@ namespace Pretzel.Tests.Templating.Razor
                 FileSystem.AddFile(String.Format(@"C:\website\_posts\2012-02-0{0}-p{0}.md", i), new MockFileData(String.Format(PostContents, i)));
             }
 
-            var generator = new SiteContextGenerator(FileSystem);
+            var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
             var context = generator.BuildContext(@"C:\website\");
             Subject.FileSystem = FileSystem;
             Subject.Process(context);

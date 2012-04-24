@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
+using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Templating.Context;
 using Xunit;
 
@@ -15,7 +16,7 @@ namespace Pretzel.Tests.Templating.Context
         public SiteContextGeneratorTests()
         {
             fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-            generator = new SiteContextGenerator(fileSystem);
+            generator = new SiteContextGenerator(fileSystem, Enumerable.Empty<IContentTransform>());
         }
 
         [Fact]

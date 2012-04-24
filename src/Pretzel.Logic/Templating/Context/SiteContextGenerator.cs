@@ -7,6 +7,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using MarkdownDeep;
+using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Logic.Templating.Context
@@ -18,11 +19,13 @@ namespace Pretzel.Logic.Templating.Context
         readonly Dictionary<string, Page> pageCache = new Dictionary<string, Page>();
         static readonly Markdown Markdown = new Markdown();
         readonly IFileSystem fileSystem;
+        readonly IEnumerable<IContentTransform> contentTransformers;
 
         [ImportingConstructor]
-        public SiteContextGenerator(IFileSystem fileSystem)
+        public SiteContextGenerator(IFileSystem fileSystem, [ImportMany]IEnumerable<IContentTransform> contentTransformers)
         {
             this.fileSystem = fileSystem;
+            this.contentTransformers = contentTransformers;
         }
 
         public SiteContext BuildContext(string path)
@@ -205,7 +208,7 @@ namespace Pretzel.Logic.Templating.Context
                 .Where(page => page != null);
         }
 
-        private static string RenderContent(string file, string contents, IDictionary<string, object> header)
+        private string RenderContent(string file, string contents, IDictionary<string, object> header)
         {
             string html;
             try
@@ -214,6 +217,8 @@ namespace Pretzel.Logic.Templating.Context
                 html = string.Equals(Path.GetExtension(file), ".md", StringComparison.InvariantCultureIgnoreCase)
                        ? Markdown.Transform(contentsWithoutHeader)
                        : contentsWithoutHeader;
+
+                html = contentTransformers.Aggregate(html, (current, contentTransformer) => contentTransformer.Transform(current));
             }
             catch (Exception e)
             {
