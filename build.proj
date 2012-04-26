@@ -6,35 +6,55 @@
   
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)'==''">Release</Configuration>
-    <Version Condition="'$(Version)'==''">0.0.0.2</Version>
+    <Version Condition="'$(Version)'==''">0.0.0.3</Version>
+    <ArtifactsDir>$(MSBuildProjectDirectory)\artifacts\</ArtifactsDir>
+    <SourceDir>$(MSBuildProjectDirectory)\src\</SourceDir>
   </PropertyGroup>
 
   <UsingTask AssemblyFile=".\tools\xunit\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
 
   <Target Name="Compile">
-    <Message Text=" ===========Building Project===========" Importance="High" />
-    <MSBuild Projects="$(MSBuildProjectDirectory)/src/Pretzel.sln" Properties="Configuration=$(Configuration)" />
+    <Message Text="=========== Compile ===========" Importance="High" />
+    
+    <MSBuild Projects="$(SourceDir)\Pretzel.sln" Properties="Configuration=$(Configuration)" />
+
+    <MakeDir Directories="$(ArtifactsDir)" />
+
+    <Copy SourceFiles="$(SourceDir)\Pretzel\bin\$(Configuration)\Pretzel.exe"
+          DestinationFolder="$(ArtifactsDir)" />
+
+    <Message Text="=========== Compile Done ===========" Importance="High" />
+    <Message Text="Pretzel.exe is available at $(ArtifactsDir)" Importance="High"  />
+
   </Target>
 
   <Target Name="Test" DependsOnTargets="Compile">
 
-    <Message Text="===========Tests===========" Importance="High" />
+    <Message Text="=========== Run Tests ===========" Importance="High" />
 
     <ItemGroup>
       <TestFiles Include="$(MSBuildProjectDirectory)\**\bin\$(Configuration)\*Tests.dll" />
     </ItemGroup>
 
     <xunit Assemblies="@(TestFiles)" />
+
+    <Message Text="=========== Tests Passed ===========" Importance="High" />
   </Target>
 
   <Target Name="Chocolatey" DependsOnTargets="Test">
+
+    <Message Text="=========== Chocolatey Package ===========" Importance="High" />
+
     <ItemGroup>
       <NuGet Include="$(MSBuildProjectDirectory)\src\.Nuget\NuGet.exe" />
     </ItemGroup>
+
     <PropertyGroup>
       <ChocolateyInstall>$(MSBuildProjectDirectory)\build\chocolatey\tools\chocolateyInstall.ps1</ChocolateyInstall>
     </PropertyGroup>
+
     <MakeDir Directories="$(MSBuildProjectDirectory)\build\chocolatey\tools" />
+
     <Copy SourceFiles="$(MSBuildProjectDirectory)\tools\chocolatey\pretzel.nuspec"
           DestinationFiles="$(MSBuildProjectDirectory)\build\chocolatey\pretzel.nuspec" />
 
@@ -45,7 +65,9 @@
                 Regex="{{version}}"
                 ReplacementText="$(Version)"/>
     
-    <Exec Command='"@(NuGet)" pack "$(MSBuildProjectDirectory)\build\chocolatey\pretzel.nuspec" -OutputDirectory "$(MSBuildProjectDirectory)\build" -Version $(Version) -NoPackageAnalysis' />
+    <Exec Command='"@(NuGet)" pack "$(MSBuildProjectDirectory)\build\chocolatey\pretzel.nuspec" -OutputDirectory "$(MSBuildProjectDirectory)\artifacts" -Version $(Version) -NoPackageAnalysis' />
+
+    <Message Text="=========== Package Done ===========" Importance="High" />
   </Target>
 
 </Project>
