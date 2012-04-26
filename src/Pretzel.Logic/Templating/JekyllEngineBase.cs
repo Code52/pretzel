@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using Pretzel.Logic.Exceptions;
+using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
 
@@ -17,6 +18,9 @@ namespace Pretzel.Logic.Templating
 #pragma warning disable 0649
         [Import] public IFileSystem FileSystem { get; set; }
 #pragma warning restore 0649
+        
+        [ImportMany]
+        public IEnumerable<IFilter> Filters { get; set; }
 
         public abstract void Initialize();
         protected abstract void PreProcess();
