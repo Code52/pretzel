@@ -550,8 +550,12 @@ namespace Pretzel.Logic.Extensions
             if (tokens.Count() < 3)
                 return DateTime.Now;
 
-            var timestamp = string.Join("-", tokens.Take(3)).Trim('\\');
-            return DateTime.Parse(timestamp);
+            var timestampText = string.Join("-", tokens.Take(3)).Trim('\\');
+            DateTime timestamp;
+            if (!DateTime.TryParse(timestampText, out timestamp))
+                throw new ApplicationException(string.Format("Failed to parse timestamp from filename: {0}", file));
+
+            return timestamp;
         }
     }
 }
