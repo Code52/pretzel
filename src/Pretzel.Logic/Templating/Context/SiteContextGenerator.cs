@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using MarkdownDeep;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
@@ -328,19 +329,10 @@ namespace Pretzel.Logic.Templating.Context
             return Path.Combine(outputDirectory, timestamp, title);
         }
 
-        private string GetTitle(string file)
+        static readonly Regex TimestampAndTitleFromPathRegex = new Regex(@"\\(?:(?<timestamp>\d+-\d+-\d+)-)?(?<title>[^\\]*)\.[^\.]+$");
+        public static string GetTitle(string file)
         {
-            // TODO: detect mode from site config
-            var fileName = file.Substring(file.LastIndexOf("\\"));
-
-            var tokens = fileName.Split('-');
-            if (tokens.Length < 3)
-            {
-                return fileName.Substring(1, fileName.LastIndexOf(".") - 1);
-            }
-            var title = string.Join("-", tokens.Skip(3));
-            title = title.Substring(0, title.LastIndexOf("."));
-            return title;
+            return TimestampAndTitleFromPathRegex.Match(file).Groups["title"].Value;
         }
         private string GetPageTitle(string file)
         {

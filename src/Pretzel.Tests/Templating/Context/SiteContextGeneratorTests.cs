@@ -233,5 +233,26 @@ title: Title
             Assert.Equal(1, cat4.Posts.First().Categories.Count());
             Assert.True(cat4.Posts.First().File.Contains("File3"));
         }
+
+        [Fact]
+        public void GetTitle_returns_original_value_when_no_timestamp()
+        {
+            var result = SiteContextGenerator.GetTitle(@"C:\temp\foobar_baz.md");
+            Assert.Equal("foobar_baz", result);
+        }
+
+        [Fact]
+        public void GetTitle_returns_strips_timestamp()
+        {
+            var result = SiteContextGenerator.GetTitle(@"C:\temp\2012-01-03-foobar_baz.md");
+            Assert.Equal("foobar_baz", result);
+        }
+
+        [Fact]
+        public void GetTitle_preserves_dash_separated_values_that_arent_timestamps()
+        {
+            var result = SiteContextGenerator.GetTitle(@"C:\temp\foo-bar-baz-qak-foobar_baz.md");
+            Assert.Equal("foo-bar-baz-qak-foobar_baz", result);
+        }
     }
 }
