@@ -26,7 +26,7 @@ b->a: bar
 <script type=""text/javascript"" src=""http://www.websequencediagrams.com/service.js""></script>";
 
             var markdown = transform.Transform(input);
-            Assert.Equal(expected.RemoveWhiteSpace(), markdown.RemoveWhiteSpace());
+            Assert.Equal(expected.RemoveLineEndings(), markdown.RemoveLineEndings());
         }
 
         [Fact]
@@ -56,7 +56,7 @@ d->c: qak
 <script type=""text/javascript"" src=""http://www.websequencediagrams.com/service.js""></script>";
 
             var markdown = transform.Transform(input);
-            Assert.Equal(expected.RemoveWhiteSpace(), markdown.RemoveWhiteSpace());
+            Assert.Equal(expected.RemoveLineEndings(), markdown.RemoveLineEndings());
         }
     }
 }

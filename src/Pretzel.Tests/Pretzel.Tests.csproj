@@ -74,6 +74,9 @@
     <Compile Include="Templating\Jekyll\BakingEnvironment.cs" />
     <Compile Include="Templating\Jekyll\LiquidEngineTests.cs" />
     <Compile Include="Templating\Jekyll\LiquidExtensionsTests.cs" />
+    <Compile Include="Templating\Jekyll\PostCategoryTests.cs" />
+    <Compile Include="Templating\Jekyll\SiteCategoryTests.cs" />
+    <Compile Include="Templating\Jekyll\SiteContextGeneratorTests.cs" />
     <Compile Include="Templating\Jekyll\StringTestExtensions.cs" />
     <Compile Include="Templating\Plugins\TagCloudTests.cs" />
     <Compile Include="Templating\Razor\RazorEngineTests.cs" />
