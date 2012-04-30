@@ -74,7 +74,14 @@ namespace Pretzel
         public void WaitForClose()
         {
             Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
+            try
+            {
+                Console.ReadKey();
+            }
+            catch (InvalidOperationException)
+            {
+                //Output is redirected, we don't care to keep console open just let it close
+            }
         }
 
         public void Compose()
