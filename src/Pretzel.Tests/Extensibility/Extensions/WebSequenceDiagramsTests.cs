@@ -1,4 +1,5 @@
 ﻿using Pretzel.Logic.Extensibility.Extensions;
+using Pretzel.Tests.Templating.Jekyll;
 using Xunit;
 
 namespace Pretzel.Tests.Extensibility.Extensions
@@ -25,7 +26,7 @@ b->a: bar
 <script type=""text/javascript"" src=""http://www.websequencediagrams.com/service.js""></script>";
 
             var markdown = transform.Transform(input);
-            Assert.Equal(expected, markdown);
+            Assert.Equal(expected.RemoveWhiteSpace(), markdown.RemoveWhiteSpace());
         }
 
         [Fact]
@@ -55,7 +56,7 @@ d->c: qak
 <script type=""text/javascript"" src=""http://www.websequencediagrams.com/service.js""></script>";
 
             var markdown = transform.Transform(input);
-            Assert.Equal(expected, markdown);
+            Assert.Equal(expected.RemoveWhiteSpace(), markdown.RemoveWhiteSpace());
         }
     }
 }
