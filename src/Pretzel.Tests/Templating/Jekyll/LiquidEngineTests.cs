@@ -2,9 +2,9 @@
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Pretzel.Logic.Extensibility;
+using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Jekyll;
 using Xunit;
-using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Tests.Templating.Jekyll
 {
@@ -207,7 +207,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public void Index_Is_Generated()
             {
                 const string fileName = @"C:\website\_site\index.html";
-                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(fileName).RemoveWhiteSpace());
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(fileName).RemoveLineEndings());
             }
 
             [Fact]
@@ -252,7 +252,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 for (var i = 2; i <= 5; i++)
                 {
                     var fileName = String.Format(@"C:\website\_site\page\{0}\index.html", i);
-                    Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(fileName).RemoveWhiteSpace());
+                    Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(fileName).RemoveLineEndings());
                 }
             }
 
@@ -297,7 +297,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 for (var i = 2; i <= 4; i++)
                 {
                     var fileName = String.Format(@"C:\website\_site\blog\page{0}\index.html", i);
-                    Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(fileName).RemoveWhiteSpace());
+                    Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(fileName).RemoveLineEndings());
                 }
             }
 
@@ -314,7 +314,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             readonly SiteContext context = new SiteContext { SourceFolder = Folder, Title = "My Web Site" };
             readonly string expectedfileContents = PageContents.Replace(@"{{ page.title }}", "My Web Site");
             const string Folder = @"C:\website";
-            
+
             public override LiquidEngine Given()
             {
                 context.Pages.Add(new Page
@@ -336,119 +336,6 @@ namespace Pretzel.Tests.Templating.Jekyll
             public void The_Page_Includes_The_Value()
             {
                 Assert.Equal(expectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html"));
-            }
-        }
-
-        // TODO: tests should live in SiteContextGenerator
-
-        public class When_A_Template_Also_Has_A_Layout_Value : BakingEnvironment<SiteContextGenerator>
-        {
-            const string ParentTemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
-            const string InnerTemplateContents = "---\r\n layout: parent\r\n---\r\n\r\n<h1>Title</h1>{{content}}";
-            const string PageContents = "---\r\n layout: inner\r\n---\r\n\r\n## Hello World!";
-            const string ExpectedfileContents = "<html><head><title>My Web Site</title></head><body><h1>Title</h1><h2>Hello World!</h2></body></html>";
-
-            public override SiteContextGenerator Given()
-            {
-                return new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
-            }
-
-            public override void When()
-            {
-                FileSystem.AddFile(@"C:\website\_layouts\parent.html", new MockFileData(ParentTemplateContents));
-                FileSystem.AddFile(@"C:\website\_layouts\inner.html", new MockFileData(InnerTemplateContents));
-                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-
-                Subject.BuildContext(@"C:\website\");
-            }
-
-            // [Fact]
-            public void The_File_Is_Applies_Data_To_The_Template()
-            {
-                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
-            }
-
-            [Fact]
-            public void Does_Not_Copy_Template_To_Output()
-            {
-                Assert.False(FileSystem.File.Exists(@"C:\website\_site\_layouts\parent.html"));
-                Assert.False(FileSystem.File.Exists(@"C:\website\_site\_layouts\inner.html"));
-            }
-        }
-
-        public class When_Aeoth_Tests_The_Edge_Cases_Of_Handling_YAML_Front_Matter : BakingEnvironment<LiquidEngine>
-        {
-            const string PageContents = "---\n---";
-
-            public override LiquidEngine Given()
-            {
-                return new LiquidEngine();
-            }
-
-            public override void When()
-            {
-                FileSystem.AddFile(@"C:\website\file.txt", new MockFileData(PageContents));
-                var context = new SiteContext { SourceFolder = @"C:\website\", Title = "My Web Site" };
-                Subject.FileSystem = FileSystem;
-                Subject.Process(context);
-            }
-
-            // [Fact]
-            public void The_Yaml_Matter_Should_Be_Cleared()
-            {
-                Assert.Equal("", FileSystem.File.ReadAllText(@"C:\website\_site\file.txt"));
-            }
-        }
-
-
-        public class Given_Markdown_Page_Has_A_Permalink : BakingEnvironment<LiquidEngine>
-        {
-            const string PageContents = "---\r\npermalink: /somepage.html\r\n---\r\n\r\n# Hello World!";
-
-            public override LiquidEngine Given()
-            {
-                return new LiquidEngine();
-            }
-
-            public override void When()
-            {
-                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var context = new SiteContext { SourceFolder = @"C:\website\", Title = "My Web Site" };
-                Subject.FileSystem = FileSystem;
-                Subject.Process(context);
-            }
-
-            // [Fact]
-            public void The_File_Should_Be_At_A_Different_Path()
-            {
-                Assert.True(FileSystem.File.Exists(@"C:\website\_site\somepage.html"));
-            }
-        }
-
-        public class Given_Markdown_Page_Has_A_Title : BakingEnvironment<LiquidEngine>
-        {
-            const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
-            const string PageContents = "---\r\n layout: default \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
-            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
-
-            public override LiquidEngine Given()
-            {
-                return new LiquidEngine();
-            }
-
-            public override void When()
-            {
-                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
-                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var context = new SiteContext { SourceFolder = @"C:\website\", Title = "My Web Site" };
-                Subject.FileSystem = FileSystem;
-                Subject.Process(context);
-            }
-
-            // [Fact]
-            public void The_Output_Should_Override_The_Site_Title()
-            {
-                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
             }
         }
     }

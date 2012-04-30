@@ -125,16 +125,16 @@ namespace Pretzel.Tests.Templating.Razor
         public void Posts_Properly_Paginated()
         {
             Assert.Equal(String.Format(ExpectedfileContents, 7, 6),
-                         FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+                         FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveLineEndings());
 
             Assert.Equal(String.Format(ExpectedfileContents, 5, 4),
-                         FileSystem.File.ReadAllText(@"C:\website\_site\blog\page2\index.html").RemoveWhiteSpace());
+                         FileSystem.File.ReadAllText(@"C:\website\_site\blog\page2\index.html").RemoveLineEndings());
 
             Assert.Equal(String.Format(ExpectedfileContents, 3, 2),
-                         FileSystem.File.ReadAllText(@"C:\website\_site\blog\page3\index.html").RemoveWhiteSpace());
+                         FileSystem.File.ReadAllText(@"C:\website\_site\blog\page3\index.html").RemoveLineEndings());
 
             Assert.Equal(String.Format(ExpectedLastFileContents, 1),
-                         FileSystem.File.ReadAllText(@"C:\website\_site\blog\page4\index.html").RemoveWhiteSpace());
+                         FileSystem.File.ReadAllText(@"C:\website\_site\blog\page4\index.html").RemoveLineEndings());
         }
     }
 }

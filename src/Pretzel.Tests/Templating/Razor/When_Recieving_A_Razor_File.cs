@@ -35,7 +35,7 @@ namespace Pretzel.Tests.Templating.Razor
         [Fact]
         public void The_File_Is_Applies_Data_To_The_Template()
         {
-            Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveLineEndings());
         }
 
         [Fact]
