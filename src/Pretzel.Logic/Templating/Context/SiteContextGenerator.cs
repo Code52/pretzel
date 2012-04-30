@@ -163,7 +163,7 @@ namespace Pretzel.Logic.Templating.Context
                 var header = contents.YamlHeader();
                 var page = new Page
                                 {
-                                    Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
+                                    Title = header.ContainsKey("title") ? header["title"].ToString() :  (config.ContainsKey("title") ? config["title"].ToString() : ""),
                                     Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
                                     Content = RenderContent(file, contents, header),
                                     Filepath = GetPathWithTimestamp(context.OutputFolder, file),
@@ -333,10 +333,6 @@ namespace Pretzel.Logic.Templating.Context
         public static string GetTitle(string file)
         {
             return TimestampAndTitleFromPathRegex.Match(file).Groups["title"].Value;
-        }
-        private string GetPageTitle(string file)
-        {
-			  return Path.GetFileNameWithoutExtension(file);
         }
     }
 }

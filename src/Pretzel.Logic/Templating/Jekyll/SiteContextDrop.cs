@@ -24,6 +24,15 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
             get { return context.Posts.Select(p => p.ToHash()).ToList(); }
         }
 
+        public Hash Categories
+        {
+            get
+            {
+                return Hash.FromDictionary(
+                    context.Categories.ToDictionary(c => c.Name, c => (object)c.Posts.Select(p => p.ToHash())));
+            }
+        }
+
         public string Title
         {
             get { return context.Title; }
@@ -43,7 +52,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
             x.Add("pages", context.Pages);
             x.Add("title", context.Title);
             x.Add("tags", context.Tags);
-            x.Add("categories", context.Categories);
+            x.Add("categories", Categories);
             x.Add("time", Time);
 
             return x;
