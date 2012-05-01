@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using HtmlAgilityPack;
+using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Templating.Context;
 using dotless.Core;
 using dotless.Core.Importers;
