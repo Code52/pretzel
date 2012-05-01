@@ -1,5 +1,8 @@
 ﻿using System.IO;
+using System.Linq;
+using NSubstitute;
 using Pretzel.Logic.Commands;
+using Pretzel.Logic.Extensibility;
 using Xunit;
 
 namespace Pretzel.Tests
@@ -11,7 +14,7 @@ namespace Pretzel.Tests
 
         public CommandParameterOutputTests()
         {
-            subject = new CommandParameters();
+            subject = new CommandParameters(Enumerable.Empty<IHaveCommandLineArgs>());
             writer = new StringWriter();
         }
 

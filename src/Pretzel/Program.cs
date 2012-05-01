@@ -93,7 +93,6 @@ namespace Pretzel
 
                 var batch = new CompositionBatch();
                 batch.AddExportedValue<IFileSystem>(new FileSystem());
-                batch.AddExportedValue<IContentTransform>(new WebSequenceDiagrams());
                 batch.AddPart(this);
                 container.Compose(batch);
             }
