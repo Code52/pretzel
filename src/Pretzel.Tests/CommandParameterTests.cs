@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Pretzel.Logic.Commands;
+using Pretzel.Logic.Extensibility;
 using Xunit;
 
 namespace Pretzel.Tests
@@ -17,7 +19,7 @@ namespace Pretzel.Tests
 
         public CommandParameterTests()
         {
-            subject = new CommandParameters();
+            subject = new CommandParameters(Enumerable.Empty<IHaveCommandLineArgs>());
         }
 
         [Fact]

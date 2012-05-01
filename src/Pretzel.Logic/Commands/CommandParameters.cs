@@ -5,6 +5,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using NDesk.Options;
+using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
@@ -12,12 +13,25 @@ using Pretzel.Logic.Templating.Context;
 namespace Pretzel.Logic.Commands
 {
     [Export]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     public class CommandParameters
     {
-        public CommandParameters()
+        readonly IEnumerable<IHaveCommandLineArgs> commandLineExtensions;
+
+        [ImportingConstructor]
+        public CommandParameters([ImportMany] IEnumerable<IHaveCommandLineArgs> commandLineExtensions)
         {
+            this.commandLineExtensions = commandLineExtensions;
             GetDefaultValue("Port", s => decimal.TryParse(s, out port));
+
+            Settings = new OptionSet
+                                {
+                                    { "t|template=", "The templating engine to use", v => Template = v },
+                                    { "d|directory=", "The path to site directory", p => Path = p },
+                                    { "p|port=", "The port to test the site locally", p => decimal.TryParse(p, out port) },
+                                    { "i|import=", "The import type", v => ImportType = v }, // TODO: necessary?
+                                    { "f|file=", "Path to import file", v => ImportPath = v },
+                                };
         }
 
         private void GetDefaultValue(string propertyName, Action<string> converter)
@@ -41,28 +55,23 @@ namespace Pretzel.Logic.Commands
             set { port = value; }
         }
 
-        private OptionSet Settings
-        {
-            get
-            {
-                return new OptionSet
-                           {
-                               { "t|template=", "The templating engine to use", v => Template = v },
-                               { "d|directory=", "The path to site directory", p => Path = p },
-                               { "p|port=", "The port to test the site locally", p => decimal.TryParse(p, out port) },
-                               { "i|import=", "The import type", v => ImportType = v }, // TODO: necessary?
-                               { "f|file=", "Path to import file", v => ImportPath = v },
-                           };
-            }
-        }
+        private OptionSet Settings { get; set; }
 
         public void Parse(IEnumerable<string> arguments)
         {
-            Settings.Parse(arguments);
+            // Allow extensions to register command line args
+            foreach (var commandLineExtension in commandLineExtensions)
+            {
+                commandLineExtension.UpdateOptions(Settings);
+            }
 
-            var firstArgument = arguments.FirstOrDefault();
+            var argumentList = arguments.ToArray();
 
-            if (firstArgument != null && !firstArgument.StartsWith("-"))
+            Settings.Parse(argumentList);
+
+            var firstArgument = argumentList.FirstOrDefault();
+
+            if (firstArgument != null && !firstArgument.StartsWith("-") && !firstArgument.StartsWith("/"))
             {
                 Path = System.IO.Path.IsPathRooted(firstArgument) 
                     ? firstArgument
