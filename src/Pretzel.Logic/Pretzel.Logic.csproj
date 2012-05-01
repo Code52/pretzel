@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="Commands\CommandParameters.cs" />
     <Compile Include="Exceptions\PageProcessingException.cs" />
+    <Compile Include="Extensibility\Extensions\PrettifyUrlFilter.cs" />
     <Compile Include="Extensibility\Extensions\SlugifyFilter.cs" />
     <Compile Include="Extensibility\IContentTransform.cs" />
     <Compile Include="Extensibility\Extensions\WebSequenceDiagrams.cs" />
