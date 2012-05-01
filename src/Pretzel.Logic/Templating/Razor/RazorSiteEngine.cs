@@ -27,7 +27,12 @@ namespace Pretzel.Logic.Templating.Razor
         protected override string RenderTemplate(string content, PageContext pageData)
         {
            var includesPath = Path.Combine(pageData.Site.SourceFolder, "_includes");
-           var serviceConfig = new TemplateServiceConfiguration { Resolver = new IncludesResolver(FileSystem, includesPath) };
+           var serviceConfig = new TemplateServiceConfiguration
+                               {
+                                  Resolver = new IncludesResolver(FileSystem, includesPath),
+                                  BaseTemplateType = typeof (ExtensibleTemplate<>)
+                               };
+           serviceConfig.Activator = new ExtensibleActivator(serviceConfig.Activator, Filters);
            RazorEngine.Razor.SetTemplateService(new TemplateService(serviceConfig));
 
            content = Regex.Replace(content, "<p>(@model .*?)</p>", "$1");

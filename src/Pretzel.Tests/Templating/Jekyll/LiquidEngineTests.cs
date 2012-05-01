@@ -2,6 +2,7 @@
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Pretzel.Logic.Extensibility;
+using Pretzel.Logic.Extensibility.Extensions;
 using Pretzel.Logic.Templating.Jekyll;
 using Xunit;
 using Pretzel.Logic.Templating.Context;
@@ -451,5 +452,34 @@ namespace Pretzel.Tests.Templating.Jekyll
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
             }
         }
+
+       public class Givet_Page_Use_Filter : BakingEnvironment<LiquidEngine>
+       {
+          const string TemplateContents = "<html><body>{{ '.NET C#' | slugify}}</body></html>";
+          const string PageContents = "---\r\n layout: default \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
+          const string ExpectedfileContents = "<html><body>net-csharp</body></html>";
+
+          public override LiquidEngine Given()
+          {
+             return new LiquidEngine {Filters = new IFilter[] {new SlugifyFilter()}};
+          }
+
+          public override void When()
+          {
+             FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+             FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+
+             var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+             var context = generator.BuildContext(@"C:\website\");
+             Subject.FileSystem = FileSystem;
+             Subject.Process(context);
+          }
+
+          [Fact]
+          public void The_Output_Should_Be_Slugified()
+          {
+             Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+          }
+       }
     }
 }

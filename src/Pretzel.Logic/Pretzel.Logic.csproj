@@ -81,8 +81,11 @@
   <ItemGroup>
     <Compile Include="Commands\CommandParameters.cs" />
     <Compile Include="Exceptions\PageProcessingException.cs" />
+    <Compile Include="Extensibility\Extensions\PrettifyUrlFilter.cs" />
+    <Compile Include="Extensibility\Extensions\SlugifyFilter.cs" />
     <Compile Include="Extensibility\IContentTransform.cs" />
     <Compile Include="Extensibility\Extensions\WebSequenceDiagrams.cs" />
+    <Compile Include="Extensibility\IFilter.cs" />
     <Compile Include="Extensions\Logger.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\Tracing.cs" />
@@ -121,6 +124,7 @@
     <Compile Include="Templating\Jekyll\Includes.cs" />
     <Compile Include="Templating\Jekyll\PostDrop.cs" />
     <Compile Include="Templating\Jekyll\SiteContextDrop.cs" />
+    <Compile Include="Templating\Razor\ExtensibleTemplate.cs" />
     <Compile Include="Templating\Razor\IncludesResolver.cs" />
     <Compile Include="Templating\Razor\RazorSiteEngine.cs" />
     <Compile Include="Templating\JekyllEngineBase.cs" />

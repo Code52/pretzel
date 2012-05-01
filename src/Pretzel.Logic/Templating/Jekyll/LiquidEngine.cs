@@ -20,6 +20,13 @@ namespace Pretzel.Logic.Templating.Jekyll
         protected override void PreProcess()
         {
             contextDrop = new SiteContextDrop(Context);
+            if (Filters != null)
+            {
+               foreach (var filter in Filters)
+               {
+                  Template.RegisterFilter(filter.GetType());
+               }
+            }
         }
 
         Hash CreatePageData(PageContext pageContext)
