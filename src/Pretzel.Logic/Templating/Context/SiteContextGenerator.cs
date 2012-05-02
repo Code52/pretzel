@@ -112,29 +112,36 @@ namespace Pretzel.Logic.Templating.Context
 
             foreach (var post in context.Posts)
             {
-                foreach (var tagName in post.Tags)
+                if (post.Tags != null)
                 {
-                    if (tags.ContainsKey(tagName))
+                    foreach (var tagName in post.Tags)
                     {
-                        tags[tagName].Add(post);
-                    }
-                    else
-                    {
-                        tags.Add(tagName, new List<Page> {post});
+                        if (tags.ContainsKey(tagName))
+                        {
+                            tags[tagName].Add(post);
+                        }
+                        else
+                        {
+                            tags.Add(tagName, new List<Page> {post});
+                        }
                     }
                 }
 
-                foreach (var catName in post.Categories)
+                if (post.Categories != null)
                 {
-                    if (categories.ContainsKey(catName))
+                    foreach (var catName in post.Categories)
                     {
-                        categories[catName].Add(post);
-                    }
-                    else
-                    {
-                        categories.Add(catName, new List<Page> { post });
-                    }
+                        if (categories.ContainsKey(catName))
+                        {
+                            categories[catName].Add(post);
+                        }
+                        else
+                        {
+                            categories.Add(catName, new List<Page> { post });
+                        }
+                    }  
                 }
+                
             }
 
             context.Tags = tags.Select(x => new Tag { Name = x.Key, Posts = x.Value }).OrderBy(x => x.Name).ToList();

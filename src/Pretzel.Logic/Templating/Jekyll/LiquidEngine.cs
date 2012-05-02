@@ -55,13 +55,13 @@ namespace Pretzel.Logic.Templating.Jekyll
             var data = CreatePageData(pageData);
             var template = Template.Parse(templateContents);
             Template.FileSystem = new Includes(Context.SourceFolder);
-            return template.Render(data);
+            var output = template.Render(data);
+            return output;
         }
 
         public override void Initialize()
         {
-            //Template.RegisterTag<RenderTime>("render_time");
-            //Template.RegisterTag<TagCloud>("tag_cloud");
+            
         }
     }
 }
