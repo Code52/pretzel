@@ -5,7 +5,7 @@ using NDesk.Options;
 namespace Pretzel.Logic.Extensibility.Extensions
 {
     [Export(typeof(IContentTransform))]
-    public class WebSequenceDiagrams : IContentTransform, IHaveCommandLineArgs
+    public class WebSequenceDiagrams : IContentTransform
     {
         static readonly Regex SequenceDiagramRegex = new Regex(@"(?s:<pre><code>@@sequence(?<style>.*?)\r?\n(?<sequenceContent>.*?)</code></pre>)");
 
@@ -29,11 +29,6 @@ namespace Pretzel.Logic.Extensibility.Extensions
                 content += "\r\n<script type=\"text/javascript\" src=\"http://www.websequencediagrams.com/service.js\"></script>";
 
             return content;
-        }
-
-        public void UpdateOptions(OptionSet options)
-        {
-            
         }
     }
 }
