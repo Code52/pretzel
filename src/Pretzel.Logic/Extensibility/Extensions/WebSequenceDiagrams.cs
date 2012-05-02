@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.Composition;
-using System.Text.RegularExpressions;
-using NDesk.Options;
+﻿using System.Text.RegularExpressions;
 
 namespace Pretzel.Logic.Extensibility.Extensions
 {
-    [Export(typeof(IContentTransform))]
     public class WebSequenceDiagrams : IContentTransform
     {
         static readonly Regex SequenceDiagramRegex = new Regex(@"(?s:<pre><code>@@sequence(?<style>.*?)\r?\n(?<sequenceContent>.*?)</code></pre>)");
