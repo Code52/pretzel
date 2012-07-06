@@ -55,7 +55,7 @@ namespace Pretzel.Logic.Import
             var header = new
             {
                 title = p.Title,
-                date = p.Published,
+                date = p.Published.ToString("yyyy-MM-dd"),
                 layout = "post",
                 categories = p.Categories,
                 tags = p.Tags
