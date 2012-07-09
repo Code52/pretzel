@@ -76,14 +76,14 @@ namespace Pretzel.Logic.Templating
             if (extension.IsImageFormat())
             {
                 CreateOutputDirectory(page.OutputFile);
-                FileSystem.File.Copy(page.File, page.OutputFile, true);
+                CopyFileIfSourceNewer(page.File, page.OutputFile, true);
                 return;
             }
 
             if (page is NonProcessedPage)
             {
                 CreateOutputDirectory(page.OutputFile);
-                FileSystem.File.Copy(page.File, page.OutputFile, true);
+                CopyFileIfSourceNewer(page.File, page.OutputFile, true);
                 return;
             }
 
@@ -162,6 +162,15 @@ namespace Pretzel.Logic.Templating
 
                 CreateOutputDirectory(context.OutputPath);
                 FileSystem.File.WriteAllText(context.OutputPath, context.Content);
+            }
+        }
+
+        public void CopyFileIfSourceNewer(string sourceFileName, string destFileName, bool overwrite)
+        {
+            if (!FileSystem.File.Exists(destFileName) ||
+                FileSystem.File.GetLastWriteTime(sourceFileName) > FileSystem.File.GetLastWriteTime(destFileName))
+            {
+                FileSystem.File.Copy(sourceFileName, destFileName, overwrite);
             }
         }
 
