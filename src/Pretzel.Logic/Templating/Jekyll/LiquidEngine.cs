@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using DotLiquid;
+using Pretzel.Logic.Liquid;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Jekyll.Liquid;
 
@@ -68,7 +69,7 @@ namespace Pretzel.Logic.Templating.Jekyll
 
         public override void Initialize()
         {
-            
+            Template.RegisterTag<HighlightBlock>("highlight");
         }
     }
 }
