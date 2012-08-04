@@ -43,7 +43,7 @@ title : SiteName
 <ul class="postArchive">
 {% for post in site.posts offset:5 %}
 	<li>
-		<span class="olderpostdate"> {{ post.date | date: "%d %b"  }} </span> <a class="postlink" href="{{ post.id }}">{{ post.title }}</a>
+		<span class="olderpostdate"> {{ post.date | date: "%d %b"  }} </span> <a class="postlink" href="{{ post.url }}">{{ post.title }}</a>
 	</li>
 {% endfor %}
 </ul>
