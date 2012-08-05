@@ -54,7 +54,7 @@ title : SiteName
 @foreach(var post in Model.Site.Posts.Skip(5))
 {
     <li>
-        <span class="olderpostdate">@post.Date.ToString("d m")</span> <a class="postlink" href="@post.Id">@post.Title</a>
+        <span class="olderpostdate">@post.Date.ToString("d m")</span> <a class="postlink" href="@post.Url">@post.Title</a>
     </li>
 }
 </ul>
