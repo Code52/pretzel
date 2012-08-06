@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Abstractions;
@@ -69,7 +70,12 @@ namespace Pretzel.Logic
 
                     CreateImages(sourceDirectory);
 
-                    Tracing.Info("Pretzel site template has been created");
+                    var currentPath = System.AppDomain.CurrentDomain.FriendlyName;
+                    var destination = Path.Combine(directory, "Pretzel.exe");
+                    if (!File.Exists(destination))
+                        File.Copy(currentPath, destination);
+
+                    Tracing.Info("Pretzel site template has been created");                    
                 }
                 else if (string.Equals("liquid", engine, StringComparison.InvariantCultureIgnoreCase))
                 {
