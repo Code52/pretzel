@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using DotLiquid;
 
 namespace Pretzel.Logic.Templating.Context
 {
-    public class Paginator
+    public class Paginator : Drop
     {
         private readonly SiteContext site;
         
