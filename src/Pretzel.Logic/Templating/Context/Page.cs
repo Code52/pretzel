@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using DotLiquid;
 
 namespace Pretzel.Logic.Templating.Context
 {
-    public class Page
+    public class Page : Drop
     {
         public Page()
         {
