@@ -70,6 +70,12 @@ namespace Pretzel.Logic
                     CreateImages(sourceDirectory);
 
                     Tracing.Info("Pretzel site template has been created");
+                    var currentPath = AppDomain.CurrentDomain.FriendlyName;
+                    var destination = Path.Combine(directory, "Pretzel.exe");
+                    if (!File.Exists(destination))
+                        File.Copy(currentPath, destination);
+
+                    Tracing.Info("Pretzel site template has been created");   
                 }
                 else if (string.Equals("liquid", engine, StringComparison.InvariantCultureIgnoreCase))
                 {
