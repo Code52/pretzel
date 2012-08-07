@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 using DotLiquid;
 
 namespace Pretzel.Logic.Liquid
 {
-    public class HighlightBlock : DotLiquid.Block
+    public class HighlightBlock : Block
     {
         public override void Render(Context context, TextWriter result)
         {
