@@ -69,6 +69,7 @@ namespace Pretzel.Logic.Templating.Jekyll
 
         public override void Initialize()
         {
+            Template.RegisterFilter(typeof(XmlEscapeFilter));
             Template.RegisterTag<HighlightBlock>("highlight");
         }
     }
