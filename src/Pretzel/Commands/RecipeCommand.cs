@@ -14,7 +14,7 @@ namespace Pretzel.Commands
     [CommandInfo(CommandName = "create")]
     public sealed class RecipeCommand : ICommand
     {
-        readonly static List<string> TemplateEngines = new List<string>(new[] { "Liquid", "Razor" });
+        readonly static List<string> TemplateEngines = new List<string>(new[] { "Liquid", "Razor", "RazorAzure" });
 
 #pragma warning disable 649
         [Import] IFileSystem fileSystem;
