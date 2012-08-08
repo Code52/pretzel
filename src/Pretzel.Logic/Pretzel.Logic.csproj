@@ -93,6 +93,7 @@
     <Compile Include="Extensions\YamlExtensions.cs" />
     <Compile Include="Import\BloggerImport.cs" />
     <Compile Include="Import\HtmlToMarkdownConverter.cs" />
+    <Compile Include="Import\TumblrImport.cs" />
     <Compile Include="Import\WordpressImport.cs" />
     <Compile Include="Minification\FileSystemExtensions.cs" />
     <Compile Include="Minification\LessTransform.cs" />

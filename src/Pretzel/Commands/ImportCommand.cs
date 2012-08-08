@@ -4,6 +4,7 @@ using System.Linq;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
+using System.Net;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Import;
@@ -14,7 +15,7 @@ namespace Pretzel.Commands
     [CommandInfo(CommandName = "import")]
     class ImportCommand : ICommand
     {
-        readonly static List<string> Importers = new List<string>(new[] { "wordpress", "blogger" });
+        readonly static List<string> Importers = new List<string>(new[] { "wordpress", "blogger", "tumblr" });
 
 #pragma warning disable 649
         [Import] IFileSystem fileSystem;
@@ -42,6 +43,17 @@ namespace Pretzel.Commands
             {
                 var bloggerImporter = new BloggerImport(fileSystem, parameters.Path, parameters.ImportPath);
                 bloggerImporter.Import();
+            }
+            else if (string.Equals("tumblr", parameters.ImportType, StringComparison.InvariantCultureIgnoreCase))
+            {
+                Func<string, string> webClient = s =>
+                {
+                    var client = new WebClient();
+                    return client.DownloadString(s);
+                };
+
+                var tumblrImporter = new TumblrImport(fileSystem, webClient, parameters.Path, parameters.ImportUrl);
+                tumblrImporter.Import();
             }
 
             Tracing.Info("Import complete");
