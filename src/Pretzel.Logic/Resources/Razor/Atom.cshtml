@@ -18,7 +18,7 @@ layout: nil
   @foreach (var post in Model.Site.Posts)
   {
       <entry>
-          <id>http://domain/{{ post.url }}</id>
+          <id>http://domain/@post.Url</id>
           <link type="text/html" rel="alternate" href="http://domain/@post.Url"/>
           <title>@post.Title</title>
           <updated>@post.Date.ToString("s")</updated>
