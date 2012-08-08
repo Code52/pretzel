@@ -169,7 +169,7 @@ namespace Pretzel.Logic.Templating.Context
                 var contents = SafeReadContents(file);
                 var header = contents.YamlHeader();
 
-                if (header.ContainsKey("draft") && header["draft"].ToString().ToLower() == "true")
+                if (header.ContainsKey("published") && header["published"].ToString().ToLower() == "false")
                 {
                     return null;
                 }
