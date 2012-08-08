@@ -168,6 +168,12 @@ namespace Pretzel.Logic.Templating.Context
                     return pageCache[file];
                 var contents = SafeReadContents(file);
                 var header = contents.YamlHeader();
+
+                if (header.ContainsKey("published") && header["published"].ToString().ToLower() == "false")
+                {
+                    return null;
+                }
+
                 var page = new Page
                                 {
                                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
