@@ -27,7 +27,7 @@ namespace Pretzel.Logic.Import
         {
             if (string.IsNullOrWhiteSpace(url))
             {
-                throw new ArgumentException("url parameter is required.");
+                throw new ArgumentException("-u or --url parameter is required for Tumblr import.");
             }
 
             const int numPostsToLoad = 10;
@@ -38,10 +38,9 @@ namespace Pretzel.Logic.Import
                 var uri = new UriBuilder(url)
                 {
                     Path = "/api/read",
-                    Query = string.Format("start={0}&num={1}", i, numPostsToLoad)
+                    Query = string.Format("start={0}&num={1}&filter=none", i, numPostsToLoad)
                 };
 
-                Console.WriteLine("Importing tumblr site from host: {0}", uri);
                 var xml = webClient(uri.ToString());
                 var root = XElement.Parse(xml);
 
@@ -51,6 +50,14 @@ namespace Pretzel.Logic.Import
 
                 foreach (var post in posts.Elements())
                 {
+                    var type = (string) post.Attribute("type");
+
+                    // TODO Handle other page types
+                    if (type != "regular")
+                    {
+                        continue;
+                    }
+
                     var urlWithSlug = (string) post.Attribute("url-with-slug");
                     var permalink = new Uri(urlWithSlug).PathAndQuery + "/index.html";
                     
@@ -58,9 +65,18 @@ namespace Pretzel.Logic.Import
                     var title = (string) post.Element("regular-title");
                     var regularBody = (string) post.Element("regular-body");
                     var date = (DateTime) post.Attribute("date");
+                    var format = (string) post.Attribute("format");
+
+                    var extension = (format == "markdown") ? "md" : "html";
+
+                    foreach (var c in Path.GetInvalidFileNameChars())
+                    {
+                        title = title.Replace(c, '_');
+                    }
 
                     var outputPath = Path.Combine(pathToSite, "_posts", 
-                            string.Format("{0}-{1}.md", date.ToString("yyyy-MM-dd"), title.Replace(" ", "-")));
+                            string.Format("{0}-{1}.{2}", date.ToString("yyyy-MM-dd"), title.Replace(' ', '-'), extension));
+
 
                     var header = new
                     {
