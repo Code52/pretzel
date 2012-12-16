@@ -82,6 +82,10 @@ namespace Pretzel.Logic.Commands
             {
                 Path = Directory.GetCurrentDirectory();
             }
+            else
+            {
+                Path = System.IO.Path.GetFullPath(Path);
+            }
         }
 
         public void DetectFromDirectory(IDictionary<string, ISiteEngine> engines, SiteContext context)
