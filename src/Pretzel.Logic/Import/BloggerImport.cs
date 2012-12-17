@@ -54,7 +54,7 @@ namespace Pretzel.Logic.Import
                         {
                             Title = e.Element(atom + "title").Value,
                             //PostName = e.Element(wp + "post_name").Value,
-                            Published = Convert.ToDateTime(e.Element(atom + "published").Value),
+                            Published = Convert.ToDateTime(e.Element(atom + "published").Value).ToUniversalTime(),
                             Updated = Convert.ToDateTime(e.Element(atom + "updated").Value),
                             Content = ConvertToMarkdown(e.Element(atom + "content").Value),
                             /*Tags = from t in e.Elements(atom + "category")
