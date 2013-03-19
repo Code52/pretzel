@@ -44,25 +44,24 @@ namespace Pretzel.Tests
             public void RemoveHeader_WithSampleValue_ContainsRestOfDocument()
             {
                 const string header = @"---
-                        layout: post
-                        title: This is a test jekyll document
-                        description: TEST ALL THE THINGS
-                        date: 2012-01-30
-                        tags : 
-                        - test
-                        - alsotest
-                        - lasttest
-                        ---
-            
-                        ##Test
-            
-                        This is a test of YAML parsing";
+layout: post
+title: This is a test jekyll document
+description: TEST ALL THE THINGS
+date: 2012-01-30
+tags : 
+- test
+- alsotest
+- lasttest
+---
+         
+##Test
+
+This is a test of YAML parsing";
 
                 var result = header.ExcludeHeader();
 
-                Assert.Equal("##Test\r\n            \r\n                        This is a test of YAML parsing", result);
+                Assert.Equal("##Test\r\n\r\nThis is a test of YAML parsing", result);
             }
-
 
             [Fact]
             public void YamlHeader_WhenNoMetadataSet_ReturnsEmptyDictionary()
