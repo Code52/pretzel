@@ -16,7 +16,7 @@
   <Target Name="Compile">
     <Message Text="=========== Compile ===========" Importance="High" />
     
-    <MSBuild Projects="$(SourceDir)\Pretzel.sln" Properties="Configuration=$(Configuration)" />
+    <MSBuild Projects="$(SourceDir)\Pretzel.sln" Properties="Configuration=$(Configuration)" Targets="Rebuild" />
 
     <MakeDir Directories="$(ArtifactsDir)" />
 
