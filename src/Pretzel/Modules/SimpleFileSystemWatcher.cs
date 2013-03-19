@@ -27,10 +27,13 @@ namespace Pretzel.Modules
             watcher.Created -= WatcherOnChanged;
         }
 
-        private string lastFile;
+        string lastFile;
         private void WatcherOnChanged(object sender, FileSystemEventArgs args)
         {
             if (args.FullPath.Contains("_site"))
+                return;
+
+            if (args.FullPath.EndsWith(".TMP", StringComparison.OrdinalIgnoreCase))
                 return;
 
             if (args.FullPath == lastFile)
