@@ -19,17 +19,9 @@
 
   <Target Name="Version">
 
-
     <GitVersion LocalPath="$(SourceDir)\..\" Condition=" '$(GitCommitHash)' == '' ">
       <Output TaskParameter="CommitHash" PropertyName="GitCommitHash" />
     </GitVersion>
-
-      <PropertyGroup>
-    
-  </PropertyGroup>
-
-  <Message Text="PropertyName: $(PropertyName)"/>
-
 
     <AssemblyInfo CodeLanguage="CS" 
                   OutputFile="$(SourceDir)\CommonAssemblyInfo.cs"
@@ -39,6 +31,7 @@
                   AssemblyFileVersion="$(Version)" 
                   AssemblyInformationalVersion="Built from hash '$(GitCommitHash)'" />
 
+    <Message Text="Building version $(Version) from hash $(GitCommitHash)"  Importance="High" />
 
   </Target>
 
