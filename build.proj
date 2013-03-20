@@ -1,4 +1,4 @@
-<Project ToolsVersion="4.0" DefaultTargets="Chocolatey" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Test;Chocolatey" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!-- TODO: mono build -->
   <!-- TODO: package step to merge code into one binary -->
@@ -63,7 +63,7 @@
     <Message Text="=========== Tests Passed ===========" Importance="High" />
   </Target>
 
-  <Target Name="Chocolatey" DependsOnTargets="Test">
+  <Target Name="Chocolatey">
 
     <Message Text="=========== Chocolatey Package ===========" Importance="High" />
 
