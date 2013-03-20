@@ -93,6 +93,12 @@
     <Compile Include="YamlExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\markdown-no-header-output.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="data\yaml-header-input.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
