@@ -6,7 +6,11 @@
   
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)'==''">Release</Configuration>
-    <Version Condition="'$(Version)'==''">0.0.0.3</Version>
+    <Version>$(BUILD_NUMBER)</Version>
+    <GitCommitHash>$(BUILD_VCS_NUMBER)</GitCommitHash>
+    <GitCommitHash Condition=" '$(GitCommitHash)' != '' ">$(GitCommitHash.Substring(0, 8))</GitCommitHash>
+    <!-- dev config -->
+    <Version Condition=" '$(Version)' == '' ">0.0.0.1</Version>
     <ArtifactsDir>$(MSBuildProjectDirectory)\artifacts\</ArtifactsDir>
     <SourceDir>$(MSBuildProjectDirectory)\src\</SourceDir>
   </PropertyGroup>
@@ -15,9 +19,18 @@
 
   <Target Name="Version">
 
-    <GitVersion LocalPath="$(SourceDir)\..\">
+
+    <GitVersion LocalPath="$(SourceDir)\..\" Condition=" '$(GitCommitHash)' == '' ">
       <Output TaskParameter="CommitHash" PropertyName="GitCommitHash" />
     </GitVersion>
+
+      <PropertyGroup>
+    
+  </PropertyGroup>
+
+  <Message Text="PropertyName: $(PropertyName)"/>
+
+
     <AssemblyInfo CodeLanguage="CS" 
                   OutputFile="$(SourceDir)\CommonAssemblyInfo.cs"
                   AssemblyCopyright="Copyright © Code52 2013" 
