@@ -13,7 +13,23 @@
 
   <UsingTask AssemblyFile=".\tools\xunit\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
 
-  <Target Name="Compile">
+  <Target Name="Version">
+
+    <GitVersion LocalPath="$(SourceDir)\..\">
+      <Output TaskParameter="CommitHash" PropertyName="GitCommitHash" />
+    </GitVersion>
+    <AssemblyInfo CodeLanguage="CS" 
+                  OutputFile="$(SourceDir)\CommonAssemblyInfo.cs"
+                  AssemblyCopyright="Copyright © Code52 2013" 
+                  ComVisible="false" 
+                  AssemblyVersion="$(Version)" 
+                  AssemblyFileVersion="$(Version)" 
+                  AssemblyInformationalVersion="Built from hash '$(GitCommitHash)'" />
+
+
+  </Target>
+
+  <Target Name="Compile" DependsOnTargets="Version">
     <Message Text="=========== Compile ===========" Importance="High" />
     
     <MSBuild Projects="$(SourceDir)\Pretzel.sln" Properties="Configuration=$(Configuration)" Targets="Rebuild" />
