@@ -69,9 +69,7 @@ namespace Pretzel.Logic.Import
                         if (listNesting.Peek() == "ol")
                             itemMarker = "1.";
                         markdown.AppendFormat("{0}{1} ", new string(' ', 4 * (listNesting.Count - 1)), itemMarker);
-                        listNesting.Push("li");
                         ProcessNodes(markdown, htmlNode.ChildNodes);
-                        listNesting.Pop();
                         break;
                     case "p":
                         markdown.AppendLine();
