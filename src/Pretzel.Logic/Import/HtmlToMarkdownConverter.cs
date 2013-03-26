@@ -18,6 +18,7 @@ namespace Pretzel.Logic.Import
             HtmlDocument doc = new HtmlDocument();
             StringBuilder markdown = new StringBuilder();
             doc.LoadHtml(html);
+            listNesting = new Stack<string>();
             ProcessNodes(markdown, doc.DocumentNode.ChildNodes);
             return markdown.ToString();
         }
@@ -28,7 +29,7 @@ namespace Pretzel.Logic.Import
             | RegexOptions.IgnorePatternWhitespace
             | RegexOptions.Compiled);
 
-        private int listNestingLevel;
+        private Stack<string> listNesting;
 
         private void ProcessNodes(StringBuilder markdown, IEnumerable<HtmlNode> htmlNodes)
         {
@@ -47,29 +48,30 @@ namespace Pretzel.Logic.Import
                     case "h4":
                     case "h5":
                     case "h6":
-                        string hashes = new string('#', htmlNode.Name[1] - '0');
+                        var hashes = new string('#', htmlNode.Name[1] - '0');
                         markdown.AppendLine();
                         markdown.AppendFormat("{0} {1}", hashes, htmlNode.InnerText);
                         markdown.AppendLine();
                         break;
                     case "ul":
+                    case "ol":
                         markdown.AppendLine();
-                        listNestingLevel++;
+                        listNesting.Push(htmlNode.Name);
                         ProcessNodes(markdown, htmlNode.ChildNodes);
-                        listNestingLevel--;
-                        if (listNestingLevel < 0) listNestingLevel = 0;
+                        listNesting.Pop();
                         markdown.AppendLine();
                         break;
                     case "li":
-                        // n.b. don't yet support nested lists:
                         markdown.AppendLine();
-                        if (listNestingLevel == 0) // missing ul
-                            listNestingLevel = 1;
-                        markdown.AppendFormat("{0}* ", new string(' ', 4 * (listNestingLevel - 1)));
-                        listNestingLevel++;
+                        if (listNesting.Count == 0) // missing ul
+                            listNesting.Push("ul");
+                        var itemMarker = "*";
+                        if (listNesting.Peek() == "ol")
+                            itemMarker = "1.";
+                        markdown.AppendFormat("{0}{1} ", new string(' ', 4 * (listNesting.Count - 1)), itemMarker);
+                        listNesting.Push("li");
                         ProcessNodes(markdown, htmlNode.ChildNodes);
-                        listNestingLevel--;
-                        if (listNestingLevel < 0) listNestingLevel = 0;
+                        listNesting.Pop();
                         break;
                     case "p":
                         markdown.AppendLine();

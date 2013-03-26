@@ -68,6 +68,13 @@ namespace Pretzel.Tests.Import
         }
 
         [Fact]
+        public void Ordered_lists_are_converted()
+        {
+            string markdown = converter.Convert("<ol><li>first</li><li>second</li></ol>");
+            Assert.Equal(Environment.NewLine + Environment.NewLine + "1. first" + Environment.NewLine + "1. second" + Environment.NewLine, markdown);
+        }
+
+        [Fact]
         public void Unordered_lists_are_converted()
         {
             string markdown = converter.Convert("<ul><li>first</li><li>second</li></ul>");
