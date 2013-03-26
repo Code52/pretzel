@@ -47,6 +47,13 @@ namespace Pretzel.Tests.Import
         }
 
         [Fact]
+        public void Links_without_href_are_left_unconverted()
+        {
+            string markdown = converter.Convert("<a name=\"OLE_LINK1\"><em>This</em></a>");
+            Assert.Equal("<a name=\"OLE_LINK1\"><em>This</em></a>", markdown);
+        }
+
+        [Fact]
         public void Images_are_left_unconverted()
         {
             string markdown = converter.Convert("<img src=\"http://foo.com/bar\">");

@@ -95,7 +95,16 @@ namespace Pretzel.Logic.Import
                         markdown.AppendLine();
                         break;
                     case "a":
-                        markdown.AppendFormat("[{0}]({1})", htmlNode.InnerText, htmlNode.Attributes["href"].Value);
+                        var href = htmlNode.Attributes["href"];
+                        if (href != null)
+                        {
+                            markdown.AppendFormat("[{0}]({1})", htmlNode.InnerText, htmlNode.Attributes["href"].Value);
+                        }
+                        else
+                        {
+                            // anchor missing href, just pass it straight through
+                            markdown.Append(htmlNode.OuterHtml);
+                        }
                         break;
                     case "img":
                     case "blockquote":
