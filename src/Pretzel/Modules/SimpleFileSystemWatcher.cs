@@ -33,9 +33,6 @@ namespace Pretzel.Modules
             if (args.FullPath.Contains("_site"))
                 return;
 
-            if (args.FullPath.EndsWith(".TMP", StringComparison.OrdinalIgnoreCase))
-                return;
-
             if (args.FullPath == lastFile)
             {
                 lastFile = "";
