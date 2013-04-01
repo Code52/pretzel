@@ -204,5 +204,28 @@ namespace Pretzel.Tests
             Assert.Equal(ExpectedImportType, subject.ImportType);
         }
 
+        [Fact]
+        public void LaunchBrowser_WhenSpecifyingEmptyList_IsTrue()
+        {
+            var args = new List<string>();
+            subject.Parse(args);
+            Assert.True(subject.LaunchBrowser);
+        }
+
+        [Fact]
+        public void LaunchBrowser_WhenSpecifyingNoBrowserDoubleDash_IsFalse()
+        {
+            var args = new List<string> { "--nobrowser" };
+            subject.Parse(args);
+            Assert.False(subject.LaunchBrowser);
+        }
+
+        [Fact]
+        public void LaunchBrowser_WhenSpecifyingNoBrowserSingleDash_IsFalse()
+        {
+            var args = new List<string> { "-nobrowser" };
+            subject.Parse(args);
+            Assert.False(subject.LaunchBrowser);
+        }
     }
 }

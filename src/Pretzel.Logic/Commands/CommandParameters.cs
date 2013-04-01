@@ -23,6 +23,8 @@ namespace Pretzel.Logic.Commands
         {
             this.commandLineExtensions = commandLineExtensions;
             GetDefaultValue("Port", s => decimal.TryParse(s, out port));
+            GetDefaultValue("LaunchBrowser", s => bool.TryParse(s, out launchBrowser));
+            LaunchBrowser = true;
 
             Settings = new OptionSet
                                 {
@@ -31,8 +33,11 @@ namespace Pretzel.Logic.Commands
                                     { "p|port=", "The port to test the site locally", p => decimal.TryParse(p, out port) },
                                     { "i|import=", "The import type", v => ImportType = v }, // TODO: necessary?
                                     { "f|file=", "Path to import file", v => ImportPath = v },
+                                    { "nobrowser", "Do not launch a browser", v => LaunchBrowser = false },
                                 };
         }
+
+        
 
         private void GetDefaultValue(string propertyName, Action<string> converter)
         {
@@ -46,8 +51,15 @@ namespace Pretzel.Logic.Commands
         public string ImportPath { get; private set; }
         public string ImportType { get; set; }
 
-        private decimal port;
+        bool launchBrowser;
+        [DefaultValue(true)]
+        public bool LaunchBrowser
+        {
+            get { return launchBrowser; }
+            set { launchBrowser = value; }
+        }
 
+        decimal port;
         [DefaultValue(8080)]
         public decimal Port
         {

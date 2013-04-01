@@ -50,7 +50,6 @@ namespace Pretzel.Commands
                 return;
             }
 
-
             engine.Initialize();
             engine.Process(context);
             foreach (var t in transforms)
@@ -61,16 +60,24 @@ namespace Pretzel.Commands
             var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider(), Convert.ToInt32(parameters.Port));
             w.Start();
 
-
-            Tracing.Info(string.Format("Launching http://localhost:{0}/ to test the site.", parameters.Port));
-            try
+            var url = string.Format("http://localhost:{0}/", parameters.Port);
+            if (parameters.LaunchBrowser)
             {
-                Process.Start(string.Format("http://localhost:{0}", parameters.Port));
+                Tracing.Info(string.Format("Opening {0} in default browser...", url));
+                try
+                {
+                    Process.Start(url);
+                }
+                catch (Exception)
+                {
+                    Tracing.Info(string.Format("Failed to launch {0}.", url));
+                }
             }
-            catch (Exception)
+            else
             {
-                Tracing.Info(string.Format("Failed to Launch http://localhost:{0}/.", parameters.Port));
+                Tracing.Info(string.Format("Browse to {0} to view the site.", url));
             }
+      
             Tracing.Info("Press 'Q' to stop the web host...");
             ConsoleKeyInfo key;
             do
