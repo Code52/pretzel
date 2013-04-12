@@ -95,6 +95,11 @@ namespace Pretzel.Logic.Minification
                 this.currentDirectory = Path.GetDirectoryName(currentDirectory);
             }
 
+            public byte[] GetBinaryFileContents(string fileName)
+            {
+                return fileSystem.File.ReadAllBytes(MapToFullPath(fileName));
+            }
+
             public string GetFileContents(string fileName)
             {
                 return fileSystem.File.ReadAllText(MapToFullPath(fileName));

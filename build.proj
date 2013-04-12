@@ -24,18 +24,16 @@
     </GitVersion>
 
     <AssemblyInfo CodeLanguage="CS" 
-                  OutputFile="$(SourceDir)\CommonAssemblyInfo.cs"
+                  OutputFile="$(SourceDir)\Pretzel\Properties\AssemblyInfo.cs"
                   AssemblyCopyright="Copyright © Code52 2013" 
                   ComVisible="false" 
-                  AssemblyVersion="$(Version)" 
-                  AssemblyFileVersion="$(Version)" 
                   AssemblyInformationalVersion="Built from hash '$(GitCommitHash)'" />
 
     <Message Text="Building version $(Version) from hash $(GitCommitHash)"  Importance="High" />
 
   </Target>
 
-  <Target Name="Compile" DependsOnTargets="Version">
+  <Target Name="Compile">
     <Message Text="=========== Compile ===========" Importance="High" />
     
     <MSBuild Projects="$(SourceDir)\Pretzel.sln" Properties="Configuration=$(Configuration)" Targets="Rebuild" />
