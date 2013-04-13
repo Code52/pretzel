@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
 using Firefly.Http;
-using Owin;
 using Pretzel.Logic.Extensions;
 using Gate;
 
@@ -39,7 +39,7 @@ namespace Pretzel
             }
 
             var server = new ServerFactory();
-            host = server.Create(ServerCallback, Port);
+            host = server.Create(NewServerCallback, Port);
 
             IsRunning = true;
 
@@ -59,7 +59,7 @@ namespace Pretzel
             return true;
         }
 
-        private void ServerCallback(IDictionary<string, object> env, ResultDelegate result, Action<Exception> fault)
+        private Task NewServerCallback(IDictionary<string, object> env)
         {
             var requestString = (string)env[OwinConstants.RequestPath];
 
@@ -67,39 +67,40 @@ namespace Pretzel
 
             if (!content.IsAvailable(requestString))
             {
-                SendText(result, env, "Page not found: " + requestString);
-                return;
+                SendText(env, "Page not found: " + requestString);
+                return TaskHelpers.Completed();
             }
 
             if (requestString.MimeType().IsBinaryMime())
             {
                 var fileContents = content.GetBinaryContent(requestString);
-                SendData(result, env, fileContents);
+                SendData(env, fileContents);
             }
             else
             {
                 var fileContents = content.GetContent(requestString);
-                SendText(result, env, fileContents);
+                SendText(env, fileContents);
             }
+
+            return TaskHelpers.Completed();
         }
 
-        private void SendText(ResultDelegate result, IDictionary<string, object> env, string text)
+
+        private void SendText(IDictionary<string, object> env, string text)
         {
             var requestString = (string)env[OwinConstants.RequestPath];
-            var response = new Response(result) { ContentType = requestString.MimeType() };
+            var response = new Response { ContentType = requestString.MimeType() };
             response.Write(text);
-            response.End();
         }
 
-        private void SendData(ResultDelegate result, IDictionary<string, object> env, byte[] data)
+        private void SendData(IDictionary<string, object> env, byte[] data)
         {
             var requestString = (string)env[OwinConstants.RequestPath];
 
-            var response = new Response(result) { ContentType = requestString.MimeType() };
+            var response = new Response { ContentType = requestString.MimeType() };
             response.Headers["Content-Range"] = new[] { string.Format("bytes 0-{0}", (data.Length - 1)) };
             response.Headers["Content-Length"] = new[] { data.Length.ToString(CultureInfo.InvariantCulture) };
             response.Write(new ArraySegment<byte>(data));
-            response.End();
         }
 
         #region IDisposable
