@@ -73,6 +73,7 @@
     <Compile Include="CommandParameterOutputTests.cs" />
     <Compile Include="CommandParameterTests.cs" />
     <Compile Include="Commands\CommandExtensions.cs" />
+    <Compile Include="Extensibility\Extensions\VirtualDirectorySupportTests.cs" />
     <Compile Include="Extensibility\Extensions\WebSequenceDiagramsTests.cs" />
     <Compile Include="Import\BloggerImportTests.cs" />
     <Compile Include="Import\HtmlToMarkdownConverterTests.cs" />
