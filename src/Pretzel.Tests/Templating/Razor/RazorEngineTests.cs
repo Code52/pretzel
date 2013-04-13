@@ -100,10 +100,11 @@ namespace Pretzel.Tests.Templating.Razor
         {
             const string templateContents = "<html><head><title>@Model.Title</title></head><body>@Raw(Model.Content)</body></html>";
             const string pageContents = "<i>@Include(\"TestInclude\")</i>";
+            const string expectedfileContents = "<html><head><title>My Web Site</title></head><body><i>@Include(\"TestInclude\")</i></body></html>";
+            ProcessContents(templateContents, pageContents, new Dictionary<string, object> {{"title", "My Web Site"}});
 
-            Assert.ThrowsDelegate action = () => ProcessContents(templateContents, pageContents, new Dictionary<string, object> {{"title", "My Web Site"}});
-
-            Assert.Throws<PageProcessingException>(action);
+            var output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
+            Assert.Equal(expectedfileContents, output);
         }
 
         [Fact]
