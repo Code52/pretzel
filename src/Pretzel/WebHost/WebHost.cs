@@ -59,7 +59,7 @@ namespace Pretzel
             return true;
         }
 
-        private Task NewServerCallback(IDictionary<string, object> env)
+        Task NewServerCallback(IDictionary<string, object> env)
         {
             var requestString = (string)env[OwinConstants.RequestPath];
 
@@ -86,14 +86,14 @@ namespace Pretzel
         }
 
 
-        private void SendText(IDictionary<string, object> env, string text)
+        static void SendText(IDictionary<string, object> env, string text)
         {
             var requestString = (string)env[OwinConstants.RequestPath];
             var response = new Response { ContentType = requestString.MimeType() };
             response.Write(text);
         }
 
-        private void SendData(IDictionary<string, object> env, byte[] data)
+        static void SendData(IDictionary<string, object> env, byte[] data)
         {
             var requestString = (string)env[OwinConstants.RequestPath];
 
