@@ -19,9 +19,7 @@ namespace Pretzel.Tests.Minification
             var importer = new Importer(reader);
             var parser = new Parser(stylizer, importer);
             ILogger logger = new ConsoleLogger(LogLevel.Error);
-            var engine = new LessEngine(parser, logger, true);
-            engine.Compress = true;
-            return engine;
+            return new LessEngine(parser, logger, true, true);
         }
     }
 }

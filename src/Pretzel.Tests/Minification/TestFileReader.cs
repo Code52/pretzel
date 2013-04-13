@@ -15,6 +15,12 @@ namespace Pretzel.Tests.Minification
             this.pathResolver = pathResolver;
         }
 
+        public byte[] GetBinaryFileContents(string fileName)
+        {
+            var path = pathResolver.GetFullPath(fileName);
+            return fileSystem.File.ReadAllBytes(path);
+        }
+
         public string GetFileContents(string fileName)
         {
             var path = pathResolver.GetFullPath(fileName);
