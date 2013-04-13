@@ -26,7 +26,7 @@ namespace Pretzel.Logic.Templating
         protected abstract void PreProcess();
         protected abstract string RenderTemplate(string content, PageContext pageData);
 
-        public void Process(SiteContext siteContext)
+        public void Process(SiteContext siteContext, bool skipFileOnError = false)
         {
             Context = siteContext;
             PreProcess();
@@ -38,7 +38,7 @@ namespace Pretzel.Logic.Templating
                 var p = siteContext.Posts[index];
                 var previous = GetPrevious(siteContext.Posts, index);
                 var next = GetNext(siteContext.Posts, index);
-                ProcessFile(outputDirectory, p, previous, next, p.Filepath);
+                ProcessFile(outputDirectory, p, previous, next, skipFileOnError, p.Filepath);
             }
 
             for (int index = 0; index < siteContext.Pages.Count; index++)
@@ -46,7 +46,7 @@ namespace Pretzel.Logic.Templating
                 var p = siteContext.Pages[index];
                 var previous = GetPrevious(siteContext.Pages, index);
                 var next = GetNext(siteContext.Pages, index);
-                ProcessFile(outputDirectory, p, previous, next);
+                ProcessFile(outputDirectory, p, previous, next, skipFileOnError);
             }
         }
 
@@ -65,7 +65,7 @@ namespace Pretzel.Logic.Templating
             return Path.Combine(path, "_site");
         }
 
-        private void ProcessFile(string outputDirectory, Page page, Page previous, Page next, string relativePath = "")
+        private void ProcessFile(string outputDirectory, Page page, Page previous, Page next, bool skipFileOnError, string relativePath = "")
         {
             if (string.IsNullOrWhiteSpace(relativePath))
                 relativePath = MapToOutputPath(page.File);
@@ -126,6 +126,7 @@ namespace Pretzel.Logic.Templating
             foreach (var context in pageContexts)
             {
                 var metadata = page.Bag;
+                var failed = false;
                 while (metadata.ContainsKey("layout"))
                 {
                     var layout = metadata["layout"];
@@ -143,11 +144,19 @@ namespace Pretzel.Logic.Templating
                     }
                     catch (Exception ex)
                     {
-                        throw new PageProcessingException(
-                            string.Format("Failed to process layout {0} for {1}, see inner exception for more details",
-                                          layout, context.OutputPath), ex);
+                        if (!skipFileOnError)
+                        {
+                            var message = string.Format("Failed to process layout {0} for {1}, see inner exception for more details", layout, context.OutputPath);
+                            throw new PageProcessingException(message, ex);
+                        }
+
+                        Console.WriteLine(@"Failed to process layout {0} for {1} because '{2}'. Skipping file", layout, context.OutputPath, ex.Message);
+                        failed = true;
+                        break;
                     }
                 }
+                if (failed)
+                    continue;
 
                 try
                 {
@@ -155,9 +164,14 @@ namespace Pretzel.Logic.Templating
                 }
                 catch (Exception ex)
                 {
-                    throw new PageProcessingException(
-                        string.Format("Failed to process {0}, see inner exception for more details",
-                                      context.OutputPath), ex);
+                    if (!skipFileOnError)
+                    {
+                        var message = string.Format("Failed to process {0}, see inner exception for more details", context.OutputPath);
+                        throw new PageProcessingException(message, ex);
+                    }
+
+                    Console.WriteLine(@"Failed to process {0}, see inner exception for more details", context.OutputPath);
+                    continue;
                 }
 
                 CreateOutputDirectory(context.OutputPath);
