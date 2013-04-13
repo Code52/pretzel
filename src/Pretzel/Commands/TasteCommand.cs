@@ -51,7 +51,7 @@ namespace Pretzel.Commands
             }
 
             engine.Initialize();
-            engine.Process(context);
+            engine.Process(context, skipFileOnError: true);
             foreach (var t in transforms)
                 t.Transform(context);
             var watcher = new SimpleFileSystemWatcher();
@@ -93,7 +93,7 @@ namespace Pretzel.Commands
             Tracing.Info(string.Format("File change: {0}", file));
 
             var context = Generator.BuildContext(parameters.Path);
-            engine.Process(context);
+            engine.Process(context, true);
         }
 
         public void WriteHelp(TextWriter writer)

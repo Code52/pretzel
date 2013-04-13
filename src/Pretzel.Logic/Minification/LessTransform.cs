@@ -41,7 +41,7 @@ namespace Pretzel.Logic.Minification
             //Process to see if the site has a CSS file that doesn't exist, and should be created from LESS files.
             //This is "smarter" than just compiling all Less files, which will crash if they're part of a larger Less project 
             //ie, one file pulls in imports, individually they don't know about each other but use variables
-            foreach (var file in siteContext.Pages.Where(p => p.OutputFile.EndsWith(".html")))
+            foreach (var file in siteContext.Pages.Where(p => p.OutputFile.EndsWith(".html") && fileSystem.File.Exists(p.OutputFile)))
             {
                 var doc = new HtmlDocument();
                 var fileContents = fileSystem.File.ReadAllText(file.OutputFile);

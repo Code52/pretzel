@@ -8,7 +8,7 @@ namespace Pretzel.Logic.Templating
     {
         void Initialize();
         bool CanProcess(SiteContext context);
-        void Process(SiteContext context);
+        void Process(SiteContext context, bool skipFileOnError = false);
         string GetOutputDirectory(string path);
     }
 }
