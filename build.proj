@@ -67,11 +67,14 @@
 
     <ItemGroup>
       <NuGet Include="$(MSBuildProjectDirectory)\src\.Nuget\NuGet.exe" />
+	  <OldPackages Include="$(MSBuildProjectDirectory)\artifacts\*.nupkg" />
     </ItemGroup>
 
     <PropertyGroup>
       <ChocolateyInstall>$(MSBuildProjectDirectory)\build\chocolatey\tools\chocolateyInstall.ps1</ChocolateyInstall>
     </PropertyGroup>
+	
+	<Delete Files="@(OldPackages)" />
 
     <MakeDir Directories="$(MSBuildProjectDirectory)\build\chocolatey\tools" />
 
