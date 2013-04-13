@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Text.RegularExpressions;
 using Pretzel.Logic.Templating.Context;
@@ -36,8 +37,15 @@ namespace Pretzel.Logic.Templating.Razor
            RazorEngine.Razor.SetTemplateService(new TemplateService(serviceConfig));
 
            content = Regex.Replace(content, "<p>(@model .*?)</p>", "$1");
-
-           return RazorEngine.Razor.Parse(content, pageData);
+            try
+            {
+                return RazorEngine.Razor.Parse(content, pageData);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine(@"Failed to render template, falling back to direct content");
+                return content;
+            }
         }
     }
 }
