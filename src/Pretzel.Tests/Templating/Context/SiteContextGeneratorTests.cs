@@ -146,6 +146,22 @@ namespace Pretzel.Tests.Templating.Context
         }
 
         [Fact]
+        public void site_context_pages_have_correct_url()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\Index.md", new MockFileData(ToPageContent("# Title")));
+            fileSystem.AddFile(@"C:\TestSite\SubFolder\SomeFile.md", new MockFileData(ToPageContent("# Title")));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite");
+
+            // assert
+            Assert.Equal("/Index.html", siteContext.Pages[0].Url);
+            Assert.Equal("/SubFolder/SomeFile.html", siteContext.Pages[1].Url);
+        }
+
+
+        [Fact]
         public void site_context_does_not_cache_page()
         {
             // arrange
