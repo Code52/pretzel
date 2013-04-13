@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
 using Firefly.Http;
-using Pretzel.Logic.Extensions;
 using Gate;
+using Pretzel.Logic.Extensions;
 
 namespace Pretzel
 {
@@ -61,46 +62,38 @@ namespace Pretzel
 
         Task NewServerCallback(IDictionary<string, object> env)
         {
-            var requestString = (string)env[OwinConstants.RequestPath];
+            var path = (string)env[OwinConstants.RequestPath];
 
-            Tracing.Info(requestString);
+            Tracing.Info(path);
 
-            if (!content.IsAvailable(requestString))
+            if (!content.IsAvailable(path))
             {
-                SendText(env, "Page not found: " + requestString);
+                var response = new Response { ContentType = path.MimeType() };
+                using (var writer = new StreamWriter(response.OutputStream))
+                {
+                    writer.Write("Page not found: " + path);
+                }
                 return TaskHelpers.Completed();
             }
 
-            if (requestString.MimeType().IsBinaryMime())
+            if (path.MimeType().IsBinaryMime())
             {
-                var fileContents = content.GetBinaryContent(requestString);
-                SendData(env, fileContents);
+                var fileContents = content.GetBinaryContent(path);
+                var response = new Response { ContentType = path.MimeType() };
+                response.Headers["Content-Range"] = new[] { string.Format("bytes 0-{0}", (fileContents.Length - 1)) };
+                response.Headers["Content-Length"] = new[] { fileContents.Length.ToString(CultureInfo.InvariantCulture) };
+                response.Write(new ArraySegment<byte>(fileContents));
             }
             else
             {
-                var fileContents = content.GetContent(requestString);
-                SendText(env, fileContents);
+                var response = new Response { ContentType = path.MimeType() };
+                using (var writer = new StreamWriter(response.OutputStream))
+                {
+                    writer.Write(content.GetContent(path));
+                }
             }
 
             return TaskHelpers.Completed();
-        }
-
-
-        static void SendText(IDictionary<string, object> env, string text)
-        {
-            var requestString = (string)env[OwinConstants.RequestPath];
-            var response = new Response { ContentType = requestString.MimeType() };
-            response.Write(text);
-        }
-
-        static void SendData(IDictionary<string, object> env, byte[] data)
-        {
-            var requestString = (string)env[OwinConstants.RequestPath];
-
-            var response = new Response { ContentType = requestString.MimeType() };
-            response.Headers["Content-Range"] = new[] { string.Format("bytes 0-{0}", (data.Length - 1)) };
-            response.Headers["Content-Length"] = new[] { data.Length.ToString(CultureInfo.InvariantCulture) };
-            response.Write(new ArraySegment<byte>(data));
         }
 
         #region IDisposable
