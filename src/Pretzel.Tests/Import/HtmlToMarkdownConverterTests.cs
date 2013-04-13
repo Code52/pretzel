@@ -47,6 +47,13 @@ namespace Pretzel.Tests.Import
         }
 
         [Fact]
+        public void Links_without_href_are_left_unconverted()
+        {
+            string markdown = converter.Convert("<a name=\"OLE_LINK1\"><em>This</em></a>");
+            Assert.Equal("<a name=\"OLE_LINK1\"><em>This</em></a>", markdown);
+        }
+
+        [Fact]
         public void Images_are_left_unconverted()
         {
             string markdown = converter.Convert("<img src=\"http://foo.com/bar\">");
@@ -58,6 +65,13 @@ namespace Pretzel.Tests.Import
         {
             string markdown = converter.Convert("<pre>hello</pre>");
             Assert.Equal(Environment.NewLine + "    hello", markdown);
+        }
+
+        [Fact]
+        public void Ordered_lists_are_converted()
+        {
+            string markdown = converter.Convert("<ol><li>first</li><li>second</li></ol>");
+            Assert.Equal(Environment.NewLine + Environment.NewLine + "1. first" + Environment.NewLine + "1. second" + Environment.NewLine, markdown);
         }
 
         [Fact]
@@ -77,7 +91,7 @@ namespace Pretzel.Tests.Import
         [Fact]
         public void Unordered_lists_can_be_nested_inside_li()
         {
-            string markdown = converter.Convert("<ul><li>first</li><li>second<li>second nested</li></li></ul>");
+            string markdown = converter.Convert("<ul><li>first</li><li>second<ul><li>second nested</li></ul></li></ul>");
             Assert.Contains(Environment.NewLine + "    * second nested" + Environment.NewLine, markdown);
         }
 
