@@ -68,7 +68,7 @@ namespace Pretzel
 
             if (!content.IsAvailable(path))
             {
-                var response = new Response { ContentType = path.MimeType() };
+                var response = new Response(env) { ContentType = path.MimeType() };
                 using (var writer = new StreamWriter(response.OutputStream))
                 {
                     writer.Write("Page not found: " + path);
@@ -79,14 +79,14 @@ namespace Pretzel
             if (path.MimeType().IsBinaryMime())
             {
                 var fileContents = content.GetBinaryContent(path);
-                var response = new Response { ContentType = path.MimeType() };
+                var response = new Response(env) { ContentType = path.MimeType() };
                 response.Headers["Content-Range"] = new[] { string.Format("bytes 0-{0}", (fileContents.Length - 1)) };
                 response.Headers["Content-Length"] = new[] { fileContents.Length.ToString(CultureInfo.InvariantCulture) };
                 response.Write(new ArraySegment<byte>(fileContents));
             }
             else
             {
-                var response = new Response { ContentType = path.MimeType() };
+                var response = new Response(env) { ContentType = path.MimeType() };
                 using (var writer = new StreamWriter(response.OutputStream))
                 {
                     writer.Write(content.GetContent(path));
