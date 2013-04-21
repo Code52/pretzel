@@ -157,7 +157,7 @@ namespace Pretzel.Logic.Templating.Context
 
         private static bool IsSpecialPath(string relativePath)
         {
-            return relativePath.StartsWith("_") || (relativePath.StartsWith(".") && relativePath != ".htaccess") || relativePath.EndsWith(".TMP");
+            return relativePath.StartsWith("_") || (relativePath.StartsWith(".") && relativePath != ".htaccess") || relativePath.EndsWith(".TMP", StringComparison.OrdinalIgnoreCase);
         }
 
         private Page CreatePage(SiteContext context, IDictionary<string, object> config, string file, bool isPost)
