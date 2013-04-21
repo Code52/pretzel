@@ -16,12 +16,9 @@ namespace Pretzel.Logic.Commands
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class CommandParameters
     {
-        readonly IEnumerable<IHaveCommandLineArgs> commandLineExtensions;
-
         [ImportingConstructor]
         public CommandParameters([ImportMany] IEnumerable<IHaveCommandLineArgs> commandLineExtensions)
         {
-            this.commandLineExtensions = commandLineExtensions;
             GetDefaultValue("Port", s => decimal.TryParse(s, out port));
             GetDefaultValue("LaunchBrowser", s => bool.TryParse(s, out launchBrowser));
             LaunchBrowser = true;
@@ -35,9 +32,13 @@ namespace Pretzel.Logic.Commands
                                     { "f|file=", "Path to import file", v => ImportPath = v },
                                     { "nobrowser", "Do not launch a browser", v => LaunchBrowser = false },
                                 };
-        }
 
-        
+            // Allow extensions to register command line args
+            foreach (var commandLineExtension in commandLineExtensions)
+            {
+                commandLineExtension.UpdateOptions(Settings);
+            }
+        }
 
         private void GetDefaultValue(string propertyName, Action<string> converter)
         {
@@ -71,12 +72,6 @@ namespace Pretzel.Logic.Commands
 
         public void Parse(IEnumerable<string> arguments)
         {
-            // Allow extensions to register command line args
-            foreach (var commandLineExtension in commandLineExtensions)
-            {
-                commandLineExtension.UpdateOptions(Settings);
-            }
-
             var argumentList = arguments.ToArray();
 
             Settings.Parse(argumentList);
@@ -90,14 +85,7 @@ namespace Pretzel.Logic.Commands
                     : System.IO.Path.Combine(Directory.GetCurrentDirectory(), firstArgument);
             }
 
-            if (string.IsNullOrWhiteSpace(Path))
-            {
-                Path = Directory.GetCurrentDirectory();
-            }
-            else
-            {
-                Path = System.IO.Path.GetFullPath(Path);
-            }
+            Path = string.IsNullOrWhiteSpace(Path) ? Directory.GetCurrentDirectory() : System.IO.Path.GetFullPath(Path);
         }
 
         public void DetectFromDirectory(IDictionary<string, ISiteEngine> engines, SiteContext context)
@@ -129,11 +117,29 @@ namespace Pretzel.Logic.Commands
             Settings.WriteOptionDescriptions(textWriter);
             var output = textWriter.ToString();
 
-            foreach (var line in output.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries))
+            var strings = RecombineMultilineArgs(output.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries));
+
+            foreach (var line in strings)
             {
                 if (args.Any(line.Contains))
                 {
                     writer.WriteLine(line);
+                }
+            }
+        }
+
+        private IEnumerable<string> RecombineMultilineArgs(string[] split)
+        {
+            for (int i = 0; i < split.Length; i++)
+            {
+                if (i + 1 < split.Length && !split[i+1].TrimStart().StartsWith("-"))
+                {
+                    yield return split[i] + "\r\n" + split[i + 1];
+                    i++;
+                }
+                else
+                {
+                    yield return split[i];
                 }
             }
         }

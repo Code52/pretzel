@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
+using Pretzel.Logic.Commands;
+using Pretzel.Logic.Extensibility;
 
 namespace Pretzel.Commands
 {
@@ -10,6 +13,10 @@ namespace Pretzel.Commands
     {
         [ImportMany]
         private Lazy<ICommand, ICommandInfo>[] Commands { get; set; }
+        [ImportMany]
+        IEnumerable<Lazy<IHaveCommandLineArgs>> CommandLineExtensions { get; set; }
+        [Import]
+        Lazy<CommandParameters> Parameters { get; set; }
 
         private Dictionary<string, ICommand> commandMap;
 
@@ -41,6 +48,10 @@ namespace Pretzel.Commands
             {
                 Console.WriteLine("Command: " + command.Key);
                 command.Value.WriteHelp(Console.Out);
+                var extraArgs = CommandLineExtensions.SelectMany(e => e.Value.GetArguments(command.Key)).ToArray();
+                if (extraArgs.Any())
+                    Parameters.Value.WriteOptions(Console.Out, extraArgs);
+                Console.WriteLine();
             }
         }
     }

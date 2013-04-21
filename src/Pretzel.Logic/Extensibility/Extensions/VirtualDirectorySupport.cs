@@ -42,8 +42,15 @@ namespace Pretzel.Logic.Extensibility.Extensions
 
         public void UpdateOptions(OptionSet options)
         {
-            options.Add("vDir|virtualDirectory=", "Rewrite url's to work inside the specified virtual directory",
-                        v => VirtualDirectory = v);
+            options.Add("vDir=", "Rewrite url's to work inside the specified virtual directory", v => VirtualDirectory = v);
+        }
+
+        public string[] GetArguments(string command)
+        {
+            if (command == "bake" || command == "taste")
+                return new[] { "-vDir" };
+
+            return new string[0];
         }
 
         public string VirtualDirectory { get; set; }

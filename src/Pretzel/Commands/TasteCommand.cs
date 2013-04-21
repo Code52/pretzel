@@ -6,7 +6,6 @@ using System.IO;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
-using Pretzel.Logic.Minification;
 using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Modules;
@@ -19,14 +18,10 @@ namespace Pretzel.Commands
     {
         private ISiteEngine engine;
 #pragma warning disable 649
-        [Import]
-        TemplateEngineCollection templateEngines;
-        [Import]
-        SiteContextGenerator Generator { get; set; }
-        [Import]
-        CommandParameters parameters;
-        [ImportMany]
-        private IEnumerable<ITransform> transforms;
+        [Import] TemplateEngineCollection templateEngines;
+        [Import] SiteContextGenerator Generator { get; set; }
+        [Import] CommandParameters parameters;
+        [ImportMany] private IEnumerable<ITransform> transforms;
 #pragma warning restore 649
 
         public void Execute(IEnumerable<string> arguments)

@@ -53,7 +53,7 @@ namespace Pretzel.Commands
 
         public void WriteHelp(TextWriter writer)
         {
-            parameters.WriteOptions(writer, "-t", "-p");
+            parameters.WriteOptions(writer, "-t", "-p", "-d");
         }
     }
 }
