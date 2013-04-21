@@ -24,14 +24,14 @@ namespace Pretzel.Logic.Commands
             LaunchBrowser = true;
 
             Settings = new OptionSet
-                                {
-                                    { "t|template=", "The templating engine to use", v => Template = v },
-                                    { "d|directory=", "The path to site directory", p => Path = p },
-                                    { "p|port=", "The port to test the site locally", p => decimal.TryParse(p, out port) },
-                                    { "i|import=", "The import type", v => ImportType = v }, // TODO: necessary?
-                                    { "f|file=", "Path to import file", v => ImportPath = v },
-                                    { "nobrowser", "Do not launch a browser", v => LaunchBrowser = false },
-                                };
+                {
+                    {"t|template=", "The templating engine to use", v => Template = v},
+                    {"d|directory=", "The path to site directory", p => Path = p},
+                    {"p|port=", "The port to test the site locally", p => decimal.TryParse(p, out port)},
+                    {"i|import=", "The import type", v => ImportType = v}, // TODO: necessary?
+                    {"f|file=", "Path to import file", v => ImportPath = v},
+                    {"nobrowser", "Do not launch a browser", v => LaunchBrowser = false},
+                };
 
             // Allow extensions to register command line args
             foreach (var commandLineExtension in commandLineExtensions)

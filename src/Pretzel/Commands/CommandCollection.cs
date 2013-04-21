@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using NDesk.Options;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 
@@ -41,12 +42,17 @@ namespace Pretzel.Commands
             }
         }
 
-        public void WriteHelp()
+        public void WriteHelp(OptionSet defaultSet)
         {
-            Console.WriteLine("Usage:");
+            Console.WriteLine(@"Usage:");
+            Console.WriteLine(@"Pretzel.exe command [options]");
+            Console.WriteLine();
+            defaultSet.WriteOptionDescriptions(Console.Out);
+            Console.WriteLine();
+
             foreach (var command in commandMap)
             {
-                Console.WriteLine("Command: " + command.Key);
+                Console.WriteLine(@"Command: " + command.Key);
                 command.Value.WriteHelp(Console.Out);
                 var extraArgs = CommandLineExtensions.SelectMany(e => e.Value.GetArguments(command.Key)).ToArray();
                 if (extraArgs.Any())
