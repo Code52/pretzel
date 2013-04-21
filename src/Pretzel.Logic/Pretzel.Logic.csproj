@@ -127,12 +127,25 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RazorAzure.resx</DependentUpon>
     </Compile>
+    <Compile Include="Properties\RazorCsProject.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RazorCsProject.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Resources1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <None Include="Resources\RazorAzure\Shim.cs" />
+    <None Include="Resources\RazorCsProject\Category_cs" />
+    <None Include="Resources\RazorCsProject\NonProcessedPage_cs" />
+    <None Include="Resources\RazorCsProject\Page_cs" />
+    <None Include="Resources\RazorCsProject\PageContext_cs" />
+    <None Include="Resources\RazorCsProject\Paginator_cs" />
+    <None Include="Resources\RazorCsProject\SiteContext_cs" />
+    <None Include="Resources\RazorCsProject\Tag_cs" />
+    <None Include="Resources\RazorCsProject\AssemblyInfo_cs" />
     <Compile Include="Templating\Context\Category.cs" />
     <Compile Include="Templating\Context\NonProcessedPage.cs" />
     <Compile Include="Templating\Context\Page.cs" />
@@ -182,6 +195,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>RazorAzure.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\RazorCsProject.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>RazorCsProject.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Liquid\Rss.liquid" />
@@ -217,6 +234,10 @@
     <None Include="Resources\logo.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\RazorCsProject\NuGet_Config" />
+    <None Include="Resources\RazorCsProject\NuGet_targets" />
+    <None Include="Resources\RazorCsProject\packages_config" />
+    <None Include="Resources\RazorCsProject\Web_config" />
     <None Include="Resources\Razor\About.cshtml" />
     <None Include="Resources\Razor\Atom.cshtml" />
     <None Include="Resources\Razor\Config.cshtml" />
@@ -227,6 +248,9 @@
     <None Include="Resources\Razor\Rss.cshtml" />
     <None Include="Resources\RazorAzure\Shim.csproj" />
     <None Include="Resources\RazorAzure\Shim.sln" />
+    <None Include="Resources\RazorCsProject\NuGet_exe" />
+    <None Include="Resources\RazorCsProject\LayoutProject_csproj" />
+    <None Include="Resources\RazorCsProject\LayoutSolution_sln" />
     <Content Include="Resources\Style.css" />
   </ItemGroup>
   <ItemGroup>

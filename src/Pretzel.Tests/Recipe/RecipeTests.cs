@@ -29,7 +29,7 @@ namespace Pretzel.Tests.Recipe
         [Fact]
         public void Files_and_Folders_Are_Created_for_Jekyll()
         {
-            var recipe = new Logic.Recipe.Recipe(fileSystem, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>());
+            var recipe = new Logic.Recipe.Recipe(fileSystem, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false);
             recipe.Create();
 
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"_posts\"));
@@ -56,7 +56,7 @@ namespace Pretzel.Tests.Recipe
         [Fact]
         public void Files_and_Folders_Are_Created_for_Razor()
         {
-            var recipe = new Logic.Recipe.Recipe(fileSystem, "razor", BaseSite, Enumerable.Empty<IAdditionalIngredient>());
+            var recipe = new Logic.Recipe.Recipe(fileSystem, "razor", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false);
             recipe.Create();
 
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"_posts\"));
@@ -84,7 +84,7 @@ namespace Pretzel.Tests.Recipe
         public void Other_Engine_returns_error()
         {
             fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-            var recipe = new Logic.Recipe.Recipe(fileSystem, "Musak", BaseSite, Enumerable.Empty<IAdditionalIngredient>());
+            var recipe = new Logic.Recipe.Recipe(fileSystem, "Musak", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false);
 
             recipe.Create();
 
@@ -96,7 +96,7 @@ namespace Pretzel.Tests.Recipe
         {
             fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
             var additionalIngredient = Substitute.For<IAdditionalIngredient>();
-            var recipe = new Logic.Recipe.Recipe(fileSystem, "Razor", BaseSite, new []{additionalIngredient });
+            var recipe = new Logic.Recipe.Recipe(fileSystem, "Razor", BaseSite, new[] { additionalIngredient }, false);
             recipe.Create();
 
             additionalIngredient.Received().MixIn(BaseSite);
@@ -107,7 +107,7 @@ namespace Pretzel.Tests.Recipe
         {
             fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
             var additionalIngredient = Substitute.For<IAdditionalIngredient>();
-            var recipe = new Logic.Recipe.Recipe(fileSystem, "Liquid", BaseSite, new[] { additionalIngredient });
+            var recipe = new Logic.Recipe.Recipe(fileSystem, "Liquid", BaseSite, new[] { additionalIngredient }, false);
             recipe.Create();
 
             additionalIngredient.Received().MixIn(BaseSite);
@@ -118,7 +118,7 @@ namespace Pretzel.Tests.Recipe
         {
             fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
             var additionalIngredient = Substitute.For<IAdditionalIngredient>();
-            var recipe = new Logic.Recipe.Recipe(fileSystem, "Musak", BaseSite, new[] { additionalIngredient });
+            var recipe = new Logic.Recipe.Recipe(fileSystem, "Musak", BaseSite, new[] { additionalIngredient }, false);
             recipe.Create();
 
             additionalIngredient.DidNotReceive().MixIn(BaseSite);

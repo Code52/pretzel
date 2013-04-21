@@ -31,6 +31,7 @@ namespace Pretzel.Logic.Commands
                     {"i|import=", "The import type", v => ImportType = v}, // TODO: necessary?
                     {"f|file=", "Path to import file", v => ImportPath = v},
                     {"nobrowser", "Do not launch a browser", v => LaunchBrowser = false},
+                    { "withproject", "Includes a layout VS Solution, to give intellisence when editing razor layout files", v=>WithProject = (v!=null)}
                 };
 
             // Allow extensions to register command line args
@@ -51,6 +52,7 @@ namespace Pretzel.Logic.Commands
         public string Template { get; set; }
         public string ImportPath { get; private set; }
         public string ImportType { get; set; }
+        public bool WithProject { get; private set; }
 
         bool launchBrowser;
         [DefaultValue(true)]
