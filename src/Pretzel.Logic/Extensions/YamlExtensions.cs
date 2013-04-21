@@ -89,11 +89,9 @@ namespace Pretzel.Logic.Extensions
 
         public static string ToYaml<T>(this T model)
         {
-            var serializer = new YamlSerializer(typeof(T));
             var stringWriter = new StringWriter();
-
-            serializer.Serialize(stringWriter, model);
-
+            var serializer = new Serializer();
+            serializer.Serialize(stringWriter, model, typeof(T));
             return stringWriter.ToString();
         }
 
