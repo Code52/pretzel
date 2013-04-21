@@ -89,9 +89,11 @@
   <ItemGroup>
     <Compile Include="Commands\CommandParameters.cs" />
     <Compile Include="Exceptions\PageProcessingException.cs" />
+    <Compile Include="Extensibility\Extensions\AzureHostSupport.cs" />
     <Compile Include="Extensibility\Extensions\PrettifyUrlFilter.cs" />
     <Compile Include="Extensibility\Extensions\VirtualDirectorySupport.cs" />
     <Compile Include="Extensibility\Extensions\SlugifyFilter.cs" />
+    <Compile Include="Extensibility\IAdditionalIngredient.cs" />
     <Compile Include="Extensibility\IContentTransform.cs" />
     <Compile Include="Extensibility\Extensions\WebSequenceDiagrams.cs" />
     <Compile Include="Extensibility\IHaveCommandLineArgs.cs" />
@@ -120,11 +122,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Razor.resx</DependentUpon>
     </Compile>
+    <Compile Include="Properties\RazorAzure.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RazorAzure.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Resources1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="Resources\RazorAzure\Shim.cs" />
     <Compile Include="Templating\Context\Category.cs" />
     <Compile Include="Templating\Context\NonProcessedPage.cs" />
     <Compile Include="Templating\Context\Page.cs" />
@@ -170,6 +178,10 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\RazorAzure.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>RazorAzure.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Liquid\Rss.liquid" />
@@ -213,6 +225,8 @@
     <None Include="Resources\Razor\Layout.cshtml" />
     <None Include="Resources\Razor\Post.cshtml" />
     <None Include="Resources\Razor\Rss.cshtml" />
+    <None Include="Resources\RazorAzure\Shim.csproj" />
+    <None Include="Resources\RazorAzure\Shim.sln" />
     <Content Include="Resources\Style.css" />
   </ItemGroup>
   <ItemGroup>

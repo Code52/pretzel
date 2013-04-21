@@ -7,8 +7,6 @@ using System.Linq;
 using System.Reflection;
 using NDesk.Options;
 using Pretzel.Commands;
-using Pretzel.Logic.Extensibility;
-using Pretzel.Logic.Extensibility.Extensions;
 using Pretzel.Logic.Extensions;
 
 namespace Pretzel
@@ -27,10 +25,10 @@ namespace Pretzel
             var debug = false;
             var help = false;
             var defaultSet = new OptionSet
-                                 {
-                                 { "help", "Display help mode", p => help = true },
-                                 { "debug", "Enable debugging", p => debug = true }
-                                 };
+                {
+                    {"help", "Display help mode", p => help = true},
+                    {"debug", "Enable debugging", p => debug = true}
+                };
             defaultSet.Parse(args);
 
             if (debug)
@@ -42,27 +40,27 @@ namespace Pretzel
 
             if (help || !args.Any())
             {
-                program.ShowHelp();
+                program.ShowHelp(defaultSet);
                 return;
             }
 
-            program.Run(args);
+            program.Run(args, defaultSet);
         }
 
-        private void ShowHelp()
+        private void ShowHelp(OptionSet defaultSet)
         {
-            Commands.WriteHelp();
+            Commands.WriteHelp(defaultSet);
         }
 
-        public void Run(string[] args)
+        private void Run(string[] args, OptionSet defaultSet)
         {
             var commandName = args[0];
             var commandArgs = args.Skip(1).ToArray();
 
             if (Commands[commandName] == null)
             {
-                Console.WriteLine("Can't find command \"{0}\"", commandName);
-                Commands.WriteHelp();
+                Console.WriteLine(@"Can't find command ""{0}""", commandName);
+                Commands.WriteHelp(defaultSet);
                 return;
             }
 
@@ -73,7 +71,7 @@ namespace Pretzel
         [Conditional("DEBUG")]
         public void WaitForClose()
         {
-            Console.WriteLine("Press any key to continue...");
+            Console.WriteLine(@"Press any key to continue...");
             try
             {
                 Console.ReadKey();
@@ -98,7 +96,7 @@ namespace Pretzel
             }
             catch (ReflectionTypeLoadException ex)
             {
-                Console.WriteLine("Unable to load: \r\n{0}", 
+                Console.WriteLine(@"Unable to load: \r\n{0}", 
                     string.Join("\r\n", ex.LoaderExceptions.Select(e=>e.Message)));
 
                 throw;
