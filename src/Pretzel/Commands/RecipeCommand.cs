@@ -41,13 +41,13 @@ namespace Pretzel.Commands
 
             Tracing.Info(string.Format("Using {0} Engine", engine));
 
-            var recipe = new Recipe(fileSystem, engine, parameters.Path, additionalIngredients, parameters.WithProject);
+            var recipe = new Recipe(fileSystem, engine, parameters.Path, additionalIngredients, parameters.WithProject, parameters.Wiki);
             recipe.Create();
         }
 
         public void WriteHelp(TextWriter writer)
         {
-            parameters.WriteOptions(writer, "-t", "-d");
+            parameters.WriteOptions(writer, "-t", "-d", "withproject", "wiki");
         }
     }
 }

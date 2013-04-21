@@ -31,7 +31,8 @@ namespace Pretzel.Logic.Commands
                     {"i|import=", "The import type", v => ImportType = v}, // TODO: necessary?
                     {"f|file=", "Path to import file", v => ImportPath = v},
                     {"nobrowser", "Do not launch a browser", v => LaunchBrowser = false},
-                    { "withproject", "Includes a layout VS Solution, to give intellisence when editing razor layout files", v=>WithProject = (v!=null)}
+                    { "withproject", "Includes a layout VS Solution, to give intellisence when editing razor layout files", v=>WithProject = (v!=null)},
+                    { "wiki", "Creates a wiki instead of a blog (razor template only)", v=>Wiki = (v!=null)}
                 };
 
             // Allow extensions to register command line args
@@ -49,10 +50,11 @@ namespace Pretzel.Logic.Commands
         }
 
         public string Path { get; private set; }
-        public string Template { get; set; }
+        public string Template { get; private set; }
         public string ImportPath { get; private set; }
-        public string ImportType { get; set; }
+        public string ImportType { get; private set; }
         public bool WithProject { get; private set; }
+        public bool Wiki { get; private set; }
 
         bool launchBrowser;
         [DefaultValue(true)]
