@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
 using System.Text;
+using NSubstitute;
+using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using Xunit;
 
@@ -26,7 +29,7 @@ namespace Pretzel.Tests.Recipe
         [Fact]
         public void Files_and_Folders_Are_Created_for_Jekyll()
         {
-            var recipe = new Logic.Recipe(fileSystem, "liquid", BaseSite);
+            var recipe = new Logic.Recipe.Recipe(fileSystem, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>());
             recipe.Create();
 
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"_posts\"));
@@ -53,7 +56,7 @@ namespace Pretzel.Tests.Recipe
         [Fact]
         public void Files_and_Folders_Are_Created_for_Razor()
         {
-            var recipe = new Logic.Recipe(fileSystem, "razor", BaseSite);
+            var recipe = new Logic.Recipe.Recipe(fileSystem, "razor", BaseSite, Enumerable.Empty<IAdditionalIngredient>());
             recipe.Create();
 
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"_posts\"));
@@ -81,11 +84,44 @@ namespace Pretzel.Tests.Recipe
         public void Other_Engine_returns_error()
         {
             fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-            var recipe = new Logic.Recipe(fileSystem, "Musak", BaseSite);
+            var recipe = new Logic.Recipe.Recipe(fileSystem, "Musak", BaseSite, Enumerable.Empty<IAdditionalIngredient>());
 
             recipe.Create();
 
             Assert.True(writer.ToString().Contains("Templating Engine not found"));
+        }
+
+        [Fact]
+        public void can_mixin_additional_ingredients_for_razor()
+        {
+            fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
+            var additionalIngredient = Substitute.For<IAdditionalIngredient>();
+            var recipe = new Logic.Recipe.Recipe(fileSystem, "Razor", BaseSite, new []{additionalIngredient });
+            recipe.Create();
+
+            additionalIngredient.Received().MixIn(BaseSite);
+        }
+
+        [Fact]
+        public void can_mixin_additional_ingredients_for_liquid()
+        {
+            fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
+            var additionalIngredient = Substitute.For<IAdditionalIngredient>();
+            var recipe = new Logic.Recipe.Recipe(fileSystem, "Liquid", BaseSite, new[] { additionalIngredient });
+            recipe.Create();
+
+            additionalIngredient.Received().MixIn(BaseSite);
+        }
+
+        [Fact]
+        public void additional_ingredients_not_mixed_in_for_other_engine()
+        {
+            fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
+            var additionalIngredient = Substitute.For<IAdditionalIngredient>();
+            var recipe = new Logic.Recipe.Recipe(fileSystem, "Musak", BaseSite, new[] { additionalIngredient });
+            recipe.Create();
+
+            additionalIngredient.DidNotReceive().MixIn(BaseSite);
         }
     }
 }

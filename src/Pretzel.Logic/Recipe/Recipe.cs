@@ -1,23 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Abstractions;
+using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 
-namespace Pretzel.Logic
+namespace Pretzel.Logic.Recipe
 {
     public class Recipe
     {
-        public Recipe(IFileSystem fileSystem, string engine, string directory)
+        public Recipe(IFileSystem fileSystem, string engine, string directory, IEnumerable<IAdditionalIngredient> additionalIngredients)
         {
             this.fileSystem = fileSystem;
             this.engine = engine;
             this.directory = directory;
+            this.additionalIngredients = additionalIngredients;
         }
 
         private readonly IFileSystem fileSystem;
         private readonly string engine;
         private readonly string directory;
+        private readonly IEnumerable<IAdditionalIngredient> additionalIngredients;
 
         public void Create()
         {
@@ -65,6 +69,12 @@ namespace Pretzel.Logic
                 else
                 {
                     Tracing.Info("Templating Engine not found");
+                    return;
+                }
+
+                foreach (var additionalIngredient in additionalIngredients)
+                {
+                    additionalIngredient.MixIn(directory);
                 }
             }
             catch (Exception ex)
