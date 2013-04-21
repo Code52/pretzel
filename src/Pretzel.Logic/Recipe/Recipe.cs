@@ -10,13 +10,14 @@ namespace Pretzel.Logic.Recipe
 {
     public class Recipe
     {
-        public Recipe(IFileSystem fileSystem, string engine, string directory, IEnumerable<IAdditionalIngredient> additionalIngredients, bool withProject)
+        public Recipe(IFileSystem fileSystem, string engine, string directory, IEnumerable<IAdditionalIngredient> additionalIngredients, bool withProject, bool wiki)
         {
             this.fileSystem = fileSystem;
             this.engine = engine;
             this.directory = directory;
             this.additionalIngredients = additionalIngredients;
             this.withProject = withProject;
+            this.wiki = wiki;
         }
 
         private readonly IFileSystem fileSystem;
@@ -24,6 +25,7 @@ namespace Pretzel.Logic.Recipe
         private readonly string directory;
         private readonly IEnumerable<IAdditionalIngredient> additionalIngredients;
         private readonly bool withProject;
+        private readonly bool wiki;
 
         public void Create()
         {
@@ -36,17 +38,27 @@ namespace Pretzel.Logic.Recipe
                 {
                     CreateDirectories();
 
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"rss.xml"), Properties.Razor.Rss);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"atom.xml"), Properties.Razor.Atom);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\layout.cshtml"), Properties.Razor.Layout);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\post.cshtml"), Properties.Razor.Post);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"index.md"), Properties.Razor.Index);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"about.md"), Properties.Razor.About);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, string.Format(@"_posts\{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Razor.FirstPost);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"css\style.css"), Properties.Resources.Style);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Razor.Config);
-
-                    CreateImages();
+                    if (wiki)
+                    {
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\layout.cshtml"), Properties.RazorWiki.Layout);
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"index.md"), Properties.RazorWiki.Index);
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"css\style.css"), Properties.RazorWiki.Style);
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Razor.Config);
+                        CreateFavicon();
+                    }
+                    else
+                    {
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"rss.xml"), Properties.Razor.Rss);
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"atom.xml"), Properties.Razor.Atom);
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\layout.cshtml"), Properties.Razor.Layout);
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\post.cshtml"), Properties.Razor.Post);
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"index.md"), Properties.Razor.Index);
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"about.md"), Properties.Razor.About);
+                        fileSystem.File.WriteAllText(Path.Combine(directory, string.Format(@"_posts\{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Razor.FirstPost);
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"css\style.css"), Properties.Resources.Style);
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Razor.Config);
+                        CreateImages();
+                    }
 
                     if (withProject)
                         CreateProject();
@@ -55,6 +67,8 @@ namespace Pretzel.Logic.Recipe
                 }
                 else if (string.Equals("liquid", engine, StringComparison.InvariantCultureIgnoreCase))
                 {
+                    if (wiki)
+                        Tracing.Info("Wiki switch not valid with liquid templating engine");
                     CreateDirectories();
 
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"rss.xml"), Properties.Liquid.Rss);
@@ -127,7 +141,12 @@ namespace Pretzel.Logic.Recipe
             Properties.Resources.logo.Save(ms, ImageFormat.Png);
             fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img\logo.png"), ms.ToArray());
 
-            ms = new MemoryStream();
+            CreateFavicon();
+        }
+
+        private void CreateFavicon()
+        {
+            var ms = new MemoryStream();
             Properties.Resources.faviconico.Save(ms);
             fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img\favicon.ico"), ms.ToArray());
         }

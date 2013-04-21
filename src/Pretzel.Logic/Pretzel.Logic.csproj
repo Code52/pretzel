@@ -146,6 +146,11 @@
     <None Include="Resources\RazorCsProject\SiteContext_cs" />
     <None Include="Resources\RazorCsProject\Tag_cs" />
     <None Include="Resources\RazorCsProject\AssemblyInfo_cs" />
+    <Compile Include="Properties\RazorWiki.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RazorWiki.resx</DependentUpon>
+    </Compile>
     <Compile Include="Templating\Context\Category.cs" />
     <Compile Include="Templating\Context\NonProcessedPage.cs" />
     <Compile Include="Templating\Context\Page.cs" />
@@ -199,6 +204,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>RazorCsProject.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\RazorWiki.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>RazorWiki.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Liquid\Rss.liquid" />
@@ -238,6 +247,8 @@
     <None Include="Resources\RazorCsProject\NuGet_targets" />
     <None Include="Resources\RazorCsProject\packages_config" />
     <None Include="Resources\RazorCsProject\Web_config" />
+    <None Include="Resources\RazorWiki\index.md" />
+    <None Include="Resources\RazorWiki\layout.cshtml" />
     <None Include="Resources\Razor\About.cshtml" />
     <None Include="Resources\Razor\Atom.cshtml" />
     <None Include="Resources\Razor\Config.cshtml" />
@@ -251,6 +262,7 @@
     <None Include="Resources\RazorCsProject\NuGet_exe" />
     <None Include="Resources\RazorCsProject\LayoutProject_csproj" />
     <None Include="Resources\RazorCsProject\LayoutSolution_sln" />
+    <Content Include="Resources\RazorWiki\style.css" />
     <Content Include="Resources\Style.css" />
   </ItemGroup>
   <ItemGroup>
