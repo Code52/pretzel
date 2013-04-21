@@ -26,7 +26,7 @@ namespace Pretzel.Tests.Recipe
         [Fact]
         public void Files_and_Folders_Are_Created_for_Jekyll()
         {
-            var recipe = new Logic.Recipe(fileSystem, "liquid", BaseSite);
+            var recipe = new Logic.Recipe(fileSystem, "liquid", BaseSite, false);
             recipe.Create();
 
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"_posts\"));
@@ -53,7 +53,7 @@ namespace Pretzel.Tests.Recipe
         [Fact]
         public void Files_and_Folders_Are_Created_for_Razor()
         {
-            var recipe = new Logic.Recipe(fileSystem, "razor", BaseSite);
+            var recipe = new Logic.Recipe(fileSystem, "razor", BaseSite, false);
             recipe.Create();
 
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"_posts\"));
@@ -81,7 +81,7 @@ namespace Pretzel.Tests.Recipe
         public void Other_Engine_returns_error()
         {
             fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-            var recipe = new Logic.Recipe(fileSystem, "Musak", BaseSite);
+            var recipe = new Logic.Recipe(fileSystem, "Musak", BaseSite, false);
 
             recipe.Create();
 

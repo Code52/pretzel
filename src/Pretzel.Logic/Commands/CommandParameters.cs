@@ -34,10 +34,9 @@ namespace Pretzel.Logic.Commands
                                     { "i|import=", "The import type", v => ImportType = v }, // TODO: necessary?
                                     { "f|file=", "Path to import file", v => ImportPath = v },
                                     { "nobrowser", "Do not launch a browser", v => LaunchBrowser = false },
+                                    { "withproject", "Includes a layout VS Solution, to give intellisence when editing razor layout files", v=>WithProject = (v!=null)}
                                 };
         }
-
-        
 
         private void GetDefaultValue(string propertyName, Action<string> converter)
         {
@@ -50,6 +49,7 @@ namespace Pretzel.Logic.Commands
         public string Template { get; set; }
         public string ImportPath { get; private set; }
         public string ImportType { get; set; }
+        public bool WithProject { get; private set; }
 
         bool launchBrowser;
         [DefaultValue(true)]
@@ -90,14 +90,7 @@ namespace Pretzel.Logic.Commands
                     : System.IO.Path.Combine(Directory.GetCurrentDirectory(), firstArgument);
             }
 
-            if (string.IsNullOrWhiteSpace(Path))
-            {
-                Path = Directory.GetCurrentDirectory();
-            }
-            else
-            {
-                Path = System.IO.Path.GetFullPath(Path);
-            }
+            Path = string.IsNullOrWhiteSpace(Path) ? Directory.GetCurrentDirectory() : System.IO.Path.GetFullPath(Path);
         }
 
         public void DetectFromDirectory(IDictionary<string, ISiteEngine> engines, SiteContext context)
