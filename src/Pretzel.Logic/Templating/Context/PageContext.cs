@@ -25,13 +25,21 @@ namespace Pretzel.Logic.Templating.Context
         }
 
         public string Title { get; set; }
+
         public string OutputPath { get; set; }
+
         public IDictionary<string, object> Bag { get; set; }
+
         public string Content { get; set; }
+
         public SiteContext Site { get; private set; }
+
         public Page Page { get; set; }
+
         public Page Previous { get; set; }
+
         public Page Next { get; set; }
+
         public Paginator Paginator { get; set; }
 
         public bool Comments
@@ -43,7 +51,7 @@ namespace Pretzel.Logic.Templating.Context
         {
             var context = new PageContext(siteContext, page);
 
-            if (page.Bag.ContainsKey("permalink"))
+            if (page.Bag.ContainsKey("permalink") || siteContext.Config.ContainsKey("permalink"))
             {
                 context.OutputPath = Path.Combine(outputPath, page.Url.ToRelativeFile());
             }
