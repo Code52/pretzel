@@ -270,5 +270,27 @@ title: Title
             var result = SiteContextGenerator.GetTitle(@"C:\temp\foo-bar-baz-qak-foobar_baz.md");
             Assert.Equal("foo-bar-baz-qak-foobar_baz", result);
         }
+
+        [Fact]
+        public void IsSpecialPath_Scenarios_AreWorking()
+        {
+            Func<string, bool> function = SiteContextGenerator.IsSpecialPath;
+
+            // underscores are ignored
+            Assert.False(function("folder"));
+            Assert.True(function("_folder"));
+
+            // .htaccess is included
+            Assert.False(function(".htaccess"));
+            Assert.True(function(".something-else"));
+            
+            // temp files are ignored
+            Assert.True(function("some-file.tmp"));
+            Assert.True(function("some-file.TMP"));
+            Assert.False(function("another-file.bar"));
+
+            // and these ones are causing me headaches in Sublime
+            Assert.True(function(@"docs\pages\features\.a4agat3qqt3.tmp"));
+        }
     }
 }
