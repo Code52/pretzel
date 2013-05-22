@@ -274,6 +274,12 @@ namespace Pretzel.Logic.Templating.Context
             }
             catch (IOException)
             {
+                if (SanityCheck.IsLockedByAnotherProcess(file))
+                {
+                    Tracing.Info(String.Format("File {0} is locked by another process. Skipping", file));
+                    return string.Empty;
+                }
+
                 var fileInfo = fileSystem.FileInfo.FromFileName(file);
                 var tempFile = Path.Combine(Path.GetTempPath(), fileInfo.Name);
                 try
