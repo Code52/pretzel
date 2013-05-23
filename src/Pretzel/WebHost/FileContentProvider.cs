@@ -86,7 +86,8 @@ namespace Pretzel
     	private string GetRequestedPage(string request)
         {
 			string requestString = basePath + request;
-
+            //#AS:2013/05/02: quick and dirty fix for issue #125
+            requestString = requestString.Replace("%20", " ");
             if (requestString.EndsWith("/", StringComparison.Ordinal))
             {
                 // Load index.html as default
