@@ -53,9 +53,12 @@ namespace Pretzel.Logic.Minification
                     foreach(HtmlNode link in nodes)
                     {
                         var cssfile = link.Attributes["href"].Value;
-                        if (cssfile.StartsWith("http"))
-                            continue;
 
+                        // If the file is not local, ignore it
+                        var matchingIgnoreProtocol = new[] {"http", "https", "//"}.FirstOrDefault(cssfile.StartsWith);
+                        if(matchingIgnoreProtocol != null)
+                            continue;
+                        
                         //If the file exists, ignore it
                         if (File.Exists(Path.Combine(siteContext.OutputFolder, cssfile)))
                             continue;
