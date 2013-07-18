@@ -226,7 +226,14 @@ namespace Pretzel.Logic.Templating.Context
         {
             var directory = Path.GetDirectoryName(page.Filepath);
             var relativePath = directory.Replace(context.OutputFolder, string.Empty);
-            var link = relativePath.Replace('\\', '/').TrimStart('/') + "/" + GetPageTitle(page.Filepath) + ".html";
+            var fileExtension = Path.GetExtension(page.Filepath);
+
+            var htmlExtensions = new[] {".markdown", ".mdown", ".mkdn", ".mkd", ".md", ".textile"};
+
+            if (htmlExtensions.Contains(fileExtension, StringComparer.InvariantCultureIgnoreCase))
+                fileExtension = ".html";
+
+            var link = relativePath.Replace('\\', '/').TrimStart('/') + "/" + GetPageTitle(page.Filepath) + fileExtension;
             if (!link.StartsWith("/"))
                 link = "/" + link;
             return link;
