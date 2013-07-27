@@ -1,7 +1,7 @@
-﻿using System;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
+using System.Reflection;
 using NDesk.Options;
 using Pretzel.Logic.Extensions;
 
@@ -35,7 +35,7 @@ namespace Pretzel.Logic.Extensibility.Extensions
             fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.csproj"), Properties.RazorAzure.ShimProject);
             fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.sln"), Properties.RazorAzure.ShimSolution);
 
-            var currentPath = AppDomain.CurrentDomain.FriendlyName;
+            var currentPath = Assembly.GetEntryAssembly().Location;
             var destination = Path.Combine(directory, "Pretzel.exe");
             if (!File.Exists(destination))
                 File.Copy(currentPath, destination);
