@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Text;
@@ -73,6 +74,8 @@ namespace Pretzel.Logic
         }
 
         private static void Ignore() { }
+
+        [HandleProcessCorruptedStateExceptions]
         private static List<string> UnsafeGetFilesLockedBy(Process process)
         {
             try
