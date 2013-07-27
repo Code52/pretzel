@@ -43,6 +43,7 @@ namespace Pretzel.Logic.Recipe
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\layout.cshtml"), Properties.RazorWiki.Layout);
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"index.md"), Properties.RazorWiki.Index);
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"css\style.css"), Properties.RazorWiki.Style);
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"css\default.css"), Properties.RazorWiki.DefaultStyle);
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Razor.Config);
                         CreateFavicon();
                     }
