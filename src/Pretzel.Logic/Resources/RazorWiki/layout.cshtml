@@ -50,7 +50,7 @@
             sb.Append(indent);
             sb.Append("    ");
             sb.Append("<li style=\"margin-left: " + (level - 1) * 20 +"px\" class=\"");
-            if (!itemInLevelSelected)
+            if (!itemInLevelSelected && level != 1)
                 sb.Append("collapse ");
             sb.Append(menuId);
             if (isSelected)
@@ -109,7 +109,6 @@
                 </div>
             </div>
           </div>
-        </div>
     
         <div class="container-fluid">
             <div class="row-fluid">
@@ -141,7 +140,8 @@
                 <div id="disqus_thread"></div>
                 <script type="text/javascript">
                     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-                    var disqus_shortname = 'teststackdocs'; // required: replace example with your forum shortname
+                    var disqus_shortname = ''; // required: replace example with your forum shortname
+                    
                     /* * * DON'T EDIT BELOW THIS LINE * * */
                     (function () {
                         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -155,12 +155,12 @@
             <hr>
 
             <footer>
-                <p>&copy; TestStack 2013</p>
+                <p>&copy; 2013</p>
             </footer>
 
         </div><!--/.fluid-container-->
 
-        <script src="http://code.jquery.com/jquery.js"></script>
+        <script src="//code.jquery.com/jquery.js"></script>
         <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
     </body>
 </html>
