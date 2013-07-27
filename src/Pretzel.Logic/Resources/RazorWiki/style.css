@@ -1,110 +1,49 @@
-body 
-{ 
-	font-family: Segoe UI, sans-serif; 
-	margin:0;
-	padding: 0;	
-	background: #d3d3d3;
-}
-h1,h2,h3,h4,h5,h6 
-{ 
-	font-family: Segoe UI Light, Segoe WP Light, Segoe UI, Helvetica, sans-serif; 
-	font-weight: lighter; 
-	margin-top: 0;
-	margin-bottom:0; 
-}
-h1 
-{ 
-	font-size: 4em;
-}
-h2 
-{ 
-	font-size: 2.5em;
-}
-a, a:visited 
-{ 
-	text-decoration: none; 
-	color:#13678b;
-}
-a:hover 
-{
-	color:white; 
-	background: #13678b
-}
-.entry ul, .idea ul 
-{
-	margin-left:10px; 
-}
-.entry li, .idea li , .latest li
-{
-	margin-left:10px; 
-	list-style-type:circle;
-}
-#hometext { font-size: 2em; margin-left: 0; margin-right:10px; color: #41B1E1; font-weight: normal;  }
-#home:hover 
-{ 
-	background:none; 
-}
-#side 
-{
-	position: fixed;
-	top:0;
-	color: #41b1e1; 
-	margin:0; 
-	margin-left:10px;
-	padding: 0;
-	width:250px;
-	height:100%;
-}
-#side .section 
-{ 
-	margin-left:10px;
-	padding:0;
-}
-#side .section ul 
-{ 
-	font-size:2em;
+
+.menu-toggle {
+    display:run-in !important;
+    width=10px !important;
+    margin-right:10px !important;
 }
 
-#container {
-	margin: 0;
-	padding: 0;
-	vertical-align: top;
-	margin-left: 250px;
-	padding-left: 20px;
-	background: #fff;
-	min-height:100%;
+.menu-toggle:hover {
+    color: black !important;
 }
 
-#content 
-{
-	width:auto;
-	min-height:400px;
-}
-#disqus_thread {
-	width:auto;
+.sidebar-nav {
+	padding: 9px 0;
 }
 
-img
-{
-  width: auto !important; 
-  height: auto !important; 
-  max-width: 100%; 
-  border: none;
-}
-.postdate 
-{ 
-	font-size: 0.8em; 
-	font-weight: bold; 
+.navbar .brand { 
+	margin-top: 10px;
+	margin-left: 5px;
+	color: White;
+	text-shadow: none;
 }
 
-.olderpostdate 
-{ 
-	font-size: 0.8em; 
-	color : #aaaaaa;
-	width: 150px;
-	margin-right: 15px;
+.btn-navbar {
+	margin-top: 10px;
 }
-.idea h1, .entry h1 
-{
-	margin-bottom: 5px;
+
+.navbar-inner {
+	background: #394755;
+}
+
+.navbar-link {
+	color: white;
+	font-size: 16px;
+	margin: 10px 0 10px 10px;
+	padding-right: 0px;
+}
+
+.navbar-link:hover {
+	color: white;
+}
+
+@media (max-width: 980px) {
+	/* Enable use of floated navbar text */
+	.navbar-text.pull-right {
+		float: none;
+		padding-left: 5px;
+		padding-right: 5px;
+	}
 }
