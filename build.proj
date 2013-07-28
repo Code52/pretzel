@@ -124,7 +124,7 @@
 
     <MakeDir Directories="$(MSBuildProjectDirectory)\build\wix" />
   
-    <Exec Command='"@(Candle)" -nologo -wx -dPretzelExe="$(SourceDir)\Pretzel\bin\$(Configuration)\Pretzel.exe" -out "$(MSBuildProjectDirectory)\build\wix\build.wixobj" "$(MSBuildProjectDirectory)\build.wxs"' />
+    <Exec Command='"@(Candle)" -nologo -wx -dbin="$(SourceDir)\Pretzel\bin\$(Configuration)" -out "$(MSBuildProjectDirectory)\build\wix\build.wixobj" "$(MSBuildProjectDirectory)\build.wxs"' />
     
     <Exec Command='"@(Light)" -nologo -wx -ext WixUIExtension -out "$(MSBuildProjectDirectory)\artifacts\Code42 Pretzel v$(Version).msi" -pdbout "$(MSBuildProjectDirectory)\build\wix\build.wixpdb" "$(MSBuildProjectDirectory)\build\wix\build.wixobj"' />
     

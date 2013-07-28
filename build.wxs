@@ -24,14 +24,16 @@
       </Directory>
     </Directory>
 
-    <Icon Id="pretzel.ico" SourceFile="$(var.PretzelExe)" />
+    <Icon Id="pretzel.ico" SourceFile="$(var.bin)\Pretzel.exe" />
     <Property Id="ALLUSERS" Value="1" />
     <Property Id="ARPPRODUCTICON" Value="pretzel.ico" />
     <Property Id="ARPNOMODIFY" Value="1" />
 
     <Feature Id='Complete' Level='1' Title='$(var.AppName)'>
       <Component Id="PretzelExeComponent" Directory="SOFTWAREDIR">
-        <File Id="PretzelExeFile" KeyPath="yes" Source="$(var.PretzelExe)" />
+        <File Id="PretzelExeFile" KeyPath="yes" Source="$(var.bin)\Pretzel.exe" />
+        <File Id="PretzelExeConfigFile" Source="$(var.bin)\Pretzel.exe.config" />
+        <File Id="PretzelPdbFile" Source="$(var.bin)\Pretzel.pdb" />
         <Environment Id="PATH" Name="PATH" Value="[SOFTWAREDIR]" Permanent="no" Part="last" Action="set" System="yes" />
       </Component>
       <ComponentRef Id='Empty' />
