@@ -112,5 +112,23 @@
 
     <Message Text="=========== Package Done ===========" Importance="High" />
   </Target>
+  
+  <Target Name="MSI">
+    
+    <Message Text="=========== MSI ===========" Importance="High" />
+    
+    <ItemGroup>
+      <Candle Include="$(MSBuildProjectDirectory)\tools\wix\candle.exe" />
+	    <Light Include="$(MSBuildProjectDirectory)\tools\wix\light.exe" />
+    </ItemGroup>
 
+    <MakeDir Directories="$(MSBuildProjectDirectory)\build\wix" />
+  
+    <Exec Command='"@(Candle)" -nologo -wx -dPretzelExe="$(SourceDir)\Pretzel\bin\$(Configuration)\Pretzel.exe" -out "$(MSBuildProjectDirectory)\build\wix\build.wixobj" "$(MSBuildProjectDirectory)\build.wxs"' />
+    
+    <Exec Command='"@(Light)" -nologo -wx -ext WixUIExtension -out "$(MSBuildProjectDirectory)\artifacts\Code42 Pretzel v$(Version).msi" -pdbout "$(MSBuildProjectDirectory)\build\wix\build.wixpdb" "$(MSBuildProjectDirectory)\build\wix\build.wixobj"' />
+    
+    <Message Text="=========== MSI Done ===========" Importance="High" />
+  </Target>
+  
 </Project>
