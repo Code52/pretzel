@@ -23,11 +23,31 @@
       <Output TaskParameter="CommitHash" PropertyName="GitCommitHash" />
     </GitVersion>
 
-    <AssemblyInfo CodeLanguage="CS" 
+    <AssemblyInfo CodeLanguage="CS"
                   OutputFile="$(SourceDir)\Pretzel\Properties\AssemblyInfo.cs"
-                  AssemblyCopyright="Copyright © Code52 2013" 
-                  ComVisible="false" 
-                  AssemblyInformationalVersion="Built from hash '$(GitCommitHash)'" />
+                  AssemblyTitle="Pretzel"
+                  AssemblyDescription="A simple static site generator for Windows"
+                  AssemblyCompany="Code52"
+                  AssemblyProduct="Pretzel"
+                  AssemblyCopyright="Copyright © Code52 2013"
+                  ComVisible="false"
+                  AssemblyInformationalVersion="Built from hash '$(GitCommitHash)'"
+                  Guid="3c5a833b-daac-49ef-bba8-1000cd0e3c4f"
+                  AssemblyVersion="$(Version)"
+                  AssemblyFileVersion="$(Version)" />
+    
+    <AssemblyInfo CodeLanguage="CS"
+                  OutputFile="$(SourceDir)\Pretzel.Logic\Properties\AssemblyInfo.cs"
+                  AssemblyTitle="Pretzel.Logic"
+                  AssemblyDescription="A simple static site generator for Windows"
+                  AssemblyCompany="Code52"
+                  AssemblyProduct="Pretzel.Logic"
+                  AssemblyCopyright="Copyright © Code52 2013"
+                  ComVisible="false"
+                  AssemblyInformationalVersion="Built from hash '$(GitCommitHash)'"
+                  Guid="0d958789-078b-4ec7-8491-2850070bf340"
+                  AssemblyVersion="$(Version)"
+                  AssemblyFileVersion="$(Version)" />
 
     <Message Text="Building version $(Version) from hash $(GitCommitHash)"  Importance="High" />
 
