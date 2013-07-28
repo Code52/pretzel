@@ -1,0 +1,62 @@
+﻿<?define Manufacturer="Code52" ?>
+<?define AppName="Pretzel"?>
+<?define UpgradeCode="{A86A92AC-ED7B-4A2D-B58A-D27FF656B84A}" ?>
+<Wix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Name="$(var.AppName) v!(bind.FileVersion.PretzelExeFile)"
+           Manufacturer="$(var.Manufacturer)"
+           Version="!(bind.FileVersion.PretzelExeFile)"
+           Id="*"
+           UpgradeCode="$(var.UpgradeCode)"
+           Language="1033"
+           Codepage="1252" >
+
+    <Package InstallerVersion="200" Compressed="yes" Id="*" />
+    <Media Id="1" Cabinet="package.cab" EmbedCab="yes" />
+
+    <MajorUpgrade DowngradeErrorMessage="You already have a newer version of $(var.AppName) installed." />
+    
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Component Id="Empty" Guid="" />
+      <Directory Id="ProgramFilesFolder" >
+        <Directory Id="ProgramFilesManufacturerFolder" Name="$(var.Manufacturer)">
+          <Directory Id="SOFTWAREDIR" Name="$(var.AppName)" />
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Icon Id="pretzel.ico" SourceFile="$(var.PretzelExe)" />
+    <Property Id="ALLUSERS" Value="1" />
+    <Property Id="ARPPRODUCTICON" Value="pretzel.ico" />
+    <Property Id="ARPNOMODIFY" Value="1" />
+
+    <Feature Id='Complete' Level='1' Title='$(var.AppName)'>
+      <Component Id="PretzelExeComponent" Directory="SOFTWAREDIR">
+        <File Id="PretzelExeFile" KeyPath="yes" Source="$(var.PretzelExe)" />
+      </Component>
+      <ComponentRef Id='Empty' />
+    </Feature>
+
+    <UI Id="Minimal">
+      <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+      <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+      <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+      <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+      <Property Id="WixUI_Mode" Value="Minimal" />
+      <DialogRef Id="ErrorDlg" />
+      <DialogRef Id="FatalError" />
+      <DialogRef Id="FilesInUse" />
+      <DialogRef Id="MsiRMFilesInUse" />
+      <DialogRef Id="PrepareDlg" />
+      <DialogRef Id="ProgressDlg" />
+      <DialogRef Id="ResumeDlg" />
+      <DialogRef Id="UserExit" />
+      <DialogRef Id="WelcomeDlg" />
+      <DialogRef Id="VerifyReadyDlg" />
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
+      <Publish Dialog='ExitDialog' Control='Finish' Event='EndDialog' Value='Return'>1</Publish>
+    </UI>
+
+    <UIRef Id="WixUI_Common" />
+  </Product>
+</Wix>
