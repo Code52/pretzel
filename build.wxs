@@ -32,6 +32,7 @@
     <Feature Id='Complete' Level='1' Title='$(var.AppName)'>
       <Component Id="PretzelExeComponent" Directory="SOFTWAREDIR">
         <File Id="PretzelExeFile" KeyPath="yes" Source="$(var.PretzelExe)" />
+        <Environment Id="PATH" Name="PATH" Value="[SOFTWAREDIR]" Permanent="no" Part="last" Action="set" System="yes" />
       </Component>
       <ComponentRef Id='Empty' />
     </Feature>
