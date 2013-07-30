@@ -13,7 +13,7 @@ using Pretzel.Logic.Templating.Context;
 namespace Pretzel.Logic.Commands
 {
     [Export]
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class CommandParameters
     {
         [ImportingConstructor]
