@@ -1,4 +1,4 @@
-﻿@using System
+@using System
 @using System.Collections.Generic
 @using System.Linq
 @using System.Text
@@ -7,9 +7,10 @@
 @inherits RazorEngine.Templating.TemplateBase<PageContext>
 @functions {
 
-    static string WriteOutContents(IEnumerable<Page> pages, string path)
+    static string WriteOutContents(PageContext context, IEnumerable<Page> pages, string path)
     {
-		var indent = string.Empty.PadLeft(((path.Count(c=>c=='/') - 1) * 4));
+        var level = path.Count(c=>c=='/');
+        var indent = string.Empty.PadLeft(((level - 1) * 4)) + "                        ";
         var sb = new StringBuilder();
         var allPagesUnderPath = pages
             .Where(p => p.Url.StartsWith(path))
@@ -20,38 +21,51 @@
             .ToArray();
         var pathDirectories = allPagesUnderPath
             .Except(pathPages)
-			.Select(p => p.Url.Substring(path.Length).Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault())
+            .Select(p => p.Url.Substring(path.Length).Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault())
             .Where(s => !string.IsNullOrEmpty(s))
             .Distinct();
 
-		if (path != "/")
-		{	
-			sb.Append(indent);		
-			sb.AppendLine(path.TrimEnd('/').Split('/').Last());
-			sb.Append(indent);
-			sb.AppendLine("<ul>");
-		}
+        var headerTitle = path.TrimEnd('/').Split('/').Last();
+        var menuId = headerTitle.Replace(" ", string.Empty) + "Menu";
+
+        if (path != "/")
+        {
+            sb.Append(indent);
+            sb.Append("<li style=\"margin-left: " + (level - 2) * 10 +"px\" class=\"nav-header");
+            var indexPage = (path + "index.html").ToLower();
+            if (indexPage == context.Page.Url.ToLower())
+                sb.Append(" active");
+            sb.Append("\">");            
+            sb.Append("<a href=\"#\" class=\"menu-toggle\" data-toggle=\"collapse\" data-target=\"." + menuId + "\"><i class=\"icon-angle-down\"></i></a>");
+            sb.Append("<a href=\"" + indexPage + "\">");
+            sb.Append(headerTitle);
+            sb.Append("</a>");
+            sb.AppendLine("</li>");
+        }
+        foreach (var pathPage in pathPages.OrderBy(p=> p.Bag.ContainsKey("order") ? p.Bag["order"] : p.Title))
+        {
+            if (pathPage.Url.ToLower().EndsWith("index.html"))continue;
+            var isSelected = pathPage.Url.ToLower() == context.Page.Url.ToLower();
+            var itemInLevelSelected = pathPages.Any(p=>p.Url.ToLower() == context.Page.Url.ToLower());
+            sb.Append(indent);
+            sb.Append("    ");
+            sb.Append("<li style=\"margin-left: " + (level - 1) * 20 +"px\" class=\"");
+            if (!itemInLevelSelected && level != 1)
+                sb.Append("collapse ");
+            sb.Append(menuId);
+            if (isSelected)
+                sb.Append(" active");
+            sb.Append("\">");
+            sb.Append(string.Format("<a href=\"{0}\">{1}</a>", pathPage.Url, pathPage.Title));
+            sb.AppendLine("</li>");
+        }
+        
         foreach (var pathDirectory in pathDirectories)
         {
-			var newPath = path.TrimEnd('/') + "/" + pathDirectory + "/";
-            sb.Append(WriteOutContents(allPagesUnderPath, newPath));
+            var newPath = path.TrimEnd('/') + "/" + pathDirectory + "/";
+            sb.Append(WriteOutContents(context, allPagesUnderPath, newPath));
         }
-
-        foreach (var pathPage in pathPages)
-        {
-			sb.Append(indent);
-			sb.Append("    ");
-			if (path != "/")
-				sb.Append("<li>");
-            sb.Append(string.Format("<a href=\"{0}\">{1}</a>", pathPage.Url, pathPage.Title));
-            sb.AppendLine(path != "/" ? "</li>" : "<br />");
-        }
-
-		if (path != "/")
-		{
-			sb.Append(indent);
-			sb.AppendLine("</ul>");
-		}
+        
         return sb.ToString();
     }
 }
@@ -62,67 +76,92 @@
         <meta content="en-au" http-equiv="Content-Language" />
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
         <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE; chrome=1" />
-        <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Blog Feed" />
-        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Blog Feed" />
-
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
         <title>@Model.Title</title>
-        <link rel="stylesheet" type="text/css" href="/css/style.css" />
+
+        <link href="/css/default.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+        <link href="/css/style.css" rel="stylesheet">
         <link rel="shortcut icon" href="/img/favicon.ico" />
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+            <!--[if lt IE 9]>
+          <script src="../assets/js/html5shiv.js"></script>
+        <![endif]-->
+
     </head>
     <body>
-        <div id="side">
-            <div id="hometext">Contents</div>
-            <a href="/index.html">Home</a><br /><br />
-            @Raw(WriteOutContents(Model.Site.Pages.Where(p => !(p is NonProcessedPage) && p.Title != "Wiki Home").OrderBy(p => p.Url), "/"))
-        </div>
-        <div id="container">
-            <div id="content">
-                <div class="entry-container">
-                    <div class='entry'>
-                        <h1>@Model.Title</h1>
-                        <span class="postdate">@Model.Page.Date.ToString("d MMM, yyyy")
-                            @foreach (var tag in Model.Page.Tags)
-                            {
+        <div class="navbar navbar-inverse navbar-fixed-top">
+          <div class="navbar-inner">
+            <div class="container-fluid">
+              <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+                <a class="brand" href="/">Wiki</a>
+                  <div class="nav-collapse collapse pull-right">
+                  <ul class="nav">
+                      <li><a href="#" class="navbar-link" target="_blank">Link</a></li>
+                    </ul>
+                  </div><!--/.nav-collapse -->
+                </div>
+            </div>
+          </div>
+    
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span3">
+                    <div class="well sidebar-nav">
+                        <ul class="nav nav-list">
+                            <li class="nav-header">Contents</li>
+                            @Raw(WriteOutContents(Model, Model.Site.Pages.Where(p => !(p is NonProcessedPage)).OrderBy(p => p.Url), "/").Trim())
+                        </ul>
+                    </div><!--/.well -->
+                </div><!--/span-->
+                <div class="span9">
+                    <div class="entry-container">
+                        <div class="entry">
+                            <h1>@Model.Title</h1>
+                            <span class="postdate">@Model.Page.Date.ToString("d MMM, yyyy")</span>
+                            <ul>
+                                @foreach (var tag in Model.Page.Tags)
+                                {
                                 <li><a href="/tag/@tag">@tag</a></li>
-                            }
-                        </span>
-                        @Raw(Model.Content)
+                                }
+                            </ul>
+                            @Raw(Model.Content)
+                        </div>
                     </div>
                 </div>
-                <div id="page-navigation"> 
-                    @if (Model.Previous != null && Model.Previous.Url != null)
-                    {
-                        <a href="@Model.Previous.Url" title="Previous Post: @Model.Previous.Title">&larr; @Model.Previous.Title</a>
-                    }
-                    @if (Model.Previous != null && Model.Previous.Url != null && Model.Next != null && Model.Next.Url != null)
-                    {
-                        <text>|</text>
-                    }
-                    @if (Model.Next != null && Model.Next.Url != null)
-                    {
-                        <a href="@Model.Next.Url" title="next Post: @Model.Next.Title">@Model.Next.Title &rarr; </a>
-                    }
-                    <div class="clear">&nbsp;</div>
-                </div> 
-              
             </div>
-            <div id="disqus_thread"></div>
-            <script type="text/javascript">
-                /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-                var disqus_shortname = 'NAME'; // required: replace example with your forum shortname
+            <div class="row-fluid">
+                <div id="disqus_thread"></div>
+                <script type="text/javascript">
+                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+                    var disqus_shortname = ''; // required: replace example with your forum shortname
+                    
+                    /* * * DON'T EDIT BELOW THIS LINE * * */
+                    (function () {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            </div>
+            <hr>
 
-                /* * * DON'T EDIT BELOW THIS LINE * * */
-                (function () {
-                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-                })();
-            </script>
-            <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-            <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            <footer>
+                <p>&copy; 2013</p>
+            </footer>
 
-        </div>
+        </div><!--/.fluid-container-->
+
+        <script src="//code.jquery.com/jquery.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
     </body>
 </html>
 @* ReSharper restore Html.PathError *@
