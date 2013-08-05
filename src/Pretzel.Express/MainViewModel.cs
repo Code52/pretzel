@@ -39,6 +39,8 @@ namespace Pretzel
             site.Port = port;
             site.Execute();
             Sites.Add(site);
+
+            
         }
 
         public void Compose()

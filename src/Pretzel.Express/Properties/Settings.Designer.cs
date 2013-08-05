@@ -22,5 +22,16 @@ namespace Pretzel.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::Pretzel.SiteSettings Sites {
+            get {
+                return ((global::Pretzel.SiteSettings)(this["Sites"]));
+            }
+            set {
+                this["Sites"] = value;
+            }
+        }
     }
 }
