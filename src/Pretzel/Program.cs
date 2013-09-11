@@ -8,6 +8,7 @@ using System.Reflection;
 using NDesk.Options;
 using Pretzel.Commands;
 using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Commands;
 
 namespace Pretzel
 {
@@ -15,6 +16,10 @@ namespace Pretzel
     {
         [Import]
         private CommandCollection Commands { get; set; }
+
+        AggregateCatalog catalog;
+
+        CompositionContainer container;
 
         static void Main(string[] args)
         {
@@ -64,6 +69,7 @@ namespace Pretzel
                 return;
             }
 
+            LoadPlugins(commandArgs);
             Commands[commandName].Execute(commandArgs);
             WaitForClose();
         }
@@ -82,12 +88,26 @@ namespace Pretzel
             }
         }
 
+        private void LoadPlugins(string[] commandArgs)
+        {
+            var parameters = container.GetExport<CommandParameters>().Value;
+            parameters.Parse(commandArgs);
+
+            var pluginsPath = System.IO.Path.Combine(parameters.Path, "_plugins");
+
+            if (System.IO.Directory.Exists(pluginsPath))
+            {
+                catalog.Catalogs.Add(new DirectoryCatalog(pluginsPath));
+            }
+        }
+
         public void Compose()
         {
             try
             {
                 var first = new AssemblyCatalog(Assembly.GetExecutingAssembly());
-                var container = new CompositionContainer(first);
+                catalog = new AggregateCatalog(first);
+                container = new CompositionContainer(catalog);
 
                 var batch = new CompositionBatch();
                 batch.AddExportedValue<IFileSystem>(new FileSystem());

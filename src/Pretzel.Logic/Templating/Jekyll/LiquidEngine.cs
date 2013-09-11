@@ -4,6 +4,7 @@ using DotLiquid;
 using Pretzel.Logic.Liquid;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Jekyll.Liquid;
+using System.Collections.Generic;
 
 namespace Pretzel.Logic.Templating.Jekyll
 {
@@ -12,6 +13,9 @@ namespace Pretzel.Logic.Templating.Jekyll
     public class LiquidEngine : JekyllEngineBase
     {
         SiteContextDrop contextDrop;
+
+        [ImportMany(AllowRecomposition = true)]
+        public IEnumerable<DotLiquid.Tag> Tags { get; set; }
 
         public LiquidEngine()
         {
@@ -27,6 +31,16 @@ namespace Pretzel.Logic.Templating.Jekyll
                {
                   Template.RegisterFilter(filter.GetType());
                }
+            }
+            if (Tags != null)
+            {
+                var registerTagMethod = typeof(Template).GetMethod("RegisterTag", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+
+                foreach (var tag in Tags)
+                {
+                    var registerTagGenericMethod = registerTagMethod.MakeGenericMethod(new[] { tag.GetType() });
+                    registerTagGenericMethod.Invoke(null, new[] { tag.Name });
+                }
             }
         }
 

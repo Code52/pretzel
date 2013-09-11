@@ -18,8 +18,8 @@ namespace Pretzel.Logic.Templating
 #pragma warning disable 0649
         [Import] public IFileSystem FileSystem { get; set; }
 #pragma warning restore 0649
-        
-        [ImportMany]
+
+        [ImportMany(AllowRecomposition = true)]
         public IEnumerable<IFilter> Filters { get; set; }
 
         public abstract void Initialize();
