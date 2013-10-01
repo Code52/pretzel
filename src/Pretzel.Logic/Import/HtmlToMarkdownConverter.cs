@@ -85,7 +85,7 @@ namespace Pretzel.Logic.Import
                             boldText = boldText.Substring(0, boldText.Length - 1);
                             addSpace = true;
                         }
-                        markdown.AppendFormat("**{0}**{1}", htmlNode.InnerText, addSpace ? " " : "");
+                        markdown.AppendFormat("**{0}**{1}", boldText, addSpace ? " " : "");
                         break;
                     case "i":
                     case "em":
