@@ -101,5 +101,12 @@ namespace Pretzel.Tests.Import
             string markdown = converter.Convert("<pre>hello" + Environment.NewLine + "world</pre>");
             Assert.Equal(Environment.NewLine + "    hello" + Environment.NewLine + "    world", markdown);
         }
+
+        [Fact]
+        public void Strong_text_with_trailing_space_appends_correctly()
+        {
+            string markdown = converter.Convert("<b>hello </b>");
+            Assert.Equal("**hello** ", markdown);
+        }
     }
 }
