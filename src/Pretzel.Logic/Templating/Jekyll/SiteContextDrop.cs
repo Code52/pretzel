@@ -39,12 +39,12 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
             if (!context.Config.ContainsKey("date"))
                 context.Config.Add("date", "2012-01-01");
             var x = Hash.FromDictionary(context.Config);
-            x.Add("posts", Posts);
-            x.Add("pages", context.Pages);
-            x.Add("title", context.Title);
-            x.Add("tags", context.Tags);
-            x.Add("categories", context.Categories);
-            x.Add("time", Time);
+            x["posts"] = Posts;
+            x["pages"] = context.Pages;
+            x["title"] = context.Title;
+            x["tags"] = context.Tags;
+            x["categories"] = context.Categories;
+            x["time"] = Time;
 
             return x;
         }
