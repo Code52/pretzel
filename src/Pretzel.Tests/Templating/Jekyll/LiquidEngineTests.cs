@@ -481,5 +481,36 @@ namespace Pretzel.Tests.Templating.Jekyll
              Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
           }
        }
+
+        public class Given_Page_With_Code : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            const string PageContents = "---\r\n layout: default \r\n title: 'A different title'\r\n---\r\n\r\n{% highlight c# %}\r\nvar test = \"test\";\r\n{% endhighlight %}";
+            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><p><div class=\"csharp\"><pre><span class=\"Keyword\">var</span> test = &amp;quot;test&amp;quot;;</pre></div></p></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\");
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_HighLighted_Code()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
     }
 }
