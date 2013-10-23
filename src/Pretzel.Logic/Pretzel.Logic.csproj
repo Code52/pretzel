@@ -37,8 +37,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\AjaxMin.4.44.4396.18853\lib\net20\AjaxMin.dll</HintPath>
     </Reference>
-    <Reference Include="ColorCode">
-      <HintPath>..\..\libs\ColorCode.dll</HintPath>
+    <Reference Include="ClrPlus.Pygments">
+      <HintPath>..\packages\ClrPlus.Pygments.1.0.2\lib\net40\ClrPlus.Pygments.dll</HintPath>
     </Reference>
     <Reference Include="dotless.Core, Version=1.3.1.0, Culture=neutral, PublicKeyToken=96b446c9e63eae34, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -109,6 +109,7 @@
     <Compile Include="Import\HtmlToMarkdownConverter.cs" />
     <Compile Include="Import\WordpressImport.cs" />
     <Compile Include="Liquid\HighlightBlock.cs" />
+    <Compile Include="Liquid\PygmentsHighlightBlock.cs" />
     <Compile Include="Liquid\XmlEscapeFilter.cs" />
     <Compile Include="Minification\FileSystemExtensions.cs" />
     <Compile Include="Minification\LessTransform.cs" />

@@ -482,11 +482,75 @@ namespace Pretzel.Tests.Templating.Jekyll
           }
        }
 
-        public class Given_Page_With_Code : BakingEnvironment<LiquidEngine>
+        public class Given_Page_With_Code_And_Pygments_Enabled : BakingEnvironment<LiquidEngine>
         {
             const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
             const string PageContents = "---\r\n layout: default \r\n title: 'A different title'\r\n---\r\n\r\n{% highlight c# %}\r\nvar test = \"test\";\r\n{% endhighlight %}";
-            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><p><div class=\"csharp\"><pre><span class=\"Keyword\">var</span> test = &amp;quot;test&amp;quot;;</pre></div></p></body></html>";
+            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><p><div class=\"highlight\"><pre><span class=\"kt\">var</span> <span class=\"n\">test</span> <span class=\"p\">=</span> <span class=\"s\">&quot;test&quot;</span><span class=\"p\">;</span></pre></div></p></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\");
+                context.Config.Add("pygments", "true");
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_HighLighted_Code()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_With_Two_Code_And_Pygments_Enabled : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            const string PageContents = "---\r\n layout: default \r\n title: 'A different title'\r\n---\r\n\r\n{% highlight c# %}\r\nvar test = \"test\";\r\n{% endhighlight %}\r\n{% highlight c# %}\r\nvar test = \"test\";\r\n{% endhighlight %}";
+            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><p><div class=\"highlight\"><pre><span class=\"kt\">var</span> <span class=\"n\">test</span> <span class=\"p\">=</span> <span class=\"s\">&quot;test&quot;</span><span class=\"p\">;</span></pre></div><div class=\"highlight\"><pre><span class=\"kt\">var</span> <span class=\"n\">test</span> <span class=\"p\">=</span> <span class=\"s\">&quot;test&quot;</span><span class=\"p\">;</span></pre></div></p></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\");
+                context.Config.Add("pygments", "true");
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_HighLighted_Code()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_With_Code_And_Pygments_Disabled : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            const string PageContents = "---\r\n layout: default \r\n title: 'A different title'\r\n---\r\n\r\n{% highlight c# %}\r\nvar test = \"test\";\r\n{% endhighlight %}";
+            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><p><pre><code>var test = &quot;test&quot;;</code></pre></p></body></html>";
 
             public override LiquidEngine Given()
             {
