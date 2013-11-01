@@ -93,6 +93,7 @@
     <Compile Include="Commands\CommandParameters.cs" />
     <Compile Include="Exceptions\PageProcessingException.cs" />
     <Compile Include="Extensibility\Extensions\AzureHostSupport.cs" />
+    <Compile Include="Extensibility\Extensions\FencedCodeBlocks.cs" />
     <Compile Include="Extensibility\Extensions\PrettifyUrlFilter.cs" />
     <Compile Include="Extensibility\Extensions\VirtualDirectorySupport.cs" />
     <Compile Include="Extensibility\Extensions\SlugifyFilter.cs" />
