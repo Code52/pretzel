@@ -1,0 +1,3 @@
+[submodule "dependencies/markdowndeep"]
+	path = dependencies/markdowndeep
+	url = https://github.com/LodewijkSioen/markdowndeep.git

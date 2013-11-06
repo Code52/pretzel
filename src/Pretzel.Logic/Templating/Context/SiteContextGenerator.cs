@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using MarkdownDeep;
@@ -27,6 +28,17 @@ namespace Pretzel.Logic.Templating.Context
         {
             this.fileSystem = fileSystem;
             this.contentTransformers = contentTransformers;
+
+            Markdown.ExtraMode = true;
+            Markdown.FormatCodeBlock = (m, l, c) =>
+            {
+                if (string.IsNullOrWhiteSpace(l))
+                {
+                    return string.Format("<pre><code>{0}</pre></code>", c);
+                }
+                var decodedCode = WebUtility.HtmlDecode(c);
+                return PygmentsHighlighter.Current.HighlightToHtml(decodedCode, l, "vs", fragment: true);
+            };
         }
 
         public SiteContext BuildContext(string path)

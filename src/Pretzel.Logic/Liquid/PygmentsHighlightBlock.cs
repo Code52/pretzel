@@ -9,7 +9,6 @@ namespace Pretzel.Logic.Liquid
 {
     public class PygmentsHighlightBlock : Block
     {
-        private static readonly Highlighter Highlighter = new Highlighter();
         private const string LinenosToken = "linenos";
 
         public LineNumberStyle LineNumberStyle { get; private set; }
@@ -36,7 +35,7 @@ namespace Pretzel.Logic.Liquid
             {
                 var decodedText = WebUtility.HtmlDecode(NodeList[0].ToString());
 
-                var highlightedText = Highlighter.HighlightToHtml(decodedText, LexerName, "vs", lineNumberStyle: LineNumberStyle, fragment:true);
+                var highlightedText = PygmentsHighlighter.Current.HighlightToHtml(decodedText, LexerName, "vs", lineNumberStyle: LineNumberStyle, fragment: true);
                 result.Write(highlightedText);
             }
         }

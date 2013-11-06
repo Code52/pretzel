@@ -52,10 +52,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net40\HtmlAgilityPack.dll</HintPath>
     </Reference>
-    <Reference Include="MarkdownDeep, Version=1.5.4615.26275, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MarkdownDeep.NET.1.5\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
-    </Reference>
     <Reference Include="NDesk.Options">
       <HintPath>..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
     </Reference>
@@ -93,7 +89,6 @@
     <Compile Include="Commands\CommandParameters.cs" />
     <Compile Include="Exceptions\PageProcessingException.cs" />
     <Compile Include="Extensibility\Extensions\AzureHostSupport.cs" />
-    <Compile Include="Extensibility\Extensions\FencedCodeBlocks.cs" />
     <Compile Include="Extensibility\Extensions\PrettifyUrlFilter.cs" />
     <Compile Include="Extensibility\Extensions\VirtualDirectorySupport.cs" />
     <Compile Include="Extensibility\Extensions\SlugifyFilter.cs" />
@@ -156,6 +151,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RazorWiki.resx</DependentUpon>
     </Compile>
+    <Compile Include="PygmentsHighlighter.cs" />
     <Compile Include="SanityCheck.cs" />
     <Compile Include="Templating\Context\Category.cs" />
     <Compile Include="Templating\Context\NonProcessedPage.cs" />
@@ -277,6 +273,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Liquid\Config.liquid" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\dependencies\markdowndeep\MarkdownDeep\MarkdownDeep.csproj">
+      <Project>{1569ed47-c7c9-4261-b6f4-7445bd0f2c95}</Project>
+      <Name>MarkdownDeep</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
