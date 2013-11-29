@@ -30,6 +30,7 @@ namespace Pretzel.Logic.Commands
                     {"p|port=", "The port to test the site locally", p => decimal.TryParse(p, out port)},
                     {"i|import=", "The import type", v => ImportType = v}, // TODO: necessary?
                     {"f|file=", "Path to import file", v => ImportPath = v},
+                    {"drafts", "Add the posts in the drafts folder", v => IncludeDrafts = true},
                     {"nobrowser", "Do not launch a browser", v => LaunchBrowser = false},
                     { "withproject", "Includes a layout VS Solution, to give intellisence when editing razor layout files", v=>WithProject = (v!=null)},
                     { "wiki", "Creates a wiki instead of a blog (razor template only)", v=>Wiki = (v!=null)}
@@ -55,6 +56,7 @@ namespace Pretzel.Logic.Commands
         public string ImportType { get; private set; }
         public bool WithProject { get; private set; }
         public bool Wiki { get; private set; }
+        public bool IncludeDrafts { get; set; }
 
         bool launchBrowser;
         [DefaultValue(true)]

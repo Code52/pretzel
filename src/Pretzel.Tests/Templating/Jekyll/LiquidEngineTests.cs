@@ -199,7 +199,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
 
                 var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
-                var context = generator.BuildContext(@"C:\website\");
+                var context = generator.BuildContext(@"C:\website\", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
             }
@@ -242,7 +242,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 }
 
                 var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
-                var context = generator.BuildContext(@"C:\website\");
+                var context = generator.BuildContext(@"C:\website\", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
             }
@@ -287,7 +287,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 }
 
                 var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
-                var context = generator.BuildContext(@"C:\website\");
+                var context = generator.BuildContext(@"C:\website\", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
             }
@@ -360,7 +360,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_layouts\inner.html", new MockFileData(InnerTemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
 
-                Subject.BuildContext(@"C:\website\");
+                Subject.BuildContext(@"C:\website\", false);
             }
 
             // [Fact]
@@ -470,7 +470,7 @@ namespace Pretzel.Tests.Templating.Jekyll
              FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
 
              var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
-             var context = generator.BuildContext(@"C:\website\");
+             var context = generator.BuildContext(@"C:\website\", false);
              Subject.FileSystem = FileSystem;
              Subject.Process(context);
           }
