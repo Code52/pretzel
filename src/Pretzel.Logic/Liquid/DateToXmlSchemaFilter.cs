@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml;
 
 namespace Pretzel.Logic.Liquid
 {
@@ -6,7 +7,7 @@ namespace Pretzel.Logic.Liquid
     {
         public static string date_to_xmlschema(DateTime input)
         {
-            return input.ToString("o", System.Globalization.CultureInfo.InvariantCulture);
+            return XmlConvert.ToString(input, XmlDateTimeSerializationMode.Local);
         }
     }
 }
