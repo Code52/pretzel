@@ -85,5 +85,10 @@ namespace Pretzel
         {
             Application.Current.Shutdown();
         }
+
+        private void Ni_OnTrayMouseDoubleClick(object sender, RoutedEventArgs e)
+        {
+            Show();
+        }
     }
 }

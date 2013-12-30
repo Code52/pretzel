@@ -15,7 +15,7 @@
                     Visibility="Visible"
                     ToolTipText="Fallback ToolTip for Windows xp"
                     IconSource="pretzel.ico"
-                        
+                        TrayMouseDoubleClick="Ni_OnTrayMouseDoubleClick"
                     MenuActivation="LeftOrRightClick">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu>
