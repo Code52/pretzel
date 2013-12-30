@@ -33,7 +33,7 @@ namespace Pretzel
             Properties.Settings.Default.Save();
         }
 
-        private async void MainWindow_Loaded(object sender, RoutedEventArgs ie)
+        private void MainWindow_Loaded(object sender, RoutedEventArgs ie)
         {
             var x = new MainViewModel();
             x.Compose();

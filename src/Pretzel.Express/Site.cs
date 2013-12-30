@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Pretzel.Commands;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
@@ -12,12 +14,21 @@ using Pretzel.Modules;
 
 namespace Pretzel
 {
-    public class Site
+    public class Site : INotifyPropertyChanged
     {
-        public RelayCommand TogglePause { get; set; }
+        public RelayCommand PauseCommand { get; set; }
         public int Port { get; set; }
         public string Directory { get; set; }
-        public bool IsRunning { get; set; }
+
+        public bool IsRunning
+        {
+            get { return isRunning; }
+            set
+            {
+                isRunning = value;
+                OnPropertyChanged();
+            }
+        }
 
         private WebHost w;
         private ISiteEngine engine;
@@ -30,22 +41,28 @@ namespace Pretzel
         [ImportMany]
         private IEnumerable<ITransform> transforms;
 
+        private bool isRunning;
+
         public Site()
         {
-            TogglePause = new RelayCommand(p => true, p => Pause());
+            PauseCommand = new RelayCommand(p => true, p => PlayPause(false));
+            PlayCommand = new RelayCommand(p => true, p => PlayPause());
         }
 
-        public void Pause()
+        public RelayCommand PlayCommand { get; set; }
+
+        public void PlayPause(bool play=true)
         {
-            if (w.IsRunning)
-            {
-                w.Stop();
-            }
-            else
+            if (play)
             {
                 Execute();
             }
+            else
+            {
+                w.Stop();
+            }
 
+            IsRunning = w.IsRunning;
         }
 
         public void Execute()
@@ -73,6 +90,8 @@ namespace Pretzel
             watcher.OnChange(Directory, WatcherOnChanged);
             w = new WebHost(engine.GetOutputDirectory(Directory), new FileContentProvider(), Convert.ToInt32(Port));
             w.Start();
+
+            IsRunning = true;
         }
 
         private void WatcherOnChanged(string file)
@@ -86,6 +105,14 @@ namespace Pretzel
         public void WriteHelp(TextWriter writer)
         {
             parameters.WriteOptions(writer, "-t", "-d", "-p", "--nobrowser");
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
