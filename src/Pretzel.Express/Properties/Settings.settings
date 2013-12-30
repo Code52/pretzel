@@ -5,5 +5,8 @@
     <Setting Name="Sites" Type="Pretzel.SiteSettings" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="Minimised" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

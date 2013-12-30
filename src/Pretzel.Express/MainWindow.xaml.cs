@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Windows;
-using System.Windows.Forms;
 using Application = System.Windows.Application;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
@@ -12,8 +9,6 @@ namespace Pretzel
     public partial class MainWindow
     {
         private MainViewModel ViewModel { get { return (MainViewModel)DataContext; } }
-
-        private NotifyIcon notifyIcon;
         public MainWindow()
         {
             InitializeComponent();
@@ -21,9 +16,26 @@ namespace Pretzel
             App.Current.Exit += Current_Exit;
         }
 
+        protected override void OnStateChanged(EventArgs e)
+        {
+            if (WindowState == WindowState.Minimized)
+            {
+                Hide();
+                Properties.Settings.Default.Minimised = true;
+                Properties.Settings.Default.Save();
+            }
+            else
+            {
+                Properties.Settings.Default.Minimised = false;
+                Properties.Settings.Default.Save();
+            }
+
+            base.OnStateChanged(e);
+        }
+
         void Current_Exit(object sender, ExitEventArgs e)
         {
-            var settings = new SiteSettings() {Sites = new List<SiteConfig>()};
+            var settings = new SiteSettings() { Sites = new List<SiteConfig>() };
             foreach (var s in ViewModel.Sites)
             {
                 settings.Sites.Add(new SiteConfig(s.Directory, s.Port, true));
@@ -35,6 +47,11 @@ namespace Pretzel
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs ie)
         {
+            if (Properties.Settings.Default.Minimised)
+            {
+                Hide();
+            }
+
             var x = new MainViewModel();
             x.Compose();
 
@@ -47,50 +64,26 @@ namespace Pretzel
             }
 
             DataContext = x;
-
-            Stream iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/Pretzel.Express;component/pretzel.ico")).Stream;
-            notifyIcon = new NotifyIcon
-            {
-                BalloonTipText = "Pretzel Express, choo choo!",
-                Text = "Pretzel Express, choo choo!",
-                Icon = new Icon(iconStream),
-                Visible = true
-            };
-
-            var contextMenuItems = new List<MenuItem>
-            {
-                new MenuItem("Start New Site", (s, e) => ButtonBase_OnClick(null, null)),
-                new MenuItem("-"),
-                new MenuItem("Exit", (s, e) => Application.Current.Shutdown())
-            };
-
-            notifyIcon.ContextMenu = new ContextMenu(contextMenuItems.ToArray());
-            notifyIcon.Click += notifyIcon_Click;
         }
 
-        void notifyIcon_Click(object sender, EventArgs e)
+        private void StartNewSiteClick(object sender, RoutedEventArgs e)
         {
-            var args = (MouseEventArgs)e;
-            if (args.Button != MouseButtons.Left)
-                return;
-
-            if (IsVisible)
-                Hide();
-            else
-                Show();
-        }
-
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
-        {
-            var dlg = new CommonOpenFileDialog();
-            dlg.Title = "New Pretzel Site";
-            dlg.IsFolderPicker = true;
+            var dlg = new CommonOpenFileDialog
+            {
+                Title = "New Pretzel Site", 
+                IsFolderPicker = true
+            };
 
             var result = dlg.ShowDialog();
             if (result == CommonFileDialogResult.Ok)
             {
                 ViewModel.StartNewSite(dlg.FileName);
             }
+        }
+
+        private void ExitClick(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }

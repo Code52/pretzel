@@ -46,6 +46,9 @@
     <Reference Include="Firefly">
       <HintPath>..\packages\Firefly.0.6.3\lib\Firefly.dll</HintPath>
     </Reference>
+    <Reference Include="Hardcodet.Wpf.TaskbarNotification">
+      <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.5\lib\net45\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro">
       <HintPath>..\packages\MahApps.Metro.0.11.0.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>

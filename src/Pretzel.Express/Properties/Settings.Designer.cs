@@ -33,5 +33,17 @@ namespace Pretzel.Properties {
                 this["Sites"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Minimised {
+            get {
+                return ((bool)(this["Minimised"]));
+            }
+            set {
+                this["Minimised"] = value;
+            }
+        }
     }
 }

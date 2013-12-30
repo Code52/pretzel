@@ -3,13 +3,29 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:pretzel="clr-namespace:Pretzel"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
         Icon="pretzel.ico"
         Title="Pretzel Express" Height="350" Width="525"  WindowStartupLocation="CenterScreen" GlowBrush="{DynamicResource AccentColorBrush}">
     <Window.Resources>
         <pretzel:ReverseBoolConverter x:Key="ReverseBoolConverter" />
     </Window.Resources>
-    
+
     <Grid>
+        <tb:TaskbarIcon x:Name="ni"
+                    Visibility="Visible"
+                    ToolTipText="Fallback ToolTip for Windows xp"
+                    IconSource="pretzel.ico"
+                        
+                    MenuActivation="LeftOrRightClick">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Start New Site" Click="StartNewSiteClick" />
+                    <Separator />
+                    <MenuItem Header="Exit" Click="ExitClick" />
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+
+        </tb:TaskbarIcon>
         <ListBox ItemsSource="{Binding Sites}" Margin="10,10,10,65">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -24,6 +40,6 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Button Content="New Site" Height="50" Width="100" Click="ButtonBase_OnClick" Margin="10,259,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" />
+        <Button Content="New Site" Height="50" Width="100" Click="StartNewSiteClick" Margin="10,259,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" />
     </Grid>
 </controls:MetroWindow>
