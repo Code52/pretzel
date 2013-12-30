@@ -49,6 +49,7 @@ namespace Pretzel
             {
                 var first = new AggregateCatalog();
                 first.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
+                first.Catalogs.Add(new AssemblyCatalog(typeof(Logic.SanityCheck).Assembly));
                 container = new CompositionContainer(first);
 
                 var batch = new CompositionBatch();

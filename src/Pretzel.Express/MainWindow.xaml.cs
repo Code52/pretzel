@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Forms;
 using Application = System.Windows.Application;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace Pretzel
 {
@@ -32,7 +33,7 @@ namespace Pretzel
             Properties.Settings.Default.Save();
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs ie)
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs ie)
         {
             var x = new MainViewModel();
             x.Compose();
@@ -81,11 +82,14 @@ namespace Pretzel
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            var dlg = new FolderBrowserDialog();
-            DialogResult result = dlg.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
+            var dlg = new CommonOpenFileDialog();
+            dlg.Title = "New Pretzel Site";
+            dlg.IsFolderPicker = true;
+
+            var result = dlg.ShowDialog();
+            if (result == CommonFileDialogResult.Ok)
             {
-                ViewModel.StartNewSite(dlg.SelectedPath);
+                ViewModel.StartNewSite(dlg.FileName);
             }
         }
     }

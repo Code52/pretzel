@@ -1,11 +1,10 @@
-﻿<Window x:Class="Pretzel.MainWindow"
+﻿<controls:MetroWindow x:Class="Pretzel.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         Icon="pretzel.ico"
-        Title="Pretzel Express" Height="350" Width="525" ResizeMode="NoResize">
-    <Window.Resources>
-
-    </Window.Resources>
+        Title="Pretzel Express" Height="350" Width="525"  WindowStartupLocation="CenterScreen" GlowBrush="{DynamicResource AccentColorBrush}">
+    
     <Grid>
         <ListBox ItemsSource="{Binding Sites}" Margin="10,10,10,65">
             <ListBox.ItemTemplate>
@@ -22,4 +21,4 @@
         </ListBox>
         <Button Content="New Site" Height="50" Width="100" Click="ButtonBase_OnClick" Margin="10,259,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" />
     </Grid>
-</Window>
+</controls:MetroWindow>
