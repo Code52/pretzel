@@ -28,6 +28,15 @@ namespace Pretzel.Logic.Templating.Jekyll
                   Template.RegisterFilter(filter.GetType());
                }
             }
+
+            if (Context.Config.ContainsKey("pygments") && Context.Config["pygments"].ToString() == "true")
+            {
+                Template.RegisterTag<PygmentsHighlightBlock>("highlight");
+            }
+            else
+            {
+                Template.RegisterTag<HighlightBlock>("highlight");
+            }
         }
 
         Hash CreatePageData(PageContext pageContext)
@@ -70,7 +79,6 @@ namespace Pretzel.Logic.Templating.Jekyll
         public override void Initialize()
         {
             Template.RegisterFilter(typeof(XmlEscapeFilter));
-            Template.RegisterTag<HighlightBlock>("highlight");
         }
     }
 }

@@ -7,9 +7,9 @@ namespace Pretzel.Logic.Liquid
     {
         public override void Render(Context context, TextWriter result)
         {
-            result.Write("<pre>");
+            result.Write("<pre><code>");
             base.Render(context, result);
-            result.Write("</pre>");
+            result.Write("</code></pre>");
         }
     }
 }

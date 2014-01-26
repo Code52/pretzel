@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ClrPlus.Pygments, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ClrPlus.Pygments.1.0.2\lib\net40\ClrPlus.Pygments.dll</HintPath>
+    </Reference>
     <Reference Include="dotless.Core, Version=1.3.1.0, Culture=neutral, PublicKeyToken=96b446c9e63eae34, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\dotless.1.3.1.0\lib\dotless.Core.dll</HintPath>
@@ -89,10 +93,12 @@
     <Compile Include="PretzelContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recipe\RecipeTests.cs" />
+    <Compile Include="Templating\Context\SiteContextGeneratorMarkdownTests.cs" />
     <Compile Include="Templating\Context\SiteContextGeneratorTests.cs" />
     <Compile Include="Templating\Jekyll\BakingEnvironment.cs" />
     <Compile Include="Templating\Jekyll\LiquidEngineTests.cs" />
     <Compile Include="Templating\Jekyll\LiquidExtensionsTests.cs" />
+    <Compile Include="Templating\Jekyll\PygmentsHighlightBlockTests.cs" />
     <Compile Include="Templating\Jekyll\StringTestExtensions.cs" />
     <Compile Include="Templating\Plugins\TagCloudTests.cs" />
     <Compile Include="Templating\Razor\RazorEngineTests.cs" />
