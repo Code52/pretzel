@@ -105,6 +105,7 @@
     <Compile Include="Import\BloggerImport.cs" />
     <Compile Include="Import\HtmlToMarkdownConverter.cs" />
     <Compile Include="Import\WordpressImport.cs" />
+    <Compile Include="Liquid\DateToXmlSchemaFilter.cs" />
     <Compile Include="Liquid\HighlightBlock.cs" />
     <Compile Include="Liquid\XmlEscapeFilter.cs" />
     <Compile Include="Minification\FileSystemExtensions.cs" />
