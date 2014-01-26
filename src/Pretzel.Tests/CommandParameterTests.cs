@@ -227,5 +227,29 @@ namespace Pretzel.Tests
             subject.Parse(args);
             Assert.False(subject.LaunchBrowser);
         }
+
+        [Fact]
+        public void IncludeDrafts_WhenSpecifyingEmptyList_IsFalse()
+        {
+            var args = new List<string>();
+            subject.Parse(args);
+            Assert.False(subject.IncludeDrafts);
+        }
+
+        [Fact]
+        public void IncludeDrafts_WhenSpecifyingDraftsDoubleDash_IsTrue()
+        {
+            var args = new List<string> { "--drafts" };
+            subject.Parse(args);
+            Assert.True(subject.IncludeDrafts);
+        }
+
+        [Fact]
+        public void IncludeDrafts_WhenSpecifyingDraftsSingleDash_IsTrue()
+        {
+            var args = new List<string> { "-drafts" };
+            subject.Parse(args);
+            Assert.True(subject.IncludeDrafts);
+        }
     }
 }

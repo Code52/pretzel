@@ -24,6 +24,7 @@ namespace Pretzel.Logic.Templating.Context
         public IEnumerable<Category> Categories { get; set; }
         public IList<Page> Posts { get; set; }
         public DateTime Time { get; set; }
+        public Boolean UseDrafts { get; set; }
 
         public List<Page> Pages { get; set; }
 

@@ -146,7 +146,7 @@ namespace Pretzel.Tests.Templating.Razor
             }
 
             var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
-            var context = generator.BuildContext(@"C:\website\");
+            var context = generator.BuildContext(@"C:\website\", false);
             Subject.FileSystem = FileSystem;
             Subject.Process(context);
         }

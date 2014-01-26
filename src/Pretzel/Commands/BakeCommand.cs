@@ -27,7 +27,7 @@ namespace Pretzel.Commands
 
             parameters.Parse(arguments);
 
-            var siteContext = Generator.BuildContext(parameters.Path);
+            var siteContext = Generator.BuildContext(parameters.Path, parameters.IncludeDrafts);
             if (string.IsNullOrWhiteSpace(parameters.Template))
             {
                 parameters.DetectFromDirectory(templateEngines.Engines, siteContext);

@@ -30,7 +30,7 @@ namespace Pretzel.Commands
 
             parameters.Parse(arguments);
 
-            var context = Generator.BuildContext(parameters.Path);
+            var context = Generator.BuildContext(parameters.Path, parameters.IncludeDrafts);
             if (string.IsNullOrWhiteSpace(parameters.Template))
             {
                 parameters.DetectFromDirectory(templateEngines.Engines, context);
@@ -88,7 +88,7 @@ namespace Pretzel.Commands
         {
             Tracing.Info(string.Format("File change: {0}", file));
 
-            var context = Generator.BuildContext(parameters.Path);
+            var context = Generator.BuildContext(parameters.Path, parameters.IncludeDrafts);
             engine.Process(context, true);
         }
 
