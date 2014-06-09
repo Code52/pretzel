@@ -50,6 +50,7 @@ namespace Pretzel
         private void ShowHelp(OptionSet defaultSet)
         {
             Commands.WriteHelp(defaultSet);
+            WaitForClose();
         }
 
         private void Run(string[] args, OptionSet defaultSet)
