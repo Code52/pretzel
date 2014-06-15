@@ -51,6 +51,7 @@ namespace Pretzel.Logic.Recipe
                     {
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"rss.xml"), Properties.Razor.Rss);
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"atom.xml"), Properties.Razor.Atom);
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"sitemap.xml"), Properties.Razor.Sitemap);
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\layout.cshtml"), Properties.Razor.Layout);
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\post.cshtml"), Properties.Razor.Post);
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"index.md"), Properties.Razor.Index);
@@ -74,6 +75,8 @@ namespace Pretzel.Logic.Recipe
 
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"rss.xml"), Properties.Liquid.Rss);
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"atom.xml"), Properties.Liquid.Atom);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"sitemap.xml"), Properties.Liquid.Sitemap);
+
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\layout.html"), Properties.Liquid.Layout);
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts\post.html"), Properties.Liquid.Post);
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"index.md"), Properties.Liquid.Index);
