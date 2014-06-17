@@ -38,6 +38,7 @@ namespace Pretzel.Tests.Recipe
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"css\"));
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"img\"));
 
+            Assert.True(fileSystem.File.Exists(BaseSite + "sitemap.xml"));
             Assert.True(fileSystem.File.Exists(BaseSite + "rss.xml"));
             Assert.True(fileSystem.File.Exists(BaseSite + "atom.xml"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"_layouts\layout.html"));
@@ -79,6 +80,7 @@ namespace Pretzel.Tests.Recipe
             Assert.Equal(!wiki, fileSystem.File.Exists(BaseSite + @"img\logo.png"));
             Assert.Equal(!wiki, fileSystem.File.Exists(BaseSite + "rss.xml"));
             Assert.Equal(!wiki, fileSystem.File.Exists(BaseSite + "atom.xml"));
+            Assert.Equal(!wiki, fileSystem.File.Exists(BaseSite + "sitemap.xml"));
 
             Assert.True(writer.ToString().Contains("Pretzel site template has been created"));
         }
