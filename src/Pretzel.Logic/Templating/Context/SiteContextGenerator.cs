@@ -200,7 +200,18 @@ namespace Pretzel.Logic.Templating.Context
                                     File = file,
                                     Bag = header,
                                 };
+                
+                // resolve categories and tags
+                if (isPost)
+                {
+                    if (header.ContainsKey("categories"))
+                        page.Categories = header["categories"] as IEnumerable<string>;
 
+                    if (header.ContainsKey("tags"))
+                        page.Tags = header["tags"] as IEnumerable<string>;
+                }
+
+                // resolve permalink
                 if (header.ContainsKey("permalink"))
                     page.Url = EvaluatePermalink(header["permalink"].ToString(), page);
                 else if (isPost && config.ContainsKey("permalink"))
@@ -212,14 +223,6 @@ namespace Pretzel.Logic.Templating.Context
                 pageCache.Add(file, page);
                 page.DirectoryPages = GetDirectoryPages(context, config, Path.GetDirectoryName(file), isPost).ToList();
 
-                if (isPost)
-                {
-                    if (header.ContainsKey("categories"))
-                        page.Categories = header["categories"] as IEnumerable<string>;
-
-                    if (header.ContainsKey("tags"))
-                        page.Tags = header["tags"] as IEnumerable<string>;
-                }
                 return page;
             }
             catch (Exception e)
@@ -347,10 +350,13 @@ namespace Pretzel.Logic.Templating.Context
         // https://github.com/mojombo/jekyll/wiki/permalinks
         private string EvaluatePermalink(string permalink, Page page)
         {
+            permalink = permalink.Replace(":categories", string.Join("-", page.Categories.ToArray()));
             permalink = permalink.Replace(":year", page.Date.Year.ToString(CultureInfo.InvariantCulture));
             permalink = permalink.Replace(":month", page.Date.ToString("MM"));
             permalink = permalink.Replace(":day", page.Date.ToString("dd"));
             permalink = permalink.Replace(":title", GetTitle(page.File));
+
+            permalink = permalink.Replace("//", "/");
 
             return permalink;
         }
