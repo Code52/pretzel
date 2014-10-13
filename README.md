@@ -2,7 +2,7 @@
 
 A simple, pluggable site generation tool for .NET developers and Windows users (with Mono support planned I think)
 
-Pretzel follows the same convensions as  [Jekyll](https://github.com/mojombo/jekyll) and should be compatible with basic Jekyll websites. If you are not familiar with Jekyll, have a read at [https://github.com/mojombo/jekyll/wiki/Usage](https://github.com/mojombo/jekyll/wiki/Usage)
+Pretzel follows the same convensions as  [Jekyll](https://github.com/mojombo/jekyll) and should be compatible with basic Jekyll websites. If you are not familiar with Jekyll, have a read at [http://jekyllrb.com/docs/usage/](http://jekyllrb.com/docs/usage/)
 
 ### Usage
 
