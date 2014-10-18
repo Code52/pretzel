@@ -13,7 +13,7 @@ layout: nil
     @foreach (var post in Model.Site.Posts)
     {
         <url>
-            <loc>http://domain/@post.Url</id>
+            <loc>http://domain/@post.Url</loc>
             <lastmod>@post.Date.ToString("s")</lastmod>
             <changefreq>daily</changefreq>
             <priority>1.00</priority>
