@@ -11,7 +11,7 @@ layout: nil
   
   {% for post in site.posts %}
   <url>
-    <loc>http://domain/{{ post.url }}</id>
+    <loc>http://domain/{{ post.url }}</loc>
     <lastmod>{{ post.date | date_to_xmlschema }}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
