@@ -11,11 +11,21 @@ layout: nil
   
   {% for post in site.posts %}
   <url>
-    <loc>http://domain/{{ post.url }}</loc>
+    <loc>http://domain{{ post.url }}</loc>
     <lastmod>{{ post.date | date_to_xmlschema }}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
   </url>
+  {% endfor %}
+  
+  {% for page in site.pages %}
+	{% if page.url %}
+	<url>
+		<loc>http://domain{{ page.url }}</loc>
+		<changefreq>daily</changefreq>
+		<priority>1.00</priority>
+	</url>
+	{% endif %}
   {% endfor %}
   
 </urlset>
