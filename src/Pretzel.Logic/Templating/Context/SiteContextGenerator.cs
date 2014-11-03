@@ -219,6 +219,12 @@ namespace Pretzel.Logic.Templating.Context
                 else
                     page.Url = EvaluateLink(context, page);
 
+                // ensure the date is accessible in the hash
+                if(!page.Bag.ContainsKey("date")) 
+                {
+                    page.Bag["date"] = page.Date;
+                }
+
                 // The GetDirectoryPage method is reentrant, we need a cache to stop a stack overflow :)
                 pageCache.Add(file, page);
                 page.DirectoryPages = GetDirectoryPages(context, config, Path.GetDirectoryName(file), isPost).ToList();

@@ -5,6 +5,7 @@ using System.Linq;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Templating.Context;
 using Xunit;
+using Xunit.Extensions;
 
 namespace Pretzel.Tests.Templating.Context
 {
@@ -305,6 +306,33 @@ title: Title
 
             // assert
             Assert.Equal(2, siteContext.Posts.Count);
+        }
+
+        [Theory]
+        [InlineData(@"C:\TestSite\2014-01-01-ByFilename.md", false)]
+        [InlineData(@"C:\TestSite\UsingDefault.md", true)]
+        public void site_context_pages_have_date_in_bag(string fileName, bool useDefault) 
+        {
+
+            // note - this test does not include the time component.
+
+            // arrange
+            var expectedDate = useDefault
+                ? DateTime.Now.ToString("yyyy-MM-dd")
+                : "2014-01-01";
+
+            fileSystem.AddFile(fileName, new MockFileData(ToPageContent("# Title")));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            // assert 
+            Assert.True(siteContext.Pages[0].Bag.ContainsKey("date"));
+            Assert.IsType<DateTime>(siteContext.Pages[0].Bag["date"]);
+
+            var actualDate = ((DateTime)siteContext.Pages[0].Bag["date"]).ToString("yyyy-MM-dd");
+
+            Assert.Equal(expectedDate, actualDate);
         }
     }
 }
