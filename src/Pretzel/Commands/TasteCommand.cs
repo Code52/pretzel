@@ -54,7 +54,15 @@ namespace Pretzel.Commands
             watcher.OnChange(parameters.Path, WatcherOnChanged);
 
             var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider(), Convert.ToInt32(parameters.Port));
-            w.Start();
+            try
+            {
+                w.Start();
+            }
+            catch (System.Net.Sockets.SocketException)
+            {
+                Tracing.Info(string.Format("Port {0} is already in use", parameters.Port));
+                return;
+            }
 
             var url = string.Format("http://localhost:{0}/", parameters.Port);
             if (parameters.LaunchBrowser)
