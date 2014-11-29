@@ -106,8 +106,16 @@
     <Compile Include="Import\BloggerImport.cs" />
     <Compile Include="Import\HtmlToMarkdownConverter.cs" />
     <Compile Include="Import\WordpressImport.cs" />
+    <Compile Include="Liquid\CgiEscapeFilter.cs" />
+    <Compile Include="Liquid\CommentBlock.cs" />
+    <Compile Include="Liquid\DateToLongStringFilter.cs" />
+    <Compile Include="Liquid\DateToRfc822FormatFilter.cs" />
+    <Compile Include="Liquid\DateToStringFilter.cs" />
     <Compile Include="Liquid\DateToXmlSchemaFilter.cs" />
     <Compile Include="Liquid\HighlightBlock.cs" />
+    <Compile Include="Liquid\NumberOfWords.cs" />
+    <Compile Include="Liquid\PostUrlBlock.cs" />
+    <Compile Include="Liquid\UriEscapeFilter.cs" />
     <Compile Include="Liquid\XmlEscapeFilter.cs" />
     <Compile Include="Minification\FileSystemExtensions.cs" />
     <Compile Include="Minification\LessTransform.cs" />
