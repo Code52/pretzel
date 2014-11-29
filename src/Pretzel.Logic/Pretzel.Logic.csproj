@@ -113,7 +113,7 @@
     <Compile Include="Liquid\DateToStringFilter.cs" />
     <Compile Include="Liquid\DateToXmlSchemaFilter.cs" />
     <Compile Include="Liquid\HighlightBlock.cs" />
-    <Compile Include="Liquid\NumberOfWords.cs" />
+    <Compile Include="Liquid\NumberOfWordsFilter.cs" />
     <Compile Include="Liquid\PostUrlBlock.cs" />
     <Compile Include="Liquid\UriEscapeFilter.cs" />
     <Compile Include="Liquid\XmlEscapeFilter.cs" />

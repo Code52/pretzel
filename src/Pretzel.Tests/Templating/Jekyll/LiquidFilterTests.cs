@@ -52,7 +52,7 @@ namespace Pretzel.Tests.Templating.Jekyll
         [Fact]
         public void NumberOfWords_ForGiveString_ReturnsCorrectCount()
         {
-            Assert.Equal(4.ToString(), NumberOfWords.number_of_words("This is a test"));
+            Assert.Equal(4.ToString(), NumberOfWordsFilter.number_of_words("This is a test"));
         }
     }
 }

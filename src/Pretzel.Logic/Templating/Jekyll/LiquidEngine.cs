@@ -75,7 +75,7 @@ namespace Pretzel.Logic.Templating.Jekyll
             Template.RegisterFilter(typeof(DateToRfc822FormatFilter));
             Template.RegisterFilter(typeof(CgiEscapeFilter));
             Template.RegisterFilter(typeof(UriEscapeFilter));
-            Template.RegisterFilter(typeof(NumberOfWords));
+            Template.RegisterFilter(typeof(NumberOfWordsFilter));
             Template.RegisterTag<HighlightBlock>("highlight");
             Template.RegisterTag<PostUrlBlock>("post_url");
         }

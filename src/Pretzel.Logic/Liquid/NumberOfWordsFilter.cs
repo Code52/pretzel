@@ -2,7 +2,7 @@
 
 namespace Pretzel.Logic.Liquid
 {
-    public class NumberOfWords
+    public class NumberOfWordsFilter
     {
         public static string number_of_words(string input)
         {
