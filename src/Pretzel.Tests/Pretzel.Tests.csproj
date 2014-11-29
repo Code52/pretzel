@@ -59,6 +59,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\System.IO.Abstractions.TestingHelpers.1.4.0.44\lib\net35\System.IO.Abstractions.TestingHelpers.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -93,6 +94,7 @@
     <Compile Include="Templating\Jekyll\BakingEnvironment.cs" />
     <Compile Include="Templating\Jekyll\LiquidEngineTests.cs" />
     <Compile Include="Templating\Jekyll\LiquidExtensionsTests.cs" />
+    <Compile Include="Templating\Jekyll\LiquidFilterTests.cs" />
     <Compile Include="Templating\Jekyll\StringTestExtensions.cs" />
     <Compile Include="Templating\Plugins\TagCloudTests.cs" />
     <Compile Include="Templating\Razor\RazorEngineTests.cs" />
