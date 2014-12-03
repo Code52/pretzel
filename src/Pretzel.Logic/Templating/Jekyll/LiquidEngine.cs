@@ -71,7 +71,13 @@ namespace Pretzel.Logic.Templating.Jekyll
         {
             Template.RegisterFilter(typeof(XmlEscapeFilter));
             Template.RegisterFilter(typeof(DateToXmlSchemaFilter));
+            Template.RegisterFilter(typeof(DateToLongStringFilter));
+            Template.RegisterFilter(typeof(DateToRfc822FormatFilter));
+            Template.RegisterFilter(typeof(CgiEscapeFilter));
+            Template.RegisterFilter(typeof(UriEscapeFilter));
+            Template.RegisterFilter(typeof(NumberOfWordsFilter));
             Template.RegisterTag<HighlightBlock>("highlight");
+            Template.RegisterTag<PostUrlBlock>("post_url");
         }
     }
 }
