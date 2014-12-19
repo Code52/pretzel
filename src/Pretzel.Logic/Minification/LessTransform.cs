@@ -125,6 +125,11 @@ namespace Pretzel.Logic.Minification
 
                 return fullPath;
             }
+
+            public bool UseCacheDependencies
+            {
+                get { return true; }
+            }
         }
     }
 }
