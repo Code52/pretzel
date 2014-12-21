@@ -10,19 +10,20 @@ namespace Pretzel.Tests.Templating.Jekyll
         [Fact]
         public void DateToXmlSchema_ForExpectedDate_ReturnsCorrectString()
         {
-           Assert.Equal("2014-01-01T00:00:00-05:00", DateToXmlSchemaFilter.date_to_xmlschema(new DateTime(2014, 01, 01)));
+            Assert.Equal("2014-01-01T01:00:00+01:00", DateToXmlSchemaFilter.date_to_xmlschema(new DateTime(2014, 1, 1, 0, 0, 0, DateTimeKind.Utc)));
         }
 
         [Fact]
         public void DateToRfc822_ForExpectedDate_ReturnsCorrectString()
         {
-            Assert.Equal("Wed, 01 Jan 2014 00:00:00 -0500", DateToRfc822FormatFilter.date_to_rfc822(new DateTime(2014, 01, 01)));
+            Assert.Equal("Wed, 01 Jan 2014 00:00:00 +0000", DateToRfc822FormatFilter.date_to_rfc822(new DateTime(2014, 01, 01, 0, 0, 0, DateTimeKind.Utc)));
         }
 
         [Fact]
         public void DateToString_ForExpectedDate_ReturnsCorrectString()
         {
-            Assert.Equal("07 Nov 2008", DateToStringFilter.date_to_string(new DateTime(2008, 11, 07)));
+            var date = new DateTime(2008, 11, 07);
+            Assert.Equal(date.ToString("dd MMM yyyy"), DateToStringFilter.date_to_string(date));
         }
 
         [Fact]
