@@ -55,7 +55,7 @@ document.write('<p>This is another paragraph.</p>');";
             var minifier = new JsMinifier(fileSystem, files, _outputPath);
             minifier.Minify();
 
-            var expectedOutput = "function test(){alert(\"hello\")}document.write(\"<h1>This is a heading</h1>\"),document.write(\"<p>This is a paragraph.</p>\"),document.write(\"<p>This is another paragraph.</p>\")";
+            var expectedOutput = "function test(){alert(\"hello\")}document.write(\"<h1>This is a heading<\\/h1>\");document.write(\"<p>This is a paragraph.<\\/p>\");document.write(\"<p>This is another paragraph.<\\/p>\")";
 
             var minifiedFile = fileSystem.File.ReadAllText(_outputPath, Encoding.UTF8);
 

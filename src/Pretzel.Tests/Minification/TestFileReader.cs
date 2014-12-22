@@ -32,5 +32,10 @@ namespace Pretzel.Tests.Minification
             var path = pathResolver.GetFullPath(fileName);
             return fileSystem.File.Exists(path);
         }
+
+        public bool UseCacheDependencies
+        {
+            get { return true; }
+        }
     }
 }

@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using YamlDotNet.RepresentationModel;
 using System.IO;
-using YamlDotNet.RepresentationModel.Serialization;
+using YamlDotNet.Serialization;
 
 namespace Pretzel.Logic.Extensions
 {
