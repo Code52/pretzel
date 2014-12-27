@@ -1,21 +1,23 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.IO;
-using System.IO.Abstractions;
-using System.Linq;
-using HtmlAgilityPack;
-using Pretzel.Logic.Extensibility;
-using Pretzel.Logic.Templating.Context;
-using dotless.Core;
+﻿using dotless.Core;
 using dotless.Core.Importers;
 using dotless.Core.Input;
 using dotless.Core.Parser;
 using dotless.Core.Stylizers;
+using HtmlAgilityPack;
+using Pretzel.Logic.Extensibility;
+using Pretzel.Logic.Templating.Context;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.IO;
+using System.IO.Abstractions;
+using System.Linq;
 
 namespace Pretzel.Logic.Minification
 {
     public class LessTransform : ITransform
     {
+        private static string[] ExternalProtocols = new[] { "http", "https", "//" };
+
         #pragma warning disable 0649
         private readonly IFileSystem fileSystem;
         #pragma warning restore 0649
@@ -32,7 +34,7 @@ namespace Pretzel.Logic.Minification
         {
             var importer = new Importer(new CustomFileReader(fileSystem, filePath));
             var parser = new Parser(new PlainStylizer(), importer);
-            var engine = new LessEngine(parser) {Compress = true};
+            var engine = new LessEngine(parser) { Compress = true };
             return engine;
         }
 
@@ -50,15 +52,15 @@ namespace Pretzel.Logic.Minification
 
                 var nodes = doc.DocumentNode.SelectNodes("/html/head/link[@rel='stylesheet']");
                 if (nodes != null)
-                    foreach(HtmlNode link in nodes)
+                    foreach (HtmlNode link in nodes)
                     {
                         var cssfile = link.Attributes["href"].Value;
 
                         // If the file is not local, ignore it
-                        var matchingIgnoreProtocol = new[] {"http", "https", "//"}.FirstOrDefault(cssfile.StartsWith);
-                        if(matchingIgnoreProtocol != null)
+                        var matchingIgnoreProtocol = ExternalProtocols.FirstOrDefault(cssfile.StartsWith);
+                        if (matchingIgnoreProtocol != null)
                             continue;
-                        
+
                         //If the file exists, ignore it
                         if (File.Exists(Path.Combine(siteContext.OutputFolder, cssfile)))
                             continue;
@@ -70,22 +72,52 @@ namespace Pretzel.Logic.Minification
 
                         var n = cssfile.Replace(".css", ".less");
                         n = n.Replace('/', '\\');
-                        shouldCompile.Add(siteContext.Pages.FirstOrDefault(f => f.OutputFile.Contains(n)));
+
+                        var cssPageToCompile = siteContext.Pages.FirstOrDefault(f => f.OutputFile.Contains(n));
+                        if (cssPageToCompile != null && !shouldCompile.Contains(cssPageToCompile))
+                        {
+                            shouldCompile.Add(cssPageToCompile);
+                        }
                     }
             }
 
-            foreach (var less in shouldCompile.Where(i => i != null))
+            foreach (var less in shouldCompile)
             {
                 filePath = less.OutputFile;
-                fileSystem.File.WriteAllText(less.OutputFile.Replace(".less", ".css"), ProcessCss(less.Filepath));
+                fileSystem.File.WriteAllText(less.OutputFile.Replace(".less", ".css"), ProcessCss(siteContext, less.Filepath));
+                fileSystem.File.Delete(less.OutputFile);
             }
         }
 
-        public string ProcessCss(string file)
+        public string ProcessCss(SiteContext siteContext, string file)
         {
             var content = fileSystem.File.ReadAllText(file);
             var engine = GetEngine();
-            return engine.TransformToCss(content, file);
+            var css = engine.TransformToCss(content, file);
+
+            var rootFolder = fileSystem.Path.GetDirectoryName(file);
+            var foldersToDelete = new List<string>();
+            foreach (string import in engine.GetImports())
+            {
+                var importRootFolder = fileSystem.Path.Combine(rootFolder, fileSystem.Path.GetDirectoryName(import));
+                if (siteContext.OutputFolder != importRootFolder && !foldersToDelete.Contains(importRootFolder))
+                {
+                    foldersToDelete.Add(importRootFolder);
+                }
+                fileSystem.File.Delete(fileSystem.Path.Combine(rootFolder, import));
+            }
+
+            // Clean the leftover directories
+            foreach (var folder in foldersToDelete)
+            {
+                // FIXME use EnumerateFileSystemEntries when System.IO.Abstractions will include it
+                if(!fileSystem.Directory.GetFileSystemEntries(folder, "*").Any())
+                {
+                    fileSystem.Directory.Delete(folder);
+                }
+            }
+
+            return css;
         }
 
         class CustomFileReader : IFileReader
@@ -93,7 +125,7 @@ namespace Pretzel.Logic.Minification
             private readonly IFileSystem fileSystem;
             private readonly string currentDirectory;
 
-            public CustomFileReader(IFileSystem fileSystem, string currentDirectory )
+            public CustomFileReader(IFileSystem fileSystem, string currentDirectory)
             {
                 this.fileSystem = fileSystem;
                 this.currentDirectory = Path.GetDirectoryName(currentDirectory);
