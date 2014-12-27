@@ -278,7 +278,7 @@ namespace Pretzel.Logic.Templating.Context
             try
             {
                 var contentsWithoutHeader = contents.ExcludeHeader();
-                html = string.Equals(Path.GetExtension(file), ".md", StringComparison.InvariantCultureIgnoreCase)
+                html = Path.GetExtension(file).IsMarkdownFile()
                        ? Markdown.Transform(contentsWithoutHeader)
                        : contentsWithoutHeader;
 
