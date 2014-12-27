@@ -111,6 +111,8 @@ namespace Pretzel.Commands
                 FileSystem.Directory.Delete(context.OutputFolder, true);
             }
             engine.Process(context, true);
+            foreach (var t in transforms)
+                t.Transform(context);
         }
 
         public void WriteHelp(TextWriter writer)
