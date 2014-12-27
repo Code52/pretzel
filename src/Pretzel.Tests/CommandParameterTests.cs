@@ -251,5 +251,30 @@ namespace Pretzel.Tests
             subject.Parse(args);
             Assert.True(subject.IncludeDrafts);
         }
+
+        [Fact]
+        public void LaunchBrowser_WhenSpecifyingCleanTargetDoubleDash_IsTrue()
+        {
+            var args = new List<string> { "--cleantarget" };
+            subject.Parse(args);
+            Assert.True(subject.CleanTarget);
+        }
+
+        [Fact]
+        public void LaunchBrowser_WhenSpecifyingCleanTargetSingleDash_IsTrue()
+        {
+            var args = new List<string> { "-cleantarget" };
+            subject.Parse(args);
+            Assert.True(subject.CleanTarget);
+        }
+
+        [Fact]
+        public void LaunchBrowser_WhenNotSpecifyingCleanTarget_IsFalse()
+        {
+            var args = new List<string>();
+            subject.Parse(args);
+            Assert.False(subject.CleanTarget);
+        }
+
     }
 }

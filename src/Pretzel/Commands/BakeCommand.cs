@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Pretzel.Logic.Commands;
+using Pretzel.Logic.Extensibility;
+using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Templating.Context;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
-using Pretzel.Logic.Commands;
-using Pretzel.Logic.Extensibility;
-using Pretzel.Logic.Extensions;
-using Pretzel.Logic.Templating.Context;
+using System.IO.Abstractions;
 
 namespace Pretzel.Commands
 {
@@ -19,6 +20,7 @@ namespace Pretzel.Commands
         [Import] SiteContextGenerator Generator { get; set; }
         [Import] CommandParameters parameters;
         [ImportMany] private IEnumerable<ITransform> transforms;
+        [Import] IFileSystem FileSystem;
 #pragma warning restore 649
 
         public void Execute(IEnumerable<string> arguments)
@@ -28,6 +30,12 @@ namespace Pretzel.Commands
             parameters.Parse(arguments);
 
             var siteContext = Generator.BuildContext(parameters.Path, parameters.IncludeDrafts);
+
+            if(parameters.CleanTarget)
+            {
+                FileSystem.Directory.Delete(siteContext.OutputFolder, true);
+            }
+
             if (string.IsNullOrWhiteSpace(parameters.Template))
             {
                 parameters.DetectFromDirectory(templateEngines.Engines, siteContext);
@@ -56,7 +64,7 @@ namespace Pretzel.Commands
 
         public void WriteHelp(TextWriter writer)
         {
-            parameters.WriteOptions(writer, "-t", "-p", "-d");
+            parameters.WriteOptions(writer, "-t", "-p", "-d", "-cleantarget");
         }
     }
 }

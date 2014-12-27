@@ -33,7 +33,8 @@ namespace Pretzel.Logic.Commands
                     {"drafts", "Add the posts in the drafts folder", v => IncludeDrafts = true},
                     {"nobrowser", "Do not launch a browser", v => LaunchBrowser = false},
                     { "withproject", "Includes a layout VS Solution, to give intellisence when editing razor layout files", v=>WithProject = (v!=null)},
-                    { "wiki", "Creates a wiki instead of a blog (razor template only)", v=>Wiki = (v!=null)}
+                    { "wiki", "Creates a wiki instead of a blog (razor template only)", v=>Wiki = (v!=null)},
+                    { "cleantarget", "Delete the target directory (_site by default)", v => CleanTarget = true }
                 };
 
             // Allow extensions to register command line args
@@ -46,7 +47,7 @@ namespace Pretzel.Logic.Commands
         private void GetDefaultValue(string propertyName, Action<string> converter)
         {
             var attributes = TypeDescriptor.GetProperties(this)[propertyName].Attributes;
-            var myAttribute = (DefaultValueAttribute) attributes[typeof (DefaultValueAttribute)];
+            var myAttribute = (DefaultValueAttribute)attributes[typeof(DefaultValueAttribute)];
             converter(myAttribute.Value.ToString());
         }
 
@@ -57,6 +58,7 @@ namespace Pretzel.Logic.Commands
         public bool WithProject { get; private set; }
         public bool Wiki { get; private set; }
         public bool IncludeDrafts { get; set; }
+        public bool CleanTarget { get; set; }
 
         bool launchBrowser;
         [DefaultValue(true)]
@@ -86,7 +88,7 @@ namespace Pretzel.Logic.Commands
 
             if (firstArgument != null && !firstArgument.StartsWith("-") && !firstArgument.StartsWith("/"))
             {
-                Path = System.IO.Path.IsPathRooted(firstArgument) 
+                Path = System.IO.Path.IsPathRooted(firstArgument)
                     ? firstArgument
                     : System.IO.Path.Combine(Directory.GetCurrentDirectory(), firstArgument);
             }
@@ -123,7 +125,7 @@ namespace Pretzel.Logic.Commands
             Settings.WriteOptionDescriptions(textWriter);
             var output = textWriter.ToString();
 
-            var strings = RecombineMultilineArgs(output.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries));
+            var strings = RecombineMultilineArgs(output.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries));
 
             foreach (var line in strings)
             {
@@ -138,7 +140,7 @@ namespace Pretzel.Logic.Commands
         {
             for (int i = 0; i < split.Length; i++)
             {
-                if (i + 1 < split.Length && !split[i+1].TrimStart().StartsWith("-"))
+                if (i + 1 < split.Length && !split[i + 1].TrimStart().StartsWith("-"))
                 {
                     yield return split[i] + "\r\n" + split[i + 1];
                     i++;

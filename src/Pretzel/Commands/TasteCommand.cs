@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Diagnostics;
-using System.IO;
-using Pretzel.Logic.Commands;
+﻿using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Modules;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.IO;
+using System.IO.Abstractions;
 
 namespace Pretzel.Commands
 {
@@ -21,7 +22,9 @@ namespace Pretzel.Commands
         [Import] TemplateEngineCollection templateEngines;
         [Import] SiteContextGenerator Generator { get; set; }
         [Import] CommandParameters parameters;
-        [ImportMany] private IEnumerable<ITransform> transforms;
+        [ImportMany]
+        private IEnumerable<ITransform> transforms;
+        [Import] IFileSystem FileSystem;
 #pragma warning restore 649
 
         public void Execute(IEnumerable<string> arguments)
@@ -31,6 +34,12 @@ namespace Pretzel.Commands
             parameters.Parse(arguments);
 
             var context = Generator.BuildContext(parameters.Path, parameters.IncludeDrafts);
+
+            if (parameters.CleanTarget)
+            {
+                FileSystem.Directory.Delete(context.OutputFolder, true);
+            }
+
             if (string.IsNullOrWhiteSpace(parameters.Template))
             {
                 parameters.DetectFromDirectory(templateEngines.Engines, context);
@@ -97,12 +106,16 @@ namespace Pretzel.Commands
             Tracing.Info(string.Format("File change: {0}", file));
 
             var context = Generator.BuildContext(parameters.Path, parameters.IncludeDrafts);
+            if (parameters.CleanTarget)
+            {
+                FileSystem.Directory.Delete(context.OutputFolder, true);
+            }
             engine.Process(context, true);
         }
 
         public void WriteHelp(TextWriter writer)
         {
-            parameters.WriteOptions(writer, "-t", "-d", "-p", "--nobrowser");
+            parameters.WriteOptions(writer, "-t", "-d", "-p", "--nobrowser", "-cleantarget");
         }
     }
 }

@@ -35,6 +35,7 @@ namespace Pretzel.Tests
             Assert.True(output.Contains("--import="));
             Assert.True(output.Contains("-f"));
             Assert.True(output.Contains("--file="));
+            Assert.True(output.Contains("--cleantarget"));
         }
 
         [Fact]
