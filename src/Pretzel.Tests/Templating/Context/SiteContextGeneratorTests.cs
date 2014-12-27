@@ -334,5 +334,58 @@ title: Title
 
             Assert.Equal(expectedDate, actualDate);
         }
+
+        [Fact]
+        public void site_context_generator_processes_page_markdown_mkd()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.mkd", new MockFileData(ToPageContent("# Title")));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            // assert
+            Assert.Equal("<h1>Title</h1>", siteContext.Posts[0].Content.Trim());
+        }
+
+        [Fact]
+        public void site_context_generator_processes_page_markdown_mkdn()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.mkdn", new MockFileData(ToPageContent("# Title")));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            // assert
+            Assert.Equal("<h1>Title</h1>", siteContext.Posts[0].Content.Trim());
+        }
+
+        [Fact]
+        public void site_context_generator_processes_page_markdown_mdown()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.mdown", new MockFileData(ToPageContent("# Title")));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            // assert
+            Assert.Equal("<h1>Title</h1>", siteContext.Posts[0].Content.Trim());
+        }
+
+        [Fact]
+        public void site_context_generator_processes_page_markdown_markdown()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.markdown", new MockFileData(ToPageContent("# Title")));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            // assert
+            Assert.Equal("<h1>Title</h1>", siteContext.Posts[0].Content.Trim());
+        }
+
     }
 }

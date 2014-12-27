@@ -5,7 +5,7 @@ namespace Pretzel.Logic.Templating.Context
 {
     public static class PathExtensions
     {
-        private static readonly string[] MarkdownFiles = new[] { ".md", ".mdown", ".markdown" };
+        private static readonly string[] MarkdownFiles = new[] { ".md", ".mkd", ".mkdn", ".mdown", ".markdown" };
         private static readonly string[] ImageFiles = new[] { ".png", ".gif", ".jpg" };
 
         public static bool IsMarkdownFile(this string extension)
