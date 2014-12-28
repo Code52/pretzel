@@ -387,5 +387,124 @@ title: Title
             Assert.Equal("<h1>Title</h1>", siteContext.Posts[0].Content.Trim());
         }
 
+        [Fact]
+        public void CanBeIncluded_Scenarios_AreWorking()
+        {
+            Func<string, bool> function = generator.CanBeIncluded;
+
+            // underscores are ignored
+            Assert.True(function("folder"));
+            Assert.False(function("_folder"));
+
+            // .htaccess is included
+            Assert.True(function(".htaccess"));
+            Assert.False(function(".something-else"));
+
+            // temp files are ignored
+            Assert.False(function("some-file.tmp"));
+            Assert.False(function("some-file.TMP"));
+            Assert.True(function("another-file.bar"));
+
+            // and these ones are causing me headaches in Sublime
+            Assert.False(function(@"docs\pages\features\.a4agat3qqt3.tmp"));
+        }
+
+        [Fact]
+        public void CanBeIncluded_Scenarios_Include()
+        {
+            // arrange
+            Func<string, bool> function = generator.CanBeIncluded;
+            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
+pretzel: 
+  include: [_folder, .something-else, some-file.tmp, test\somefile.txt, subfolder\childfolder, anotherfolder\tempfile.tmp]
+---"));
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            // assert
+            Assert.True(function("folder"));
+            Assert.True(function("_folder"));
+
+            // .htaccess is included
+            Assert.True(function(".htaccess"));
+            Assert.True(function(".something-else"));
+
+            // temp files specified are included
+            Assert.True(function("some-file.tmp"));
+            Assert.False(function("some-file.TMP"));
+            Assert.True(function("another-file.bar"));
+
+            Assert.True(function(@"test\somefile.txt"));
+            Assert.True(function(@"subfolder\childfolder"));
+            Assert.True(function(@"anotherfolder\tempfile.tmp"));
+        }
+
+        [Fact]
+        public void CanBeIncluded_Scenarios_Exclude()
+        {
+            // arrange
+            Func<string, bool> function = generator.CanBeIncluded;
+            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
+pretzel: 
+  exclude: [folder, .htaccess, some-file.tmp, test\somefile.txt, subfolder\childfolder, anotherfolder\tempfile.tmp]
+---"));
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            // assert
+            Assert.False(function("folder"));
+            Assert.False(function("_folder"));
+
+            // .htaccess is excluded
+            Assert.False(function(".htaccess"));
+            Assert.False(function(".something-else"));
+
+            // temp files are ignored
+            Assert.False(function("some-file.tmp"));
+            Assert.False(function("some-file.TMP"));
+            Assert.True(function("another-file.bar"));
+
+            Assert.False(function(@"test\somefile.txt"));
+            Assert.False(function(@"subfolder\childfolder"));
+            Assert.False(function(@"anotherfolder\tempfile.tmp"));
+        }
+
+        [Fact]
+        public void CanBeIncluded_Scenarios_IncludeExclude()
+        {
+            // arrange
+            Func<string, bool> function = generator.CanBeIncluded;
+            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
+pretzel: 
+  include: [_folder, .something-else]
+  exclude: [folder, test\somefile.txt]
+---"));
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            // underscores are ignored
+            Assert.False(function("folder"));
+            Assert.True(function("_folder"));
+            Assert.True(function("somefolder"));
+            Assert.False(function("_somefolder"));
+
+            // .htaccess is included
+            Assert.True(function(".htaccess"));
+            Assert.True(function(".something-else"));
+            Assert.False(function(".pointedfile"));
+
+            // temp files are ignored
+            Assert.False(function("some-file.tmp"));
+            Assert.False(function("some-file.TMP"));
+            Assert.True(function("another-file.bar"));
+
+            // and these ones are causing me headaches in Sublime
+            Assert.False(function(@"docs\pages\features\.a4agat3qqt3.tmp"));
+
+            Assert.False(function(@"test\somefile.txt"));
+            Assert.True(function(@"subfolder\childfolder"));
+            Assert.False(function(@"anotherfolder\tempfile.tmp"));
+            Assert.True(function(@"anotherfolder\textfile.txt"));
+        }
     }
 }

@@ -21,6 +21,8 @@ namespace Pretzel.Logic.Templating.Context
         static readonly Markdown Markdown = new Markdown();
         readonly IFileSystem fileSystem;
         readonly IEnumerable<IContentTransform> contentTransformers;
+        readonly List<string> includes = new List<string>();
+        readonly List<string> excludes = new List<string>();
 
         [ImportingConstructor]
         public SiteContextGenerator(IFileSystem fileSystem, [ImportMany]IEnumerable<IContentTransform> contentTransformers)
@@ -40,6 +42,22 @@ namespace Pretzel.Logic.Templating.Context
 
                 if (!config.ContainsKey("permalink"))
                     config.Add("permalink", "/:year/:month/:day/:title.html");
+
+                if (config.ContainsKey("pretzel"))
+                {
+                    var pretzelSettings = config["pretzel"] as Dictionary<string, object>;
+                    if (pretzelSettings != null)
+                    {
+                        if (pretzelSettings.ContainsKey("include") && includes.Count == 0)
+                        {
+                            includes.AddRange((IEnumerable<string>)pretzelSettings["include"]);
+                        }
+                        if (pretzelSettings.ContainsKey("exclude") && excludes.Count == 0)
+                        {
+                            excludes.AddRange((IEnumerable<string>)pretzelSettings["exclude"]);
+                        }
+                    }
+                }
 
                 var context = new SiteContext
                 {
@@ -69,7 +87,7 @@ namespace Pretzel.Logic.Templating.Context
         {
             var files = from file in fileSystem.Directory.GetFiles(context.SourceFolder, "*.*", SearchOption.AllDirectories)
                         let relativePath = MapToOutputPath(context, file)
-                        where !IsSpecialPath(relativePath)
+                        where CanBeIncluded(relativePath)
                         select file;
 
             foreach (var file in files)
@@ -137,7 +155,7 @@ namespace Pretzel.Logic.Templating.Context
                         }
                         else
                         {
-                            tags.Add(tagName, new List<Page> {post});
+                            tags.Add(tagName, new List<Page> { post });
                         }
                     }
                 }
@@ -154,13 +172,13 @@ namespace Pretzel.Logic.Templating.Context
                         {
                             categories.Add(catName, new List<Page> { post });
                         }
-                    }  
+                    }
                 }
-                
+
             }
 
             context.Tags = tags.Select(x => new Tag { Name = x.Key, Posts = x.Value }).OrderBy(x => x.Name).ToList();
-            context.Categories = categories.Select(x => new Category { Name = x.Key, Posts = x.Value }).OrderBy(x=>x.Name).ToList();
+            context.Categories = categories.Select(x => new Category { Name = x.Key, Posts = x.Value }).OrderBy(x => x.Name).ToList();
         }
 
         private bool ContainsYamlFrontMatter(string file)
@@ -170,10 +188,25 @@ namespace Pretzel.Logic.Templating.Context
             return postFirstLine != null && postFirstLine.StartsWith("---");
         }
 
+        public bool CanBeIncluded(string relativePath)
+        {
+            if (excludes.Count > 0 && excludes.Contains(relativePath))
+            {
+                return false;
+            }
+            
+            if (includes.Count > 0 && includes.Contains(relativePath))
+            {
+                return true;
+            }
+
+            return !IsSpecialPath(relativePath);
+        }
+
         public static bool IsSpecialPath(string relativePath)
         {
-            return relativePath.StartsWith("_") 
-                    || (relativePath.StartsWith(".") && relativePath != ".htaccess") 
+            return relativePath.StartsWith("_")
+                    || (relativePath.StartsWith(".") && relativePath != ".htaccess")
                     || relativePath.EndsWith(".TMP", StringComparison.OrdinalIgnoreCase);
         }
 
@@ -200,7 +233,7 @@ namespace Pretzel.Logic.Templating.Context
                                     File = file,
                                     Bag = header,
                                 };
-                
+
                 // resolve categories and tags
                 if (isPost)
                 {
@@ -220,7 +253,7 @@ namespace Pretzel.Logic.Templating.Context
                     page.Url = EvaluateLink(context, page);
 
                 // ensure the date is accessible in the hash
-                if(!page.Bag.ContainsKey("date")) 
+                if (!page.Bag.ContainsKey("date"))
                 {
                     page.Bag["date"] = page.Date;
                 }
@@ -252,7 +285,7 @@ namespace Pretzel.Logic.Templating.Context
             var relativePath = directory.Replace(context.OutputFolder, string.Empty);
             var fileExtension = Path.GetExtension(page.Filepath);
 
-            var htmlExtensions = new[] {".markdown", ".mdown", ".mkdn", ".mkd", ".md", ".textile"};
+            var htmlExtensions = new[] { ".markdown", ".mdown", ".mkdn", ".mkd", ".md", ".textile" };
 
             if (htmlExtensions.Contains(fileExtension, StringComparer.InvariantCultureIgnoreCase))
                 fileExtension = ".html";
@@ -408,7 +441,7 @@ namespace Pretzel.Logic.Templating.Context
         }
         private string GetPageTitle(string file)
         {
-			  return Path.GetFileNameWithoutExtension(file);
+            return Path.GetFileNameWithoutExtension(file);
         }
     }
 }
