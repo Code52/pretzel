@@ -31,7 +31,7 @@ namespace Pretzel.Commands
 
             var siteContext = Generator.BuildContext(parameters.Path, parameters.IncludeDrafts);
 
-            if(parameters.CleanTarget)
+            if (parameters.CleanTarget && FileSystem.Directory.Exists(siteContext.OutputFolder))
             {
                 FileSystem.Directory.Delete(siteContext.OutputFolder, true);
             }

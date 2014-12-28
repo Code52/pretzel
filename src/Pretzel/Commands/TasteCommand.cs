@@ -35,7 +35,7 @@ namespace Pretzel.Commands
 
             var context = Generator.BuildContext(parameters.Path, parameters.IncludeDrafts);
 
-            if (parameters.CleanTarget)
+            if (parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
                 FileSystem.Directory.Delete(context.OutputFolder, true);
             }
@@ -106,7 +106,7 @@ namespace Pretzel.Commands
             Tracing.Info(string.Format("File change: {0}", file));
 
             var context = Generator.BuildContext(parameters.Path, parameters.IncludeDrafts);
-            if (parameters.CleanTarget)
+            if (parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
                 FileSystem.Directory.Delete(context.OutputFolder, true);
             }
