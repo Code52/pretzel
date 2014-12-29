@@ -41,7 +41,10 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
             var x = Hash.FromDictionary(context.Config);
             x["posts"] = Posts;
             x["pages"] = context.Pages;
-            x["title"] = context.Title;
+            if (string.IsNullOrWhiteSpace((string)x["title"]))
+            {
+                x["title"] = context.Title;
+            }
             x["tags"] = context.Tags;
             x["categories"] = context.Categories;
             x["time"] = Time;
