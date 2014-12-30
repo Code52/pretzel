@@ -315,7 +315,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             readonly SiteContext context = new SiteContext { SourceFolder = Folder, Title = "My Web Site" };
             readonly string expectedfileContents = PageContents.Replace(@"{{ page.title }}", "My Web Site");
             const string Folder = @"C:\website";
-            
+
             public override LiquidEngine Given()
             {
                 context.Pages.Add(new Page
@@ -340,18 +340,16 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
         }
 
-        // TODO: tests should live in SiteContextGenerator
-
-        public class When_A_Template_Also_Has_A_Layout_Value : BakingEnvironment<SiteContextGenerator>
+        public class When_A_Template_Also_Has_A_Layout_Value : BakingEnvironment<LiquidEngine>
         {
             const string ParentTemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
             const string InnerTemplateContents = "---\r\n layout: parent\r\n---\r\n\r\n<h1>Title</h1>{{content}}";
             const string PageContents = "---\r\n layout: inner\r\n---\r\n\r\n## Hello World!";
             const string ExpectedfileContents = "<html><head><title>My Web Site</title></head><body><h1>Title</h1><h2>Hello World!</h2></body></html>";
 
-            public override SiteContextGenerator Given()
+            public override LiquidEngine Given()
             {
-                return new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                return new LiquidEngine();
             }
 
             public override void When()
@@ -360,10 +358,14 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_layouts\inner.html", new MockFileData(InnerTemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
 
-                Subject.BuildContext(@"C:\website\", false);
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                context.Title = "My Web Site";
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
             }
 
-            // [Fact]
+            [Fact]
             public void The_File_Is_Applies_Data_To_The_Template()
             {
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
@@ -389,12 +391,14 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\file.txt", new MockFileData(PageContents));
-                var context = new SiteContext { SourceFolder = @"C:\website\", Title = "My Web Site" };
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                context.Title = "My Web Site";
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
             }
 
-            // [Fact]
+            [Fact]
             public void The_Yaml_Matter_Should_Be_Cleared()
             {
                 Assert.Equal("", FileSystem.File.ReadAllText(@"C:\website\_site\file.txt"));
@@ -414,12 +418,14 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var context = new SiteContext { SourceFolder = @"C:\website\", Title = "My Web Site" };
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                context.Title = "My Web Site";
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
             }
 
-            // [Fact]
+            [Fact]
             public void The_File_Should_Be_At_A_Different_Path()
             {
                 Assert.True(FileSystem.File.Exists(@"C:\website\_site\somepage.html"));
@@ -441,45 +447,119 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var context = new SiteContext { SourceFolder = @"C:\website\", Title = "My Web Site" };
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                context.Title = "My Web Site";
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
             }
 
-            // [Fact]
+            [Fact]
             public void The_Output_Should_Override_The_Site_Title()
             {
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
             }
         }
 
-       public class Givet_Page_Use_Filter : BakingEnvironment<LiquidEngine>
-       {
-          const string TemplateContents = "<html><body>{{ '.NET C#' | slugify}}</body></html>";
-          const string PageContents = "---\r\n layout: default \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
-          const string ExpectedfileContents = "<html><body>net-csharp</body></html>";
+        public class Given_Page_Use_Filter : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><body>{{ '.NET C#' | slugify}}</body></html>";
+            const string PageContents = "---\r\n layout: default \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
+            const string ExpectedfileContents = "<html><body>net-csharp</body></html>";
 
-          public override LiquidEngine Given()
-          {
-             return new LiquidEngine {Filters = new IFilter[] {new SlugifyFilter()}};
-          }
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine { Filters = new IFilter[] { new SlugifyFilter() } };
+            }
 
-          public override void When()
-          {
-             FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
-             FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
 
-             var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
-             var context = generator.BuildContext(@"C:\website\", false);
-             Subject.FileSystem = FileSystem;
-             Subject.Process(context);
-          }
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
 
-          [Fact]
-          public void The_Output_Should_Be_Slugified()
-          {
-             Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
-          }
-       }
+            [Fact]
+            public void The_Output_Should_Be_Slugified()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Config_File_Has_A_Title : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents_1 = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            const string TemplateContents_2 = "<html><head><title>{{ site.title }}</title></head><body>{{ content }}</body></html>";
+            const string PageContents_1 = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!";
+            const string PageContents_2 = "---\r\n layout: default2 \r\n---\r\n\r\n## Hello World!";
+            const string ConfigContents = "---\r\n title: A different title\r\n---";
+            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_config.yml", new MockFileData(ConfigContents));
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents_1));
+                FileSystem.AddFile(@"C:\website\_layouts\default2.html", new MockFileData(TemplateContents_2));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents_1));
+                FileSystem.AddFile(@"C:\website\index2.md", new MockFileData(PageContents_2));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                context.Title = "My Web Site";
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Override_The_Page_Title()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void The_Output_Should_Override_The_Site_Title()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index2.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Config_File_Has_A_Title_And_Context_Has_No_Title : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><head><title>{{ site.title }}</title></head><body>{{ content }}</body></html>";
+            const string PageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!";
+            const string ConfigContents = "---\r\n title: A different title\r\n---";
+            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_config.yml", new MockFileData(ConfigContents));
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Use_The_Site_Title_From_Config()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
     }
 }
