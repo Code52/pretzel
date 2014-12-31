@@ -252,6 +252,9 @@ namespace Pretzel.Logic.Templating.Context
                 else
                     page.Url = EvaluateLink(context, page);
 
+                // resolve id
+                page.Id = page.Url.Replace(".html", string.Empty).Replace("index", string.Empty);
+
                 // ensure the date is accessible in the hash
                 if (!page.Bag.ContainsKey("date"))
                 {
