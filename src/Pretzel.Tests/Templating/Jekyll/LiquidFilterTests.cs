@@ -1,6 +1,6 @@
-﻿using System;
-using System.Web;
-using Pretzel.Logic.Liquid;
+﻿using Pretzel.Logic.Liquid;
+using System;
+using System.Xml;
 using Xunit;
 
 namespace Pretzel.Tests.Templating.Jekyll
@@ -10,7 +10,9 @@ namespace Pretzel.Tests.Templating.Jekyll
         [Fact]
         public void DateToXmlSchema_ForExpectedDate_ReturnsCorrectString()
         {
-            Assert.Equal("2014-01-01T01:00:00+01:00", DateToXmlSchemaFilter.date_to_xmlschema(new DateTime(2014, 1, 1, 0, 0, 0, DateTimeKind.Utc)));
+            // "2014-01-01T01:00:00+01:00"
+            var date = new DateTime(2014, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            Assert.Equal(XmlConvert.ToString(date, XmlDateTimeSerializationMode.Local), DateToXmlSchemaFilter.date_to_xmlschema(date));
         }
 
         [Fact]
