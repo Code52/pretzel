@@ -1,3 +1,4 @@
+[![TeamCity build status](http://teamcity.ginnivan.net/app/rest/builds/buildType:(id:bt52)/statusIcon)](http://teamcity.ginnivan.net/viewType.html?buildTypeId=bt52&guest=1)
 ## Pretzel
 
 A simple, pluggable site generation tool for .NET developers and Windows users (with Mono support planned I think)
