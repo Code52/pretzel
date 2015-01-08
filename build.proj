@@ -1,4 +1,4 @@
-<Project ToolsVersion="4.0" DefaultTargets="Test;Chocolatey" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Test;Chocolatey;MSI" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!-- TODO: mono build -->
   <!-- TODO: package step to merge code into one binary -->
@@ -23,11 +23,31 @@
       <Output TaskParameter="CommitHash" PropertyName="GitCommitHash" />
     </GitVersion>
 
-    <AssemblyInfo CodeLanguage="CS" 
+    <AssemblyInfo CodeLanguage="CS"
                   OutputFile="$(SourceDir)\Pretzel\Properties\AssemblyInfo.cs"
-                  AssemblyCopyright="Copyright © Code52 2013" 
-                  ComVisible="false" 
-                  AssemblyInformationalVersion="Built from hash '$(GitCommitHash)'" />
+                  AssemblyTitle="Pretzel"
+                  AssemblyDescription="A simple static site generator for Windows"
+                  AssemblyCompany="Code52"
+                  AssemblyProduct="Pretzel"
+                  AssemblyCopyright="Copyright © Code52 2013"
+                  ComVisible="false"
+                  AssemblyInformationalVersion="Built from hash '$(GitCommitHash)'"
+                  Guid="3c5a833b-daac-49ef-bba8-1000cd0e3c4f"
+                  AssemblyVersion="$(Version)"
+                  AssemblyFileVersion="$(Version)" />
+    
+    <AssemblyInfo CodeLanguage="CS"
+                  OutputFile="$(SourceDir)\Pretzel.Logic\Properties\AssemblyInfo.cs"
+                  AssemblyTitle="Pretzel.Logic"
+                  AssemblyDescription="A simple static site generator for Windows"
+                  AssemblyCompany="Code52"
+                  AssemblyProduct="Pretzel.Logic"
+                  AssemblyCopyright="Copyright © Code52 2013"
+                  ComVisible="false"
+                  AssemblyInformationalVersion="Built from hash '$(GitCommitHash)'"
+                  Guid="0d958789-078b-4ec7-8491-2850070bf340"
+                  AssemblyVersion="$(Version)"
+                  AssemblyFileVersion="$(Version)" />
 
     <Message Text="Building version $(Version) from hash $(GitCommitHash)"  Importance="High" />
 
@@ -92,5 +112,23 @@
 
     <Message Text="=========== Package Done ===========" Importance="High" />
   </Target>
+  
+  <Target Name="MSI">
+    
+    <Message Text="=========== MSI ===========" Importance="High" />
+    
+    <ItemGroup>
+      <Candle Include="$(MSBuildProjectDirectory)\tools\wix\candle.exe" />
+	    <Light Include="$(MSBuildProjectDirectory)\tools\wix\light.exe" />
+    </ItemGroup>
 
+    <MakeDir Directories="$(MSBuildProjectDirectory)\build\wix" />
+  
+    <Exec Command='"@(Candle)" -nologo -wx -dbin="$(SourceDir)\Pretzel\bin\$(Configuration)" -out "$(MSBuildProjectDirectory)\build\wix\build.wixobj" "$(MSBuildProjectDirectory)\build.wxs"' />
+    
+    <Exec Command='"@(Light)" -nologo -wx -ext WixUIExtension -out "$(MSBuildProjectDirectory)\artifacts\Code42 Pretzel v$(Version).msi" -pdbout "$(MSBuildProjectDirectory)\build\wix\build.wixpdb" "$(MSBuildProjectDirectory)\build\wix\build.wixobj"' />
+    
+    <Message Text="=========== MSI Done ===========" Importance="High" />
+  </Target>
+  
 </Project>

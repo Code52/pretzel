@@ -16,6 +16,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5F558191-21D9-40C6-9173-C416DCEFDA21}"
 	ProjectSection(SolutionItems) = preProject
 		..\build.proj = ..\build.proj
+		..\build.wxs = ..\build.wxs
 	EndProjectSection
 EndProject
 Global
