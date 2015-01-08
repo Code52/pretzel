@@ -84,6 +84,12 @@ namespace Pretzel.Logic.Extensions
                 return listResults;
             }
 
+            bool valueBool;
+            if (bool.TryParse(value.ToString(), out valueBool))
+            {
+                return valueBool;
+            }
+
             return value.ToString();
         }
 
