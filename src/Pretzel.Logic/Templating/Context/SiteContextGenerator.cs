@@ -395,6 +395,13 @@ namespace Pretzel.Logic.Templating.Context
             permalink = permalink.Replace(":day", page.Date.ToString("dd"));
             permalink = permalink.Replace(":title", GetTitle(page.File));
 
+            if (page.Categories.Any())
+            {
+                permalink = permalink.Replace(":category1", page.Categories.FirstOrDefault());
+                permalink = permalink.Replace(":category2", page.Categories.Skip(1).FirstOrDefault());
+                permalink = permalink.Replace(":category3", page.Categories.Skip(2).FirstOrDefault());
+            }
+
             permalink = permalink.Replace("//", "/");
 
             return permalink;
