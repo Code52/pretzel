@@ -524,5 +524,22 @@ categories: [cat1, cat2]
 
             Assert.Equal(outputPath, firstPost.Url);
         }
+
+        [Fact]
+        public void permalink_with_numbered_category_without_categories()
+        {
+            fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData(@"---
+permalink: /blog/:category2/:category1/:category3/:category42/index.html
+---# Title"));
+
+            var outputPath = "/blog/index.html";
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            var firstPost = siteContext.Posts.First();
+
+            Assert.Equal(outputPath, firstPost.Url);
+        }
     }
 }
