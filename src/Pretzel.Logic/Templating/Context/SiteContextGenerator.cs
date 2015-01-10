@@ -399,7 +399,7 @@ namespace Pretzel.Logic.Templating.Context
             permalink = permalink.Replace(":day", page.Date.ToString("dd"));
             permalink = permalink.Replace(":title", GetTitle(page.File));
 
-            if (permalink.Contains(":category") && page.Categories.Any())
+            if (permalink.Contains(":category"))
             {
                 var matches = categoryRegex.Matches(permalink);
                 if (matches != null && matches.Count > 0)
