@@ -506,5 +506,23 @@ pretzel:
             Assert.False(function(@"anotherfolder\tempfile.tmp"));
             Assert.True(function(@"anotherfolder\textfile.txt"));
         }
+
+        [Fact]
+        public void permalink_with_numbered_category()
+        {
+            fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData(@"---
+permalink: /blog/:category2/:category1/:category3/:category42/index.html
+categories: [cat1, cat2]
+---# Title"));
+
+            var outputPath = "/blog/cat2/cat1/index.html";
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            var firstPost = siteContext.Posts.First();
+
+            Assert.Equal(outputPath, firstPost.Url);
+        }
     }
 }

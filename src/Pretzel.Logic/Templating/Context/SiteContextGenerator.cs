@@ -17,6 +17,10 @@ namespace Pretzel.Logic.Templating.Context
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class SiteContextGenerator
     {
+        private static readonly Regex categoryRegex = new Regex(@":category(\d*)", RegexOptions.Compiled);
+        private static readonly Regex slashesRegex = new Regex(@"/{1,}", RegexOptions.Compiled);
+
+
         readonly Dictionary<string, Page> pageCache = new Dictionary<string, Page>();
         static readonly Markdown Markdown = new Markdown();
         readonly IFileSystem fileSystem;
@@ -395,14 +399,27 @@ namespace Pretzel.Logic.Templating.Context
             permalink = permalink.Replace(":day", page.Date.ToString("dd"));
             permalink = permalink.Replace(":title", GetTitle(page.File));
 
-            if (page.Categories.Any())
+            if (permalink.Contains(":category") && page.Categories.Any())
             {
-                permalink = permalink.Replace(":category1", page.Categories.FirstOrDefault());
-                permalink = permalink.Replace(":category2", page.Categories.Skip(1).FirstOrDefault());
-                permalink = permalink.Replace(":category3", page.Categories.Skip(2).FirstOrDefault());
+                var matches = categoryRegex.Matches(permalink);
+                if (matches != null && matches.Count > 0)
+                {
+                    foreach (Match match in matches)
+                    {
+                        var replacementValue = string.Empty;
+                        int categoryIndex;
+                        if (match.Success && int.TryParse(match.Groups[1].Value, out categoryIndex) && categoryIndex > 0)
+                        {
+                            replacementValue = page.Categories.Skip(categoryIndex- 1).FirstOrDefault();
+                        }
+
+                        permalink = permalink.Replace(match.Value, replacementValue);
+                    }
+                }
             }
 
-            permalink = permalink.Replace("//", "/");
+
+            permalink = slashesRegex.Replace(permalink, "/");
 
             return permalink;
         }
