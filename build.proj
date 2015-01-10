@@ -13,6 +13,7 @@
     <Version Condition=" '$(Version)' == '' ">0.0.0.1</Version>
     <ArtifactsDir>$(MSBuildProjectDirectory)\artifacts\</ArtifactsDir>
     <SourceDir>$(MSBuildProjectDirectory)\src\</SourceDir>
+	<CurrentYear>$([System.DateTime]::Now.ToString(yyyy))</CurrentYear>
   </PropertyGroup>
 
   <UsingTask AssemblyFile=".\tools\xunit\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
@@ -25,7 +26,7 @@
 
     <AssemblyInfo CodeLanguage="CS" 
                   OutputFile="$(SourceDir)\Pretzel\Properties\AssemblyInfo.cs"
-                  AssemblyCopyright="Copyright © Code52 2013" 
+                  AssemblyCopyright="Copyright © Code52 '$(CurrentYear)'" 
                   ComVisible="false" 
                   AssemblyInformationalVersion="Built from hash '$(GitCommitHash)'" />
 
