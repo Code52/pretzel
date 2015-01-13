@@ -37,7 +37,7 @@
 
   <Target Name="Compile">
 	<ItemGroup>
-		<TestsDll Include="$(MSBuildProjectDirectory)\**\bin\$(Configuration)\*Tests.dll" />
+		<TestsDll Include="$(MSBuildProjectDirectory)\**\bin\$(Configuration)\*.dll" />
 	</ItemGroup>
   
     <Message Text="=========== Compile ===========" Importance="High" />
