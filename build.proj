@@ -12,6 +12,7 @@
     <!-- dev config -->
     <Version Condition=" '$(Version)' == '' ">0.0.0.1</Version>
     <ArtifactsDir>$(MSBuildProjectDirectory)\artifacts\</ArtifactsDir>
+    <TestsDir>$(MSBuildProjectDirectory)\tests\</TestsDir>
     <SourceDir>$(MSBuildProjectDirectory)\src\</SourceDir>
 	<CurrentYear>$([System.DateTime]::Now.ToString(yyyy))</CurrentYear>
   </PropertyGroup>
@@ -35,6 +36,10 @@
   </Target>
 
   <Target Name="Compile">
+	<ItemGroup>
+		<TestsDll Include="$(MSBuildProjectDirectory)\**\bin\$(Configuration)\*Tests.dll" />
+	</ItemGroup>
+  
     <Message Text="=========== Compile ===========" Importance="High" />
     
     <MSBuild Projects="$(SourceDir)\Pretzel.sln" Properties="Configuration=$(Configuration)" Targets="Rebuild" />
@@ -43,9 +48,13 @@
 
     <Copy SourceFiles="$(SourceDir)\Pretzel\bin\$(Configuration)\Pretzel.exe"
           DestinationFolder="$(ArtifactsDir)" />
-
+	
+    <Copy SourceFiles="@(TestsDll)"
+          DestinationFolder="$(TestsDir)" />
+	
     <Message Text="=========== Compile Done ===========" Importance="High" />
     <Message Text="Pretzel.exe is available at $(ArtifactsDir)" Importance="High"  />
+    <Message Text="All tests are available at $(TestsDir)" Importance="High"  />
 
   </Target>
 

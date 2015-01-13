@@ -17,7 +17,7 @@ _ReSharper.*
 deploy-to-ec2*
 TestResults/
 build/
-
+tests/
 
 CommonAssemblyInfo.cs
 Thumbs.db
