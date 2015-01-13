@@ -38,6 +38,7 @@
   <Target Name="Compile">
 	<ItemGroup>
 		<TestsDll Include="$(MSBuildProjectDirectory)\**\bin\$(Configuration)\*.dll" />
+		<DataDir Include="$(MSBuildProjectDirectory)\**\bin\$(Configuration)\data\*.*" />
 	</ItemGroup>
   
     <Message Text="=========== Compile ===========" Importance="High" />
@@ -52,6 +53,9 @@
     <Copy SourceFiles="@(TestsDll)"
           DestinationFolder="$(TestsDir)" />
 	
+    <Copy SourceFiles="@(DataDir)"
+          DestinationFolder="$(TestsDir)\data" />
+		  
     <Message Text="=========== Compile Done ===========" Importance="High" />
     <Message Text="Pretzel.exe is available at $(ArtifactsDir)" Importance="High"  />
     <Message Text="All tests are available at $(TestsDir)" Importance="High"  />
