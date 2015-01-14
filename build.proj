@@ -46,6 +46,7 @@
     <MSBuild Projects="$(SourceDir)\Pretzel.sln" Properties="Configuration=$(Configuration)" Targets="Rebuild" />
 
     <MakeDir Directories="$(ArtifactsDir)" />
+	<RemoveDir Directories="$(TestsDir)" />
 
     <Copy SourceFiles="$(SourceDir)\Pretzel\bin\$(Configuration)\Pretzel.exe"
           DestinationFolder="$(ArtifactsDir)" />
