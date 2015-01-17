@@ -100,6 +100,27 @@ This is a test of YAML parsing
                 Assert.Equal("alsotest", tags[1]);
                 Assert.Equal("lasttest", tags[2]);
             }
+
+            [Fact]
+            public void YamlHeader_WithSampleData_HandleBoolean()
+            {
+                const string header = @"---
+                        active: true
+                        comments: false
+                        other: 'true'
+                        ---
+            
+                        ##Test
+            
+                        This is a test of YAML parsing";
+
+                var result = header.YamlHeader();
+
+                Assert.True((bool)result["active"]);
+                Assert.False((bool)result["comments"]);
+                Assert.Equal("True", result["other"].ToString());
+            }
+
         }
     }
 }
