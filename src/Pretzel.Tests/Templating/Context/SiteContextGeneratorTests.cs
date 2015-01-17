@@ -197,7 +197,7 @@ title: Title
 
             Assert.Equal(4, siteContext.Tags.Count());
             Assert.Equal(1, siteContext.Categories.Count());
-            
+
             var tag1 = siteContext.Tags.First(x => x.Name == "tag1");
             Assert.Equal(1, tag1.Posts.Count());
             Assert.Equal(2, tag1.Posts.First().Tags.Count());
@@ -205,13 +205,13 @@ title: Title
 
             var tag2 = siteContext.Tags.First(x => x.Name == "tag2");
             Assert.Equal(2, tag2.Posts.Count());
-            Assert.NotNull(tag2.Posts.FirstOrDefault(x=>x.File.Contains("File1")));
-            Assert.NotNull(tag2.Posts.FirstOrDefault(x=>x.File.Contains("File2")));
-            
+            Assert.NotNull(tag2.Posts.FirstOrDefault(x => x.File.Contains("File1")));
+            Assert.NotNull(tag2.Posts.FirstOrDefault(x => x.File.Contains("File2")));
+
             var tag3 = siteContext.Tags.First(x => x.Name == "tag3");
             Assert.Equal(1, tag3.Posts.Count());
             Assert.True(tag3.Posts.First().File.Contains("File2"));
-            
+
             var tag4 = siteContext.Tags.First(x => x.Name == "tag4");
             Assert.Equal(1, tag4.Posts.Count());
             Assert.Equal(1, tag4.Posts.First().Tags.Count());
@@ -230,7 +230,7 @@ title: Title
 
             Assert.Equal(4, siteContext.Categories.Count());
             Assert.Equal(1, siteContext.Tags.Count());
-            
+
             var cat1 = siteContext.Categories.First(x => x.Name == "cat1");
             Assert.Equal(1, cat1.Posts.Count());
             Assert.Equal(2, cat1.Posts.First().Categories.Count());
@@ -238,8 +238,8 @@ title: Title
 
             var cat2 = siteContext.Categories.First(x => x.Name == "cat2");
             Assert.Equal(2, cat2.Posts.Count());
-            Assert.NotNull(cat2.Posts.FirstOrDefault(x=>x.File.Contains("File1")));
-            Assert.NotNull(cat2.Posts.FirstOrDefault(x=>x.File.Contains("File2")));
+            Assert.NotNull(cat2.Posts.FirstOrDefault(x => x.File.Contains("File1")));
+            Assert.NotNull(cat2.Posts.FirstOrDefault(x => x.File.Contains("File2")));
 
             var cat3 = siteContext.Categories.First(x => x.Name == "cat3");
             Assert.Equal(1, cat3.Posts.Count());
@@ -284,7 +284,7 @@ title: Title
             // .htaccess is included
             Assert.False(function(".htaccess"));
             Assert.True(function(".something-else"));
-            
+
             // temp files are ignored
             Assert.True(function("some-file.tmp"));
             Assert.True(function("some-file.TMP"));
@@ -311,7 +311,7 @@ title: Title
         [Theory]
         [InlineData(@"C:\TestSite\2014-01-01-ByFilename.md", false)]
         [InlineData(@"C:\TestSite\UsingDefault.md", true)]
-        public void site_context_pages_have_date_in_bag(string fileName, bool useDefault) 
+        public void site_context_pages_have_date_in_bag(string fileName, bool useDefault)
         {
 
             // note - this test does not include the time component.
@@ -540,6 +540,97 @@ permalink: /blog/:category2/:category1/:category3/:category42/index.html
             var firstPost = siteContext.Posts.First();
 
             Assert.Equal(outputPath, firstPost.Url);
+        }
+
+        [Fact]
+        public void site_context_generator_processes_page_id_for_post()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.markdown", new MockFileData(ToPageContent("# Title")));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            // assert
+            Assert.Equal("/2012/01/01/SomeFile", siteContext.Posts[0].Id);
+        }
+
+        [Fact]
+        public void site_context_generator_processes_page_id_for_post_with_categories()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.markdown", new MockFileData(@"---
+categories: [cat1, cat2]
+---
+# Title"));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            // assert
+            Assert.Equal("/2012/01/01/SomeFile", siteContext.Posts[0].Id);
+        }
+
+        [Fact]
+        public void site_context_generator_processes_page_id_for_post_with_categories_and_permalink()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.markdown", new MockFileData(@"---
+categories: [cat1, cat2]
+permalink: /blog/:categories/:year/:month/:day/:title/index.html
+---
+# Title"));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            // assert
+            Assert.Equal("/blog/cat1-cat2/2012/01/01/SomeFile/", siteContext.Posts[0].Id);
+        }
+
+        [Fact]
+        public void site_context_generator_processes_page_id_for_page()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\about.md", new MockFileData(ToPageContent("# Title")));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            // assert
+            Assert.Equal("/about", siteContext.Pages[0].Id);
+        }
+
+        [Fact]
+        public void site_context_generator_processes_page_id_for_page_with_permalink()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\about.md", new MockFileData(@"---
+permalink: /about/
+---
+# Title"));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            // assert
+            Assert.Equal("/about/", siteContext.Pages[0].Id);
+        }
+
+        [Fact]
+        public void site_context_generator_processes_page_id_for_page_with_override()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\about.md", new MockFileData(@"---
+id: my_page_id
+---
+# Title"));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            // assert
+            Assert.Equal("/about", siteContext.Pages[0].Id);
         }
     }
 }

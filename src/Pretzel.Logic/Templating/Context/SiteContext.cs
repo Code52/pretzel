@@ -7,6 +7,7 @@ namespace Pretzel.Logic.Templating.Context
     {
         public IDictionary<string, object> Config;
         private string engine;
+        private string title;
 
         public SiteContext()
         {
@@ -19,7 +20,20 @@ namespace Pretzel.Logic.Templating.Context
 
         public string SourceFolder { get; set; }
         public string OutputFolder { get; set; }
-        public string Title { get; set; }
+
+        public string Title
+        {
+            get
+            {
+                if(Config.Keys.Contains("title"))
+                {
+                    title = Config["title"].ToString();
+                }
+                return title;
+            }
+            set { title = value; }
+        }
+
         public IEnumerable<Tag> Tags { get; set; }
         public IEnumerable<Category> Categories { get; set; }
         public IList<Page> Posts { get; set; }
@@ -31,7 +45,7 @@ namespace Pretzel.Logic.Templating.Context
         public string Engine
         {
             get
-            { 
+            {
                 if (engine == null)
                 {
                     if (!Config.ContainsKey("pretzel"))
@@ -42,7 +56,7 @@ namespace Pretzel.Logic.Templating.Context
 
                     var pretzelSettings = Config["pretzel"] as Dictionary<string, object>;
                     if (pretzelSettings != null && pretzelSettings.ContainsKey("engine"))
-                        engine = (string) pretzelSettings["engine"];
+                        engine = (string)pretzelSettings["engine"];
                     else
                         engine = string.Empty;
                 }
