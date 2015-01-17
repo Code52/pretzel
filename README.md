@@ -1,4 +1,6 @@
-[![TeamCity build status](http://teamcity.ginnivan.net/app/rest/builds/buildType:(id:bt52)/statusIcon)](http://teamcity.ginnivan.net/viewType.html?buildTypeId=bt52&guest=1)
+[![TeamCity build status](http://teamcity.ginnivan.net/app/rest/builds/buildType:(id:bt52)/statusIcon)](http://teamcity.ginnivan.net/viewType.html?buildTypeId=bt52&guest=1)  |  [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/rp8nq03r4b7mdecf?svg=true)](https://ci.appveyor.com/project/laedit/pretzel)
+
+
 ## Pretzel
 
 A simple, pluggable site generation tool for .NET developers and Windows users (with Mono support planned I think)
