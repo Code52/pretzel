@@ -37,6 +37,7 @@ in a template.
 - Improve less compilation
 - Add include and exclude configuration features, like in [Jekyll](http://jekyllrb.com/docs/configuration/#global-configuration)
 - [#189](https://github.com/Code52/pretzel/pull/189): Add support for category in page permalinks by [dkarzon](https://github.com/dkarzon)
+- [#186](https://github.com/Code52/pretzel/pull/186): site.title can be valorized in _config.yaml and page.ig is generated for every posts and pages
 
 ## Fixes
 - Fix issue where transforms aren't processed during taste => fix the .less not compiled during taste for example
