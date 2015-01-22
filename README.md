@@ -36,7 +36,7 @@ To explicitly specify the input - we should support inferring the input based on
 
 **Taste** is for testing a site locally - make a change, and pretzel should handle regenerating the page when a file changes.
 
-To test a site locally (we plan to use [Firefly](https://github.com/loudej/firefly)), run:
+To test a site locally, run:
 
 	pretzel taste 
 
@@ -44,6 +44,7 @@ To specify the port to serve the site from (default will be 4000), run:
 
     pretzel taste --port 5000
 
+To stop the site, press q.
 
 ### Getting started
 
@@ -59,6 +60,10 @@ Once you're familiar with Git and GitHub, clone the repository and run the ```.\
 
 * [Trello Board](https://trello.com/board/pretzel/4f25ffb3dbbed1ab5a4f0f5a) - add ideas, or claim an idea and start working on it!
 * [JabbR Chatroom](http://jabbr.net/#/rooms/code52) - discuss things in real-time with people all over the world!
+
+### Contributing
+
+All PRs are welcome but don't forget the tests with your new shiny feature.
 
 ### Links
 - [ColorCode Fork](https://github.com/csainty/ColorCode) - Switch from inline html to stylesheet approach 
