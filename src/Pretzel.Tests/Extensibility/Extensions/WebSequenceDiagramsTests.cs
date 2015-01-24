@@ -19,7 +19,7 @@ b->a: bar
 <p>world</p>";
 
             const string expected = @"<p>hello</p>
-<div class=""wsd"" wsd_style=""""><pre>a->b: foo
+<div class=""wsd"" wsd_style=""default""><pre>a->b: foo
 b->a: bar
 </pre></div>
 <p>world</p>
@@ -45,14 +45,35 @@ d->c: qak
 <p>woo</p>";
 
             const string expected = @"<p>hello</p>
-<div class=""wsd"" wsd_style=""""><pre>a->b: foo
+<div class=""wsd"" wsd_style=""default""><pre>a->b: foo
 b->a: bar
 </pre></div>
 <p>world</p>
-<div class=""wsd"" wsd_style=""""><pre>c->d: baz
+<div class=""wsd"" wsd_style=""default""><pre>c->d: baz
 d->c: qak
 </pre></div>
 <p>woo</p>
+<script type=""text/javascript"" src=""http://www.websequencediagrams.com/service.js""></script>";
+
+            var markdown = transform.Transform(input);
+            Assert.Equal(expected.RemoveWhiteSpace(), markdown.RemoveWhiteSpace());
+        }
+
+        [Fact]
+        public void Single_block_is_converted_to_diagram_style_mscgen()
+        {
+            const string input = @"<p>hello</p>
+<pre><code>@@sequence mscgen
+a->b: foo
+b->a: bar
+</code></pre>
+<p>world</p>";
+
+            const string expected = @"<p>hello</p>
+<div class=""wsd"" wsd_style=""mscgen""><pre>a->b: foo
+b->a: bar
+</pre></div>
+<p>world</p>
 <script type=""text/javascript"" src=""http://www.websequencediagrams.com/service.js""></script>";
 
             var markdown = transform.Transform(input);
