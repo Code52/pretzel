@@ -61,7 +61,7 @@ namespace Pretzel.Commands
                 t.Transform(context);
             var watcher = new SimpleFileSystemWatcher();
             watcher.OnChange(parameters.Path, WatcherOnChanged);
-
+            // TODO see to replace engine.GetOutputDirectory by context.OutputFolder
             var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider(), Convert.ToInt32(parameters.Port));
             try
             {

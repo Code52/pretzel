@@ -5,21 +5,19 @@ namespace Pretzel.Logic.Templating.Context
 {
     public class SiteContext
     {
-        public IDictionary<string, object> Config;
         private string engine;
         private string title;
 
-        public SiteContext()
-        {
-            Tags = new List<Tag>();
-            Categories = new List<Category>();
-            Posts = new List<Page>();
-            Pages = new List<Page>();
-            Config = new Dictionary<string, object>();
-        }
-
+        public IDictionary<string, object> Config { get; set; }
         public string SourceFolder { get; set; }
         public string OutputFolder { get; set; }
+        public IEnumerable<Tag> Tags { get; set; }
+        public IEnumerable<Category> Categories { get; set; }
+        public IList<Page> Posts { get; set; }
+        public DateTime Time { get; set; }
+        public Boolean UseDrafts { get; set; }
+
+        public List<Page> Pages { get; set; }
 
         public string Title
         {
@@ -33,14 +31,6 @@ namespace Pretzel.Logic.Templating.Context
             }
             set { title = value; }
         }
-
-        public IEnumerable<Tag> Tags { get; set; }
-        public IEnumerable<Category> Categories { get; set; }
-        public IList<Page> Posts { get; set; }
-        public DateTime Time { get; set; }
-        public Boolean UseDrafts { get; set; }
-
-        public List<Page> Pages { get; set; }
 
         public string Engine
         {
@@ -64,5 +54,15 @@ namespace Pretzel.Logic.Templating.Context
                 return engine;
             }
         }
+
+        public SiteContext()
+        {
+            Tags = new List<Tag>();
+            Categories = new List<Category>();
+            Posts = new List<Page>();
+            Pages = new List<Page>();
+            Config = new Dictionary<string, object>();
+        }
+
     }
 }
