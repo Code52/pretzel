@@ -60,6 +60,7 @@ namespace Pretzel.Logic.Templating
             return index >= 1 ? pages[index - 1] : null;
         }
 
+        // TODO factorize with outputDirectory in Process(...)?
         public virtual string GetOutputDirectory(string path)
         {
             return Path.Combine(path, "_site");
