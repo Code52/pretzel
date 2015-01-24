@@ -1,14 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.Composition;
-using System.IO;
-using System.Linq;
 using NDesk.Options;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.IO;
+using System.Linq;
 
 namespace Pretzel.Logic.Commands
 {
@@ -19,21 +18,20 @@ namespace Pretzel.Logic.Commands
         [ImportingConstructor]
         public CommandParameters([ImportMany] IEnumerable<IHaveCommandLineArgs> commandLineExtensions)
         {
-            GetDefaultValue("Port", s => decimal.TryParse(s, out port));
-            GetDefaultValue("LaunchBrowser", s => bool.TryParse(s, out launchBrowser));
+            port = 8080;
             LaunchBrowser = true;
 
             Settings = new OptionSet
                 {
-                    {"t|template=", "The templating engine to use", v => Template = v},
-                    {"d|directory=", "The path to site directory", p => Path = p},
-                    {"p|port=", "The port to test the site locally", p => decimal.TryParse(p, out port)},
-                    {"i|import=", "The import type", v => ImportType = v}, // TODO: necessary?
-                    {"f|file=", "Path to import file", v => ImportPath = v},
-                    {"drafts", "Add the posts in the drafts folder", v => IncludeDrafts = true},
-                    {"nobrowser", "Do not launch a browser", v => LaunchBrowser = false},
-                    { "withproject", "Includes a layout VS Solution, to give intellisence when editing razor layout files", v=>WithProject = (v!=null)},
-                    { "wiki", "Creates a wiki instead of a blog (razor template only)", v=>Wiki = (v!=null)},
+                    { "t|template=", "The templating engine to use", v => Template = v },
+                    { "d|directory=", "The path to site directory", p => Path = p },
+                    { "p|port=", "The port to test the site locally", p => decimal.TryParse(p, out port) },
+                    { "i|import=", "The import type", v => ImportType = v },
+                    { "f|file=", "Path to import file", v => ImportPath = v },
+                    { "drafts", "Add the posts in the drafts folder", v => IncludeDrafts = true },
+                    { "nobrowser", "Do not launch a browser", v => LaunchBrowser = false },
+                    { "withproject", "Includes a layout VS Solution, to give intellisence when editing razor layout files", v => WithProject = (v!=null) },
+                    { "wiki", "Creates a wiki instead of a blog (razor template only)", v => Wiki = (v!=null) },
                     { "cleantarget", "Delete the target directory (_site by default)", v => CleanTarget = true }
                 };
 
@@ -44,36 +42,20 @@ namespace Pretzel.Logic.Commands
             }
         }
 
-        private void GetDefaultValue(string propertyName, Action<string> converter)
-        {
-            var attributes = TypeDescriptor.GetProperties(this)[propertyName].Attributes;
-            var myAttribute = (DefaultValueAttribute)attributes[typeof(DefaultValueAttribute)];
-            converter(myAttribute.Value.ToString());
-        }
-
         public string Path { get; private set; }
         public string Template { get; private set; }
         public string ImportPath { get; private set; }
         public string ImportType { get; private set; }
         public bool WithProject { get; private set; }
         public bool Wiki { get; private set; }
-        public bool IncludeDrafts { get; set; }
+        public bool IncludeDrafts { get; private set; }
         public bool CleanTarget { get; set; }
+        public bool LaunchBrowser { get; private set; }
 
-        bool launchBrowser;
-        [DefaultValue(true)]
-        public bool LaunchBrowser
-        {
-            get { return launchBrowser; }
-            set { launchBrowser = value; }
-        }
-
-        decimal port;
-        [DefaultValue(8080)]
-        public decimal Port
+        private decimal port;
+        public decimal Port 
         {
             get { return port; }
-            set { port = value; }
         }
 
         private OptionSet Settings { get; set; }

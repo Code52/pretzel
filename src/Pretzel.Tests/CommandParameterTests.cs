@@ -4,6 +4,10 @@ using System.Linq;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using Xunit;
+using NSubstitute;
+using NDesk.Options;
+using Pretzel.Logic.Templating.Context;
+using Pretzel.Logic.Templating;
 
 namespace Pretzel.Tests
 {
@@ -97,7 +101,7 @@ namespace Pretzel.Tests
         [Fact]
         public void Parse_WhenSpecifyingPathUsingFullParameterSingleDash_MapsToPath()
         {
-            var args = new List<string> { "-directory", ExpectedPath};
+            var args = new List<string> { "-directory", ExpectedPath };
             subject.Parse(args);
             Assert.Equal(ExpectedPath, subject.Path);
         }
@@ -276,5 +280,108 @@ namespace Pretzel.Tests
             Assert.False(subject.CleanTarget);
         }
 
+        [Fact]
+        public void CommandParameters_WhenSpecifyingAllParameters_ResultIsCorrect()
+        {
+            var args = new List<string> { "-template=jekyll", @"-directory=c:\mysite", "-port=8182", "-import=blogger", "-file=BloggerExport.xml", "-drafts", "-nobrowser", "-withproject", "-wiki", "-cleantarget" };
+            
+            subject.Parse(args);
+            
+            Assert.Equal("jekyll", subject.Template);
+            Assert.Equal(@"c:\mysite", subject.Path);
+            Assert.Equal(8182, subject.Port);
+            Assert.Equal("blogger", subject.ImportType);
+            Assert.Equal("BloggerExport.xml", subject.ImportPath);
+            Assert.True(subject.IncludeDrafts);
+            Assert.False(subject.LaunchBrowser);
+            Assert.True(subject.WithProject);
+            Assert.True(subject.Wiki);
+            Assert.True(subject.CleanTarget);
+        }
+
+        [Fact]
+        public void CommandParameters_WhenSpecifyingNoParameters_DefaultVeluesResultIsCorrect()
+        {
+            var args = new List<string>();
+
+            subject.Parse(args);
+
+            Assert.Equal(8080, subject.Port);
+            Assert.True(subject.LaunchBrowser);
+            Assert.Null(subject.Template);
+            Assert.Equal(Directory.GetCurrentDirectory(),  subject.Path);
+            Assert.Null(subject.ImportType);
+            Assert.Null(subject.ImportPath);
+            Assert.False(subject.IncludeDrafts);
+            Assert.False(subject.WithProject);
+            Assert.False(subject.Wiki);
+            Assert.False(subject.CleanTarget);
+        }
+
+        [Fact]
+        public void CommandParameters_WhenSpecifyingCommandExtension_ExtensionParameterIsParsed()
+        {
+            var extension = Substitute.For<IHaveCommandLineArgs>();
+            extension.When(e => e.UpdateOptions(Arg.Any<OptionSet>()))
+                .Do(c =>
+                {
+                    var options = c.Arg<OptionSet>();
+
+                    options.Add<string>("newOption=", "description", v => NewOption = v);
+                });
+
+            var subject = new CommandParameters(new List<IHaveCommandLineArgs> { extension });
+            var args = new List<string>{"-newOption=test"};
+
+            subject.Parse(args);
+
+            Assert.Equal("test", NewOption);
+        }
+
+        protected string NewOption { get; set; }
+
+        [Fact]
+        public void Parse_WhenOneParameterSet_MapsToPath_RelativePath()
+        {
+            var args = new List<string> { "mySite" };
+            
+            subject.Parse(args);
+            
+            Assert.Equal(Path.Combine(Directory.GetCurrentDirectory(), "mySite"), subject.Path);
+        }
+
+        [Fact]
+        public void DetectFromDirectory_WhenSpecifyingNoSiteEngines_DefaultValueIsLiquid()
+        {
+            var siteContext = new SiteContext();
+            
+            subject.DetectFromDirectory(new Dictionary<string, ISiteEngine>(), siteContext);
+            
+            Assert.Equal("liquid", subject.Template);
+        }
+
+        [Fact]
+        public void DetectFromDirectory_WhenSpecifyingTwoSiteEngines_CorrectValueIsPicked()
+        {
+            var siteContext = new SiteContext { Config = new Dictionary<string, object> { { "pretzel", new Dictionary<string, object> { { "engine", "engine2" } } } } };
+            
+            var siteEngine1 = Substitute.For<ISiteEngine>();
+            siteEngine1.CanProcess(Arg.Any<SiteContext>())
+                .Returns(ci => ci.Arg<SiteContext>().Engine == "engine1");
+
+            var siteEngine2 = Substitute.For<ISiteEngine>();
+            siteEngine2.CanProcess(Arg.Any<SiteContext>())
+                .Returns(ci => ci.Arg<SiteContext>().Engine == "engine2");
+            
+            var siteEngines = new Dictionary<string, ISiteEngine> 
+            {
+                { "engine1", siteEngine1 },
+                { "engine2", siteEngine2 },
+            };
+
+            subject.DetectFromDirectory(siteEngines, siteContext);
+
+            Assert.Equal("engine2", subject.Template);
+        }
     }
 }
