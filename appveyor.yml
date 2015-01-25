@@ -43,7 +43,7 @@ after_build:
 
     # create zip
 
-    7z a pretzel.$version.zip $env:appveyor_build_folder\src\Pretzel\bin\Release\Pretzel.exe* -i!ReleaseNotes.md
+    7z a pretzel.$version.zip $env:appveyor_build_folder\src\Pretzel\bin\Release\Pretzel.exe*
 
     7z a pretzel.$version.zip ReleaseNotes.md
 
