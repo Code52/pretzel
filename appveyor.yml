@@ -25,7 +25,7 @@ after_build:
 
     $version = $env:appveyor_build_version
 
-    If ($env:appveyor_repo_tag -eq $True){$version = $env:appveyor_repo_tag_name}
+    #If ($env:appveyor_repo_tag -eq $True){$version = $env:appveyor_repo_tag_name}
 
     # build nupkg
 
@@ -65,7 +65,6 @@ deploy:
       secure: piWk1xd/YxJK+HJOFwJyBORP+Go1p4XO6148zeePdyVEGPxk4wGXk5tP2jYkM4eU
     artifact: Pretzel.zip
     on:
-      branch: master
       appveyor_repo_tag: true
   
   - provider: NuGet
@@ -75,5 +74,4 @@ deploy:
     skip_symbols: true
     artifact: Pretzel.nupkg
     on:
-      branch: master
       appveyor_repo_tag: true
