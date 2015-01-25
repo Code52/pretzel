@@ -120,6 +120,19 @@ namespace Pretzel.Tests.Templating.Razor
            Assert.Equal(expectedfileContents, output);
         }
 
+        [Fact]
+        public void Filter_PrettifyUrl_is_processed()
+        {
+            const string templateContents = "<html><body>@Raw(Model.Content) @Filter.PrettifyUrl(\"http://mysite.com/index.html\")</body></html>";
+            const string pageContents = "<h1>Hello</h1>";
+            const string expectedfileContents = "<html><body><h1>Hello</h1> http://mysite.com/</body></html>";
+
+            Subject.Filters = new IFilter[] { new PrettifyUrlFilter() };
+            ProcessContents(templateContents, pageContents, new Dictionary<string, object>());
+            var output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
+            Assert.Equal(expectedfileContents, output);
+        }
+
     }
 
     public class When_Paginate_Razor : BakingEnvironment<RazorSiteEngine>

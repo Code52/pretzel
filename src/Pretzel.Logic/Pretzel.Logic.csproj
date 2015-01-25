@@ -99,7 +99,6 @@
     <Compile Include="Import\HtmlToMarkdownConverter.cs" />
     <Compile Include="Import\WordpressImport.cs" />
     <Compile Include="Liquid\CgiEscapeFilter.cs" />
-    <Compile Include="Liquid\CommentBlock.cs" />
     <Compile Include="Liquid\DateToLongStringFilter.cs" />
     <Compile Include="Liquid\DateToRfc822FormatFilter.cs" />
     <Compile Include="Liquid\DateToStringFilter.cs" />
