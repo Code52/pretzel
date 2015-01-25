@@ -41,3 +41,4 @@ in a template.
 
 ## Fixes
 - Fix issue where transforms aren't processed during taste => fix the .less not compiled during taste for example
+- [#194] Fix issue where the style wasn't used for WebSequenceDiagram: now with "@@sequence mscgen", the style will be "mscgen"
