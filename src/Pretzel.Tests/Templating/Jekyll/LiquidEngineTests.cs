@@ -876,5 +876,59 @@ namespace Pretzel.Tests.Templating.Jekyll
                 Assert.False(Subject.CanProcess(context));
             }
         }
+
+        public class Given_Page_Use_PrettifyUrlFilter : BakingEnvironment<LiquidEngine>
+        {
+            const string PageContents = "---\r\n layout: nill \r\n---\r\n\r\n{{ 'http://mysite.com/index.html' | prettify_url}}";
+            const string ExpectedfileContents = "http://mysite.com/";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine { Filters = new IFilter[] { new PrettifyUrlFilter() } };
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.html", new MockFileData(PageContents));
+
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Be_Prettifyed()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_Comment : BakingEnvironment<LiquidEngine>
+        {
+            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n## Hello World!{% comment %} This is a comment {% endcomment %}";
+            const string ExpectedfileContents = "<h2>Hello World!</h2>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Not_Have_The_Comment()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
     }
 }

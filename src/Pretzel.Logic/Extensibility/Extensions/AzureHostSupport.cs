@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.Composition;
+﻿using NDesk.Options;
+using Pretzel.Logic.Extensions;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
-using System.Reflection;
 using System.Linq;
-using NDesk.Options;
-using Pretzel.Logic.Extensions;
+using System.Reflection;
 
 namespace Pretzel.Logic.Extensibility.Extensions
 {
@@ -46,11 +46,11 @@ namespace Pretzel.Logic.Extensibility.Extensions
                 var trimStart = directoryToMove.Replace(directory, string.Empty).TrimStart('/', '\\');
                 Directory.Move(directoryToMove, Path.Combine(sourceFolder, trimStart));
             }
-
+            
             fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.cs"), Properties.RazorAzure.Shim);
             fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.csproj"), Properties.RazorAzure.ShimProject);
             fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.sln"), Properties.RazorAzure.ShimSolution);
-
+            
             var currentPath = Assembly.GetEntryAssembly().Location;
             var destination = Path.Combine(directory, "Pretzel.exe");
             if (!File.Exists(destination))
