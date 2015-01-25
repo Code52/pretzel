@@ -25,7 +25,9 @@ after_build:
 
     $version = $env:appveyor_build_version
 
-    #If ($env:appveyor_repo_tag -eq $True){$version = $env:appveyor_repo_tag_name}
+    $tag = $version
+
+    If ($env:appveyor_repo_tag -eq $True){$tag = $env:appveyor_repo_tag_name}
 
     # build nupkg
 
@@ -37,15 +39,15 @@ after_build:
 
     move tools\chocolatey\chocolateyInstall.ps1 chocoTemp\tools\chocolateyInstall.ps1
 
-    (gc chocoTemp\tools\chocolateyInstall.ps1).replace('{{version}}',$version)|sc chocoTemp\tools\chocolateyInstall.ps1
+    (gc chocoTemp\tools\chocolateyInstall.ps1).replace('{{version}}',$version).replace('{{tag}}',$tag)|sc chocoTemp\tools\chocolateyInstall.ps1
 
     nuget pack chocoTemp\pretzel.nuspec -OutputDirectory artifacts -Version $version -NoPackageAnalysis
 
     # create zip
 
-    7z a pretzel.$version.zip $env:appveyor_build_folder\src\Pretzel\bin\Release\Pretzel.exe*
+    7z a Pretzel.$version.zip $env:appveyor_build_folder\src\Pretzel\bin\Release\Pretzel.exe*
 
-    7z a pretzel.$version.zip ReleaseNotes.md
+    7z a Pretzel.$version.zip ReleaseNotes.md
 
 test_script:
 - cinst opencover -source https://nuget.org/api/v2/
