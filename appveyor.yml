@@ -1,0 +1,79 @@
+version: 0.2.0.{build}
+
+configuration: Release
+
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+  
+cache:
+- src\packages
+- C:\ProgramData\chocolatey\bin\OpenCover.Console.exe
+- C:\ProgramData\chocolatey\bin\coveralls.net.exe
+- C:\ProgramData\chocolatey\lib
+
+build:
+  project: src\Pretzel.sln
+  verbosity: minimal
+  
+after_build:
+- ps: >-
+    # define version
+
+    $version = $env:appveyor_build_version
+
+    If ($env:appveyor_repo_tag -eq $True){$version = $env:appveyor_repo_tag_name}
+
+    # build nupkg
+
+    mkdir artifacts
+
+    mkdir chocoTemp\tools
+
+    move tools\chocolatey\pretzel.nuspec chocoTemp\pretzel.nuspec
+
+    move tools\chocolatey\chocolateyInstall.ps1 chocoTemp\tools\chocolateyInstall.ps1
+
+    (gc chocoTemp\tools\chocolateyInstall.ps1).replace('{{version}}',$version)|sc chocoTemp\tools\chocolateyInstall.ps1
+
+    nuget pack chocoTemp\pretzel.nuspec -OutputDirectory artifacts -Version $version -NoPackageAnalysis
+
+    # create zip
+
+    7z a pretzel.$version.zip $env:appveyor_build_folder\src\Pretzel\bin\Release\Pretzel.exe* -i!ReleaseNotes.md
+
+    7z a pretzel.$version.zip ReleaseNotes.md
+
+test_script:
+- cinst opencover -source https://nuget.org/api/v2/
+- cinst coveralls.io -source https://nuget.org/api/v2/
+- OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -target:"xunit.console.clr4.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"" /noshadow /appveyor" -output:coverage.xml
+
+artifacts:
+- path: artifacts\Pretzel.*.nupkg
+  name: Pretzel.nupkg
+- path: coverage.xml
+- path: Pretzel.*.zip
+  name: Pretzel.zip
+
+deploy:
+  - provider: GitHub
+    auth_token:
+      secure: piWk1xd/YxJK+HJOFwJyBORP+Go1p4XO6148zeePdyVEGPxk4wGXk5tP2jYkM4eU
+    artifact: Pretzel.zip
+    on:
+      branch: master
+      appveyor_repo_tag: true
+  
+  - provider: NuGet
+    server: https://chocolatey.org/
+    api_key:
+      secure: 2GBJF71EQfU+kIL5NHVM4wYoCRcFf/gM/voNIgud8vDWUE+uA1ye/hRWjJPQWA5w
+    skip_symbols: true
+    artifact: Pretzel.nupkg
+    on:
+      branch: master
+      appveyor_repo_tag: true
