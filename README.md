@@ -70,4 +70,4 @@ All PRs are welcome but don't forget the tests with your new shiny feature.
 
 
 ### Attribution
- “[Pretzel](http://thenounproject.com/noun/pretzel/#icon-No555)” symbol by [The Noun Project](http://www.thenounproject.com/), from The Noun Project collection.
+ “[Pretzel](http://thenounproject.com/noun/pretzel/#icon-No555)” symbol by Edward Boatman on [The Noun Project](http://www.thenounproject.com/), from The Noun Project collection.
