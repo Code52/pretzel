@@ -110,8 +110,7 @@ namespace Pretzel.Logic.Minification
             // Clean the leftover directories
             foreach (var folder in foldersToDelete)
             {
-                // FIXME use EnumerateFileSystemEntries when System.IO.Abstractions will include it
-                if(!fileSystem.Directory.GetFileSystemEntries(folder, "*").Any())
+                if(!fileSystem.Directory.EnumerateFileSystemEntries(folder, "*").Any())
                 {
                     fileSystem.Directory.Delete(folder);
                 }
