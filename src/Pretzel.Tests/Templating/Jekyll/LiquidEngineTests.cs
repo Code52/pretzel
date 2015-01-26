@@ -1,6 +1,8 @@
-﻿using Pretzel.Logic.Exceptions;
+﻿using DotLiquid;
+using Pretzel.Logic.Exceptions;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensibility.Extensions;
+using Pretzel.Logic.Liquid;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Jekyll;
 using System;
@@ -930,5 +932,161 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
         }
 
+        public class Given_Page_Has_PostUrlBlock : BakingEnvironment<LiquidEngine>
+        {
+            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% posturl post-title.md%}{% endposturl %}";
+            const string ExpectedfileContents = "<p>post/title.html</p>";
+
+            public override LiquidEngine Given()
+            {
+                Template.RegisterTag<PostUrlBlock>("posturl");
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_Been_Transformed()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_HighlightBlock : BakingEnvironment<LiquidEngine>
+        {
+            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight %}a word{% endhighlight %}";
+            const string ExpectedfileContents = "<p><pre>a word</pre></p>";
+
+            public override LiquidEngine Given()
+            {
+                Template.RegisterTag<HighlightBlock>("highlight");
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_Been_Highlighted()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+
+        public class Given_LiquidEngin_Is_Initialized : BakingEnvironment<LiquidEngine>
+        {
+            const string HighlightPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight %}a word{% endhighlight %}";
+            const string HighlightExpectedfileContents = "<p><pre>a word</pre></p>";
+            const string PostUrlPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% posturl post-title.md%}{% endposturl %}";
+            const string PostUrlExpectedfileContents = "<p>post/title.html</p>";
+            const string CgiEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'foo,bar;baz?' | cgi_escape }}";
+            const string CgiEscapeExpectedfileContents = "<p>foo%2Cbar%3Bbaz%3F</p>";
+            const string UriEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'foo, bar \\baz?' | uri_escape }}";
+            const string UriEscapeExpectedfileContents = "<p>foo,%20bar%20%5Cbaz?</p>";
+            const string NumberOfWordsPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'This is a test' | number_of_words }}";
+            const string NumberOfWordsExpectedfileContents = "<p>4</p>";
+            const string XmlEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ '<test>this is a test</test>' | xml_escape }}";
+            const string XmlEscapeExpectedfileContents = "<p>&lt;test&gt;this is a test&lt;/test&gt;</p>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\Highlight.md", new MockFileData(HighlightPageContents));
+                //FileSystem.AddFile(@"C:\website\PostUrl.md", new MockFileData(PostUrlPageContents));
+                FileSystem.AddFile(@"C:\website\CgiEscape.md", new MockFileData(CgiEscapePageContents));
+                FileSystem.AddFile(@"C:\website\UriEscape.md", new MockFileData(UriEscapePageContents));
+                FileSystem.AddFile(@"C:\website\NumberOfWords.md", new MockFileData(NumberOfWordsPageContents));
+                FileSystem.AddFile(@"C:\website\XmlEscape.md", new MockFileData(XmlEscapePageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_Been_Highlighted()
+            {
+                Assert.Equal(HighlightExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\Highlight.html").RemoveWhiteSpace());
+            }
+
+            [Fact(Skip="Actual version of PostUrlBlock doesn't work => turn into a tag")]
+            public void The_Output_Should_Have_A_PostUrl()
+            {
+                Assert.Equal(PostUrlExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\PostUrl.html").RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_Been_CgiEscaped()
+            {
+                Assert.Equal(CgiEscapeExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\CgiEscape.html").RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_Been_UriEscaped()
+            {
+                Assert.Equal(UriEscapeExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\UriEscape.html").RemoveWhiteSpace());
+            }
+
+            [Fact(Skip="Doesn't seems to function, maybe a problem with DotLiquid and '_'")]
+            public void The_Output_Should_Be_The_Number_Of_Words()
+            {
+                Assert.Equal(NumberOfWordsExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\NumberOfWords.html").RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_Been_XmlEscaped()
+            {
+                Assert.Equal(XmlEscapeExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\XmlEscape.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Markdown_Page_Has_An_Empty_Title : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            const string PageContents = "---\r\n layout: default \r\n title: \r\n---\r\n\r\n## Hello World!";
+            const string ExpectedfileContents = "<html><head><title>My Web Site</title></head><body><h2>Hello World!</h2></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                context.Title = "My Web Site";
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_The_Site_Title()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
     }
 }

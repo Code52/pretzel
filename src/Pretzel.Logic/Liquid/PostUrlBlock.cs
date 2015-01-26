@@ -1,10 +1,10 @@
-﻿using System;
+﻿using DotLiquid;
 using System.Collections.Generic;
 using System.IO;
-using DotLiquid;
 
 namespace Pretzel.Logic.Liquid
 {
+    // FixMe: Transform into Tag, the actual version doesn't work
     public class PostUrlBlock : Block
     {
         private string postFileName;
