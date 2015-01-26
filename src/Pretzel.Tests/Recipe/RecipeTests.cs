@@ -16,8 +16,8 @@ namespace Pretzel.Tests.Recipe
     {
         const string BaseSite = @"c:\site\";
         MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-		readonly StringBuilder sb = new StringBuilder();
-		readonly TextWriter writer;
+        readonly StringBuilder sb = new StringBuilder();
+        readonly TextWriter writer;
 
         public RecipeTests()
         {
@@ -127,6 +127,43 @@ namespace Pretzel.Tests.Recipe
             recipe.Create();
 
             additionalIngredient.DidNotReceive().MixIn(BaseSite);
+        }
+
+        [Fact]
+        public void liquid_engine_with_wiki()
+        {
+            fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
+
+            var recipe = new Logic.Recipe.Recipe(fileSystem, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, true);
+            recipe.Create();
+
+            Assert.True(writer.ToString().Contains("Wiki switch not valid with liquid templating engine"));
+        }
+
+        [Fact]
+        public void razor_engine_with_project()
+        {
+            fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
+
+            var recipe = new Logic.Recipe.Recipe(fileSystem, "razor", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), true, false);
+            recipe.Create();
+
+            Assert.Equal(38, fileSystem.AllPaths.Count());
+            Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\Properties\AssemblyInfo.cs"));
+            Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\PretzelClasses\Category.cs"));
+            Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\LayoutProject.csproj"));
+            Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\layoutSolution.sln"));
+            Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\PretzelClasses\NonProcessedPage.cs"));
+            Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\.nuget\NuGet.config"));
+            Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\.nuget\NuGet.exe"));
+            Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\.nuget\NuGet.targets"));
+            Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\PretzelClasses\PageContext.cs"));
+            Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\PretzelClasses\Page.cs"));
+            Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\PretzelClasses\Paginator.cs"));
+            Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\PretzelClasses\SiteContext.cs"));
+            Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\PretzelClasses\Tag.cs"));
+            Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\web.config"));
+            Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\packages.config"));
         }
     }
 }

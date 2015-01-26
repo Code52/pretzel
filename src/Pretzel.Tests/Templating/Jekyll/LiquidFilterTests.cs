@@ -35,9 +35,22 @@ namespace Pretzel.Tests.Templating.Jekyll
         }
 
         [Fact]
+        public void DateToString_WithStringDate_ReturnsCorrectString()
+        {
+            var date = new DateTime(2008, 11, 07);
+            Assert.Equal(date.ToString("dd MMM yyyy"), DateToStringFilter.date_to_string(date.ToString()));
+        }
+
+        [Fact]
         public void DateToLongString_ForExpectedDate_ReturnsCorrectString()
         {
             Assert.Equal("07 November 2008", DateToLongStringFilter.date_to_long_string(new DateTime(2008, 11, 07)));
+        }
+
+        [Fact]
+        public void DateToLongString_ForExpectedStringDate_ReturnsCorrectString()
+        {
+            Assert.Equal("07 November 2008", DateToLongStringFilter.date_to_long_string(new DateTime(2008, 11, 07).ToString()));
         }
 
         [Fact]
@@ -56,6 +69,12 @@ namespace Pretzel.Tests.Templating.Jekyll
         public void NumberOfWords_ForGiveString_ReturnsCorrectCount()
         {
             Assert.Equal(4.ToString(), NumberOfWordsFilter.number_of_words("This is a test"));
+        }
+
+        [Fact]
+        public void XmlEscape_ForGiveString_ReturnsCorrectEscapedString()
+        {
+            Assert.Equal("&lt;test&gt;&quot;this is &amp; &apos;test&apos;&quot;&lt;/test&gt;", XmlEscapeFilter.xml_escape("<test>\"this is & 'test'\"</test>"));
         }
     }
 }
