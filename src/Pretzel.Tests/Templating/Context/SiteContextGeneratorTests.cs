@@ -6,6 +6,12 @@ using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Templating.Context;
 using Xunit;
 using Xunit.Extensions;
+using NSubstitute;
+using DotLiquid.FileSystems;
+using System.IO.Abstractions;
+using System.IO;
+using Pretzel.Logic.Extensions;
+using System.Text;
 
 namespace Pretzel.Tests.Templating.Context
 {
@@ -632,5 +638,343 @@ id: my_page_id
             // assert
             Assert.Equal("/about", siteContext.Pages[0].Id);
         }
+
+        [Fact]
+        public void permalink_with_false_numbered_category()
+        {
+            fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData(@"---
+permalink: /blog/:categorya/index.html
+categories: [cat1, cat2]
+---# Title"));
+
+            var outputPath = "/blog/a/index.html";
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            var firstPost = siteContext.Posts.First();
+
+            Assert.Equal(outputPath, firstPost.Url);
+        }
+
+        [Fact]
+        public void empty_file_is_processed_and_have_no_metadata()
+        {
+            fileSystem.AddFile(@"C:\TestSite\SomeFile.md", MockFileData.NullObject);
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+
+            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Equal(0, siteContext.Pages[0].Bag.Count);
+        }
+
+        [Fact]
+        public void file_with_published_false_is_not_processed()
+        {
+            fileSystem.AddFile(@"C:\TestSite\SomeFile.md", new MockFileData(@"---
+published: false
+---# Title"));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+
+            Assert.Equal(0, siteContext.Pages.Count);
+        }
+
+        [Fact]
+        public void page_default_values()
+        {
+            fileSystem.AddFile(@"C:\TestSite\SomeFile.md", new MockFileData(@"---
+param: value
+---# Title"));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Equal("this is a post", siteContext.Pages[0].Title);
+            Assert.Equal(DateTime.Now.Date, siteContext.Pages[0].Date.Date);
+            Assert.Equal("<h1>Title</h1>\n", siteContext.Pages[0].Content);
+            Assert.Equal(@"C:\TestSite\_site\SomeFile.md", siteContext.Pages[0].Filepath);
+            Assert.Equal(@"C:\TestSite\SomeFile.md", siteContext.Pages[0].File);
+            Assert.Equal(2, siteContext.Pages[0].Bag.Count);
+            Assert.Equal("value", siteContext.Pages[0].Bag["param"]);
+        }
+
+        [Fact]
+        public void page_metadata_values()
+        {
+            var currentDate = new DateTime(2015, 1, 27).ToShortDateString();
+            fileSystem.AddFile(@"C:\TestSite\SomeFile.md", new MockFileData(string.Format(@"---
+title: my title
+date: {0}
+param: value
+---# Title",
+            currentDate)));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Equal("my title", siteContext.Pages[0].Title);
+            Assert.Equal(new DateTime(2015, 1, 27), siteContext.Pages[0].Date);
+            Assert.Equal("<h1>Title</h1>\n", siteContext.Pages[0].Content);
+            Assert.Equal(@"C:\TestSite\_site\SomeFile.md", siteContext.Pages[0].Filepath);
+            Assert.Equal(@"C:\TestSite\SomeFile.md", siteContext.Pages[0].File);
+            Assert.Equal(3, siteContext.Pages[0].Bag.Count);
+            Assert.Equal("value", siteContext.Pages[0].Bag["param"]);
+            Assert.Equal("my title", siteContext.Pages[0].Bag["title"]);
+            Assert.Equal(currentDate, siteContext.Pages[0].Bag["date"]);
+        }
+
+        [Fact]
+        public void page_with_date_in_title()
+        {
+            var currentDate = new DateTime(2015, 1, 26).ToShortDateString();
+            var filePath = string.Format(@"C:\TestSite\{0}-SomeFile.md", currentDate.Replace("/", "-"));
+            fileSystem.AddFile(filePath, new MockFileData(string.Format(@"---
+param: value
+---# Title",
+            currentDate)));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Equal("this is a post", siteContext.Pages[0].Title);
+            Assert.Equal(new DateTime(2015, 1, 26), siteContext.Pages[0].Date);
+            Assert.Equal("<h1>Title</h1>\n", siteContext.Pages[0].Content);
+            Assert.Equal(string.Format(@"C:\TestSite\_site\{0}-SomeFile.md", currentDate.Replace("/", "-")), siteContext.Pages[0].Filepath);
+            Assert.Equal(filePath, siteContext.Pages[0].File);
+            Assert.Equal(2, siteContext.Pages[0].Bag.Count);
+            Assert.Equal("value", siteContext.Pages[0].Bag["param"]);
+        }
+
+        [Fact]
+        public void page_with_false_date_in_title()
+        {
+            var currentDate = new DateTime(2015, 1, 26).ToShortDateString();
+            var filePath = string.Format(@"C:\TestSite\{0}SomeFile.md", currentDate.Replace("/", "-"));
+            fileSystem.AddFile(filePath, new MockFileData(string.Format(@"---
+param: value
+---# Title",
+            currentDate)));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Equal("this is a post", siteContext.Pages[0].Title);
+            Assert.Equal(DateTime.Now.Date, siteContext.Pages[0].Date.Date);
+            Assert.Equal("<h1>Title</h1>\n", siteContext.Pages[0].Content);
+            Assert.Equal(string.Format(@"C:\TestSite\_site\{0}SomeFile.md", currentDate.Replace("/", "-")), siteContext.Pages[0].Filepath);
+            Assert.Equal(filePath, siteContext.Pages[0].File);
+            Assert.Equal(2, siteContext.Pages[0].Bag.Count);
+            Assert.Equal("value", siteContext.Pages[0].Bag["param"]);
+        }
+
+        [Fact]
+        public void post_default_values()
+        {
+            fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData(@"---
+param: value
+---# Title"));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            Assert.Equal(1, siteContext.Posts.Count);
+            Assert.Equal("this is a post", siteContext.Posts[0].Title);
+            Assert.Equal(DateTime.Now.Date, siteContext.Posts[0].Date.Date);
+            Assert.Equal("<h1>Title</h1>\n", siteContext.Posts[0].Content);
+            Assert.Equal(@"C:\TestSite\_site\SomeFile.md", siteContext.Posts[0].Filepath);
+            Assert.Equal(@"C:\TestSite\_posts\SomeFile.md", siteContext.Posts[0].File);
+            Assert.Equal(2, siteContext.Posts[0].Bag.Count);
+            Assert.Equal("value", siteContext.Posts[0].Bag["param"]);
+        }
+
+        [Fact]
+        public void post_metadata_values()
+        {
+            var currentDate = new DateTime(2015, 1, 27).ToShortDateString();
+            fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData(string.Format(@"---
+title: my title
+date: {0}
+param: value
+---# Title",
+            currentDate)));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            Assert.Equal(1, siteContext.Posts.Count);
+            Assert.Equal("my title", siteContext.Posts[0].Title);
+            Assert.Equal(new DateTime(2015, 1, 27), siteContext.Posts[0].Date);
+            Assert.Equal("<h1>Title</h1>\n", siteContext.Posts[0].Content);
+            Assert.Equal(@"C:\TestSite\_site\SomeFile.md", siteContext.Posts[0].Filepath);
+            Assert.Equal(@"C:\TestSite\_posts\SomeFile.md", siteContext.Posts[0].File);
+            Assert.Equal(3, siteContext.Posts[0].Bag.Count);
+            Assert.Equal("value", siteContext.Posts[0].Bag["param"]);
+            Assert.Equal("my title", siteContext.Posts[0].Bag["title"]);
+            Assert.Equal(currentDate, siteContext.Posts[0].Bag["date"]);
+        }
+
+        [Fact]
+        public void post_with_date_in_title()
+        {
+            var currentDate = new DateTime(2015, 1, 26).ToShortDateString();
+            var filePath = string.Format(@"C:\TestSite\_posts\{0}-SomeFile.md", currentDate.Replace("/", "-"));
+            fileSystem.AddFile(filePath, new MockFileData(string.Format(@"---
+param: value
+---# Title",
+            currentDate)));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            Assert.Equal(1, siteContext.Posts.Count);
+            Assert.Equal("this is a post", siteContext.Posts[0].Title);
+            Assert.Equal(new DateTime(2015, 1, 26), siteContext.Posts[0].Date);
+            Assert.Equal("<h1>Title</h1>\n", siteContext.Posts[0].Content);
+            Assert.Equal(string.Format(@"C:\TestSite\_site\{0}\SomeFile.md", currentDate.Replace("/", "\\")), siteContext.Posts[0].Filepath);
+            Assert.Equal(filePath, siteContext.Posts[0].File);
+            Assert.Equal(2, siteContext.Posts[0].Bag.Count);
+            Assert.Equal("value", siteContext.Posts[0].Bag["param"]);
+        }
+
+        [Fact]
+        public void post_with_false_date_in_title()
+        {
+            var currentDate = new DateTime(2015, 1, 26).ToShortDateString();
+            var filePath = string.Format(@"C:\TestSite\_posts\{0}SomeFile.md", currentDate.Replace("/", "-"));
+            fileSystem.AddFile(filePath, new MockFileData(string.Format(@"---
+param: value
+---# Title",
+            currentDate)));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            Assert.Equal(1, siteContext.Posts.Count);
+            Assert.Equal("this is a post", siteContext.Posts[0].Title);
+            Assert.Equal(DateTime.Now.Date, siteContext.Posts[0].Date.Date);
+            Assert.Equal("<h1>Title</h1>\n", siteContext.Posts[0].Content);
+            Assert.Equal(string.Format(@"C:\TestSite\_site\{0}SomeFile.md", currentDate.Replace("/", "\\")), siteContext.Posts[0].Filepath);
+            Assert.Equal(filePath, siteContext.Posts[0].File);
+            Assert.Equal(2, siteContext.Posts[0].Bag.Count);
+            Assert.Equal("value", siteContext.Posts[0].Bag["param"]);
+        }
+
+        [Fact]
+        public void file_with_1_ioexception_is_processed_and_have_no_metadata()
+        {
+            // arrange
+            string filePath = Path.Combine(Path.GetTempPath(), "SomeFile.md");
+            bool alreadyOccured = false;
+            var fileSubstitute = Substitute.For<FileBase>();
+            fileSubstitute.OpenText(Arg.Any<string>()).Returns(x =>
+            {
+                if (alreadyOccured)
+                {
+                    return new StreamReader(new MemoryStream(0));
+                }
+                else
+                {
+                    alreadyOccured = true;
+                    throw new IOException();
+                }
+            });
+            fileSubstitute.Exists(filePath).Returns(true);
+
+            var directorySubstitute = Substitute.For<DirectoryBase>();
+            directorySubstitute.GetFiles(Arg.Any<string>(), "*.*", SearchOption.AllDirectories).Returns(new[] { @"C:\TestSite\SomeFile.md" });
+
+            var fileInfoSubstitute = Substitute.For<FileInfoBase>();
+            fileInfoSubstitute.Name.Returns("SomeFile.md");
+
+            var fileInfoFactorySubstitute = Substitute.For<IFileInfoFactory>();
+            fileInfoFactorySubstitute.FromFileName(Arg.Any<string>()).Returns(fileInfoSubstitute);
+
+            var fileSystemSubstitute = Substitute.For<System.IO.Abstractions.IFileSystem>();
+            fileSystemSubstitute.File.Returns(fileSubstitute);
+            fileSystemSubstitute.Directory.Returns(directorySubstitute);
+            fileSystemSubstitute.FileInfo.Returns(fileInfoFactorySubstitute);
+
+
+            var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>());
+
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+
+            // assert
+            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Equal(0, siteContext.Pages[0].Bag.Count);
+            // Check if the temp file have been deleted
+            fileSubstitute.Received().Delete(filePath);
+        }
+
+        [Fact]
+        public void file_with_2_ioexception_is_not_processed_and_throw_ioexception()
+        {
+            // arrange
+            string filePath = Path.Combine(Path.GetTempPath(), "SomeFile.md");
+            var fileSubstitute = Substitute.For<FileBase>();
+            fileSubstitute.OpenText(Arg.Any<string>()).Returns(x =>
+            {
+                throw new IOException();
+            });
+            fileSubstitute.Exists(filePath).Returns(true);
+
+            var directorySubstitute = Substitute.For<DirectoryBase>();
+            directorySubstitute.GetFiles(Arg.Any<string>(), "*.*", SearchOption.AllDirectories).Returns(new[] { @"C:\TestSite\SomeFile.md" });
+            
+            var fileInfoSubstitute = Substitute.For<FileInfoBase>();
+            fileInfoSubstitute.Name.Returns("SomeFile.md");
+
+            var fileInfoFactorySubstitute = Substitute.For<IFileInfoFactory>();
+            fileInfoFactorySubstitute.FromFileName(Arg.Any<string>()).Returns(fileInfoSubstitute);
+
+            var fileSystemSubstitute = Substitute.For<System.IO.Abstractions.IFileSystem>();
+            fileSystemSubstitute.File.Returns(fileSubstitute);
+            fileSystemSubstitute.Directory.Returns(directorySubstitute);
+            fileSystemSubstitute.FileInfo.Returns(fileInfoFactorySubstitute);
+
+            var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>());
+
+
+            // act & assert
+            Assert.Throws<IOException>(() => generator.BuildContext(@"C:\TestSite", false));
+            // Check if the temp file have been deleted
+            fileSubstitute.Received().Delete(filePath);
+        }
+
+
+        [Fact]
+        public void page_with_false_date_is_not_processed()
+        {
+            fileSystem.AddFile(@"C:\TestSite\SomeFile.md", new MockFileData(@"---
+date: 20150127
+---# Title"));
+            StringBuilder sb = new StringBuilder();
+            TextWriter writer = new StringWriter(sb);
+            Tracing.Logger.SetWriter(writer);
+            Tracing.Logger.AddCategory("info");
+            Tracing.Logger.AddCategory("debug");
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+
+            Assert.Equal(0, siteContext.Pages.Count);
+            Assert.Contains(@"Failed to build post from File: C:\TestSite\SomeFile.md", sb.ToString());
+            Assert.Contains(@"String was not recognized as a valid DateTime.", sb.ToString());
+            Assert.Contains(@"System.FormatException: String was not recognized as a valid DateTime.", sb.ToString());
+        }
+
     }
 }

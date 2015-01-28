@@ -8,14 +8,14 @@ namespace Pretzel.Tests
 {
     public class SanityCheckTest
     {
-        [Fact(Skip = "Can provoke some AppDomainException")]
+        [Fact]//(Skip = "Can provoke some AppDomainException")]
         public void IsLockedByAnotherProcess_File_Not_Exists_Returns_False()
         {
             var tempFile = Path.GetTempFileName();
             Assert.False(SanityCheck.IsLockedByAnotherProcess(tempFile));
         }
 
-        [Fact(Skip = "Can provoke some AppDomainException")]
+        [Fact]//(Skip = "Can provoke some AppDomainException")]
         public void IsLockedByAnotherProcess_File_Exists_Returns_False()
         {
             var tempFile = Path.GetTempFileName();
@@ -34,7 +34,7 @@ namespace Pretzel.Tests
         }
 
 
-        [Fact(Skip="Not stable and can provoke some AppDomainException")]
+        [Fact]//(Skip="Not stable and can provoke some AppDomainException")]
         public void IsLockedByAnotherProcess_File_Is_Locked_Returns_True()
         {
             var tempFile = Path.GetTempFileName();

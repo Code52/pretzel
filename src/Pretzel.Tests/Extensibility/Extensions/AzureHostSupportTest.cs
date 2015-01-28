@@ -1,13 +1,9 @@
 ﻿using NDesk.Options;
-using NSubstitute;
 using Pretzel.Logic.Extensibility.Extensions;
-using Pretzel.Logic.Templating.Context;
-using System.Collections.Generic;
-using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
 using Xunit;
 using Xunit.Extensions;
-using System.Linq;
 
 namespace Pretzel.Tests.Extensibility.Extensions
 {

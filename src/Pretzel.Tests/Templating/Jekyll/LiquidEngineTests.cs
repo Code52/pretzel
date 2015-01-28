@@ -1088,5 +1088,61 @@ namespace Pretzel.Tests.Templating.Jekyll
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
             }
         }
+
+        public class Given_Page_Has_A_Layout : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><body>{{ content }}</body></html>";
+            const string PageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!\r\n{{ page.layout }}";
+            const string ExpectedfileContents = "<html><body><h2>Hello World!</h2><p>default</p></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_The_Page_Layout()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_Comments_Metadata : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><body>{{ content }}</body></html>";
+            const string PageContents = "---\r\n layout: default \r\n comments: true \r\n---\r\n\r\n## Hello World!\r\n{{ page.comments }}";
+            const string ExpectedfileContents = "<html><body><h2>Hello World!</h2><p>true</p></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_The_Comments_Value()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
     }
 }

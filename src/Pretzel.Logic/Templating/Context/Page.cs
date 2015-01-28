@@ -26,6 +26,7 @@ namespace Pretzel.Logic.Templating.Context
         public string File { get; set; }
         public string OutputFile { get; set; }
 
+        // TODO seems unnecessary (see test LiquidEngineTest.Given_Page_Has_A_Layout)
         public string Layout
         {
             get { return (string)Bag["layout"]; }
