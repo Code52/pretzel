@@ -8,6 +8,7 @@
     <owners>Code52</owners>
     <projectUrl>https://github.com/Code52/pretzel</projectUrl>
 	<iconUrl>https://cdn.rawgit.com/Code52/pretzel/master/pretzel.png</iconUrl>
+	<licenseUrl>https://github.com/Code52/pretzel/blob/master/LICENSE.md</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A simple, pluggable site generation tool for .NET developers and Windows users</description>
     <tags>Jekyll Liquid Razor Markdown</tags>
