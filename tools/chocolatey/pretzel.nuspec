@@ -11,6 +11,6 @@
 	<licenseUrl>https://github.com/Code52/pretzel/blob/master/LICENSE.md</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A simple, pluggable site generation tool for .NET developers and Windows users</description>
-    <tags>Jekyll Liquid Razor Markdown</tags>
+    <tags>Jekyll Liquid Razor Markdown blog hmtl static site engine</tags>
   </metadata>
 </package>
