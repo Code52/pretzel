@@ -8,14 +8,14 @@ namespace Pretzel.Tests
 {
     public class SanityCheckTest
     {
-        [Fact]
+        [Fact(Skip = "Can provoke some CannotUnloadAppDomainException error")]
         public void IsLockedByAnotherProcess_File_Not_Exists_Returns_False()
         {
             var tempFile = Path.GetTempFileName();
             Assert.False(SanityCheck.IsLockedByAnotherProcess(tempFile));
         }
 
-        [Fact]
+        [Fact(Skip = "Can provoke some CannotUnloadAppDomainException error")]
         public void IsLockedByAnotherProcess_File_Exists_Returns_False()
         {
             var tempFile = Path.GetTempFileName();

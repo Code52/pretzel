@@ -997,9 +997,7 @@ date: 20150127
         [Fact]
         public void render_with_ContentTransformer_exception_should_trace_the_error()
         {
-            fileSystem.AddFile(@"C:\TestSite\SomeFile.md", new MockFileData(@"---
----# Title
-[foo]"));
+            fileSystem.AddFile(@"C:\TestSite\SomeFile.md", new MockFileData("---\r\n---# Title\r\n[foo]"));
             StringBuilder sb = new StringBuilder();
             TextWriter writer = new StringWriter(sb);
             Tracing.Logger.SetWriter(writer);

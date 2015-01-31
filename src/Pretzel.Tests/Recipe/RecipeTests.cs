@@ -179,8 +179,8 @@ namespace Pretzel.Tests.Recipe
             var recipe = new Logic.Recipe.Recipe(fileSystemSubstitute, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, false);
             recipe.Create();
 
-            Assert.Contains(@"Error trying to create template: System.Exception: Error!!!
-   at Pretzel.Tests.Recipe.RecipeTests.<error_is_traced>b__0(CallInfo x)", writer.ToString());
+            Assert.Contains(@"Error trying to create template: System.Exception: Error!!!", writer.ToString());
+            Assert.Contains(@"at Pretzel.Tests.Recipe.RecipeTests.<error_is_traced>b__0(CallInfo x)", writer.ToString());
         }
     }
 }
