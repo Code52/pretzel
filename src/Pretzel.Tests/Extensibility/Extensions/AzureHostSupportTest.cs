@@ -11,11 +11,13 @@ namespace Pretzel.Tests.Extensibility.Extensions
     {
         readonly MockFileSystem fileSystem;
         readonly AzureHostSupport azureHostSupport;
+        readonly MockAssembly assembly;
 
         public AzureHostSupportTest()
         {
             fileSystem = new MockFileSystem();
-            azureHostSupport = new AzureHostSupport(fileSystem);
+            assembly = new MockAssembly();
+            azureHostSupport = new AzureHostSupport(fileSystem, assembly);
         }
 
         [InlineData("create")]
@@ -73,13 +75,16 @@ namespace Pretzel.Tests.Extensibility.Extensions
             Assert.Equal(2, fileSystem.AllPaths.Count());
         }
 
-        [Fact(Skip="Cannot be tested for now because Assembly.GetEntryAssembly() returns null")]
+        [Fact]
         public void MixIn_AzureActivated_AllFilesAreIncluded()
         {
             // arrange
             fileSystem.AddDirectory(@"c:\website");
             fileSystem.AddFile(@"c:\website\index.md", MockFileData.NullObject);
             fileSystem.AddDirectory(@"c:\website\_posts");
+
+            assembly.EntryAssemblyLocation = @"c:\tools\Pretzel.exe";
+            fileSystem.AddFile(@"c:\tools\Pretzel.exe", MockFileData.NullObject);
 
             var optionSet = new OptionSet();
             azureHostSupport.UpdateOptions(optionSet);
@@ -89,9 +94,9 @@ namespace Pretzel.Tests.Extensibility.Extensions
             azureHostSupport.MixIn(@"c:\website");
 
             // assert
-            Assert.True(fileSystem.AllDirectories.Contains(@"c:\website\_source"));
+            Assert.True(fileSystem.AllDirectories.Contains(@"c:\website\_source\"));
             Assert.True(fileSystem.AllFiles.Contains(@"c:\website\_source\index.md"));
-            Assert.True(fileSystem.AllDirectories.Contains(@"c:\website\_source\_posts"));
+            Assert.True(fileSystem.AllDirectories.Contains(@"c:\website\_source\_posts\"));
             Assert.True(fileSystem.AllFiles.Contains(@"c:\website\Shim.cs"));
             Assert.True(fileSystem.AllFiles.Contains(@"c:\website\Shim.csproj"));
             Assert.True(fileSystem.AllFiles.Contains(@"c:\website\Shim.sln"));

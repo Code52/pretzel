@@ -62,7 +62,7 @@ namespace Pretzel.Logic.Minification
                             continue;
 
                         //If the file exists, ignore it
-                        if (File.Exists(Path.Combine(siteContext.OutputFolder, cssfile)))
+                        if (fileSystem.File.Exists(Path.Combine(siteContext.OutputFolder, cssfile)))
                             continue;
 
                         //If there is a CSS file that matches the name, ignore, could be another issue

@@ -90,6 +90,7 @@
     <Compile Include="Extensibility\Extensions\WebSequenceDiagrams.cs" />
     <Compile Include="Extensibility\IHaveCommandLineArgs.cs" />
     <Compile Include="Extensibility\IFilter.cs" />
+    <Compile Include="Extensions\IAssembly.cs" />
     <Compile Include="Extensions\Logger.cs" />
     <Compile Include="Extensions\Sitemap.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />

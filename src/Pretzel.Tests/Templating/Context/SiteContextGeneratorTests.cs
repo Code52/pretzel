@@ -953,7 +953,6 @@ param: value
             fileSubstitute.Received().Delete(filePath);
         }
 
-
         [Fact]
         public void page_with_false_date_is_not_processed()
         {
@@ -976,5 +975,161 @@ date: 20150127
             Assert.Contains(@"System.FormatException: String was not recognized as a valid DateTime.", sb.ToString());
         }
 
+        [Fact]
+        public void render_with_ContentTransformer_should_transform_content()
+        {
+            fileSystem.AddFile(@"C:\TestSite\SomeFile.md", new MockFileData(@"---
+---# Title
+[foo]"));
+            var contentTransformer = Substitute.For<IContentTransform>();
+            contentTransformer.Transform(Arg.Any<string>()).Returns(s => s[0].ToString().Replace("[foo]", "bar"));
+
+            var generator = new SiteContextGenerator(fileSystem, new[] { contentTransformer });
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+
+            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Equal("<h1>Title</h1>\n<p>bar</p>\n", siteContext.Pages[0].Content);
+        }
+
+        [Fact]
+        public void render_with_ContentTransformer_exception_should_trace_the_error()
+        {
+            fileSystem.AddFile(@"C:\TestSite\SomeFile.md", new MockFileData(@"---
+---# Title
+[foo]"));
+            StringBuilder sb = new StringBuilder();
+            TextWriter writer = new StringWriter(sb);
+            Tracing.Logger.SetWriter(writer);
+            Tracing.Logger.AddCategory("info");
+            Tracing.Logger.AddCategory("debug");
+
+            var contentTransformer = Substitute.For<IContentTransform>();
+            contentTransformer.Transform(Arg.Any<string>()).Returns(s => { throw new Exception("foo bar");});
+
+            var generator = new SiteContextGenerator(fileSystem, new[] { contentTransformer });
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+
+            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Equal("<p><b>Error converting markdown</b></p><pre>---\r\n---# Title\r\n[foo]</pre>", siteContext.Pages[0].Content);
+            Assert.Contains(@"Error (foo bar) converting C:\TestSite\SomeFile.md", sb.ToString());
+            Assert.Contains(@"System.Exception: foo bar", sb.ToString());
+        }
+
+        [Fact]
+        public void file_with_1_ioexception_on_ReadAllText_is_processed()
+        {
+            // arrange
+            string filePath = Path.Combine(Path.GetTempPath(), "SomeFile.md");
+            bool alreadyOccured = false;
+            var fileSubstitute = Substitute.For<FileBase>();
+            fileSubstitute.OpenText(Arg.Any<string>()).Returns(new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes("---"))));
+            fileSubstitute.ReadAllText(Arg.Any<string>()).Returns(x =>
+            {
+                if (alreadyOccured)
+                {
+                    return "---\r\n---# Title";
+                }
+                else
+                {
+                    alreadyOccured = true;
+                    throw new IOException();
+                }
+            });
+            fileSubstitute.Exists(filePath).Returns(true);
+
+            var directorySubstitute = Substitute.For<DirectoryBase>();
+            directorySubstitute.GetFiles(Arg.Any<string>(), "*.*", SearchOption.AllDirectories).Returns(new[] { @"C:\TestSite\SomeFile.md" });
+
+            var fileInfoSubstitute = Substitute.For<FileInfoBase>();
+            fileInfoSubstitute.Name.Returns("SomeFile.md");
+
+            var fileInfoFactorySubstitute = Substitute.For<IFileInfoFactory>();
+            fileInfoFactorySubstitute.FromFileName(Arg.Any<string>()).Returns(fileInfoSubstitute);
+
+            var fileSystemSubstitute = Substitute.For<System.IO.Abstractions.IFileSystem>();
+            fileSystemSubstitute.File.Returns(fileSubstitute);
+            fileSystemSubstitute.Directory.Returns(directorySubstitute);
+            fileSystemSubstitute.FileInfo.Returns(fileInfoFactorySubstitute);
+
+
+            var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>());
+
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+
+            // assert
+            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Equal("<h1>Title</h1>\n", siteContext.Pages[0].Content);
+            // Check if the temp file have been deleted
+            fileSubstitute.Received().Delete(filePath);
+        }
+
+        [Fact]
+        public void file_with_2_ioexception_on_ReadAllText_is_not_processed_and_exception_traced()
+        {
+            // arrange
+            string filePath = Path.Combine(Path.GetTempPath(), "SomeFile.md");
+            var fileSubstitute = Substitute.For<FileBase>();
+            fileSubstitute.OpenText(Arg.Any<string>()).Returns(new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes("---"))));
+            fileSubstitute.ReadAllText(Arg.Any<string>()).Returns(x =>
+            {
+                throw new IOException();
+            });
+            fileSubstitute.Exists(filePath).Returns(true);
+
+            var directorySubstitute = Substitute.For<DirectoryBase>();
+            directorySubstitute.GetFiles(Arg.Any<string>(), "*.*", SearchOption.AllDirectories).Returns(new[] { @"C:\TestSite\SomeFile.md" });
+
+            var fileInfoSubstitute = Substitute.For<FileInfoBase>();
+            fileInfoSubstitute.Name.Returns("SomeFile.md");
+
+            var fileInfoFactorySubstitute = Substitute.For<IFileInfoFactory>();
+            fileInfoFactorySubstitute.FromFileName(Arg.Any<string>()).Returns(fileInfoSubstitute);
+
+            var fileSystemSubstitute = Substitute.For<System.IO.Abstractions.IFileSystem>();
+            fileSystemSubstitute.File.Returns(fileSubstitute);
+            fileSystemSubstitute.Directory.Returns(directorySubstitute);
+            fileSystemSubstitute.FileInfo.Returns(fileInfoFactorySubstitute);
+
+            StringBuilder sb = new StringBuilder();
+            TextWriter writer = new StringWriter(sb);
+            Tracing.Logger.SetWriter(writer);
+            Tracing.Logger.AddCategory("info");
+            Tracing.Logger.AddCategory("debug");
+
+            var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>());
+
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            // assert
+            Assert.Equal(0, siteContext.Pages.Count);
+            Assert.Contains(@"Failed to build post from File: C:\TestSite\SomeFile.md", sb.ToString());
+            Assert.Contains(@"I/O error occurred.", sb.ToString());
+            Assert.Contains(@"System.IO.IOException: I/O error occurred.", sb.ToString());
+            // Check if the temp file have been deleted
+            fileSubstitute.Received().Delete(filePath);
+        }
+
+        [Fact]
+        public void RemoveDiacritics_should_remove_any_accents()
+        {
+            Assert.Equal("the cat is running & getting away", SiteContextGenerator.RemoveDiacritics("The cát ís running & getting away"));
+        }
+
+        [Fact]
+        public void RemoveDiacritics_should_return_null_if_input_null()
+        {
+            Assert.Equal(null, SiteContextGenerator.RemoveDiacritics(null));
+        }
     }
 }

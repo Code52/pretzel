@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using NDesk.Options;
+using NSubstitute;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
-using Xunit;
-using NSubstitute;
-using NDesk.Options;
-using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating;
+using Pretzel.Logic.Templating.Context;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Xunit;
 
 namespace Pretzel.Tests
 {
@@ -284,9 +284,9 @@ namespace Pretzel.Tests
         public void CommandParameters_WhenSpecifyingAllParameters_ResultIsCorrect()
         {
             var args = new List<string> { "-template=jekyll", @"-directory=c:\mysite", "-port=8182", "-import=blogger", "-file=BloggerExport.xml", "-drafts", "-nobrowser", "-withproject", "-wiki", "-cleantarget" };
-            
+
             subject.Parse(args);
-            
+
             Assert.Equal("jekyll", subject.Template);
             Assert.Equal(@"c:\mysite", subject.Path);
             Assert.Equal(8182, subject.Port);
@@ -309,7 +309,7 @@ namespace Pretzel.Tests
             Assert.Equal(8080, subject.Port);
             Assert.True(subject.LaunchBrowser);
             Assert.Null(subject.Template);
-            Assert.Equal(Directory.GetCurrentDirectory(),  subject.Path);
+            Assert.Equal(Directory.GetCurrentDirectory(), subject.Path);
             Assert.Null(subject.ImportType);
             Assert.Null(subject.ImportPath);
             Assert.False(subject.IncludeDrafts);
@@ -331,7 +331,7 @@ namespace Pretzel.Tests
                 });
 
             var subject = new CommandParameters(new List<IHaveCommandLineArgs> { extension });
-            var args = new List<string>{"-newOption=test"};
+            var args = new List<string> { "-newOption=test" };
 
             subject.Parse(args);
 
@@ -344,9 +344,9 @@ namespace Pretzel.Tests
         public void Parse_WhenOneParameterSet_MapsToPath_RelativePath()
         {
             var args = new List<string> { "mySite" };
-            
+
             subject.Parse(args);
-            
+
             Assert.Equal(Path.Combine(Directory.GetCurrentDirectory(), "mySite"), subject.Path);
         }
 
@@ -354,9 +354,9 @@ namespace Pretzel.Tests
         public void DetectFromDirectory_WhenSpecifyingNoSiteEngines_DefaultValueIsLiquid()
         {
             var siteContext = new SiteContext();
-            
+
             subject.DetectFromDirectory(new Dictionary<string, ISiteEngine>(), siteContext);
-            
+
             Assert.Equal("liquid", subject.Template);
         }
 
@@ -364,7 +364,7 @@ namespace Pretzel.Tests
         public void DetectFromDirectory_WhenSpecifyingTwoSiteEngines_CorrectValueIsPicked()
         {
             var siteContext = new SiteContext { Config = new Dictionary<string, object> { { "pretzel", new Dictionary<string, object> { { "engine", "engine2" } } } } };
-            
+
             var siteEngine1 = Substitute.For<ISiteEngine>();
             siteEngine1.CanProcess(Arg.Any<SiteContext>())
                 .Returns(ci => ci.Arg<SiteContext>().Engine == "engine1");
@@ -372,7 +372,7 @@ namespace Pretzel.Tests
             var siteEngine2 = Substitute.For<ISiteEngine>();
             siteEngine2.CanProcess(Arg.Any<SiteContext>())
                 .Returns(ci => ci.Arg<SiteContext>().Engine == "engine2");
-            
+
             var siteEngines = new Dictionary<string, ISiteEngine> 
             {
                 { "engine1", siteEngine1 },
@@ -382,6 +382,63 @@ namespace Pretzel.Tests
             subject.DetectFromDirectory(siteEngines, siteContext);
 
             Assert.Equal("engine2", subject.Template);
+        }
+
+        [Fact]
+        public void DetectFromDirectory_WhenSpecifyingNoPretzelConfig_DefaultValueIsLiquid()
+        {
+            var siteContext = new SiteContext { Config = new Dictionary<string, object> { } };
+
+            var siteEngine1 = Substitute.For<ISiteEngine>();
+            siteEngine1.CanProcess(Arg.Any<SiteContext>())
+                .Returns(ci => ci.Arg<SiteContext>().Engine == "engine1");
+
+            var siteEngines = new Dictionary<string, ISiteEngine> 
+            {
+                { "engine1", siteEngine1 }
+            };
+
+            subject.DetectFromDirectory(siteEngines, siteContext);
+
+            Assert.Equal("liquid", subject.Template);
+        }
+
+        [Fact]
+        public void DetectFromDirectory_WhenSpecifyingNoEnginInPretzelConfig_DefaultValueIsLiquid()
+        {
+            var siteContext = new SiteContext { Config = new Dictionary<string, object> { { "pretzel", new Dictionary<string, object> { } } } };
+
+            var siteEngine1 = Substitute.For<ISiteEngine>();
+            siteEngine1.CanProcess(Arg.Any<SiteContext>())
+                .Returns(ci => ci.Arg<SiteContext>().Engine == "engine1");
+
+            var siteEngines = new Dictionary<string, ISiteEngine> 
+            {
+                { "engine1", siteEngine1 }
+            };
+
+            subject.DetectFromDirectory(siteEngines, siteContext);
+
+            Assert.Equal("liquid", subject.Template);
+        }
+
+        [Fact]
+        public void DetectFromDirectory_WhenSpecifyingPretzelConfigSimpleValue_DefaultValueIsLiquid()
+        {
+            var siteContext = new SiteContext { Config = new Dictionary<string, object> { { "pretzel", 42 } } };
+
+            var siteEngine1 = Substitute.For<ISiteEngine>();
+            siteEngine1.CanProcess(Arg.Any<SiteContext>())
+                .Returns(ci => ci.Arg<SiteContext>().Engine == "engine1");
+
+            var siteEngines = new Dictionary<string, ISiteEngine> 
+            {
+                { "engine1", siteEngine1 }
+            };
+
+            subject.DetectFromDirectory(siteEngines, siteContext);
+
+            Assert.Equal("liquid", subject.Template);
         }
     }
 }

@@ -54,6 +54,12 @@ namespace Pretzel.Tests.Templating.Jekyll
         }
 
         [Fact]
+        public void DateToLongString_ForUnexpectedStringDate_ReturnsStringEmpty()
+        {
+            Assert.Equal(string.Empty, DateToLongStringFilter.date_to_long_string("foo bar"));
+        }
+
+        [Fact]
         public void CgiEscape_ForGivenString_ReturnsEscapedString()
         {
             Assert.Equal("foo%2Cbar%3Bbaz%3F", CgiEscapeFilter.cgi_escape(@"foo,bar;baz?"));

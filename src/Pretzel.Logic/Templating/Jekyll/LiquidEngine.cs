@@ -62,7 +62,7 @@ namespace Pretzel.Logic.Templating.Jekyll
         {
             var data = CreatePageData(pageData);
             var template = Template.Parse(templateContents);
-            Template.FileSystem = new Includes(Context.SourceFolder);
+            Template.FileSystem = new Includes(Context.SourceFolder, FileSystem);
             var output = template.Render(data);
             return output;
         }

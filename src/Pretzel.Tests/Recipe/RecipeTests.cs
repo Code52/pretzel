@@ -1,12 +1,13 @@
-﻿using System;
+﻿using NSubstitute;
+using Pretzel.Logic.Extensibility;
+using Pretzel.Logic.Extensions;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using System.Text;
-using NSubstitute;
-using Pretzel.Logic.Extensibility;
-using Pretzel.Logic.Extensions;
 using Xunit;
 using Xunit.Extensions;
 
@@ -164,6 +165,22 @@ namespace Pretzel.Tests.Recipe
             Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\PretzelClasses\Tag.cs"));
             Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\web.config"));
             Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\packages.config"));
+        }
+
+        [Fact]
+        public void error_is_traced()
+        {
+            var fileSubstitute = Substitute.For<FileBase>();
+            fileSubstitute.When(f => f.WriteAllText(Arg.Any<string>(), Arg.Any<string>())).Do(x => { throw new Exception("Error!!!"); });
+
+            var fileSystemSubstitute = Substitute.For<IFileSystem>();
+            fileSystemSubstitute.File.Returns(fileSubstitute);
+
+            var recipe = new Logic.Recipe.Recipe(fileSystemSubstitute, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, false);
+            recipe.Create();
+
+            Assert.Contains(@"Error trying to create template: System.Exception: Error!!!
+   at Pretzel.Tests.Recipe.RecipeTests.<error_is_traced>b__0(CallInfo x)", writer.ToString());
         }
     }
 }
