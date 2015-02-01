@@ -1,7 +1,7 @@
 [![TeamCity build status](http://teamcity.ginnivan.net/app/rest/builds/buildType:(id:bt52)/statusIcon)](http://teamcity.ginnivan.net/viewType.html?buildTypeId=bt52&guest=1)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/rp8nq03r4b7mdecf?svg=true)](https://ci.appveyor.com/project/laedit/pretzel)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/3949/badge.svg)](https://scan.coverity.com/projects/3949)
-[![Coverage Status](https://coveralls.io/repos/Code52/pretzel/badge.svg?branch=Code-Coverage)](https://coveralls.io/r/Code52/pretzel?branch=Code-Coverage)
+[![Coverage Status](https://coveralls.io/repos/Code52/pretzel/badge.svg)](https://coveralls.io/r/Code52/pretzel)
 [![Chocolatey](https://img.shields.io/chocolatey/v/pretzel.svg?style=flat)](https://chocolatey.org/packages/pretzel/)
 
 
