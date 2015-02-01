@@ -19,12 +19,16 @@ namespace Pretzel.Commands
     {
         private ISiteEngine engine;
 #pragma warning disable 649
-        [Import] TemplateEngineCollection templateEngines;
-        [Import] SiteContextGenerator Generator { get; set; }
-        [Import] CommandParameters parameters;
+        [Import]
+        TemplateEngineCollection templateEngines;
+        [Import]
+        SiteContextGenerator Generator { get; set; }
+        [Import]
+        CommandParameters parameters;
         [ImportMany]
         private IEnumerable<ITransform> transforms;
-        [Import] IFileSystem FileSystem;
+        [Import]
+        IFileSystem FileSystem;
 #pragma warning restore 649
 
         public void Execute(IEnumerable<string> arguments)
@@ -59,46 +63,51 @@ namespace Pretzel.Commands
             engine.Process(context, skipFileOnError: true);
             foreach (var t in transforms)
                 t.Transform(context);
-            var watcher = new SimpleFileSystemWatcher();
-            watcher.OnChange(parameters.Path, WatcherOnChanged);
-            // TODO see to replace engine.GetOutputDirectory by context.OutputFolder
-            var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider(), Convert.ToInt32(parameters.Port));
-            try
-            {
-                w.Start();
-            }
-            catch (System.Net.Sockets.SocketException)
-            {
-                Tracing.Info(string.Format("Port {0} is already in use", parameters.Port));
-                return;
-            }
 
-            var url = string.Format("http://localhost:{0}/", parameters.Port);
-            if (parameters.LaunchBrowser)
+            using (var watcher = new SimpleFileSystemWatcher())
             {
-                Tracing.Info(string.Format("Opening {0} in default browser...", url));
-                try
+                watcher.OnChange(parameters.Path, WatcherOnChanged);
+                // TODO see to replace engine.GetOutputDirectory by context.OutputFolder
+                using (var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider(), Convert.ToInt32(parameters.Port)))
                 {
-                    Process.Start(url);
+                    try
+                    {
+                        w.Start();
+                    }
+                    catch (System.Net.Sockets.SocketException)
+                    {
+                        Tracing.Info(string.Format("Port {0} is already in use", parameters.Port));
+                        return;
+                    }
+
+                    var url = string.Format("http://localhost:{0}/", parameters.Port);
+                    if (parameters.LaunchBrowser)
+                    {
+                        Tracing.Info(string.Format("Opening {0} in default browser...", url));
+                        try
+                        {
+                            Process.Start(url);
+                        }
+                        catch (Exception)
+                        {
+                            Tracing.Info(string.Format("Failed to launch {0}.", url));
+                        }
+                    }
+                    else
+                    {
+                        Tracing.Info(string.Format("Browse to {0} to view the site.", url));
+                    }
+
+                    Tracing.Info("Press 'Q' to stop the web host...");
+                    ConsoleKeyInfo key;
+                    do
+                    {
+                        key = Console.ReadKey();
+                    }
+                    while (key.Key != ConsoleKey.Q);
+                    Console.WriteLine();
                 }
-                catch (Exception)
-                {
-                    Tracing.Info(string.Format("Failed to launch {0}.", url));
-                }
             }
-            else
-            {
-                Tracing.Info(string.Format("Browse to {0} to view the site.", url));
-            }
-      
-            Tracing.Info("Press 'Q' to stop the web host...");
-            ConsoleKeyInfo key;
-            do
-            {
-                key = Console.ReadKey();
-            }
-            while (key.Key != ConsoleKey.Q);
-            Console.WriteLine();
         }
 
         private void WatcherOnChanged(string file)

@@ -1,5 +1,7 @@
- 
 # In development
+
+
+# 0.2.0
 
 ## Breaking changes
 - [#189](https://github.com/Code52/pretzel/pull/189): Handle bool in yaml
