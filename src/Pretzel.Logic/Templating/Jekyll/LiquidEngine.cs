@@ -1,9 +1,10 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using DotLiquid;
+﻿using DotLiquid;
 using Pretzel.Logic.Liquid;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Jekyll.Liquid;
+using System;
+using System.ComponentModel.Composition;
+using System.Text.RegularExpressions;
 
 namespace Pretzel.Logic.Templating.Jekyll
 {
@@ -11,7 +12,8 @@ namespace Pretzel.Logic.Templating.Jekyll
     [SiteEngineInfo(Engine = "liquid")]
     public class LiquidEngine : JekyllEngineBase
     {
-        SiteContextDrop contextDrop;
+        private SiteContextDrop contextDrop;
+        private readonly Regex emHtmlRegex = new Regex(@"(?<=\{[\{\%].*?)(</?em>)(?=.*?[\%\}]\})", RegexOptions.Compiled);
 
         public LiquidEngine()
         {
@@ -60,6 +62,8 @@ namespace Pretzel.Logic.Templating.Jekyll
 
         protected override string RenderTemplate(string templateContents, PageContext pageData)
         {
+            // Replace all em HTML tags in liquid tags ({{ or {%) by underscores
+            templateContents = emHtmlRegex.Replace(templateContents, "_");
             var data = CreatePageData(pageData);
             var template = Template.Parse(templateContents);
             Template.FileSystem = new Includes(Context.SourceFolder, FileSystem);

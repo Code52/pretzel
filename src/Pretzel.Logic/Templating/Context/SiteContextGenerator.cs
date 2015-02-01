@@ -1,4 +1,7 @@
-﻿using System;
+﻿using MarkdownDeep;
+using Pretzel.Logic.Extensibility;
+using Pretzel.Logic.Extensions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Globalization;
@@ -7,9 +10,6 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using MarkdownDeep;
-using Pretzel.Logic.Extensibility;
-using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Logic.Templating.Context
 {
@@ -318,6 +318,7 @@ namespace Pretzel.Logic.Templating.Context
             try
             {
                 var contentsWithoutHeader = contents.ExcludeHeader();
+
                 html = Path.GetExtension(file).IsMarkdownFile()
                        ? Markdown.Transform(contentsWithoutHeader)
                        : contentsWithoutHeader;

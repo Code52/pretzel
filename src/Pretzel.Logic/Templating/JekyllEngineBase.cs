@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Pretzel.Logic.Exceptions;
+using Pretzel.Logic.Extensibility;
+using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Templating.Context;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using Pretzel.Logic.Exceptions;
-using Pretzel.Logic.Extensibility;
-using Pretzel.Logic.Extensions;
-using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Logic.Templating
 {
@@ -16,9 +16,10 @@ namespace Pretzel.Logic.Templating
         protected SiteContext Context;
 
 #pragma warning disable 0649
-        [Import] public IFileSystem FileSystem { get; set; }
+        [Import]
+        public IFileSystem FileSystem { get; set; }
 #pragma warning restore 0649
-        
+
         [ImportMany]
         public IEnumerable<IFilter> Filters { get; set; }
 
@@ -96,7 +97,7 @@ namespace Pretzel.Logic.Templating
             pageContext.Previous = previous;
             pageContext.Next = next;
 
-            var pageContexts = new List<PageContext> {pageContext};
+            var pageContexts = new List<PageContext> { pageContext };
             object paginateObj;
             if (page.Bag.TryGetValue("paginate", out paginateObj))
             {
@@ -112,15 +113,15 @@ namespace Pretzel.Logic.Templating
                 var prevLink = page.Url;
                 for (var i = 2; i <= totalPages; i++)
                 {
-                    var newPaginator = new Paginator(Context, totalPages, paginate, i) {PreviousPageUrl = prevLink};
+                    var newPaginator = new Paginator(Context, totalPages, paginate, i) { PreviousPageUrl = prevLink };
                     var link = paginateLink.Replace(":page", Convert.ToString(i));
                     paginator.NextPageUrl = link;
-                    
+
                     paginator = newPaginator;
                     prevLink = link;
 
                     var path = Path.Combine(outputDirectory, link.ToRelativeFile());
-                    pageContexts.Add(new PageContext(pageContext) {Paginator = newPaginator, OutputPath = path});
+                    pageContexts.Add(new PageContext(pageContext) { Paginator = newPaginator, OutputPath = path });
                 }
             }
 
@@ -131,7 +132,7 @@ namespace Pretzel.Logic.Templating
                 while (metadata.ContainsKey("layout"))
                 {
                     var layout = metadata["layout"];
-                    if ((string) layout == "nil" || layout == null)
+                    if ((string)layout == "nil" || layout == null)
                         break;
 
                     var path = Path.Combine(Context.SourceFolder, "_layouts", layout + LayoutExtension);
@@ -189,14 +190,14 @@ namespace Pretzel.Logic.Templating
             }
         }
 
-		  private void CreateOutputDirectory(string outputFile)
-		  {
-			  var directory = Path.GetDirectoryName(outputFile);
-			  if (!FileSystem.Directory.Exists(directory))
-				  FileSystem.Directory.CreateDirectory(directory);
-		  }
+        private void CreateOutputDirectory(string outputFile)
+        {
+            var directory = Path.GetDirectoryName(outputFile);
+            if (!FileSystem.Directory.Exists(directory))
+                FileSystem.Directory.CreateDirectory(directory);
+        }
 
-    	protected virtual string LayoutExtension
+        protected virtual string LayoutExtension
         {
             get { return ".html"; }
         }
@@ -218,7 +219,7 @@ namespace Pretzel.Logic.Templating
 
         public bool CanProcess(SiteContext context)
         {
-            var engineInfo = GetType().GetCustomAttributes(typeof (SiteEngineInfoAttribute), true).SingleOrDefault() as SiteEngineInfoAttribute;
+            var engineInfo = GetType().GetCustomAttributes(typeof(SiteEngineInfoAttribute), true).SingleOrDefault() as SiteEngineInfoAttribute;
             if (engineInfo == null) return false;
             return context.Engine == engineInfo.Engine;
         }

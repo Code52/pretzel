@@ -994,18 +994,17 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
         }
 
-
-        public class Given_LiquidEngin_Is_Initialized : BakingEnvironment<LiquidEngine>
+        public class Given_LiquidEngine_Is_Initialized : BakingEnvironment<LiquidEngine>
         {
             const string HighlightPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight %}a word{% endhighlight %}";
             const string HighlightExpectedfileContents = "<p><pre>a word</pre></p>";
-            const string PostUrlPageContents = "---\r\n layout: nil \r\n---\r\n\r\n<p>{% post_url post-title.md%}test{% endpost_url %}</p>";
+            const string PostUrlPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% post_url post-title.md%}test{% endpost_url %}";
             const string PostUrlExpectedfileContents = "<p>post/title.html</p>";
             const string CgiEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'foo,bar;baz?' | cgi_escape }}";
             const string CgiEscapeExpectedfileContents = "<p>foo%2Cbar%3Bbaz%3F</p>";
             const string UriEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'foo, bar \\baz?' | uri_escape }}";
             const string UriEscapeExpectedfileContents = "<p>foo,%20bar%20%5Cbaz?</p>";
-            const string NumberOfWordsPageContents = "---\r\n layout: nil \r\n---\r\n\r\n<p>{{ 'This is a test' | number_of_words }}</p>";
+            const string NumberOfWordsPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'This is a test' | number_of_words }}";
             const string NumberOfWordsExpectedfileContents = "<p>4</p>";
             const string XmlEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ '<test>this is a test</test>' | xml_escape }}";
             const string XmlEscapeExpectedfileContents = "<p>&lt;test&gt;this is a test&lt;/test&gt;</p>";
@@ -1243,6 +1242,34 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 Assert.True(FileSystem.File.Exists(@"C:\website\_site\pages\index.html"));
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\pages\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_Liquid_Tag_And_Block_With_Underscores : BakingEnvironment<LiquidEngine>
+        {
+            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n_any_ word {% highlight %}a word{% endhighlight %}\r\n{% post_url post-title.md%}{% endpost_url %}\r\n{{ 'This is a test' | number_of_words }}";
+            const string ExpectedfileContents = "<p><em>any</em> word <pre>a word</pre>post/title.html4</p>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Filter_And_Block_Have_Been_Correctly_Interpreted()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
             }
         }
     }
