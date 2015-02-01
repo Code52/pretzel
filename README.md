@@ -5,7 +5,7 @@
 
 A simple, pluggable site generation tool for .NET developers and Windows users (with Mono support planned I think)
 
-Pretzel follows the same convensions as  [Jekyll](https://github.com/mojombo/jekyll) and should be compatible with basic Jekyll websites. If you are not familiar with Jekyll, have a read at [http://jekyllrb.com/docs/usage/](http://jekyllrb.com/docs/usage/)
+Pretzel follows the same conventions as  [Jekyll](https://github.com/mojombo/jekyll) and should be compatible with basic Jekyll websites. If you are not familiar with Jekyll, have a read at [http://jekyllrb.com/docs/usage/](http://jekyllrb.com/docs/usage/)
 
 ### Usage
 
@@ -31,7 +31,7 @@ To scan a specific folder and parse the contents, run:
 
 To explicitly specify the input - we should support inferring the input based on the files found anyway - run:
 
-    pretzel bake --engine jekyll
+    pretzel bake --engine liquid
     
 
 **Taste** is for testing a site locally - make a change, and pretzel should handle regenerating the page when a file changes.
@@ -46,13 +46,15 @@ To specify the port to serve the site from (default will be 4000), run:
 
 To stop the site, press q.
 
+*More infos on the [wiki](https://github.com/Code52/pretzel/wiki)*
+
 ### Getting started
 
 **Getting started with Git and GitHub**
 
  * [Setting up Git for Windows and connecting to GitHub](http://help.github.com/win-set-up-git/)
  * [Forking a GitHub repository](http://help.github.com/fork-a-repo/)
- * [The simple gude to GIT guide](http://rogerdudler.github.com/git-guide/)
+ * [The simple guide to GIT guide](http://rogerdudler.github.com/git-guide/)
 
 Once you're familiar with Git and GitHub, clone the repository and run the ```.\build.cmd``` script to compile the code and run all the unit tests. You can use this script to test your changes quickly.
 
