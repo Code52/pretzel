@@ -15,6 +15,10 @@ cache:
 - C:\ProgramData\chocolatey\bin\coveralls.net.exe
 - C:\ProgramData\chocolatey\lib
 
+environment:
+  COVERALLS_REPO_TOKEN:
+    secure: rd3+Sv0U98kwJXr9TgMPICL7AOh2c6RHr2JY0DTT4GEt1y40aWnDmudcGT+PBmQH
+
 build:
   project: src\Pretzel.sln
   verbosity: minimal
@@ -53,6 +57,7 @@ test_script:
 - cinst opencover -source https://nuget.org/api/v2/
 - cinst coveralls.io -source https://nuget.org/api/v2/
 - OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -target:"xunit.console.clr4.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"" /noshadow /appveyor" -output:coverage.xml
+- coveralls.net --opencover coverage.xml
 
 artifacts:
 - path: artifacts\Pretzel.*.nupkg

@@ -1,22 +1,24 @@
-﻿using System.ComponentModel.Composition;
+﻿using NDesk.Options;
+using Pretzel.Logic.Extensions;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
-using System.Reflection;
 using System.Linq;
-using NDesk.Options;
-using Pretzel.Logic.Extensions;
+using System.Reflection;
 
 namespace Pretzel.Logic.Extensibility.Extensions
 {
     public class AzureHostSupport : IAdditionalIngredient, IHaveCommandLineArgs
     {
         private readonly IFileSystem fileSystem;
+        private readonly IAssembly assembly;
         private bool performAzureWorkaround;
 
         [ImportingConstructor]
-        public AzureHostSupport(IFileSystem fileSystem)
+        public AzureHostSupport(IFileSystem fileSystem, IAssembly assembly)
         {
             this.fileSystem = fileSystem;
+            this.assembly = assembly;
         }
 
         public void UpdateOptions(OptionSet options)
@@ -34,27 +36,33 @@ namespace Pretzel.Logic.Extensibility.Extensions
             if (!performAzureWorkaround) return;
             // Move everything under the _source folder
             var sourceFolder = Path.Combine(directory, "_source");
-            if (!Directory.Exists(sourceFolder))
-                Directory.CreateDirectory(sourceFolder);
-            foreach (var file in Directory.GetFiles(directory))
+            if (!fileSystem.Directory.Exists(sourceFolder))
             {
-                var trimStart = file.Replace(directory, string.Empty).TrimStart('/', '\\');
-                File.Move(file, Path.Combine(sourceFolder, trimStart));
-            }
-            foreach (var directoryToMove in Directory.GetDirectories(directory).Where(n => !n.EndsWith("_source")))
-            {
-                var trimStart = directoryToMove.Replace(directory, string.Empty).TrimStart('/', '\\');
-                Directory.Move(directoryToMove, Path.Combine(sourceFolder, trimStart));
+                fileSystem.Directory.CreateDirectory(sourceFolder);
             }
 
+            foreach (var file in fileSystem.Directory.GetFiles(directory))
+            {
+                var trimStart = file.Replace(directory, string.Empty).TrimStart('/', '\\');
+                fileSystem.File.Move(file, Path.Combine(sourceFolder, trimStart));
+            }
+
+            foreach (var directoryToMove in fileSystem.Directory.GetDirectories(directory).Where(n => new DirectoryInfo(n).Name != "_source"))
+            {
+                var trimStart = directoryToMove.Replace(directory, string.Empty).TrimStart('/', '\\');
+                fileSystem.Directory.Move(directoryToMove, Path.Combine(sourceFolder, trimStart));
+            }
+            
             fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.cs"), Properties.RazorAzure.Shim);
             fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.csproj"), Properties.RazorAzure.ShimProject);
             fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.sln"), Properties.RazorAzure.ShimSolution);
 
-            var currentPath = Assembly.GetEntryAssembly().Location;
+            var currentPath = assembly.GetEntryAssemblyLocation();
             var destination = Path.Combine(directory, "Pretzel.exe");
-            if (!File.Exists(destination))
-                File.Copy(currentPath, destination);
+            if (!fileSystem.File.Exists(destination))
+            { 
+                fileSystem.File.Copy(currentPath, destination);
+            }
 
             Tracing.Info("Shim project added to allow deployment to azure websites");
         }

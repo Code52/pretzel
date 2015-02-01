@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
-using Pretzel.Logic.Exceptions;
-using Pretzel.Logic.Extensibility;
+﻿using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensibility.Extensions;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Razor;
 using Pretzel.Tests.Templating.Jekyll;
+using System;
+using System.Collections.Generic;
+using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
 using Xunit;
 
 namespace Pretzel.Tests.Templating.Razor
@@ -16,7 +15,9 @@ namespace Pretzel.Tests.Templating.Razor
     {
         public override RazorSiteEngine Given()
         {
-            return new RazorSiteEngine();
+            var engine = new RazorSiteEngine();
+            engine.Initialize();
+            return engine;
         }
 
         public override void When()
@@ -48,7 +49,7 @@ namespace Pretzel.Tests.Templating.Razor
             const string fileContents = "<html><head><title>@Model.Title</title></head><body></body></html>";
             const string title = "This is the title!";
 
-            var bag = new Dictionary<string, object> {{"title", title}};
+            var bag = new Dictionary<string, object> { { "title", title } };
             ProcessContents(fileContents, string.Empty, bag);
             var expected = fileContents.Replace(@"@Model.Title", title);
             var output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
@@ -84,15 +85,15 @@ namespace Pretzel.Tests.Templating.Razor
         [Fact]
         public void File_with_include_and_model_is_processed()
         {
-           const string templateContents = "<html><head><title>@Model.Title</title></head><body>@Raw(Model.Content)</body></html>";
-           const string pageContents = "<i>@Include(\"TestInclude\", @Model.Title)</i>";
-           const string layoutContents = "<b>Included from @Model!</b>";
-           const string expectedfileContents = "<html><head><title>My Web Site</title></head><body><i><b>Included from My Web Site!</b></i></body></html>";
+            const string templateContents = "<html><head><title>@Model.Title</title></head><body>@Raw(Model.Content)</body></html>";
+            const string pageContents = "<i>@Include(\"TestInclude\", @Model.Title)</i>";
+            const string layoutContents = "<b>Included from @Model!</b>";
+            const string expectedfileContents = "<html><head><title>My Web Site</title></head><body><i><b>Included from My Web Site!</b></i></body></html>";
 
-           FileSystem.AddFile(@"C:\website\_includes\TestInclude.cshtml", new MockFileData(layoutContents));
-           ProcessContents(templateContents, pageContents, new Dictionary<string, object> { { "title", "My Web Site" } });
-           string output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
-           Assert.Equal(expectedfileContents, output);
+            FileSystem.AddFile(@"C:\website\_includes\TestInclude.cshtml", new MockFileData(layoutContents));
+            ProcessContents(templateContents, pageContents, new Dictionary<string, object> { { "title", "My Web Site" } });
+            string output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
+            Assert.Equal(expectedfileContents, output);
         }
 
         [Fact]
@@ -101,7 +102,7 @@ namespace Pretzel.Tests.Templating.Razor
             const string templateContents = "<html><head><title>@Model.Title</title></head><body>@Raw(Model.Content)</body></html>";
             const string pageContents = "<i>@Include(\"TestInclude\")</i>";
             const string expectedfileContents = "<html><head><title>My Web Site</title></head><body><i>@Include(\"TestInclude\")</i></body></html>";
-            ProcessContents(templateContents, pageContents, new Dictionary<string, object> {{"title", "My Web Site"}});
+            ProcessContents(templateContents, pageContents, new Dictionary<string, object> { { "title", "My Web Site" } });
 
             var output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
             Assert.Equal(expectedfileContents, output);
@@ -110,16 +111,108 @@ namespace Pretzel.Tests.Templating.Razor
         [Fact]
         public void File_with_extension_is_processed()
         {
-           const string templateContents = "<html><body>@Raw(Model.Content) @Filter.Slugify(\".ASP.NET MVC\")</body></html>";
-           const string pageContents = "<h1>Hello</h1>";
-           const string expectedfileContents = "<html><body><h1>Hello</h1> asp-net-mvc</body></html>";
+            const string templateContents = "<html><body>@Raw(Model.Content) @Filter.Slugify(\".ASP.NET MVC\")</body></html>";
+            const string pageContents = "<h1>Hello</h1>";
+            const string expectedfileContents = "<html><body><h1>Hello</h1> asp-net-mvc</body></html>";
 
-           Subject.Filters = new IFilter[]{new SlugifyFilter()};
-           ProcessContents(templateContents, pageContents, new Dictionary<string, object>());
-           var output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
-           Assert.Equal(expectedfileContents, output);
+            Subject.Filters = new IFilter[] { new SlugifyFilter() };
+            ProcessContents(templateContents, pageContents, new Dictionary<string, object>());
+            var output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
+            Assert.Equal(expectedfileContents, output);
         }
 
+        [Fact]
+        public void Filter_PrettifyUrl_is_processed()
+        {
+            const string templateContents = "<html><body>@Raw(Model.Content) @Filter.PrettifyUrl(\"http://mysite.com/index.html\")</body></html>";
+            const string pageContents = "<h1>Hello</h1>";
+            const string expectedfileContents = "<html><body><h1>Hello</h1> http://mysite.com/</body></html>";
+
+            Subject.Filters = new IFilter[] { new PrettifyUrlFilter() };
+            ProcessContents(templateContents, pageContents, new Dictionary<string, object>());
+            var output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
+            Assert.Equal(expectedfileContents, output);
+        }
+
+        [Fact]
+        public void Comments_true_is_processed_correctly()
+        {
+            // arrange
+            const string fileContents = "<html><head><title>Some title</title></head><body>@if (Model.Comments){<span>Comments is true</span>}</body></html>";
+
+            var bag = new Dictionary<string, object> { { "comments", true } };
+            ProcessContents(fileContents, string.Empty, bag);
+            var expected = "<html><head><title>Some title</title></head><body><span>Comments is true</span></body></html>";
+
+            // act
+            var output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
+
+            // assert
+            Assert.Equal(expected, output);
+        }
+
+        [Fact]
+        public void Comments_false_is_processed_correctly()
+        {
+            // arrange
+            const string fileContents = "<html><head><title>Some title</title></head><body>@if (Model.Comments){ <span>Comments is true</span> }</body></html>";
+
+            var bag = new Dictionary<string, object> { { "comments", false } };
+            ProcessContents(fileContents, string.Empty, bag);
+            var expected = "<html><head><title>Some title</title></head><body></body></html>";
+
+            // act
+            var output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
+
+            // assert
+            Assert.Equal(expected, output);
+        }
+
+        [Fact]
+        public void Comments_inexisting_is_processed_correctly()
+        {
+            // arrange
+            const string fileContents = "<html><head><title>Some title</title></head><body>@if (Model.Comments){ <span>Comments is true</span> }</body></html>";
+
+            var bag = new Dictionary<string, object> { };
+            ProcessContents(fileContents, string.Empty, bag);
+            var expected = "<html><head><title>Some title</title></head><body></body></html>";
+
+            // act
+            var output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
+
+            // assert
+            Assert.Equal(expected, output);
+        }
+
+        [Fact]
+        public void Page_Layout_is_available_in_model()
+        {
+            // arrange
+            const string fileContents = "<html><head><title>Some title</title></head><body>@Model.Page.Layout / @Model.Site.Posts[0].Layout / @Model.Bag[\"layout\"]</body></html>";
+
+            var bag = new Dictionary<string, object> { };
+            ProcessContents(fileContents, string.Empty, bag);
+            var expected = "<html><head><title>Some title</title></head><body>Test / Test / Test</body></html>";
+
+            // act
+            var output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
+
+            // assert
+            Assert.Equal(expected, output);
+        }
+
+        [Fact]
+        public void Use_non_existing_filter_do_not_render_page()
+        {
+            const string templateContents = "<html><body>@Raw(Model.Content) @Filter.DoSomething(\"http://mysite.com/index.html\")</body></html>";
+            const string pageContents = "<h1>Hello</h1>";
+
+            Subject.Filters = new IFilter[] { new PrettifyUrlFilter() };
+            ProcessContents(templateContents, pageContents, new Dictionary<string, object>());
+            var output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
+            Assert.Equal(templateContents, output);
+        }
     }
 
     public class When_Paginate_Razor : BakingEnvironment<RazorSiteEngine>
@@ -166,5 +259,6 @@ namespace Pretzel.Tests.Templating.Razor
             Assert.Equal(String.Format(ExpectedLastFileContents, 1),
                          FileSystem.File.ReadAllText(@"C:\website\_site\blog\page4\index.html").RemoveWhiteSpace());
         }
+
     }
 }

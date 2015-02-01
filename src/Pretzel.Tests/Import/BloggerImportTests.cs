@@ -4,6 +4,10 @@ using Xunit;
 using System.IO.Abstractions.TestingHelpers;
 using Pretzel.Logic.Import;
 using Pretzel.Logic.Extensions;
+using System.Text;
+using System.IO;
+using NSubstitute;
+using System.IO.Abstractions;
 
 namespace Pretzel.Tests.Import
 {
@@ -47,6 +51,7 @@ namespace Pretzel.Tests.Import
     <entry>
         <id>tag:blogger.com,1999:blog-786740.post-786751</id>
         <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+        <category scheme='http://www.blogger.com/atom/ns#' term='aTag'/>
         <published>2000-09-07T13:24:00.000+08:00</published>
         <updated>2000-09-07T13:24:23.890+08:00</updated>
         <title type='text'>Hello World 2</title>
@@ -86,6 +91,45 @@ namespace Pretzel.Tests.Import
             var header = postContent.YamlHeader();
 
             Assert.Equal("Hello World 1", header["title"].ToString());
+            Assert.Equal(0, ((List<string>)header["tags"]).Count);
+
+            string expectedPost2 = @"_posts\2000-09-07-Hello-World-2.md";
+            Assert.True(fileSystem.File.Exists(BaseSite + expectedPost2));
+
+            var postContent2 = fileSystem.File.ReadAllText(BaseSite + expectedPost2);
+            var header2 = postContent2.YamlHeader();
+
+            Assert.Equal("Hello World 2", header2["title"].ToString());
+            var tags = (List<string>)header2["tags"];
+            Assert.Equal(1, tags.Count);
+            Assert.Equal("aTag", tags[0]);
+        }
+
+        [Fact]
+        public void Error_on_write_is_traced()
+        {
+            // arrange
+            StringBuilder sb = new StringBuilder();
+            TextWriter writer = new StringWriter(sb);
+            Tracing.Logger.SetWriter(writer);
+            Tracing.Logger.AddCategory("info");
+            Tracing.Logger.AddCategory("debug");
+
+            var fileSubstitute = Substitute.For<FileBase>();
+            fileSubstitute.ReadAllText(ImportFile).Returns(ImportContent);
+            fileSubstitute.When(f => f.WriteAllText(Arg.Any<string>(), Arg.Any<string>())).Do(x => { throw new Exception(); });
+
+            var fileSystemSubstitute = Substitute.For<IFileSystem>();
+            fileSystemSubstitute.File.Returns(fileSubstitute);
+
+            // act
+            var bloggerImporter = new BloggerImport(fileSystemSubstitute, BaseSite, ImportFile);
+            bloggerImporter.Import();
+
+            // assert
+            Assert.Contains(@"Failed to write out 2000-09-07-Hello-World-1.md", sb.ToString());
+            Assert.Contains("Exception of type 'System.Exception' was thrown.", sb.ToString());
+            Assert.Contains(@"Failed to write out 2000-09-07-Hello-World-2.md", sb.ToString());
         }
     }
 }

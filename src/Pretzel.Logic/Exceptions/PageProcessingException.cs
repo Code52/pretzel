@@ -6,28 +6,7 @@ namespace Pretzel.Logic.Exceptions
     [Serializable]
     public class PageProcessingException : Exception
     {
-        //
-        // For guidelines regarding the creation of new exception types, see
-        //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconerrorraisinghandlingguidelines.asp
-        // and
-        //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
-        //
-
-        public PageProcessingException()
-        {
-        }
-
-        public PageProcessingException(string message) : base(message)
-        {
-        }
-
-        public PageProcessingException(string message, Exception inner) : base(message, inner)
-        {
-        }
-
-        protected PageProcessingException(
-            SerializationInfo info,
-            StreamingContext context) : base(info, context)
+        internal PageProcessingException(string message, Exception inner) : base(message, inner)
         {
         }
     }

@@ -1,11 +1,16 @@
-﻿using System;
-using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
+﻿using DotLiquid;
+using Pretzel.Logic.Exceptions;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensibility.Extensions;
-using Pretzel.Logic.Templating.Jekyll;
-using Xunit;
+using Pretzel.Logic.Liquid;
 using Pretzel.Logic.Templating.Context;
+using Pretzel.Logic.Templating.Jekyll;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
+using Xunit;
 
 namespace Pretzel.Tests.Templating.Jekyll
 {
@@ -223,8 +228,8 @@ namespace Pretzel.Tests.Templating.Jekyll
         {
             const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
             const string PostContents = "---\r\n layout: default \r\n title: 'Post'\r\n---\r\n\r\n## Hello World!";
-            const string IndexContents = "---\r\n layout: default \r\n paginate: 1 \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
-            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
+            const string IndexContents = "---\r\n layout: default \r\n paginate: 1 \r\n title: 'A different title'\r\n---\r\n\r\n<h2>Hello World!</h2><p>{{ paginator.previous_page }} / {{ paginator.page }} / {{ paginator.next_page }}</p>";
+            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2><p>{0} / {1} / {2}</p></body></html>";
 
             public override LiquidEngine Given()
             {
@@ -234,7 +239,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
-                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
+                FileSystem.AddFile(@"C:\website\index.html", new MockFileData(IndexContents));
 
                 for (var i = 1; i <= 5; i++)
                 {
@@ -253,7 +258,8 @@ namespace Pretzel.Tests.Templating.Jekyll
                 for (var i = 2; i <= 5; i++)
                 {
                     var fileName = String.Format(@"C:\website\_site\page\{0}\index.html", i);
-                    Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(fileName).RemoveWhiteSpace());
+                    var expectedContents = string.Format(ExpectedfileContents, i-1, i, i+1);
+                    Assert.Equal(expectedContents, FileSystem.File.ReadAllText(fileName).RemoveWhiteSpace());
                 }
             }
 
@@ -261,6 +267,13 @@ namespace Pretzel.Tests.Templating.Jekyll
             public void Page1_Is_Not_Generated()
             {
                 Assert.False(FileSystem.File.Exists(@"C:\website\_site\page\1\index.html"));
+            }
+
+            [Fact]
+            public void But_Index_Is_Generated()
+            {
+                var expectedContents = string.Format(ExpectedfileContents, 0, 1, 2);
+                Assert.Equal(expectedContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
             }
         }
 
@@ -561,5 +574,676 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
         }
 
+        public class Given_Site_Comport_Non_Standard_Files : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><head><title>{{ site.title }}</title></head><body>{{ content }}</body></html>";
+            const string NonProcessedPageContents = "## Hello World!";
+            const string LayoutNilPageContents = "---\r\n layout: nil \r\n---\r\n\r\n## Hello World!";
+            const string NoLayoutPageContents = "---\r\n  \r\n---\r\n\r\n## Hello World!";
+            const string NonExistingLayoutPageContents = "----\r\n layout: inexistant \r\n---\r\n\r\n## Hello World!";
+
+            const string ExpectedfileContents = "<h2>Hello World!</h2>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\NoProcessed.md", new MockFileData(NonProcessedPageContents));
+                FileSystem.AddFile(@"C:\website\LayoutNil.md", new MockFileData(LayoutNilPageContents));
+                FileSystem.AddFile(@"C:\website\NoLayout.md", new MockFileData(NoLayoutPageContents));
+                FileSystem.AddFile(@"C:\website\NonExistingLayout.md", new MockFileData(NonExistingLayoutPageContents));
+                FileSystem.AddFile(@"C:\website\image.jpg", new MockFileData("jpg image"));
+                FileSystem.AddFile(@"C:\website\image.png", new MockFileData("png image"));
+                FileSystem.AddFile(@"C:\website\image.gif", new MockFileData("gif image"));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Non_Processed_Page_Should_Not_Be_Transformed()
+            {
+                Assert.Equal("## Hello World!", FileSystem.File.ReadAllText(@"C:\website\_site\NoProcessed.md").RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void Page_With_Layout_Nil_Should_Not_Have_Any_Layout()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\LayoutNil.html").RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void Page_With_No_Layout_Should_Not_Have_Any_Layout()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\NoLayout.html").RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void Page_With_Non_Existing_Layout_Should_Not_Have_Any_Layout()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\NonExistingLayout.html").RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void Images_Should_Be_Copied_In_Output_Directory()
+            {
+                Assert.Equal("jpg image", FileSystem.File.ReadAllText(@"C:\website\_site\image.jpg").RemoveWhiteSpace());
+                Assert.Equal("png image", FileSystem.File.ReadAllText(@"C:\website\_site\image.png").RemoveWhiteSpace());
+                Assert.Equal("gif image", FileSystem.File.ReadAllText(@"C:\website\_site\image.gif").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Site_Comport_Bad_Formated_Layout : BakingEnvironment<LiquidEngine>
+        {
+            private SiteContext Context;
+            const string TemplateContents = "----\r\n layout: default \r\n-----<html><head><title>{{ site.title }}</title>{{}</head><body>{{ content }}</body></html>";
+            const string PageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                Context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+            }
+
+            [Fact]
+            public void Layout_With_Bad_Header_Should_Throw_Exception()
+            {
+                var exception = Record.Exception(() => Subject.Process(Context));
+                Assert.IsType(typeof(PageProcessingException), exception);
+                Assert.Equal(@"Failed to process layout default for C:\website\_site\index.html, see inner exception for more details", exception.Message);
+                Assert.False(FileSystem.AllFiles.Contains(@"C:\website\_site\index.html"));
+            }
+        }
+
+        public class Given_Site_Comport_Bad_Formated_Layout_But_Skip_File_Error : BakingEnvironment<LiquidEngine>
+        {
+            private SiteContext Context;
+            const string TemplateContents = "----\r\n layout: default \r\n-----<html><head><title>{{ site.title }}</title>{{}</head><body>{{ content }}</body></html>";
+            const string PageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                Context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+            }
+
+            [Fact]
+            public void Layout_With_Bad_Header_Should_Not_Throw_Exception()
+            {
+                using (StringWriter sw = new StringWriter())
+                {
+                    Console.SetOut(sw);
+
+                    Subject.Process(Context, true);
+
+                    Assert.Equal(@"Failed to process layout default for C:\website\_site\index.html because 'Variable '{{}' was not properly terminated with regexp: (?-mix:\}\})'. Skipping file" + Environment.NewLine, sw.ToString());
+                }
+                Assert.False(FileSystem.AllFiles.Contains(@"C:\website\_site\index.html"));
+            }
+        }
+
+        public class Given_Page_Is_Bad_Formated : BakingEnvironment<LiquidEngine>
+        {
+            private SiteContext Context;
+            const string BadFormatPageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World! {{}";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\BadFormat.md", new MockFileData(BadFormatPageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                Context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+            }
+
+            [Fact]
+            public void Layout_With_Bad_Header_Should_Throw_Exception()
+            {
+                var exception = Record.Exception(() => Subject.Process(Context));
+                Assert.IsType(typeof(PageProcessingException), exception);
+                Assert.Equal(@"Failed to process C:\website\_site\BadFormat.html, see inner exception for more details", exception.Message);
+                Assert.False(FileSystem.AllFiles.Contains(@"C:\website\_site\BadFormat.html"));
+            }
+        }
+
+        public class Given_Page_Is_Bad_Formated_But_Skip_File_Error : BakingEnvironment<LiquidEngine>
+        {
+            private SiteContext Context;
+            const string BadFormatPageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World! {{}";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\BadFormat.md", new MockFileData(BadFormatPageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                Context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+            }
+
+            [Fact]
+            public void Layout_With_Bad_Header_Should_Not_Throw_Exception()
+            {
+                using (StringWriter sw = new StringWriter())
+                {
+                    Console.SetOut(sw);
+
+                    Subject.Process(Context, true);
+
+                    Assert.Equal(@"Failed to process C:\website\_site\BadFormat.html, see inner exception for more details" + Environment.NewLine, sw.ToString());
+                }
+                Assert.False(FileSystem.AllFiles.Contains(@"C:\website\_site\BadFormat.html"));
+            }
+        }
+
+        public class Given_Older_Non_Processed_Page_Already_Exists_In_Output_Directory : BakingEnvironment<LiquidEngine>
+        {
+            const string OriginalPageContents = "## Hello Earth!";
+            const string PageContents = "## Hello World!";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_site\BadFormat.md", new MockFileData(OriginalPageContents) { LastWriteTime = new DateTime(2010, 01, 2) });
+                FileSystem.AddFile(@"C:\website\BadFormat.md", new MockFileData(PageContents) { LastWriteTime = new DateTime(2010, 01, 3) });
+
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Existing_File_Should_Be_Replaced()
+            {
+                Assert.Equal(PageContents, FileSystem.File.ReadAllText(@"C:\website\_site\BadFormat.md").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Newer_Non_Processed_Page_Already_Exists_In_Output_Directory : BakingEnvironment<LiquidEngine>
+        {
+            const string OriginalPageContents = "## Hello Earth!";
+            const string PageContents = "## Hello World!";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_site\BadFormat.md", new MockFileData(OriginalPageContents) { LastWriteTime = new DateTime(2010, 01, 5) });
+                FileSystem.AddFile(@"C:\website\BadFormat.md", new MockFileData(PageContents) { LastWriteTime = new DateTime(2010, 01, 3) });
+
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Existing_File_Should_Be_Not_Replaced()
+            {
+                Assert.Equal(OriginalPageContents, FileSystem.File.ReadAllText(@"C:\website\_site\BadFormat.md").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_GetOutputDirectory_Method : BakingEnvironment<LiquidEngine>
+        {
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddDirectory(@"C:\website\");
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Output_Directory_Should_Comport_site()
+            {
+                Assert.Equal(@"C:\mysite\_site", Subject.GetOutputDirectory(@"C:\mysite"));
+            }
+        }
+
+        public class Given_Site_Engine_Is_Liquid : BakingEnvironment<LiquidEngine>
+        {
+            private SiteContext context;
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                context = new SiteContext();
+                context.Config.Add("pretzel", new Dictionary<string, object> { { "engine", "liquid" } });
+            }
+
+            [Fact]
+            public void CanProcess_Should_Return_True()
+            {
+                Assert.True(Subject.CanProcess(context));
+            }
+        }
+
+        public class Given_Site_Engine_Is_Not_Liquid : BakingEnvironment<LiquidEngine>
+        {
+            private SiteContext context;
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                context = new SiteContext();
+                context.Config.Add("pretzel", new Dictionary<string, object> { { "engine", "myengine" } });
+            }
+
+            [Fact]
+            public void CanProcess_Should_Return_False()
+            {
+                Assert.False(Subject.CanProcess(context));
+            }
+        }
+
+        public class Given_Page_Use_PrettifyUrlFilter : BakingEnvironment<LiquidEngine>
+        {
+            const string PageContents = "---\r\n layout: nill \r\n---\r\n\r\n{{ 'http://mysite.com/index.html' | prettify_url}}";
+            const string ExpectedfileContents = "http://mysite.com/";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine { Filters = new IFilter[] { new PrettifyUrlFilter() } };
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.html", new MockFileData(PageContents));
+
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Be_Prettifyed()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_Comment : BakingEnvironment<LiquidEngine>
+        {
+            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n## Hello World!{% comment %} This is a comment {% endcomment %}";
+            const string ExpectedfileContents = "<h2>Hello World!</h2>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Not_Have_The_Comment()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_PostUrlBlock : BakingEnvironment<LiquidEngine>
+        {
+            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n<p>{% post_url post-title.md%}{% endpost_url %}</p>";
+            const string ExpectedfileContents = "<p>post/title.html</p>";
+
+            public override LiquidEngine Given()
+            {
+                Template.RegisterTag<PostUrlBlock>("post_url");
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_Been_Transformed()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_HighlightBlock : BakingEnvironment<LiquidEngine>
+        {
+            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight %}a word{% endhighlight %}";
+            const string ExpectedfileContents = "<p><pre>a word</pre></p>";
+
+            public override LiquidEngine Given()
+            {
+                Template.RegisterTag<HighlightBlock>("highlight");
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_Been_Highlighted()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+
+        public class Given_LiquidEngin_Is_Initialized : BakingEnvironment<LiquidEngine>
+        {
+            const string HighlightPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight %}a word{% endhighlight %}";
+            const string HighlightExpectedfileContents = "<p><pre>a word</pre></p>";
+            const string PostUrlPageContents = "---\r\n layout: nil \r\n---\r\n\r\n<p>{% post_url post-title.md%}test{% endpost_url %}</p>";
+            const string PostUrlExpectedfileContents = "<p>post/title.html</p>";
+            const string CgiEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'foo,bar;baz?' | cgi_escape }}";
+            const string CgiEscapeExpectedfileContents = "<p>foo%2Cbar%3Bbaz%3F</p>";
+            const string UriEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'foo, bar \\baz?' | uri_escape }}";
+            const string UriEscapeExpectedfileContents = "<p>foo,%20bar%20%5Cbaz?</p>";
+            const string NumberOfWordsPageContents = "---\r\n layout: nil \r\n---\r\n\r\n<p>{{ 'This is a test' | number_of_words }}</p>";
+            const string NumberOfWordsExpectedfileContents = "<p>4</p>";
+            const string XmlEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ '<test>this is a test</test>' | xml_escape }}";
+            const string XmlEscapeExpectedfileContents = "<p>&lt;test&gt;this is a test&lt;/test&gt;</p>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\Highlight.md", new MockFileData(HighlightPageContents));
+                FileSystem.AddFile(@"C:\website\PostUrl.md", new MockFileData(PostUrlPageContents));
+                FileSystem.AddFile(@"C:\website\CgiEscape.md", new MockFileData(CgiEscapePageContents));
+                FileSystem.AddFile(@"C:\website\UriEscape.md", new MockFileData(UriEscapePageContents));
+                FileSystem.AddFile(@"C:\website\NumberOfWords.md", new MockFileData(NumberOfWordsPageContents));
+                FileSystem.AddFile(@"C:\website\XmlEscape.md", new MockFileData(XmlEscapePageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_Been_Highlighted()
+            {
+                Assert.Equal(HighlightExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\Highlight.html").RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_A_PostUrl()
+            {
+                Assert.Equal(PostUrlExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\PostUrl.html").RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_Been_CgiEscaped()
+            {
+                Assert.Equal(CgiEscapeExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\CgiEscape.html").RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_Been_UriEscaped()
+            {
+                Assert.Equal(UriEscapeExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\UriEscape.html").RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void The_Output_Should_Be_The_Number_Of_Words()
+            {
+                Assert.Equal(NumberOfWordsExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\NumberOfWords.html").RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_Been_XmlEscaped()
+            {
+                Assert.Equal(XmlEscapeExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\XmlEscape.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Markdown_Page_Has_An_Empty_Title : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            const string PageContents = "---\r\n layout: default \r\n title: \r\n---\r\n\r\n## Hello World!";
+            const string ExpectedfileContents = "<html><head><title>My Web Site</title></head><body><h2>Hello World!</h2></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                context.Title = "My Web Site";
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_The_Site_Title()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_A_Layout : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><body>{{ content }}</body></html>";
+            const string PageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!\r\n{{ page.layout }}";
+            const string ExpectedfileContents = "<html><body><h2>Hello World!</h2><p>default</p></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_The_Page_Layout()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_Comments_Metadata : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><body>{{ content }}</body></html>";
+            const string PageContents = "---\r\n layout: default \r\n comments: true \r\n---\r\n\r\n## Hello World!\r\n{{ page.comments }}";
+            const string ExpectedfileContents = "<html><body><h2>Hello World!</h2><p>true</p></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_The_Comments_Value()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class When_A_Page_Has_A_Valid_Include_Value : BakingEnvironment<LiquidEngine>
+        {
+            const string PageContents = "---\r\ntest: value\r\n---#{{ page.title }}\r\n{% include foobar.html %}";
+            const string IncludePageContents = "foo {{ page.test }} bar";
+            const string ExpectedfileContents = "<h1>My Web Site</h1><p>foo value bar</p>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_includes\foobar.html", new MockFileData(IncludePageContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                context.Title = "My Web Site";
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_File_Has_The_Include_Value()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+
+            [Fact]
+            public void Does_Not_Copy_Include_To_Output()
+            {
+                Assert.False(FileSystem.File.Exists(@"C:\website\_site\_includes\foobar.html"));
+            }
+        }
+
+        public class When_A_Page_Has_A_Non_Existing_Include_Value : BakingEnvironment<LiquidEngine>
+        {
+            const string PageContents = "---\r\ntest: value\r\n---#{{ page.title }}\r\n{% include foobar.html %}";
+            const string ExpectedfileContents = "<h1>My Web Site</h1><p></p>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                context.Title = "My Web Site";
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_File_Has_Not_The_Include_Value()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class When_A_Page_Has_A_Permalink_Without_FileName : BakingEnvironment<LiquidEngine>
+        {
+            const string PageContents = "---\r\npermalink: /pages/\r\n---#{{ page.title }}";
+            const string ExpectedfileContents = "<h1>My Web Site</h1>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                context.Title = "My Web Site";
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_File_Is_Generated_With_Index_Name()
+            {
+                Assert.True(FileSystem.File.Exists(@"C:\website\_site\pages\index.html"));
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\pages\index.html").RemoveWhiteSpace());
+            }
+        }
     }
 }

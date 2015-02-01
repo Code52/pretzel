@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Import;
+using System;
+using System.IO;
 using System.Text;
 using Xunit;
-using Pretzel.Logic.Import;
 
 namespace Pretzel.Tests.Import
 {
@@ -107,6 +107,58 @@ namespace Pretzel.Tests.Import
         {
             string markdown = converter.Convert("<b>hello </b>");
             Assert.Equal("**hello** ", markdown);
+        }
+
+        [Fact]
+        public void Comment_is_ignored()
+        {
+            string markdown = converter.Convert("<!-- comment -->");
+            Assert.Equal(string.Empty, markdown);
+        }
+
+        [Fact]
+        public void Unordered_lists_with_missing_ul()
+        {
+            string markdown = converter.Convert("<li>first</li>");
+            Assert.Equal(Environment.NewLine + "* first", markdown);
+        }
+
+        [Fact]
+        public void Strong_text_without_trailing_space()
+        {
+            string markdown = converter.Convert("<b>hello</b>");
+            Assert.Equal("**hello**", markdown);
+        }
+
+        [Fact]
+        public void Em_is_converted_correctly()
+        {
+            string markdown = converter.Convert("<em>hello</em>");
+            Assert.Equal("*hello*", markdown);
+        }
+
+        [Fact]
+        public void Br_appends_new_line()
+        {
+            string markdown = converter.Convert("hello<br/>world");
+            Assert.Equal("hello" + Environment.NewLine + "world", markdown);
+        }
+
+        [Fact]
+        public void Unknown_node_is_traced_and_child_processed()
+        {
+            // arrange
+            StringBuilder sb = new StringBuilder();
+            TextWriter writer = new StringWriter(sb);
+            Tracing.Logger.SetWriter(writer);
+            Tracing.Logger.AddCategory("info");
+
+            // act
+            string markdown = converter.Convert("<body><b>hello</b><br/><em>world</em></body>");
+
+            // assert
+            Assert.Equal("**hello**" + Environment.NewLine + "*world*", markdown);
+            Assert.Equal("<body><b>hello</b><br><em>world</em></body>\r\n", sb.ToString());
         }
     }
 }

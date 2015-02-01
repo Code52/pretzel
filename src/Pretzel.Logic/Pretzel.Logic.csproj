@@ -90,6 +90,7 @@
     <Compile Include="Extensibility\Extensions\WebSequenceDiagrams.cs" />
     <Compile Include="Extensibility\IHaveCommandLineArgs.cs" />
     <Compile Include="Extensibility\IFilter.cs" />
+    <Compile Include="Extensions\IAssembly.cs" />
     <Compile Include="Extensions\Logger.cs" />
     <Compile Include="Extensions\Sitemap.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
@@ -99,7 +100,6 @@
     <Compile Include="Import\HtmlToMarkdownConverter.cs" />
     <Compile Include="Import\WordpressImport.cs" />
     <Compile Include="Liquid\CgiEscapeFilter.cs" />
-    <Compile Include="Liquid\CommentBlock.cs" />
     <Compile Include="Liquid\DateToLongStringFilter.cs" />
     <Compile Include="Liquid\DateToRfc822FormatFilter.cs" />
     <Compile Include="Liquid\DateToStringFilter.cs" />

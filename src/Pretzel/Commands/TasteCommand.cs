@@ -63,10 +63,11 @@ namespace Pretzel.Commands
             engine.Process(context, skipFileOnError: true);
             foreach (var t in transforms)
                 t.Transform(context);
+
             using (var watcher = new SimpleFileSystemWatcher())
             {
                 watcher.OnChange(parameters.Path, WatcherOnChanged);
-
+                // TODO see to replace engine.GetOutputDirectory by context.OutputFolder
                 using (var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider(), Convert.ToInt32(parameters.Port)))
                 {
                     try

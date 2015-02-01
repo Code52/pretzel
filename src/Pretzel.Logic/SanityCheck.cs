@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
 using System.Text;
 using System.Threading;
 
@@ -53,10 +53,10 @@ namespace Pretzel.Logic
                 catch { Ignore(); }
             };
 
+            var t = new Thread(ts);
+            t.IsBackground = true;
             try
             {
-                var t = new Thread(ts);
-                t.IsBackground = true;
                 t.Start();
                 if (!t.Join(250))
                 {
@@ -65,10 +65,10 @@ namespace Pretzel.Logic
                         t.Interrupt();
                         t.Abort();
                     }
-                    catch { Ignore(); }
+                    catch { t.Abort(); }
                 }
             }
-            catch { Ignore(); }
+            catch { t.Abort(); }
 
             return outp;
         }

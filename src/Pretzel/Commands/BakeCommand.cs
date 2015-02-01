@@ -50,8 +50,8 @@ namespace Pretzel.Commands
                 engine.Process(siteContext);
                 foreach (var t in transforms)
                     t.Transform(siteContext);
-                
-                engine.CompressSitemap(siteContext);
+
+                engine.CompressSitemap(siteContext, FileSystem);
                 
                 watch.Stop();
                 Tracing.Info(string.Format("done - took {0}ms", watch.ElapsedMilliseconds));
