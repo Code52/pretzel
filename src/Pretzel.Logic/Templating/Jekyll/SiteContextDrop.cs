@@ -40,7 +40,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
                 context.Config.Add("date", "2012-01-01");
             var x = Hash.FromDictionary(context.Config);
             x["posts"] = Posts;
-            x["pages"] = context.Pages;
+            x["pages"] = context.Pages.Select(p => p.ToHash()).ToList();
             x["title"] = context.Title;
             x["tags"] = context.Tags;
             x["categories"] = context.Categories;

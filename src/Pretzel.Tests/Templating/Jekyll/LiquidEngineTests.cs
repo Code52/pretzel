@@ -1272,5 +1272,42 @@ namespace Pretzel.Tests.Templating.Jekyll
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
             }
         }
+
+        public class Given_Page_And_Posts_Have_Custom_Metadatas : BakingEnvironment<LiquidEngine>
+        {
+            const string Page1Contents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n{% for post in site.posts %}\r\n{{ post.title }}/{{ post.show }}-\r\n{% endfor %}";
+            const string ExpectedPage1Contents = "<p>post2/false-post1/true-</p>";
+            const string Page2Contents = "---\r\n title: pages\r\n show: false \r\n---\r\n\r\n{% for page in site.pages %}\r\n{{ page.title }}/{{ page.show }}-\r\n{% endfor %}";
+            const string ExpectedPage2Contents = "<p>index/true-pages/false-</p>";
+
+            const string Post1Contents = "---\r\n title: post1\r\n show: true \r\n---\r\n# Title1\r\nContent1";
+            const string Post2Contents = "---\r\n title: post2\r\n show: false \r\n---\r\n# Title2\r\nContent2";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(Page1Contents));
+                FileSystem.AddFile(@"C:\website\pages.md", new MockFileData(Page2Contents));
+                FileSystem.AddFile(@"C:\website\_posts\post1.md", new MockFileData(Post1Contents));
+                FileSystem.AddFile(@"C:\website\_posts\post2.md", new MockFileData(Post2Contents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Filter_And_Block_Have_Been_Correctly_Interpreted()
+            {
+                Assert.Equal(ExpectedPage1Contents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+                Assert.Equal(ExpectedPage2Contents, FileSystem.File.ReadAllText(@"C:\website\_site\pages.html").RemoveWhiteSpace());
+            }
+        }
     }
 }

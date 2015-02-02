@@ -3,6 +3,7 @@ using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Logic.Templating.Jekyll.Liquid
 {
+    // Seems unnecessary, see Given_Page_And_Posts_Have_Custom_Metadatas test
     public class PostDrop : Drop
     {
         private readonly Page page;
