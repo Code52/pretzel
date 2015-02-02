@@ -414,9 +414,16 @@ namespace Pretzel.Logic.Templating.Context
                     {
                         var replacementValue = string.Empty;
                         int categoryIndex;
-                        if (match.Success && int.TryParse(match.Groups[1].Value, out categoryIndex) && categoryIndex > 0)
+                        if (match.Success)
                         {
-                            replacementValue = page.Categories.Skip(categoryIndex- 1).FirstOrDefault();
+                            if (int.TryParse(match.Groups[1].Value, out categoryIndex) && categoryIndex > 0)
+                            {
+                                replacementValue = page.Categories.Skip(categoryIndex - 1).FirstOrDefault();
+                            } 
+                            else if (match.Groups[1].Value == "" && page.Categories.Any())
+                            {
+                                replacementValue = page.Categories.First();
+                            }
                         }
 
                         permalink = permalink.Replace(match.Value, replacementValue);
