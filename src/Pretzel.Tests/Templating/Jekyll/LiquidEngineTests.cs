@@ -942,7 +942,7 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_PostUrlBlock : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n<p>{% post_url post-title.md%}{% endpost_url %}</p>";
+            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n<p>{% post_url post-title.md %}</p>";
             const string ExpectedfileContents = "<p>post/title.html</p>";
 
             public override LiquidEngine Given()
@@ -998,7 +998,7 @@ namespace Pretzel.Tests.Templating.Jekyll
         {
             const string HighlightPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight %}a word{% endhighlight %}";
             const string HighlightExpectedfileContents = "<p><pre>a word</pre></p>";
-            const string PostUrlPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% post_url post-title.md%}test{% endpost_url %}";
+            const string PostUrlPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% post_url post-title.md %}";
             const string PostUrlExpectedfileContents = "<p>post/title.html</p>";
             const string CgiEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'foo,bar;baz?' | cgi_escape }}";
             const string CgiEscapeExpectedfileContents = "<p>foo%2Cbar%3Bbaz%3F</p>";
@@ -1247,7 +1247,7 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_Liquid_Tag_And_Block_With_Underscores : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n_any_ word {% highlight %}a word{% endhighlight %}\r\n{% post_url post-title.md%}{% endpost_url %}\r\n{{ 'This is a test' | number_of_words }}";
+            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n_any_ word {% highlight %}a word{% endhighlight %}\r\n{% post_url post-title.md %}\r\n{{ 'This is a test' | number_of_words }}";
             const string ExpectedfileContents = "<p><em>any</em> word <pre>a word</pre>post/title.html4</p>";
 
             public override LiquidEngine Given()
