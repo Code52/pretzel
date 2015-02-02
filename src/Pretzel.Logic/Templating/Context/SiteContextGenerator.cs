@@ -243,6 +243,8 @@ namespace Pretzel.Logic.Templating.Context
                 {
                     if (header.ContainsKey("categories"))
                         page.Categories = header["categories"] as IEnumerable<string>;
+                    else if (header.ContainsKey("category"))
+                        page.Categories = new[] { header["category"].ToString() };
 
                     if (header.ContainsKey("tags"))
                         page.Tags = header["tags"] as IEnumerable<string>;
