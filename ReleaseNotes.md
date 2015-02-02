@@ -1,4 +1,14 @@
-# In development
+# vNext
+
+ - [#199](https://github.com/Code52/pretzel/issues/199) - PostUrl should be a Liquid Tag +breaking change
+ It should now be used like this
+ ```
+ {% post_url post-title.md %}
+ ```
+ - [#198](https://github.com/Code52/pretzel/issues/198) - Liquid tag/filter with underscore doesn't works in markdown files +fix
+ - [#170](https://github.com/Code52/pretzel/issues/170) - update binary download
+
+Commits: [1436ac1f52...faca4f2db7](https://github.com/Code52/pretzel/compare/1436ac1f52...faca4f2db7)
 
 
 # 0.2.0
@@ -16,13 +26,13 @@ Recognize that the value of "active" is a boolean and convert it in the datas fo
 {% if page.active == true %}
 ```
 Like in Jekyll.
- 
+
 But this will cause a breaking change if anyone have a
 ```cs
 {% if page.active == 'true' %}
 ```
 in a template.
- 
+
 ## Features
 - [#181](https://github.com/Code52/pretzel/pull/181): Added new Jekyll filters and tags by [switchspan](https://github.com/switchspan)
     - DateToLongStringFilter
@@ -32,9 +42,9 @@ in a template.
     - UriEscapeFilter
     - CommentBlock
     - PostUrlBlock
- 
+
 - [#185](https://github.com/Code52/pretzel/pull/185): Allow all *.md, *.mkd, *.mkdn, *.mdown and *.markdown files to be processed
- 
+
 - Add a cleantarget argument which deletes the target directory (_site), like Jekyll does by default
 - Improve less compilation
 - Add include and exclude configuration features, like in [Jekyll](http://jekyllrb.com/docs/configuration/#global-configuration)
@@ -44,3 +54,5 @@ in a template.
 ## Fixes
 - Fix issue where transforms aren't processed during taste => fix the .less not compiled during taste for example
 - [#194](https://github.com/Code52/pretzel/pull/194): Fix issue where the style wasn't used for WebSequenceDiagram: now with "@@sequence mscgen", the style will be "mscgen"
+
+Commits: ...
