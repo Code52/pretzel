@@ -1307,6 +1307,34 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 Assert.Equal(ExpectedPage1Contents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
                 Assert.Equal(ExpectedPage2Contents, FileSystem.File.ReadAllText(@"C:\website\_site\pages.html").RemoveWhiteSpace());
+               
+            }
+        }
+
+        public class Given_Page_Has_Category : BakingEnvironment<LiquidEngine>
+        {
+            private SiteContext Context;
+            const string ContentWithCategory = "---\r\n category: mycategory \r\n---\r\n";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_posts\ContentWithCategory.md", new MockFileData(ContentWithCategory));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                Context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+            }
+
+            [Fact]
+            public void Layout_With_Bad_Header_Should_Not_Throw_Exception()
+            {
+                Assert.Equal(Context.Posts.Count, 1);
+                Assert.Equal(Context.Posts[0].Categories.Count(), 1);
+                Assert.Equal(Context.Posts[0].Categories.First(), "mycategory");
             }
         }
     }

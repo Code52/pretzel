@@ -549,6 +549,41 @@ permalink: /blog/:category2/:category1/:category3/:category42/index.html
         }
 
         [Fact]
+        public void permalink_with_unnumbered_category()
+        {
+            fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData(@"---
+permalink: /blog/:category/index.html
+category: cat
+---# Title"));
+
+            var outputPath = "/blog/cat/index.html";
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            var firstPost = siteContext.Posts.First();
+
+            Assert.Equal(outputPath, firstPost.Url);
+        }
+
+        [Fact]
+        public void permalink_with_unnumbered_category_without_categories()
+        {
+            fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData(@"---
+permalink: /blog/:category/index.html
+---# Title"));
+
+            var outputPath = "/blog/index.html";
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            var firstPost = siteContext.Posts.First();
+
+            Assert.Equal(outputPath, firstPost.Url);
+        }
+
+        [Fact]
         public void site_context_generator_processes_page_id_for_post()
         {
             // arrange
@@ -647,7 +682,7 @@ permalink: /blog/:categorya/index.html
 categories: [cat1, cat2]
 ---# Title"));
 
-            var outputPath = "/blog/a/index.html";
+            var outputPath = "/blog/cat1a/index.html";
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", false);
@@ -918,7 +953,7 @@ param: value
             fileSubstitute.Received().Delete(filePath);
         }
 
-        [Fact(Skip="The call to SanityCheck can provoke some errors")]
+        [Fact(Skip = "The call to SanityCheck can provoke some errors")]
         public void file_with_2_ioexception_is_not_processed_and_throw_ioexception()
         {
             // arrange
@@ -932,7 +967,7 @@ param: value
 
             var directorySubstitute = Substitute.For<DirectoryBase>();
             directorySubstitute.GetFiles(Arg.Any<string>(), "*.*", SearchOption.AllDirectories).Returns(new[] { @"C:\TestSite\SomeFile.md" });
-            
+
             var fileInfoSubstitute = Substitute.For<FileInfoBase>();
             fileInfoSubstitute.Name.Returns("SomeFile.md");
 
@@ -1005,7 +1040,7 @@ date: 20150127
             Tracing.Logger.AddCategory("debug");
 
             var contentTransformer = Substitute.For<IContentTransform>();
-            contentTransformer.Transform(Arg.Any<string>()).Returns(s => { throw new Exception("foo bar");});
+            contentTransformer.Transform(Arg.Any<string>()).Returns(s => { throw new Exception("foo bar"); });
 
             var generator = new SiteContextGenerator(fileSystem, new[] { contentTransformer });
 
