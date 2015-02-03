@@ -1294,8 +1294,8 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(Page1Contents));
                 FileSystem.AddFile(@"C:\website\pages.md", new MockFileData(Page2Contents));
-                FileSystem.AddFile(@"C:\website\_posts\post1.md", new MockFileData(Post1Contents));
-                FileSystem.AddFile(@"C:\website\_posts\post2.md", new MockFileData(Post2Contents));
+                FileSystem.AddFile(@"C:\website\_posts\2015-02-02-post1.md", new MockFileData(Post1Contents));
+                FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post2.md", new MockFileData(Post2Contents));
                 var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
                 var context = generator.BuildContext(@"C:\website\", false);
                 Subject.FileSystem = FileSystem;
