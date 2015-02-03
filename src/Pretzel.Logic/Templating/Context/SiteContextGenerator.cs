@@ -242,6 +242,7 @@ namespace Pretzel.Logic.Templating.Context
                                     File = file,
                                     Bag = header,
                                 };
+                page.Bag["excerpt"] = page.Excerpt;
 
                 // resolve categories and tags
                 if (isPost)
