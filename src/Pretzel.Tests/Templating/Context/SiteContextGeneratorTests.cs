@@ -866,7 +866,7 @@ param: value
             var siteContext = generator.BuildContext(@"C:\TestSite", false);
 
             Assert.Equal(1, siteContext.Posts.Count);
-            Assert.Equal("<p>One", siteContext.Posts[0].ContentExcerpt);
+            Assert.Equal("<p>One", siteContext.Posts[0].Excerpt);
         }
 
         [Fact]
@@ -880,7 +880,7 @@ excerpt_separator: <!--excerpt_separator-->
             var siteContext = generator.BuildContext(@"C:\TestSite", false);
 
             Assert.Equal(1, siteContext.Posts.Count);
-            Assert.Equal("<p>One<!--more-->Two", siteContext.Posts[0].ContentExcerpt);
+            Assert.Equal("<p>One<!--more-->Two", siteContext.Posts[0].Excerpt);
         }
 
         [Fact]

@@ -237,7 +237,7 @@ namespace Pretzel.Logic.Templating.Context
                                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
                                     Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
                                     Content = content,
-                                    ContentExcerpt = GetContentExcerpt(content, excerptSeparator),
+                                    Excerpt = GetContentExcerpt(content, excerptSeparator),
                                     Filepath = isPost ? GetPathWithTimestamp(context.OutputFolder, file) : GetFilePathForPage(context, file),
                                     File = file,
                                     Bag = header,
