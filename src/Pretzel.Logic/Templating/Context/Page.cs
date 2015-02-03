@@ -20,6 +20,7 @@ namespace Pretzel.Logic.Templating.Context
         public IEnumerable<string> Categories { get; set; }
         public IEnumerable<string> Tags { get; set; }
         public string Content { get; set; }
+        public string ContentExcerpt { get; set; }
         public string Filepath { get; set; }
         public IDictionary<string, object> Bag { get; set; }
         public IEnumerable<Page> DirectoryPages { get; set; }

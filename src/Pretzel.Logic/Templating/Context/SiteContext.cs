@@ -5,8 +5,11 @@ namespace Pretzel.Logic.Templating.Context
 {
     public class SiteContext
     {
+        private const string ExcerptSeparatorDefault = "<!--more-->";
+
         private string engine;
         private string title;
+        private string excerptSeparator = ExcerptSeparatorDefault;
 
         public IDictionary<string, object> Config { get; set; }
         public string SourceFolder { get; set; }
@@ -30,6 +33,19 @@ namespace Pretzel.Logic.Templating.Context
                 return title;
             }
             set { title = value; }
+        }
+
+        public string ExcerptSeparator
+        {
+            get
+            {
+                if (Config.Keys.Contains("excerpt_separator"))
+                {
+                    excerptSeparator = Config["excerpt_separator"].ToString();
+                }
+                return excerptSeparator;
+            }
+            set { excerptSeparator = value; }
         }
 
         public string Engine

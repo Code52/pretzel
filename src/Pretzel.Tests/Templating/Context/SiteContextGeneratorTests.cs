@@ -858,6 +858,32 @@ param: value
         }
 
         [Fact]
+        public void post_with_excerpt()
+        {
+            fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData(string.Format(@"One<!--more-->Two")));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            Assert.Equal(1, siteContext.Posts.Count);
+            Assert.Equal("<p>One", siteContext.Posts[0].ContentExcerpt);
+        }
+
+        [Fact]
+        public void post_with_excerpt_and_custom_separator()
+        {
+            fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData(string.Format(@"---
+excerpt_separator: <!--excerpt_separator-->
+---One<!--more-->Two<!--excerpt_separator-->Three")));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+
+            Assert.Equal(1, siteContext.Posts.Count);
+            Assert.Equal("<p>One<!--more-->Two", siteContext.Posts[0].ContentExcerpt);
+        }
+
+        [Fact]
         public void post_with_date_in_title()
         {
             var currentDate = new DateTime(2015, 1, 26).ToShortDateString();

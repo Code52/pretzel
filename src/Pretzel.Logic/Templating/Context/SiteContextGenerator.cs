@@ -222,6 +222,10 @@ namespace Pretzel.Logic.Templating.Context
                     return pageCache[file];
                 var contents = SafeReadContents(file);
                 var header = contents.YamlHeader();
+                var content = RenderContent(file, contents, header);
+                var excerptSeparator = header.ContainsKey("excerpt_separator") 
+                    ? header["excerpt_separator"].ToString() 
+                    : context.ExcerptSeparator;
 
                 if (header.ContainsKey("published") && header["published"].ToString().ToLower() == "false")
                 {
@@ -232,7 +236,8 @@ namespace Pretzel.Logic.Templating.Context
                                 {
                                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
                                     Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
-                                    Content = RenderContent(file, contents, header),
+                                    Content = content,
+                                    ContentExcerpt = GetContentExcerpt(content, excerptSeparator),
                                     Filepath = isPost ? GetPathWithTimestamp(context.OutputFolder, file) : GetFilePathForPage(context, file),
                                     File = file,
                                     Bag = header,
@@ -334,6 +339,12 @@ namespace Pretzel.Logic.Templating.Context
                 html = String.Format("<p><b>Error converting markdown</b></p><pre>{0}</pre>", contents);
             }
             return html;
+        }
+
+        private static string GetContentExcerpt(string content, string excerptSeparator)
+        {
+            var index = content.IndexOf(excerptSeparator, StringComparison.InvariantCulture);
+            return index == -1 ? content : content.Substring(0, index);
         }
 
         private string SafeReadLine(string file)
