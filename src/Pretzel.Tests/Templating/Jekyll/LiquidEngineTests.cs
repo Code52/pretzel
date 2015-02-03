@@ -1303,7 +1303,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
 
             [Fact]
-            public void The_Filter_And_Block_Have_Been_Correctly_Interpreted()
+            public void Pages_And_Posts_Should_Have_The_Metadatas_Displayed()
             {
                 Assert.Equal(ExpectedPage1Contents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
                 Assert.Equal(ExpectedPage2Contents, FileSystem.File.ReadAllText(@"C:\website\_site\pages.html").RemoveWhiteSpace());
