@@ -243,6 +243,8 @@ namespace Pretzel.Logic.Templating.Context
                 {
                     if (header.ContainsKey("categories"))
                         page.Categories = header["categories"] as IEnumerable<string>;
+                    else if (header.ContainsKey("category"))
+                        page.Categories = new[] { header["category"].ToString() };
 
                     if (header.ContainsKey("tags"))
                         page.Tags = header["tags"] as IEnumerable<string>;
@@ -412,16 +414,22 @@ namespace Pretzel.Logic.Templating.Context
                     {
                         var replacementValue = string.Empty;
                         int categoryIndex;
-                        if (match.Success && int.TryParse(match.Groups[1].Value, out categoryIndex) && categoryIndex > 0)
+                        if (match.Success)
                         {
-                            replacementValue = page.Categories.Skip(categoryIndex- 1).FirstOrDefault();
+                            if (int.TryParse(match.Groups[1].Value, out categoryIndex) && categoryIndex > 0)
+                            {
+                                replacementValue = page.Categories.Skip(categoryIndex - 1).FirstOrDefault();
+                            } 
+                            else if(page.Categories.Any())
+                            {
+                                replacementValue = page.Categories.First();
+                            }
                         }
 
                         permalink = permalink.Replace(match.Value, replacementValue);
                     }
                 }
             }
-
 
             permalink = slashesRegex.Replace(permalink, "/");
 
