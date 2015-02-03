@@ -967,6 +967,36 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
         }
 
+        public class Given_Page_Has_Excerpt : BakingEnvironment<LiquidEngine>
+        {
+            const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n{% for post in site.posts %}{{ post.excerpt }}{% endfor %}";
+            const string PostContents = "---\r\n layout: nil \r\n---\r\n\r\n<p>One<!--more-->Two</p>";
+            const string ExpectedIndexContents = "<p><p>One</p>";       
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
+                FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post.md", new MockFileData(PostContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Posts_Should_Have_Excerpt()
+            {
+                Assert.Equal(ExpectedIndexContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());                    
+            }
+        }
+
         public class Given_Page_Has_HighlightBlock : BakingEnvironment<LiquidEngine>
         {
             const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight %}a word{% endhighlight %}";
