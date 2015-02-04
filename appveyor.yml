@@ -2,10 +2,8 @@ version: 0.2.1.{build}
 
 configuration: Release
 
-init:
-- cinst GitVersion
-
 install:
+- cinst GitVersion
 - GitVersion /output buildserver /UpdateAssemblyInfo true
   
 cache:

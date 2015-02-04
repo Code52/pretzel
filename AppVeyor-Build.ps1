@@ -1,7 +1,7 @@
 $executingScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 # define version
 
-$version = $env:appveyor_build_version
+$version = $env:GitVersion_ClassicVersion
 $tag = $version
 If ($env:appveyor_repo_tag -eq $True)
 {
