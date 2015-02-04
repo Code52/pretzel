@@ -10,6 +10,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Pretzel.Logic.Helpers;
 
 namespace Pretzel.Logic.Templating.Context
 {
@@ -22,7 +23,7 @@ namespace Pretzel.Logic.Templating.Context
 
 
         readonly Dictionary<string, Page> pageCache = new Dictionary<string, Page>();
-        static readonly Markdown Markdown = new Markdown();
+        static readonly Markdown Markdown = MarkdownHelper.CreateMarkdown();
         readonly IFileSystem fileSystem;
         readonly IEnumerable<IContentTransform> contentTransformers;
         readonly List<string> includes = new List<string>();

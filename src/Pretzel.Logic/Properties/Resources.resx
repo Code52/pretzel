@@ -133,4 +133,7 @@
   <data name="Style" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\style.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="RunPrettify" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\run_prettify.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

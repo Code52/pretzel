@@ -96,6 +96,7 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\Tracing.cs" />
     <Compile Include="Extensions\YamlExtensions.cs" />
+    <Compile Include="Helpers\MarkdownHelper.cs" />
     <Compile Include="Import\BloggerImport.cs" />
     <Compile Include="Import\HtmlToMarkdownConverter.cs" />
     <Compile Include="Import\WordpressImport.cs" />
@@ -211,6 +212,7 @@
     <EmbeddedResource Include="Properties\RazorWiki.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>RazorWiki.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -270,6 +272,7 @@
     <Content Include="Resources\RazorWiki\default.css" />
     <Content Include="Resources\RazorWiki\style.css" />
     <Content Include="Resources\Style.css" />
+    <Content Include="Resources\run_prettify.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Templating\Plugins\" />

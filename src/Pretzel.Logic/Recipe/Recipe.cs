@@ -58,6 +58,7 @@ namespace Pretzel.Logic.Recipe
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"about.md"), Properties.Razor.About);
                         fileSystem.File.WriteAllText(Path.Combine(directory, string.Format(@"_posts\{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Razor.FirstPost);
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"css\style.css"), Properties.Resources.Style);
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"js\run_prettify.js"), Properties.Resources.RunPrettify);
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Razor.Config);
                         CreateImages();
                     }
@@ -83,6 +84,7 @@ namespace Pretzel.Logic.Recipe
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"about.md"), Properties.Liquid.About);
                     fileSystem.File.WriteAllText(Path.Combine(directory, string.Format(@"_posts\{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Liquid.FirstPost);
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"css\style.css"), Properties.Resources.Style);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"js\run_prettify.js"), Properties.Resources.RunPrettify);
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Liquid.Config);
 
                     CreateImages();
@@ -161,6 +163,7 @@ namespace Pretzel.Logic.Recipe
             fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"_layouts"));
             fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"css"));
             fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"img"));
+            fileSystem.Directory.CreateDirectory(Path.Combine(directory, @"js"));
         }
     }
 }

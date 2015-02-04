@@ -138,5 +138,11 @@ namespace Pretzel.Logic.Properties {
                 return ResourceManager.GetString("Style", resourceCulture);
             }
         }
+
+        internal static string RunPrettify {
+            get {
+                return ResourceManager.GetString("RunPrettify", resourceCulture);
+            }
+        }
     }
 }

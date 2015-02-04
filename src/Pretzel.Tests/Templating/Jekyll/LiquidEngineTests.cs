@@ -1337,5 +1337,33 @@ namespace Pretzel.Tests.Templating.Jekyll
                 Assert.Equal(Context.Posts[0].Categories.First(), "mycategory");
             }
         }
+
+        public class Given_Page_Has_Code_Block : BakingEnvironment<LiquidEngine>
+        {
+            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n    {{C#}}\r\n    My code1\r\n    My code2\r\n";
+            const string ExpectedfileContents = "<pre class=\"prettyprint lang-cs\"><code>My code1My code2</code></pre>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Filter_And_Block_Have_Been_Correctly_Interpreted()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
     }
 }

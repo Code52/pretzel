@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using YamlDotNet.RepresentationModel;
 using System.IO;
+using System.Linq;
 using YamlDotNet.Serialization;
 
 namespace Pretzel.Logic.Extensions
@@ -107,7 +109,11 @@ namespace Pretzel.Logic.Extensions
             if (m.Count == 0)
                 return text;
 
-            return text.Replace(m[0].Groups[0].Value, "").Trim();
+            text = text.Replace(m[0].Groups[0].Value, "");
+            var lines = text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None).ToList();
+            while (lines.Any() && string.IsNullOrWhiteSpace(lines.First()))
+                lines.RemoveAt(0);
+            return string.Join(Environment.NewLine, lines).TrimEnd();
         }
     }
 }
