@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Xunit;
 using System.IO.Abstractions.TestingHelpers;
 using Pretzel.Logic.Import;
@@ -8,6 +9,7 @@ using System.Text;
 using System.IO;
 using NSubstitute;
 using System.IO.Abstractions;
+using System.Threading;
 
 namespace Pretzel.Tests.Import
 {
@@ -108,6 +110,8 @@ namespace Pretzel.Tests.Import
         [Fact]
         public void Error_on_write_is_traced()
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
             // arrange
             StringBuilder sb = new StringBuilder();
             TextWriter writer = new StringWriter(sb);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Pretzel.Logic.Extensibility;
@@ -12,6 +13,7 @@ using System.IO.Abstractions;
 using System.IO;
 using Pretzel.Logic.Extensions;
 using System.Text;
+using System.Threading;
 
 namespace Pretzel.Tests.Templating.Context
 {
@@ -768,6 +770,7 @@ param: value
         [Fact]
         public void page_with_date_in_title()
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             var currentDate = new DateTime(2015, 1, 26).ToShortDateString();
             var filePath = string.Format(@"C:\TestSite\{0}-SomeFile.md", currentDate.Replace("/", "-"));
             fileSystem.AddFile(filePath, new MockFileData(string.Format(@"---
@@ -860,6 +863,7 @@ param: value
         [Fact]
         public void post_with_date_in_title()
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             var currentDate = new DateTime(2015, 1, 26).ToShortDateString();
             var filePath = string.Format(@"C:\TestSite\_posts\{0}-SomeFile.md", currentDate.Replace("/", "-"));
             fileSystem.AddFile(filePath, new MockFileData(string.Format(@"---
@@ -991,6 +995,8 @@ param: value
         [Fact]
         public void page_with_false_date_is_not_processed()
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
             fileSystem.AddFile(@"C:\TestSite\SomeFile.md", new MockFileData(@"---
 date: 20150127
 ---# Title"));
@@ -1108,6 +1114,8 @@ date: 20150127
         [Fact]
         public void file_with_2_ioexception_on_ReadAllText_is_not_processed_and_exception_traced()
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
             // arrange
             string filePath = Path.Combine(Path.GetTempPath(), "SomeFile.md");
             var fileSubstitute = Substitute.For<FileBase>();
