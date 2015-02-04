@@ -3,11 +3,13 @@ using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Xunit;
 using Xunit.Extensions;
 
@@ -170,6 +172,8 @@ namespace Pretzel.Tests.Recipe
         [Fact]
         public void error_is_traced()
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
             var fileSubstitute = Substitute.For<FileBase>();
             fileSubstitute.When(f => f.WriteAllText(Arg.Any<string>(), Arg.Any<string>())).Do(x => { throw new Exception("Error!!!"); });
 
