@@ -735,7 +735,7 @@ param: value
             Assert.Equal("<h1>Title</h1>\n", siteContext.Pages[0].Content);
             Assert.Equal(@"C:\TestSite\_site\SomeFile.md", siteContext.Pages[0].Filepath);
             Assert.Equal(@"C:\TestSite\SomeFile.md", siteContext.Pages[0].File);
-            Assert.Equal(2, siteContext.Pages[0].Bag.Count);
+            Assert.Equal(3, siteContext.Pages[0].Bag.Count); // param, excerpt, date
             Assert.Equal("value", siteContext.Pages[0].Bag["param"]);
         }
 
@@ -759,7 +759,7 @@ param: value
             Assert.Equal("<h1>Title</h1>\n", siteContext.Pages[0].Content);
             Assert.Equal(@"C:\TestSite\_site\SomeFile.md", siteContext.Pages[0].Filepath);
             Assert.Equal(@"C:\TestSite\SomeFile.md", siteContext.Pages[0].File);
-            Assert.Equal(3, siteContext.Pages[0].Bag.Count);
+            Assert.Equal(4, siteContext.Pages[0].Bag.Count); // title, date, param, excerpt
             Assert.Equal("value", siteContext.Pages[0].Bag["param"]);
             Assert.Equal("my title", siteContext.Pages[0].Bag["title"]);
             Assert.Equal(currentDate, siteContext.Pages[0].Bag["date"]);
@@ -784,7 +784,7 @@ param: value
             Assert.Equal("<h1>Title</h1>\n", siteContext.Pages[0].Content);
             Assert.Equal(string.Format(@"C:\TestSite\_site\{0}-SomeFile.md", currentDate.Replace("/", "-")), siteContext.Pages[0].Filepath);
             Assert.Equal(filePath, siteContext.Pages[0].File);
-            Assert.Equal(2, siteContext.Pages[0].Bag.Count);
+            Assert.Equal(3, siteContext.Pages[0].Bag.Count); // param, excerpt, date
             Assert.Equal("value", siteContext.Pages[0].Bag["param"]);
         }
 
@@ -807,7 +807,7 @@ param: value
             Assert.Equal("<h1>Title</h1>\n", siteContext.Pages[0].Content);
             Assert.Equal(string.Format(@"C:\TestSite\_site\{0}SomeFile.md", currentDate.Replace("/", "-")), siteContext.Pages[0].Filepath);
             Assert.Equal(filePath, siteContext.Pages[0].File);
-            Assert.Equal(2, siteContext.Pages[0].Bag.Count);
+            Assert.Equal(3, siteContext.Pages[0].Bag.Count); // param, excerpt, date
             Assert.Equal("value", siteContext.Pages[0].Bag["param"]);
         }
 
@@ -827,7 +827,7 @@ param: value
             Assert.Equal("<h1>Title</h1>\n", siteContext.Posts[0].Content);
             Assert.Equal(@"C:\TestSite\_site\SomeFile.md", siteContext.Posts[0].Filepath);
             Assert.Equal(@"C:\TestSite\_posts\SomeFile.md", siteContext.Posts[0].File);
-            Assert.Equal(2, siteContext.Posts[0].Bag.Count);
+            Assert.Equal(3, siteContext.Posts[0].Bag.Count); // param, excerpt, date
             Assert.Equal("value", siteContext.Posts[0].Bag["param"]);
         }
 
@@ -851,7 +851,7 @@ param: value
             Assert.Equal("<h1>Title</h1>\n", siteContext.Posts[0].Content);
             Assert.Equal(@"C:\TestSite\_site\SomeFile.md", siteContext.Posts[0].Filepath);
             Assert.Equal(@"C:\TestSite\_posts\SomeFile.md", siteContext.Posts[0].File);
-            Assert.Equal(3, siteContext.Posts[0].Bag.Count);
+            Assert.Equal(4, siteContext.Posts[0].Bag.Count); // title, date, param, excerpt
             Assert.Equal("value", siteContext.Posts[0].Bag["param"]);
             Assert.Equal("my title", siteContext.Posts[0].Bag["title"]);
             Assert.Equal(currentDate, siteContext.Posts[0].Bag["date"]);
@@ -902,7 +902,7 @@ param: value
             Assert.Equal("<h1>Title</h1>\n", siteContext.Posts[0].Content);
             Assert.Equal(string.Format(@"C:\TestSite\_site\{0}\SomeFile.md", currentDate.Replace("/", "\\")), siteContext.Posts[0].Filepath);
             Assert.Equal(filePath, siteContext.Posts[0].File);
-            Assert.Equal(2, siteContext.Posts[0].Bag.Count);
+            Assert.Equal(3, siteContext.Posts[0].Bag.Count); // param, excerpt, date
             Assert.Equal("value", siteContext.Posts[0].Bag["param"]);
         }
 
@@ -925,7 +925,7 @@ param: value
             Assert.Equal("<h1>Title</h1>\n", siteContext.Posts[0].Content);
             Assert.Equal(string.Format(@"C:\TestSite\_site\{0}SomeFile.md", currentDate.Replace("/", "\\")), siteContext.Posts[0].Filepath);
             Assert.Equal(filePath, siteContext.Posts[0].File);
-            Assert.Equal(2, siteContext.Posts[0].Bag.Count);
+            Assert.Equal(3, siteContext.Posts[0].Bag.Count); // param, excerpt, date
             Assert.Equal("value", siteContext.Posts[0].Bag["param"]);
         }
 
