@@ -10,7 +10,6 @@ cache:
 - src\packages
 - C:\ProgramData\chocolatey\bin\OpenCover.Console.exe
 - C:\ProgramData\chocolatey\bin\coveralls.net.exe
-- C:\ProgramData\chocolatey\bin\GitVersion.exe
 - C:\ProgramData\chocolatey\lib
 
 environment:
