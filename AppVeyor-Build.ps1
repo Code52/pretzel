@@ -1,3 +1,4 @@
+$executingScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 # define version
 
 $version = $env:appveyor_build_version
@@ -5,6 +6,30 @@ $tag = $version
 If ($env:appveyor_repo_tag -eq $True)
 {
 	$tag = $env:appveyor_repo_tag_name
+	
+	$reader = [System.IO.File]::OpenText("$executingScriptDirectory/ReleaseNotes.md")
+	try {
+		for(;;) {
+			$line = $reader.ReadLine()
+		  If ($line.StartsWith("# ") -eq $True)
+		  {
+			If($readFirstNote) { break }
+			Else 
+			{ 
+				$readFirstNote = $True 
+			}
+		  }
+		  Else
+		  {
+			$description += "$line`r`n"
+		  }
+		}
+	}
+	finally {
+		$reader.Close()
+	}
+		
+	$env:releaseDescription = $description
 }
 
 # build nupkg

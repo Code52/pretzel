@@ -2,17 +2,17 @@ version: 0.2.1.{build}
 
 configuration: Release
 
-assembly_info:
-  patch: true
-  file: '**\AssemblyInfo.*'
-  assembly_version: '{version}'
-  assembly_file_version: '{version}'
-  assembly_informational_version: '{version}'
+init:
+- cinst GitVersion
+
+install:
+- GitVersion /output buildserver /UpdateAssemblyInfo true
   
 cache:
 - src\packages
 - C:\ProgramData\chocolatey\bin\OpenCover.Console.exe
 - C:\ProgramData\chocolatey\bin\coveralls.net.exe
+- C:\ProgramData\chocolatey\bin\GitVersion.exe
 - C:\ProgramData\chocolatey\lib
 
 environment:
@@ -29,7 +29,7 @@ after_build:
 test_script:
 - cinst opencover -source https://nuget.org/api/v2/
 - cinst coveralls.io -source https://nuget.org/api/v2/
-- OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -target:"xunit.console.clr4.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"" /noshadow /appveyor" -output:coverage.xml
+- OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -target:"xunit.console.clr4.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"" /noshadow /appveyor" -output:coverage.xml -returntargetcode
 - coveralls.net --opencover coverage.xml
 
 artifacts:
@@ -44,6 +44,7 @@ deploy:
     auth_token:
       secure: piWk1xd/YxJK+HJOFwJyBORP+Go1p4XO6148zeePdyVEGPxk4wGXk5tP2jYkM4eU
     artifact: Pretzel.zip
+    description: $(releaseDescription)
     on:
       appveyor_repo_tag: true
   
