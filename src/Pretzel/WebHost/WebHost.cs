@@ -68,10 +68,20 @@ namespace Pretzel
 
             if (!content.IsAvailable(path))
             {
-                var response = new Response(env) { ContentType = path.MimeType() };
+                var path404 = "/404.html";
+                var use404 = content.IsAvailable(path404);
+
+                var response = new Response(env) { ContentType = use404 ? path404.MimeType() : path.MimeType() };
                 using (var writer = new StreamWriter(response.OutputStream))
                 {
-                    writer.Write("Page not found: " + path);
+                    if (use404)
+                    {
+                        writer.Write(content.GetContent(path404));
+                    }
+                    else
+                    {
+                        writer.Write("Page not found: " + path);
+                    }
                 }
                 return TaskHelpers.Completed();
             }
