@@ -1,5 +1,4 @@
-﻿using MarkdownDeep;
-using Pretzel.Logic.Extensibility;
+﻿using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,6 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Pretzel.Logic.Helpers;
 
 namespace Pretzel.Logic.Templating.Context
 {
@@ -23,7 +21,6 @@ namespace Pretzel.Logic.Templating.Context
 
 
         readonly Dictionary<string, Page> pageCache = new Dictionary<string, Page>();
-        static readonly Markdown Markdown = MarkdownHelper.CreateMarkdown();
         readonly IFileSystem fileSystem;
         readonly IEnumerable<IContentTransform> contentTransformers;
         readonly List<string> includes = new List<string>();
@@ -329,7 +326,7 @@ namespace Pretzel.Logic.Templating.Context
                 var contentsWithoutHeader = contents.ExcludeHeader();
 
                 html = Path.GetExtension(file).IsMarkdownFile()
-                       ? Markdown.Transform(contentsWithoutHeader)
+                       ? CommonMark.CommonMarkConverter.Convert(contentsWithoutHeader).Trim()
                        : contentsWithoutHeader;
 
                 html = contentTransformers.Aggregate(html, (current, contentTransformer) => contentTransformer.Transform(current));
