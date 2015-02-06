@@ -91,32 +91,12 @@ namespace Pretzel.Logic.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /*! jQuery v2.1.3 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license */
-        ///!function(a,b){&quot;object&quot;==typeof module&amp;&amp;&quot;object&quot;==typeof module.exports?module.exports=a.document?b(a,!0):function(a){if(!a.document)throw new Error(&quot;jQuery requires a window with a document&quot;);return b(a)}:b(a)}(&quot;undefined&quot;!=typeof window?window:this,function(a,b){var c=[],d=c.slice,e=c.concat,f=c.push,g=c.indexOf,h={},i=h.toString,j=h.hasOwnProperty,k={},l=a.document,m=&quot;2.1.3&quot;,n=function(a,b){return new n.fn.init(a,b)},o=/^[ [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string JQuery {
-            get {
-                return ResourceManager.GetString("JQuery", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap logo {
             get {
                 object obj = ResourceManager.GetObject("logo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to !function(){var r=null;
-        ///(function(){function X(e){function j(){try{J.doScroll(&quot;left&quot;)}catch(e){P(j,50);return}w(&quot;poll&quot;)}function w(j){if(!(j.type==&quot;readystatechange&quot;&amp;&amp;x.readyState!=&quot;complete&quot;)&amp;&amp;((j.type==&quot;load&quot;?n:x)[z](i+j.type,w,!1),!m&amp;&amp;(m=!0)))e.call(n,j.type||j)}var Y=x.addEventListener,m=!1,C=!0,t=Y?&quot;addEventListener&quot;:&quot;attachEvent&quot;,z=Y?&quot;removeEventListener&quot;:&quot;detachEvent&quot;,i=Y?&quot;&quot;:&quot;on&quot;;if(x.readyState==&quot;complete&quot;)e.call(n,&quot;lazy&quot;);else{if(x.createEventObject&amp;&amp;J.doScroll){try{C=!n.frameElement}catch(A){}C&amp;&amp; [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string RunPrettify {
-            get {
-                return ResourceManager.GetString("RunPrettify", resourceCulture);
             }
         }
         

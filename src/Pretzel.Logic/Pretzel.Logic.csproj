@@ -133,11 +133,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RazorCsProject.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Resources1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <None Include="Resources\Liquid\Sitemap.liquid" />
     <None Include="Resources\RazorAzure\Shim.cs" />
     <None Include="Resources\RazorCsProject\Category_cs" />
@@ -152,6 +147,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>RazorWiki.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SanityCheck.cs" />
     <Compile Include="Templating\Context\Category.cs" />
@@ -197,7 +197,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
-      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\RazorAzure.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -267,11 +267,9 @@
     <None Include="Resources\RazorCsProject\NuGet_exe" />
     <None Include="Resources\RazorCsProject\LayoutProject_csproj" />
     <None Include="Resources\RazorCsProject\LayoutSolution_sln" />
-    <Content Include="Resources\jquery.js" />
     <Content Include="Resources\RazorWiki\default.css" />
     <Content Include="Resources\RazorWiki\style.css" />
     <Content Include="Resources\Style.css" />
-    <Content Include="Resources\run_prettify.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Templating\Plugins\" />

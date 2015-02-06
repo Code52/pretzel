@@ -151,7 +151,7 @@ namespace Pretzel.Tests.Recipe
             var recipe = new Logic.Recipe.Recipe(fileSystem, "razor", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), true, false);
             recipe.Create();
 
-            Assert.Equal(41, fileSystem.AllPaths.Count());
+            Assert.Equal(38, fileSystem.AllPaths.Count());
             Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\Properties\AssemblyInfo.cs"));
             Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\PretzelClasses\Category.cs"));
             Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\LayoutProject.csproj"));

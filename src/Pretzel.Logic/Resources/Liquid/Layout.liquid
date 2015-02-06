@@ -8,6 +8,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 		<title>{{ page.title }}</title>
 		<link rel="stylesheet" type="text/css" href="/css/style.css" />
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/8.4/styles/default.min.css">
 		<link rel="shortcut icon" href="/img/favicon.ico" />
 	</head>
 	<body>
@@ -26,13 +27,7 @@
 				{{content}}
 			</div>
 		</div>
-		<script src="js/jquery.js"></script>
-		<script>
-			$(function() {
-				$('pre, code').addClass("prettyprint");
-				$('pre code').removeClass("prettyprint");
-			})(jQuery, this);
-		</script>
-		<script src="js/run_prettify.js"></script>
+		<script src="//cdn.jsdelivr.net/highlight.js/8.4/highlight.min.js"></script>
+		<script>hljs.initHighlightingOnLoad();</script>
 	</body>
 </html>
