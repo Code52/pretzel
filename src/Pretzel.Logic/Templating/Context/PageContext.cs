@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -31,6 +32,8 @@ namespace Pretzel.Logic.Templating.Context
         public IDictionary<string, object> Bag { get; set; }
 
         public string Content { get; set; }
+
+        public string Excerpt { get; set; }
 
         public SiteContext Site { get; private set; }
 
@@ -77,9 +80,9 @@ namespace Pretzel.Logic.Templating.Context
                 context.Title = siteContext.Title;
 
             context.Content = page.Content;
+            context.Excerpt = page.Excerpt;
             context.Bag = page.Bag;
             context.Bag["id"] = page.Id;
-            context.Bag.Add("url", page.Url);
             return context;
         }
     }
