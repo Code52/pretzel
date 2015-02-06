@@ -18,8 +18,7 @@ namespace Pretzel.Logic.Templating.Context
     public class SiteContextGenerator
     {
         private static readonly Regex categoryRegex = new Regex(@":category(\d*)", RegexOptions.Compiled);
-        private static readonly Regex slashesRegex = new Regex(@"/{1,}", RegexOptions.Compiled);
-
+        private static readonly Regex slashesRegex = new Regex(@"/{1,}", RegexOptions.Compiled);
 
         readonly Dictionary<string, Page> pageCache = new Dictionary<string, Page>();
         static readonly Markdown Markdown = new Markdown();
@@ -198,7 +197,7 @@ namespace Pretzel.Logic.Templating.Context
             {
                 return false;
             }
-            
+
             if (includes.Count > 0 && includes.Contains(relativePath))
             {
                 return true;
@@ -223,9 +222,6 @@ namespace Pretzel.Logic.Templating.Context
                 var contents = SafeReadContents(file);
                 var header = contents.YamlHeader();
                 var content = RenderContent(file, contents, header);
-                var excerptSeparator = header.ContainsKey("excerpt_separator") 
-                    ? header["excerpt_separator"].ToString() 
-                    : context.ExcerptSeparator;
 
                 if (header.ContainsKey("published") && header["published"].ToString().ToLower() == "false")
                 {
@@ -237,12 +233,10 @@ namespace Pretzel.Logic.Templating.Context
                                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
                                     Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
                                     Content = content,
-                                    Excerpt = GetContentExcerpt(content, excerptSeparator),
                                     Filepath = isPost ? GetPathWithTimestamp(context.OutputFolder, file) : GetFilePathForPage(context, file),
                                     File = file,
                                     Bag = header,
                                 };
-                page.Bag["excerpt"] = page.Excerpt;
 
                 // resolve categories and tags
                 if (isPost)
@@ -342,12 +336,6 @@ namespace Pretzel.Logic.Templating.Context
             return html;
         }
 
-        private static string GetContentExcerpt(string content, string excerptSeparator)
-        {
-            var index = content.IndexOf(excerptSeparator, StringComparison.InvariantCulture);
-            return index == -1 ? content : content.Substring(0, index);
-        }
-
         private string SafeReadLine(string file)
         {
             string postFirstLine;
@@ -431,8 +419,8 @@ namespace Pretzel.Logic.Templating.Context
                             if (int.TryParse(match.Groups[1].Value, out categoryIndex) && categoryIndex > 0)
                             {
                                 replacementValue = page.Categories.Skip(categoryIndex - 1).FirstOrDefault();
-                            } 
-                            else if(page.Categories.Any())
+                            }
+                            else if (page.Categories.Any())
                             {
                                 replacementValue = page.Categories.First();
                             }

@@ -8,11 +8,13 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Pretzel.Logic.Templating
 {
     public abstract class JekyllEngineBase : ISiteEngine
     {
+        private static readonly Regex paragraphRegex = new Regex(@"(<(?:p|h\d{1})>.*?</(?:p|h\d{1})>)", RegexOptions.Compiled);
         protected SiteContext Context;
 
 #pragma warning disable 0649
@@ -93,7 +95,7 @@ namespace Pretzel.Logic.Templating
                 page.OutputFile = page.OutputFile.Replace(extension, ".html");
 
             var pageContext = PageContext.FromPage(Context, page, outputDirectory, page.OutputFile);
-            //pageContext.Content = markdown.Transform(pageContext.Content);
+
             pageContext.Previous = previous;
             pageContext.Next = next;
 
@@ -129,6 +131,26 @@ namespace Pretzel.Logic.Templating
             {
                 var metadata = page.Bag;
                 var failed = false;
+
+                var excerptSeparator = context.Bag.ContainsKey("excerpt_separator")
+                    ? context.Bag["excerpt_separator"].ToString()
+                    : Context.ExcerptSeparator;
+                try
+                {
+                    context.Bag["excerpt"] = GetContentExcerpt(RenderTemplate(context.Content, context), excerptSeparator);
+                }
+                catch (Exception ex)
+                {
+                    if (!skipFileOnError)
+                    {
+                        var message = string.Format("Failed to process {0}, see inner exception for more details", context.OutputPath);
+                        throw new PageProcessingException(message, ex);
+                    }
+
+                    Console.WriteLine(@"Failed to process {0}, see inner exception for more details", context.OutputPath);
+                    continue;
+                }
+
                 while (metadata.ContainsKey("layout"))
                 {
                     var layout = metadata["layout"];
@@ -179,6 +201,29 @@ namespace Pretzel.Logic.Templating
                 CreateOutputDirectory(context.OutputPath);
                 FileSystem.File.WriteAllText(context.OutputPath, context.Content);
             }
+        }
+
+        private static string GetContentExcerpt(string content, string excerptSeparator)
+        {
+            var excerptSeparatorIndex = content.IndexOf(excerptSeparator, StringComparison.InvariantCulture);
+            string excerpt = null;
+            if (excerptSeparatorIndex == -1)
+            {
+                var match = paragraphRegex.Match(content);
+                if (match.Success)
+                {
+                    excerpt = match.Groups[1].Value;
+                }
+            }
+            else
+            {
+                excerpt = content.Substring(0, excerptSeparatorIndex);
+                if (excerpt.StartsWith("<p>") && !excerpt.EndsWith("</p>"))
+                {
+                    excerpt += "</p>";
+                }
+            }
+            return excerpt;
         }
 
         public void CopyFileIfSourceNewer(string sourceFileName, string destFileName, bool overwrite)

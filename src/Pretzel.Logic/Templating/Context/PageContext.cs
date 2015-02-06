@@ -33,8 +33,6 @@ namespace Pretzel.Logic.Templating.Context
 
         public string Content { get; set; }
 
-        public string Excerpt { get; set; }
-
         public SiteContext Site { get; private set; }
 
         public Page Page { get; set; }
@@ -80,7 +78,6 @@ namespace Pretzel.Logic.Templating.Context
                 context.Title = siteContext.Title;
 
             context.Content = page.Content;
-            context.Excerpt = page.Excerpt;
             context.Bag = page.Bag;
             context.Bag["id"] = page.Id;
             return context;

@@ -750,7 +750,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
 
             [Fact]
-            public void Layout_With_Bad_Header_Should_Not_Throw_Exception()
+            public void File_With_Bad_Liquid_Format_Should_Be_Traced()
             {
                 using (StringWriter sw = new StringWriter())
                 {
@@ -970,8 +970,8 @@ namespace Pretzel.Tests.Templating.Jekyll
         public class Given_Page_Has_Excerpt : BakingEnvironment<LiquidEngine>
         {
             const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n{% for post in site.posts %}{{ post.excerpt }}{% endfor %}";
-            const string PostContents = "---\r\n layout: nil \r\n---\r\n\r\n<p>One<!--more-->Two</p>";
-            const string ExpectedIndexContents = "<p><p>One</p>";       
+            const string PostContents = "---\r\n layout: nil\r\n title: post \r\n---\r\n\r\n<p>One {{ page.title }}<!--more-->Two</p>";
+            const string ExpectedIndexContents = "<p><p>One post</p></p>";       
 
             public override LiquidEngine Given()
             {
@@ -994,6 +994,190 @@ namespace Pretzel.Tests.Templating.Jekyll
             public void Posts_Should_Have_Excerpt()
             {
                 Assert.Equal(ExpectedIndexContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());                    
+            }
+        }
+
+        public class Given_Page_Has_Excerpt_With_Layout : BakingEnvironment<LiquidEngine>
+        {
+            const string TemplateContents = "<html><head><title>{{ site.title }}</title></head><body>{{ content }}</body></html>";
+            const string IndexContents = "---\r\n layout: default\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt }}{% endfor %}</div>";
+            const string PostContents = "---\r\n layout: default\r\n title: post \r\n---\r\n\r\nOne {{ page.title }}<!--more-->Two";
+            const string ExpectedIndexContents = "<html><head><title></title></head><body><div><p>One post</p></div></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
+                FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post.md", new MockFileData(PostContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Posts_Should_Have_Excerpt()
+            {
+                Assert.Equal(ExpectedIndexContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_Excerpt_And_ExcerptSeparator_Is_Overrided_In_Config : BakingEnvironment<LiquidEngine>
+        {
+            const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt }}{% endfor %}</div>";
+            const string PostContents = "---\r\n layout: nil\r\n title: post\r\n---\r\n\r\nOne<!--more-->Two<!--excerpt_separator-->Three";
+            const string ConfigContents = "excerpt_separator: <!--excerpt_separator-->";
+            const string ExpectedIndexContents = "<div><p>One<!--more-->Two</p></div>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_config.yml", new MockFileData(ConfigContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
+                FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post.md", new MockFileData(PostContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Posts_Should_Have_Excerpt()
+            {
+                Assert.Equal(ExpectedIndexContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_Excerpt_And_ExcerptSeparator_Is_Overrided : BakingEnvironment<LiquidEngine>
+        {
+            const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt }}{% endfor %}</div>";
+            const string PostContents = "---\r\n layout: nil\r\n title: post\r\n excerpt_separator: <!--excerpt_separator--> \r\n---\r\n\r\nOne<!--more-->Two<!--excerpt_separator-->Three";
+            const string ExpectedIndexContents = "<div><p>One<!--more-->Two</p></div>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
+                FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post.md", new MockFileData(PostContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Posts_Should_Have_Excerpt()
+            {
+                Assert.Equal(ExpectedIndexContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_Excerpt_And_Use_Strip_Html_Filter : BakingEnvironment<LiquidEngine>
+        {
+            const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt | strip_html }}{% endfor %}</div>";
+            const string PostContents = "---\r\n layout: nil\r\n title: post \r\n---\r\n\r\nOne {{ page.title }}<!--more-->Two";
+            const string ExpectedIndexContents = "<div>One post</div>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
+                FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post.md", new MockFileData(PostContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Posts_Should_Have_Excerpt_Whithout_Html_Tags()
+            {
+                Assert.Equal(ExpectedIndexContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_Excerpt_And_Has_Html_Title : BakingEnvironment<LiquidEngine>
+        {
+            const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt }}{% endfor %}</div>";
+            const string PostContents = "---\r\n layout: nil\r\n title: post \r\n---\r\n\r\n# One {{ page.title }}\r\nTwo";
+            const string ExpectedIndexContents = "<div><h1>One post</h1></div>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
+                FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post.md", new MockFileData(PostContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Posts_Should_Have_Excerpt_With_Title()
+            {
+                Assert.Equal(ExpectedIndexContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_Excerpt_But_No_Excerpt_Separator : BakingEnvironment<LiquidEngine>
+        {
+            const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt }}{% endfor %}</div>";
+            const string PostContents = "---\r\n layout: nil\r\n title: post \r\n---\r\n\r\nOne {{ page.title }}\r\n\r\nTwo";
+            const string ExpectedIndexContents = "<div><p>One post</p></div>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
+                FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post.md", new MockFileData(PostContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Posts_Should_Have_Excerpt_With_The_First_Paragraph()
+            {
+                Assert.Equal(ExpectedIndexContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
             }
         }
 

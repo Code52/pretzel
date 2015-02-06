@@ -45,7 +45,6 @@ namespace Pretzel.Logic.Templating.Context
                 }
                 return excerptSeparator;
             }
-            set { excerptSeparator = value; }
         }
 
         public string Engine
