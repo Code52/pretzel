@@ -267,6 +267,7 @@
     <None Include="Resources\RazorCsProject\NuGet_exe" />
     <None Include="Resources\RazorCsProject\LayoutProject_csproj" />
     <None Include="Resources\RazorCsProject\LayoutSolution_sln" />
+    <Content Include="Resources\jquery.js" />
     <Content Include="Resources\RazorWiki\default.css" />
     <Content Include="Resources\RazorWiki\style.css" />
     <Content Include="Resources\Style.css" />
