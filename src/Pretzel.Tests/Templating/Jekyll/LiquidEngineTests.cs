@@ -1184,7 +1184,7 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_A_Page_Has_A_Valid_Include_Value : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\ntest: value\r\n---#{{ page.title }}\r\n{% include foobar.html %}";
+            const string PageContents = "---\r\ntest: value\r\n---# {{ page.title }}\r\n{% include foobar.html %}";
             const string IncludePageContents = "foo {{ page.test }} bar";
             const string ExpectedfileContents = "<h1>My Web Site</h1><p>foo value bar</p>";
 
@@ -1220,7 +1220,7 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_A_Page_Has_A_Non_Existing_Include_Value : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\ntest: value\r\n---#{{ page.title }}\r\n{% include foobar.html %}";
+            const string PageContents = "---\r\ntest: value\r\n---# {{ page.title }}\r\n{% include foobar.html %}";
             const string ExpectedfileContents = "<h1>My Web Site</h1><p></p>";
 
             public override LiquidEngine Given()
@@ -1248,7 +1248,7 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_A_Page_Has_A_Permalink_Without_FileName : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\npermalink: /pages/\r\n---#{{ page.title }}";
+            const string PageContents = "---\r\npermalink: /pages/\r\n---# {{ page.title }}";
             const string ExpectedfileContents = "<h1>My Web Site</h1>";
 
             public override LiquidEngine Given()
@@ -1370,8 +1370,8 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_Code_Block : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n    {{C#}}\r\n    My code1\r\n    My code2\r\n";
-            const string ExpectedfileContents = "<pre class=\"prettyprint lang-cs\"><code>My code1My code2</code></pre>";
+            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n```cs\r\nMy code1\r\nMy code2\r\n```\r\n";
+            const string ExpectedfileContents = "<pre><code class=\"language-cs\">My code1My code2</code></pre>";
 
             public override LiquidEngine Given()
             {

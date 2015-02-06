@@ -220,8 +220,8 @@ namespace Pretzel.Tests.Templating.Razor
         const string TemplateContents = "@model Pretzel.Logic.Templating.Context.PageContext \r\n<html><body>@Raw(Model.Content)</body></html>";
         const string PostContents = "---\r\n layout: default \r\n title: 'Post'\r\n---\r\n<h1>Post{0}</h1>";
         const string IndexContents = "---\r\n layout: default \r\n paginate: 2 \r\n paginate_link: /blog/page:page/index.html \r\n---\r\n @model Pretzel.Logic.Templating.Context.PageContext \r\n @foreach(var post in Model.Paginator.Posts) { @Raw(post.Content) }";
-        const string ExpectedfileContents = "<html><body><p> <h1>Post{0}</h1><h1>Post{1}</h1></p></body></html>";
-        const string ExpectedLastFileContents = "<html><body><p> <h1>Post{0}</h1></p></body></html>";
+        const string ExpectedFileContents = "<html><body><p><h1>Post{0}</h1><h1>Post{1}</h1></p></body></html>";
+        const string ExpectedLastFileContents = "<html><body><p><h1>Post{0}</h1></p></body></html>";
 
         public override RazorSiteEngine Given()
         {
@@ -247,13 +247,13 @@ namespace Pretzel.Tests.Templating.Razor
         [Fact]
         public void Posts_Properly_Paginated()
         {
-            Assert.Equal(String.Format(ExpectedfileContents, 7, 6),
+            Assert.Equal(String.Format(ExpectedFileContents, 7, 6),
                          FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
 
-            Assert.Equal(String.Format(ExpectedfileContents, 5, 4),
+            Assert.Equal(String.Format(ExpectedFileContents, 5, 4),
                          FileSystem.File.ReadAllText(@"C:\website\_site\blog\page2\index.html").RemoveWhiteSpace());
 
-            Assert.Equal(String.Format(ExpectedfileContents, 3, 2),
+            Assert.Equal(String.Format(ExpectedFileContents, 3, 2),
                          FileSystem.File.ReadAllText(@"C:\website\_site\blog\page3\index.html").RemoveWhiteSpace());
 
             Assert.Equal(String.Format(ExpectedLastFileContents, 1),
