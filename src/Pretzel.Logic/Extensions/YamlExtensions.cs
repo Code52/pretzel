@@ -109,11 +109,11 @@ namespace Pretzel.Logic.Extensions
             if (m.Count == 0)
                 return text;
 
-            text = text.Replace(m[0].Groups[0].Value, "");
-            var lines = text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None).ToList();
-            while (lines.Any() && string.IsNullOrWhiteSpace(lines.First()))
-                lines.RemoveAt(0);
-            return string.Join(Environment.NewLine, lines).TrimEnd();
+            var textWithoutHeader = text.Replace(m[0].Groups[0].Value, "").TrimEnd();
+            var lines = textWithoutHeader.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+            var targetLines = lines.SkipWhile(string.IsNullOrEmpty);
+            var targetText = string.Join(Environment.NewLine, targetLines);
+            return targetText;
         }
     }
 }
