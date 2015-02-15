@@ -11,7 +11,6 @@ layout: nil
     <language>en-au</language>
     <pubDate>{{ site.time | date: "%a, %d %b %Y %H:%M:%S %z" }}</pubDate>
     <lastBuildDate>{{ site.time | date: "%a, %d %b %Y %H:%M:%S %z" }}</lastBuildDate>
-
     {% for post in site.posts %}
     <item>
       <title>{{ post.title | xml_escape }}</title>
@@ -22,6 +21,5 @@ layout: nil
       <description>{{ post.content | xml_escape }}</description>
     </item>
     {% endfor %}
-
   </channel> 
 </rss>

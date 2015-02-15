@@ -1,5 +1,7 @@
 # vNext
 
+ - [#206](https://github.com/Code52/pretzel/pull/206) - Code block support contributed by Andrey Akinshin ([AndreyAkinshin](https://github.com/AndreyAkinshin))
+ - [#157](https://github.com/Code52/pretzel/pull/157) - Add support to load dlls in "_plugins" path contributed by Miguel Román ([miguelerm](https://github.com/miguelerm))
  - [#203](https://github.com/Code52/pretzel/pull/203) - Support for 404 pages contributed by Damian Karzon ([dkarzon](https://github.com/dkarzon))
  - [#202](https://github.com/Code52/pretzel/pull/202) - Add Excerpt feature for pages contributed by Andrey Akinshin ([AndreyAkinshin](https://github.com/AndreyAkinshin))
  - [#200](https://github.com/Code52/pretzel/pull/200) - Single category support for liquid posts contributed by Andrey Akinshin ([AndreyAkinshin](https://github.com/AndreyAkinshin))
@@ -13,7 +15,7 @@
  - [#198](https://github.com/Code52/pretzel/issues/198) - Liquid tag/filter with underscore doesn't works in markdown files +fix
  - [#170](https://github.com/Code52/pretzel/issues/170) - update binary download
 
-Commits: [1436ac1f52...8226cb8a26](https://github.com/Code52/pretzel/compare/1436ac1f52...8226cb8a26)
+Commits: [1436ac1f52...6aeae31f9a](https://github.com/Code52/pretzel/compare/1436ac1f52...6aeae31f9a)
 
 
 # 0.2.0
