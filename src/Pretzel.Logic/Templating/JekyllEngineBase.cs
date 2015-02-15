@@ -14,19 +14,23 @@ namespace Pretzel.Logic.Templating
 {
     public abstract class JekyllEngineBase : ISiteEngine
     {
-        private static readonly Regex paragraphRegex = new Regex(@"(<(?:p|h\d{1})>.*?</(?:p|h\d{1})>)", RegexOptions.Compiled);
+        private static readonly Regex paragraphRegex = new Regex(@"(<(?:p|h\d{1})>.*?</(?:p|h\d{1})>)", RegexOptions.Compiled | RegexOptions.Singleline);
         protected SiteContext Context;
 
 #pragma warning disable 0649
+
         [Import]
         public IFileSystem FileSystem { get; set; }
+
 #pragma warning restore 0649
 
         [ImportMany]
         public IEnumerable<IFilter> Filters { get; set; }
 
         public abstract void Initialize();
+
         protected abstract void PreProcess();
+
         protected abstract string RenderTemplate(string content, PageContext pageData);
 
         public void Process(SiteContext siteContext, bool skipFileOnError = false)

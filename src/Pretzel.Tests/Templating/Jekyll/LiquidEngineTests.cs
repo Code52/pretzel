@@ -18,9 +18,9 @@ namespace Pretzel.Tests.Templating.Jekyll
     {
         public class When_Recieving_A_Folder_Containing_One_File : BakingEnvironment<LiquidEngine>
         {
-            const string FileContents = "<html><head></head><body></body></html>";
-            const string Folder = @"C:\website\";
-            readonly SiteContext context = new SiteContext { SourceFolder = Folder };
+            private const string FileContents = "<html><head></head><body></body></html>";
+            private const string Folder = @"C:\website\";
+            private readonly SiteContext context = new SiteContext { SourceFolder = Folder };
 
             public override LiquidEngine Given()
             {
@@ -61,9 +61,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_Recieving_A_Folder_Without_A_Trailing_Slash : BakingEnvironment<LiquidEngine>
         {
-            const string FileContents = "<html><head></head><body></body></html>";
-            const string Folder = @"C:\website";
-            readonly SiteContext context = new SiteContext { SourceFolder = Folder };
+            private const string FileContents = "<html><head></head><body></body></html>";
+            private const string Folder = @"C:\website";
+            private readonly SiteContext context = new SiteContext { SourceFolder = Folder };
 
             public override LiquidEngine Given()
             {
@@ -91,9 +91,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_Recieving_A_Folder_Containing_One_File_In_A_Subfolder : BakingEnvironment<LiquidEngine>
         {
-            const string FileContents = "<html><head></head><body></body></html>";
-            const string Folder = @"C:\website";
-            readonly SiteContext context = new SiteContext { SourceFolder = Folder };
+            private const string FileContents = "<html><head></head><body></body></html>";
+            private const string Folder = @"C:\website";
+            private readonly SiteContext context = new SiteContext { SourceFolder = Folder };
 
             public override LiquidEngine Given()
             {
@@ -133,10 +133,10 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_Recieving_A_File_With_Metadata : BakingEnvironment<LiquidEngine>
         {
-            const string FileContents = "<html><head><title>{{ page.title }}</title></head><body></body></html>";
-            const string OutputContents = "<html><head><title></title></head><body></body></html>";
-            const string Folder = @"C:\website";
-            readonly SiteContext context = new SiteContext { SourceFolder = Folder };
+            private const string FileContents = "<html><head><title>{{ page.title }}</title></head><body></body></html>";
+            private const string OutputContents = "<html><head><title></title></head><body></body></html>";
+            private const string Folder = @"C:\website";
+            private readonly SiteContext context = new SiteContext { SourceFolder = Folder };
 
             public override LiquidEngine Given()
             {
@@ -165,7 +165,7 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_A_Folder_Starting_With_Dot : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\n layout: default \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
+            private const string PageContents = "---\r\n layout: default \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
 
             public override LiquidEngine Given()
             {
@@ -189,9 +189,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_Paginate_With_No_Posts : BakingEnvironment<LiquidEngine>
         {
-            const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
-            const string IndexContents = "---\r\n layout: default \r\n paginate: 5 \r\n paginate_link: /blog/page:page/index.html \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
-            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
+            private const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            private const string IndexContents = "---\r\n layout: default \r\n paginate: 5 \r\n paginate_link: /blog/page:page/index.html \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
+            private const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
 
             public override LiquidEngine Given()
             {
@@ -226,10 +226,10 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_Paginate_With_Default_Pagelink : BakingEnvironment<LiquidEngine>
         {
-            const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
-            const string PostContents = "---\r\n layout: default \r\n title: 'Post'\r\n---\r\n\r\n## Hello World!";
-            const string IndexContents = "---\r\n layout: default \r\n paginate: 1 \r\n title: 'A different title'\r\n---\r\n\r\n<h2>Hello World!</h2><p>{{ paginator.previous_page }} / {{ paginator.page }} / {{ paginator.next_page }}</p>";
-            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2><p>{0} / {1} / {2}</p></body></html>";
+            private const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            private const string PostContents = "---\r\n layout: default \r\n title: 'Post'\r\n---\r\n\r\n## Hello World!";
+            private const string IndexContents = "---\r\n layout: default \r\n paginate: 1 \r\n title: 'A different title'\r\n---\r\n\r\n<h2>Hello World!</h2><p>{{ paginator.previous_page }} / {{ paginator.page }} / {{ paginator.next_page }}</p>";
+            private const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2><p>{0} / {1} / {2}</p></body></html>";
 
             public override LiquidEngine Given()
             {
@@ -258,7 +258,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 for (var i = 2; i <= 5; i++)
                 {
                     var fileName = String.Format(@"C:\website\_site\page\{0}\index.html", i);
-                    var expectedContents = string.Format(ExpectedfileContents, i-1, i, i+1);
+                    var expectedContents = string.Format(ExpectedfileContents, i - 1, i, i + 1);
                     Assert.Equal(expectedContents, FileSystem.File.ReadAllText(fileName).RemoveWhiteSpace());
                 }
             }
@@ -279,10 +279,10 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_Paginate_With_Custom_Pagelink : BakingEnvironment<LiquidEngine>
         {
-            const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
-            const string PostContents = "---\r\n layout: default \r\n title: 'Post'\r\n---\r\n\r\n## Hello World!";
-            const string IndexContents = "---\r\n layout: default \r\n paginate: 2 \r\n paginate_link: /blog/page:page/index.html \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
-            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
+            private const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            private const string PostContents = "---\r\n layout: default \r\n title: 'Post'\r\n---\r\n\r\n## Hello World!";
+            private const string IndexContents = "---\r\n layout: default \r\n paginate: 2 \r\n paginate_link: /blog/page:page/index.html \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
+            private const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
 
             public override LiquidEngine Given()
             {
@@ -324,10 +324,10 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_SiteContext_Specifies_Title : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "<html><head><title>{{ page.title }}</title></head><body><h1>Hello World!</h1></body></html>";
-            readonly SiteContext context = new SiteContext { SourceFolder = Folder, Title = "My Web Site" };
-            readonly string expectedfileContents = PageContents.Replace(@"{{ page.title }}", "My Web Site");
-            const string Folder = @"C:\website";
+            private const string PageContents = "<html><head><title>{{ page.title }}</title></head><body><h1>Hello World!</h1></body></html>";
+            private readonly SiteContext context = new SiteContext { SourceFolder = Folder, Title = "My Web Site" };
+            private readonly string expectedfileContents = PageContents.Replace(@"{{ page.title }}", "My Web Site");
+            private const string Folder = @"C:\website";
 
             public override LiquidEngine Given()
             {
@@ -355,10 +355,10 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_A_Template_Also_Has_A_Layout_Value : BakingEnvironment<LiquidEngine>
         {
-            const string ParentTemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
-            const string InnerTemplateContents = "---\r\n layout: parent\r\n---\r\n\r\n<h1>Title</h1>{{content}}";
-            const string PageContents = "---\r\n layout: inner\r\n---\r\n\r\n## Hello World!";
-            const string ExpectedfileContents = "<html><head><title>My Web Site</title></head><body><h1>Title</h1><h2>Hello World!</h2></body></html>";
+            private const string ParentTemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            private const string InnerTemplateContents = "---\r\n layout: parent\r\n---\r\n\r\n<h1>Title</h1>{{content}}";
+            private const string PageContents = "---\r\n layout: inner\r\n---\r\n\r\n## Hello World!";
+            private const string ExpectedfileContents = "<html><head><title>My Web Site</title></head><body><h1>Title</h1><h2>Hello World!</h2></body></html>";
 
             public override LiquidEngine Given()
             {
@@ -394,7 +394,7 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_Aeoth_Tests_The_Edge_Cases_Of_Handling_YAML_Front_Matter : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\n---";
+            private const string PageContents = "---\n---";
 
             public override LiquidEngine Given()
             {
@@ -418,10 +418,9 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
         }
 
-
         public class Given_Markdown_Page_Has_A_Permalink : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\npermalink: /somepage.html\r\n---\r\n\r\n# Hello World!";
+            private const string PageContents = "---\r\npermalink: /somepage.html\r\n---\r\n\r\n# Hello World!";
 
             public override LiquidEngine Given()
             {
@@ -447,9 +446,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Markdown_Page_Has_A_Title : BakingEnvironment<LiquidEngine>
         {
-            const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
-            const string PageContents = "---\r\n layout: default \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
-            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
+            private const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            private const string PageContents = "---\r\n layout: default \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
+            private const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
 
             public override LiquidEngine Given()
             {
@@ -476,9 +475,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Use_Filter : BakingEnvironment<LiquidEngine>
         {
-            const string TemplateContents = "<html><body>{{ '.NET C#' | slugify}}</body></html>";
-            const string PageContents = "---\r\n layout: default \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
-            const string ExpectedfileContents = "<html><body>net-csharp</body></html>";
+            private const string TemplateContents = "<html><body>{{ '.NET C#' | slugify}}</body></html>";
+            private const string PageContents = "---\r\n layout: default \r\n title: 'A different title'\r\n---\r\n\r\n## Hello World!";
+            private const string ExpectedfileContents = "<html><body>net-csharp</body></html>";
 
             public override LiquidEngine Given()
             {
@@ -505,12 +504,12 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Config_File_Has_A_Title : BakingEnvironment<LiquidEngine>
         {
-            const string TemplateContents_1 = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
-            const string TemplateContents_2 = "<html><head><title>{{ site.title }}</title></head><body>{{ content }}</body></html>";
-            const string PageContents_1 = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!";
-            const string PageContents_2 = "---\r\n layout: default2 \r\n---\r\n\r\n## Hello World!";
-            const string ConfigContents = "---\r\n title: A different title\r\n---";
-            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
+            private const string TemplateContents_1 = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            private const string TemplateContents_2 = "<html><head><title>{{ site.title }}</title></head><body>{{ content }}</body></html>";
+            private const string PageContents_1 = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!";
+            private const string PageContents_2 = "---\r\n layout: default2 \r\n---\r\n\r\n## Hello World!";
+            private const string ConfigContents = "---\r\n title: A different title\r\n---";
+            private const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
 
             public override LiquidEngine Given()
             {
@@ -546,10 +545,10 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Config_File_Has_A_Title_And_Context_Has_No_Title : BakingEnvironment<LiquidEngine>
         {
-            const string TemplateContents = "<html><head><title>{{ site.title }}</title></head><body>{{ content }}</body></html>";
-            const string PageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!";
-            const string ConfigContents = "---\r\n title: A different title\r\n---";
-            const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
+            private const string TemplateContents = "<html><head><title>{{ site.title }}</title></head><body>{{ content }}</body></html>";
+            private const string PageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!";
+            private const string ConfigContents = "---\r\n title: A different title\r\n---";
+            private const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2></body></html>";
 
             public override LiquidEngine Given()
             {
@@ -576,13 +575,13 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Site_Comport_Non_Standard_Files : BakingEnvironment<LiquidEngine>
         {
-            const string TemplateContents = "<html><head><title>{{ site.title }}</title></head><body>{{ content }}</body></html>";
-            const string NonProcessedPageContents = "## Hello World!";
-            const string LayoutNilPageContents = "---\r\n layout: nil \r\n---\r\n\r\n## Hello World!";
-            const string NoLayoutPageContents = "---\r\n  \r\n---\r\n\r\n## Hello World!";
-            const string NonExistingLayoutPageContents = "----\r\n layout: inexistant \r\n---\r\n\r\n## Hello World!";
+            private const string TemplateContents = "<html><head><title>{{ site.title }}</title></head><body>{{ content }}</body></html>";
+            private const string NonProcessedPageContents = "## Hello World!";
+            private const string LayoutNilPageContents = "---\r\n layout: nil \r\n---\r\n\r\n## Hello World!";
+            private const string NoLayoutPageContents = "---\r\n  \r\n---\r\n\r\n## Hello World!";
+            private const string NonExistingLayoutPageContents = "----\r\n layout: inexistant \r\n---\r\n\r\n## Hello World!";
 
-            const string ExpectedfileContents = "<h2>Hello World!</h2>";
+            private const string ExpectedfileContents = "<h2>Hello World!</h2>";
 
             public override LiquidEngine Given()
             {
@@ -641,8 +640,8 @@ namespace Pretzel.Tests.Templating.Jekyll
         public class Given_Site_Comport_Bad_Formated_Layout : BakingEnvironment<LiquidEngine>
         {
             private SiteContext Context;
-            const string TemplateContents = "----\r\n layout: default \r\n-----<html><head><title>{{ site.title }}</title>{{}</head><body>{{ content }}</body></html>";
-            const string PageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!";
+            private const string TemplateContents = "----\r\n layout: default \r\n-----<html><head><title>{{ site.title }}</title>{{}</head><body>{{ content }}</body></html>";
+            private const string PageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!";
 
             public override LiquidEngine Given()
             {
@@ -671,8 +670,8 @@ namespace Pretzel.Tests.Templating.Jekyll
         public class Given_Site_Comport_Bad_Formated_Layout_But_Skip_File_Error : BakingEnvironment<LiquidEngine>
         {
             private SiteContext Context;
-            const string TemplateContents = "----\r\n layout: default \r\n-----<html><head><title>{{ site.title }}</title>{{}</head><body>{{ content }}</body></html>";
-            const string PageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!";
+            private const string TemplateContents = "----\r\n layout: default \r\n-----<html><head><title>{{ site.title }}</title>{{}</head><body>{{ content }}</body></html>";
+            private const string PageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!";
 
             public override LiquidEngine Given()
             {
@@ -706,7 +705,7 @@ namespace Pretzel.Tests.Templating.Jekyll
         public class Given_Page_Is_Bad_Formated : BakingEnvironment<LiquidEngine>
         {
             private SiteContext Context;
-            const string BadFormatPageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World! {{}";
+            private const string BadFormatPageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World! {{}";
 
             public override LiquidEngine Given()
             {
@@ -734,7 +733,7 @@ namespace Pretzel.Tests.Templating.Jekyll
         public class Given_Page_Is_Bad_Formated_But_Skip_File_Error : BakingEnvironment<LiquidEngine>
         {
             private SiteContext Context;
-            const string BadFormatPageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World! {{}";
+            private const string BadFormatPageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World! {{}";
 
             public override LiquidEngine Given()
             {
@@ -766,8 +765,8 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Older_Non_Processed_Page_Already_Exists_In_Output_Directory : BakingEnvironment<LiquidEngine>
         {
-            const string OriginalPageContents = "## Hello Earth!";
-            const string PageContents = "## Hello World!";
+            private const string OriginalPageContents = "## Hello Earth!";
+            private const string PageContents = "## Hello World!";
 
             public override LiquidEngine Given()
             {
@@ -794,8 +793,8 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Newer_Non_Processed_Page_Already_Exists_In_Output_Directory : BakingEnvironment<LiquidEngine>
         {
-            const string OriginalPageContents = "## Hello Earth!";
-            const string PageContents = "## Hello World!";
+            private const string OriginalPageContents = "## Hello Earth!";
+            private const string PageContents = "## Hello World!";
 
             public override LiquidEngine Given()
             {
@@ -889,8 +888,8 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Use_PrettifyUrlFilter : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\n layout: nill \r\n---\r\n\r\n{{ 'http://mysite.com/index.html' | prettify_url}}";
-            const string ExpectedfileContents = "http://mysite.com/";
+            private const string PageContents = "---\r\n layout: nill \r\n---\r\n\r\n{{ 'http://mysite.com/index.html' | prettify_url}}";
+            private const string ExpectedfileContents = "http://mysite.com/";
 
             public override LiquidEngine Given()
             {
@@ -916,8 +915,8 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_Comment : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n## Hello World!{% comment %} This is a comment {% endcomment %}";
-            const string ExpectedfileContents = "<h2>Hello World!</h2>";
+            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n## Hello World!{% comment %} This is a comment {% endcomment %}";
+            private const string ExpectedfileContents = "<h2>Hello World!</h2>";
 
             public override LiquidEngine Given()
             {
@@ -942,8 +941,8 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_PostUrlBlock : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n<p>{% post_url post-title.md %}</p>";
-            const string ExpectedfileContents = "<p>post/title.html</p>";
+            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n<p>{% post_url post-title.md %}</p>";
+            private const string ExpectedfileContents = "<p>post/title.html</p>";
 
             public override LiquidEngine Given()
             {
@@ -969,9 +968,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_Excerpt : BakingEnvironment<LiquidEngine>
         {
-            const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n{% for post in site.posts %}{{ post.excerpt }}{% endfor %}";
-            const string PostContents = "---\r\n layout: nil\r\n title: post \r\n---\r\n\r\n<p>One {{ page.title }}<!--more-->Two</p>";
-            const string ExpectedIndexContents = "<p><p>One post</p></p>";       
+            private const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n{% for post in site.posts %}{{ post.excerpt }}{% endfor %}";
+            private const string PostContents = "---\r\n layout: nil\r\n title: post \r\n---\r\n\r\n<p>One {{ page.title }}<!--more-->Two</p>";
+            private const string ExpectedIndexContents = "<p><p>One post</p></p>";
 
             public override LiquidEngine Given()
             {
@@ -993,16 +992,16 @@ namespace Pretzel.Tests.Templating.Jekyll
             [Fact]
             public void Posts_Should_Have_Excerpt()
             {
-                Assert.Equal(ExpectedIndexContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());                    
+                Assert.Equal(ExpectedIndexContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
             }
         }
 
         public class Given_Page_Has_Excerpt_With_Layout : BakingEnvironment<LiquidEngine>
         {
-            const string TemplateContents = "<html><head><title>{{ site.title }}</title></head><body>{{ content }}</body></html>";
-            const string IndexContents = "---\r\n layout: default\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt }}{% endfor %}</div>";
-            const string PostContents = "---\r\n layout: default\r\n title: post \r\n---\r\n\r\nOne {{ page.title }}<!--more-->Two";
-            const string ExpectedIndexContents = "<html><head><title></title></head><body><div><p>One post</p></div></body></html>";
+            private const string TemplateContents = "<html><head><title>{{ site.title }}</title></head><body>{{ content }}</body></html>";
+            private const string IndexContents = "---\r\n layout: default\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt }}{% endfor %}</div>";
+            private const string PostContents = "---\r\n layout: default\r\n title: post \r\n---\r\n\r\nOne {{ page.title }}<!--more-->Two";
+            private const string ExpectedIndexContents = "<html><head><title></title></head><body><div><p>One post</p></div></body></html>";
 
             public override LiquidEngine Given()
             {
@@ -1031,10 +1030,10 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_Excerpt_And_ExcerptSeparator_Is_Overrided_In_Config : BakingEnvironment<LiquidEngine>
         {
-            const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt }}{% endfor %}</div>";
-            const string PostContents = "---\r\n layout: nil\r\n title: post\r\n---\r\n\r\nOne<!--more-->Two<!--excerpt_separator-->Three";
-            const string ConfigContents = "excerpt_separator: <!--excerpt_separator-->";
-            const string ExpectedIndexContents = "<div><p>One<!--more-->Two</p></div>";
+            private const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt }}{% endfor %}</div>";
+            private const string PostContents = "---\r\n layout: nil\r\n title: post\r\n---\r\n\r\nOne<!--more-->Two<!--excerpt_separator-->Three";
+            private const string ConfigContents = "excerpt_separator: <!--excerpt_separator-->";
+            private const string ExpectedIndexContents = "<div><p>One<!--more-->Two</p></div>";
 
             public override LiquidEngine Given()
             {
@@ -1063,9 +1062,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_Excerpt_And_ExcerptSeparator_Is_Overrided : BakingEnvironment<LiquidEngine>
         {
-            const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt }}{% endfor %}</div>";
-            const string PostContents = "---\r\n layout: nil\r\n title: post\r\n excerpt_separator: <!--excerpt_separator--> \r\n---\r\n\r\nOne<!--more-->Two<!--excerpt_separator-->Three";
-            const string ExpectedIndexContents = "<div><p>One<!--more-->Two</p></div>";
+            private const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt }}{% endfor %}</div>";
+            private const string PostContents = "---\r\n layout: nil\r\n title: post\r\n excerpt_separator: <!--excerpt_separator--> \r\n---\r\n\r\nOne<!--more-->Two<!--excerpt_separator-->Three";
+            private const string ExpectedIndexContents = "<div><p>One<!--more-->Two</p></div>";
 
             public override LiquidEngine Given()
             {
@@ -1093,9 +1092,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_Excerpt_And_Use_Strip_Html_Filter : BakingEnvironment<LiquidEngine>
         {
-            const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt | strip_html }}{% endfor %}</div>";
-            const string PostContents = "---\r\n layout: nil\r\n title: post \r\n---\r\n\r\nOne {{ page.title }}<!--more-->Two";
-            const string ExpectedIndexContents = "<div>One post</div>";
+            private const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt | strip_html }}{% endfor %}</div>";
+            private const string PostContents = "---\r\n layout: nil\r\n title: post \r\n---\r\n\r\nOne {{ page.title }}<!--more-->Two";
+            private const string ExpectedIndexContents = "<div>One post</div>";
 
             public override LiquidEngine Given()
             {
@@ -1123,9 +1122,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_Excerpt_And_Has_Html_Title : BakingEnvironment<LiquidEngine>
         {
-            const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt }}{% endfor %}</div>";
-            const string PostContents = "---\r\n layout: nil\r\n title: post \r\n---\r\n\r\n# One {{ page.title }}\r\nTwo";
-            const string ExpectedIndexContents = "<div><h1>One post</h1></div>";
+            private const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt }}{% endfor %}</div>";
+            private const string PostContents = "---\r\n layout: nil\r\n title: post \r\n---\r\n\r\n# One {{ page.title }}\r\nTwo";
+            private const string ExpectedIndexContents = "<div><h1>One post</h1></div>";
 
             public override LiquidEngine Given()
             {
@@ -1153,9 +1152,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_Excerpt_But_No_Excerpt_Separator : BakingEnvironment<LiquidEngine>
         {
-            const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt }}{% endfor %}</div>";
-            const string PostContents = "---\r\n layout: nil\r\n title: post \r\n---\r\n\r\nOne {{ page.title }}\r\n\r\nTwo";
-            const string ExpectedIndexContents = "<div><p>One post</p></div>";
+            private const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n<div>{% for post in site.posts %}{{ post.excerpt }}{% endfor %}</div>";
+            private const string PostContents = "---\r\n layout: nil\r\n title: post \r\n---\r\n\r\nOne {{ page.title }}\r\nTwo\r\n\r\nThree";
+            private const string ExpectedIndexContents = "<div><p>One post\r\nTwo</p></div>";
 
             public override LiquidEngine Given()
             {
@@ -1177,14 +1176,14 @@ namespace Pretzel.Tests.Templating.Jekyll
             [Fact]
             public void Posts_Should_Have_Excerpt_With_The_First_Paragraph()
             {
-                Assert.Equal(ExpectedIndexContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+                Assert.Equal(ExpectedIndexContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html"));
             }
         }
 
         public class Given_Page_Has_HighlightBlock : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight %}a word{% endhighlight %}";
-            const string ExpectedfileContents = "<p><pre>a word</pre></p>";
+            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight %}a word{% endhighlight %}";
+            private const string ExpectedfileContents = "<p><pre>a word</pre></p>";
 
             public override LiquidEngine Given()
             {
@@ -1210,18 +1209,18 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_LiquidEngine_Is_Initialized : BakingEnvironment<LiquidEngine>
         {
-            const string HighlightPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight %}a word{% endhighlight %}";
-            const string HighlightExpectedfileContents = "<p><pre>a word</pre></p>";
-            const string PostUrlPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% post_url post-title.md %}";
-            const string PostUrlExpectedfileContents = "<p>post/title.html</p>";
-            const string CgiEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'foo,bar;baz?' | cgi_escape }}";
-            const string CgiEscapeExpectedfileContents = "<p>foo%2Cbar%3Bbaz%3F</p>";
-            const string UriEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'foo, bar \\baz?' | uri_escape }}";
-            const string UriEscapeExpectedfileContents = "<p>foo,%20bar%20%5Cbaz?</p>";
-            const string NumberOfWordsPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'This is a test' | number_of_words }}";
-            const string NumberOfWordsExpectedfileContents = "<p>4</p>";
-            const string XmlEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ '<test>this is a test</test>' | xml_escape }}";
-            const string XmlEscapeExpectedfileContents = "<p>&lt;test&gt;this is a test&lt;/test&gt;</p>";
+            private const string HighlightPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight %}a word{% endhighlight %}";
+            private const string HighlightExpectedfileContents = "<p><pre>a word</pre></p>";
+            private const string PostUrlPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% post_url post-title.md %}";
+            private const string PostUrlExpectedfileContents = "<p>post/title.html</p>";
+            private const string CgiEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'foo,bar;baz?' | cgi_escape }}";
+            private const string CgiEscapeExpectedfileContents = "<p>foo%2Cbar%3Bbaz%3F</p>";
+            private const string UriEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'foo, bar \\baz?' | uri_escape }}";
+            private const string UriEscapeExpectedfileContents = "<p>foo,%20bar%20%5Cbaz?</p>";
+            private const string NumberOfWordsPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'This is a test' | number_of_words }}";
+            private const string NumberOfWordsExpectedfileContents = "<p>4</p>";
+            private const string XmlEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ '<test>this is a test</test>' | xml_escape }}";
+            private const string XmlEscapeExpectedfileContents = "<p>&lt;test&gt;this is a test&lt;/test&gt;</p>";
 
             public override LiquidEngine Given()
             {
@@ -1283,9 +1282,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Markdown_Page_Has_An_Empty_Title : BakingEnvironment<LiquidEngine>
         {
-            const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
-            const string PageContents = "---\r\n layout: default \r\n title: \r\n---\r\n\r\n## Hello World!";
-            const string ExpectedfileContents = "<html><head><title>My Web Site</title></head><body><h2>Hello World!</h2></body></html>";
+            private const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            private const string PageContents = "---\r\n layout: default \r\n title: \r\n---\r\n\r\n## Hello World!";
+            private const string ExpectedfileContents = "<html><head><title>My Web Site</title></head><body><h2>Hello World!</h2></body></html>";
 
             public override LiquidEngine Given()
             {
@@ -1312,9 +1311,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_A_Layout : BakingEnvironment<LiquidEngine>
         {
-            const string TemplateContents = "<html><body>{{ content }}</body></html>";
-            const string PageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!\r\n{{ page.layout }}";
-            const string ExpectedfileContents = "<html><body><h2>Hello World!</h2><p>default</p></body></html>";
+            private const string TemplateContents = "<html><body>{{ content }}</body></html>";
+            private const string PageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!\r\n{{ page.layout }}";
+            private const string ExpectedfileContents = "<html><body><h2>Hello World!</h2><p>default</p></body></html>";
 
             public override LiquidEngine Given()
             {
@@ -1340,9 +1339,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_Comments_Metadata : BakingEnvironment<LiquidEngine>
         {
-            const string TemplateContents = "<html><body>{{ content }}</body></html>";
-            const string PageContents = "---\r\n layout: default \r\n comments: true \r\n---\r\n\r\n## Hello World!\r\n{{ page.comments }}";
-            const string ExpectedfileContents = "<html><body><h2>Hello World!</h2><p>true</p></body></html>";
+            private const string TemplateContents = "<html><body>{{ content }}</body></html>";
+            private const string PageContents = "---\r\n layout: default \r\n comments: true \r\n---\r\n\r\n## Hello World!\r\n{{ page.comments }}";
+            private const string ExpectedfileContents = "<html><body><h2>Hello World!</h2><p>true</p></body></html>";
 
             public override LiquidEngine Given()
             {
@@ -1368,9 +1367,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_A_Page_Has_A_Valid_Include_Value : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\ntest: value\r\n---#{{ page.title }}\r\n{% include foobar.html %}";
-            const string IncludePageContents = "foo {{ page.test }} bar";
-            const string ExpectedfileContents = "<h1>My Web Site</h1><p>foo value bar</p>";
+            private const string PageContents = "---\r\ntest: value\r\n---#{{ page.title }}\r\n{% include foobar.html %}";
+            private const string IncludePageContents = "foo {{ page.test }} bar";
+            private const string ExpectedfileContents = "<h1>My Web Site</h1><p>foo value bar</p>";
 
             public override LiquidEngine Given()
             {
@@ -1404,8 +1403,8 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_A_Page_Has_A_Non_Existing_Include_Value : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\ntest: value\r\n---#{{ page.title }}\r\n{% include foobar.html %}";
-            const string ExpectedfileContents = "<h1>My Web Site</h1><p></p>";
+            private const string PageContents = "---\r\ntest: value\r\n---#{{ page.title }}\r\n{% include foobar.html %}";
+            private const string ExpectedfileContents = "<h1>My Web Site</h1><p></p>";
 
             public override LiquidEngine Given()
             {
@@ -1432,8 +1431,8 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_A_Page_Has_A_Permalink_Without_FileName : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\npermalink: /pages/\r\n---#{{ page.title }}";
-            const string ExpectedfileContents = "<h1>My Web Site</h1>";
+            private const string PageContents = "---\r\npermalink: /pages/\r\n---#{{ page.title }}";
+            private const string ExpectedfileContents = "<h1>My Web Site</h1>";
 
             public override LiquidEngine Given()
             {
@@ -1461,8 +1460,8 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_Liquid_Tag_And_Block_With_Underscores : BakingEnvironment<LiquidEngine>
         {
-            const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n_any_ word {% highlight %}a word{% endhighlight %}\r\n{% post_url post-title.md %}\r\n{{ 'This is a test' | number_of_words }}";
-            const string ExpectedfileContents = "<p><em>any</em> word <pre>a word</pre>post/title.html4</p>";
+            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n_any_ word {% highlight %}a word{% endhighlight %}\r\n{% post_url post-title.md %}\r\n{{ 'This is a test' | number_of_words }}";
+            private const string ExpectedfileContents = "<p><em>any</em> word <pre>a word</pre>post/title.html4</p>";
 
             public override LiquidEngine Given()
             {
@@ -1489,13 +1488,13 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_And_Posts_Have_Custom_Metadatas : BakingEnvironment<LiquidEngine>
         {
-            const string Page1Contents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n{% for post in site.posts %}\r\n{{ post.title }}/{{ post.show }}-\r\n{% endfor %}";
-            const string ExpectedPage1Contents = "<p>post2/false-post1/true-</p>";
-            const string Page2Contents = "---\r\n title: pages\r\n show: false \r\n---\r\n\r\n{% for page in site.pages %}\r\n{{ page.title }}/{{ page.show }}-\r\n{% endfor %}";
-            const string ExpectedPage2Contents = "<p>index/true-pages/false-</p>";
+            private const string Page1Contents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n{% for post in site.posts %}\r\n{{ post.title }}/{{ post.show }}-\r\n{% endfor %}";
+            private const string ExpectedPage1Contents = "<p>post2/false-post1/true-</p>";
+            private const string Page2Contents = "---\r\n title: pages\r\n show: false \r\n---\r\n\r\n{% for page in site.pages %}\r\n{{ page.title }}/{{ page.show }}-\r\n{% endfor %}";
+            private const string ExpectedPage2Contents = "<p>index/true-pages/false-</p>";
 
-            const string Post1Contents = "---\r\n title: post1\r\n show: true \r\n---\r\n# Title1\r\nContent1";
-            const string Post2Contents = "---\r\n title: post2\r\n show: false \r\n---\r\n# Title2\r\nContent2";
+            private const string Post1Contents = "---\r\n title: post1\r\n show: true \r\n---\r\n# Title1\r\nContent1";
+            private const string Post2Contents = "---\r\n title: post2\r\n show: false \r\n---\r\n# Title2\r\nContent2";
 
             public override LiquidEngine Given()
             {
@@ -1521,14 +1520,13 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 Assert.Equal(ExpectedPage1Contents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
                 Assert.Equal(ExpectedPage2Contents, FileSystem.File.ReadAllText(@"C:\website\_site\pages.html").RemoveWhiteSpace());
-               
             }
         }
 
         public class Given_Page_Has_Category : BakingEnvironment<LiquidEngine>
         {
             private SiteContext Context;
-            const string ContentWithCategory = "---\r\n category: mycategory \r\n---\r\n";
+            private const string ContentWithCategory = "---\r\n category: mycategory \r\n---\r\n";
 
             public override LiquidEngine Given()
             {
