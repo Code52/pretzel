@@ -44,5 +44,16 @@ namespace Pretzel
         {
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Checks if request points to a directory
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public bool IsDirectory(string request)
+        {
+            return false;
+        }
+
     }
 }
