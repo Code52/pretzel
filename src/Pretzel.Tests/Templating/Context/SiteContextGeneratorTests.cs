@@ -887,6 +887,7 @@ param: value
         [Fact]
         public void post_with_false_date_in_title()
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             var currentDate = new DateTime(2015, 1, 26).ToShortDateString();
             var filePath = string.Format(@"C:\TestSite\_posts\{0}SomeFile.md", currentDate.Replace("/", "-"));
             fileSystem.AddFile(filePath, new MockFileData(string.Format(@"---
