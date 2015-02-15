@@ -1,5 +1,8 @@
 # vNext
 
+ - [#203](https://github.com/Code52/pretzel/pull/203) - Support for 404 pages contributed by Damian Karzon ([dkarzon](https://github.com/dkarzon))
+ - [#202](https://github.com/Code52/pretzel/pull/202) - Add Excerpt feature for pages contributed by Andrey Akinshin ([AndreyAkinshin](https://github.com/AndreyAkinshin))
+ - [#200](https://github.com/Code52/pretzel/pull/200) - Single category support for liquid posts contributed by Andrey Akinshin ([AndreyAkinshin](https://github.com/AndreyAkinshin))
  - [#201](https://github.com/Code52/pretzel/issues/201) - Custom metadatas in pages are not available from site.pages in liquid +fix
  - [#200](https://github.com/Code52/pretzel/pull/200) - Single category support for liquid posts contributed by Andrey Akinshin ([AndreyAkinshin](https://github.com/AndreyAkinshin))
  - [#199](https://github.com/Code52/pretzel/issues/199) - PostUrl should be a Liquid Tag +breaking change
@@ -10,7 +13,7 @@
  - [#198](https://github.com/Code52/pretzel/issues/198) - Liquid tag/filter with underscore doesn't works in markdown files +fix
  - [#170](https://github.com/Code52/pretzel/issues/170) - update binary download
 
-Commits: [1436ac1f52...d9d8dd07c3](https://github.com/Code52/pretzel/compare/1436ac1f52...d9d8dd07c3)
+Commits: [1436ac1f52...8226cb8a26](https://github.com/Code52/pretzel/compare/1436ac1f52...8226cb8a26)
 
 
 # 0.2.0
