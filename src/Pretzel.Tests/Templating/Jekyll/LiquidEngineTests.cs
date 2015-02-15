@@ -1367,7 +1367,7 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_A_Page_Has_A_Valid_Include_Value : BakingEnvironment<LiquidEngine>
         {
-            private const string PageContents = "---\r\ntest: value\r\n---#{{ page.title }}\r\n{% include foobar.html %}";
+            private const string PageContents = "---\r\ntest: value\r\n---# {{ page.title }}\r\n{% include foobar.html %}";
             private const string IncludePageContents = "foo {{ page.test }} bar";
             private const string ExpectedfileContents = "<h1>My Web Site</h1><p>foo value bar</p>";
 
@@ -1403,7 +1403,7 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_A_Page_Has_A_Non_Existing_Include_Value : BakingEnvironment<LiquidEngine>
         {
-            private const string PageContents = "---\r\ntest: value\r\n---#{{ page.title }}\r\n{% include foobar.html %}";
+            private const string PageContents = "---\r\ntest: value\r\n---# {{ page.title }}\r\n{% include foobar.html %}";
             private const string ExpectedfileContents = "<h1>My Web Site</h1><p></p>";
 
             public override LiquidEngine Given()
@@ -1431,7 +1431,7 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_A_Page_Has_A_Permalink_Without_FileName : BakingEnvironment<LiquidEngine>
         {
-            private const string PageContents = "---\r\npermalink: /pages/\r\n---#{{ page.title }}";
+            private const string PageContents = "---\r\npermalink: /pages/\r\n---# {{ page.title }}";
             private const string ExpectedfileContents = "<h1>My Web Site</h1>";
 
             public override LiquidEngine Given()
@@ -1584,6 +1584,62 @@ namespace Pretzel.Tests.Templating.Jekyll
                 {
                     result.WriteLine("custom tag");
                 }
+            }
+        }
+
+        public class Given_Page_Has_Code_Block : BakingEnvironment<LiquidEngine>
+        {
+            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n```cs\r\nMy code1\r\nMy code2\r\n```\r\n";
+            private const string ExpectedfileContents = "<pre><code class=\"language-cs\">My code1My code2</code></pre>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Filter_And_Block_Have_Been_Correctly_Interpreted()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_HTML_Code_Block : BakingEnvironment<LiquidEngine>
+        {
+            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n```html\r\n<span>word</span>\r\n```\r\n";
+            private const string ExpectedfileContents = "<pre><code class=\"language-html\">&lt;span&gt;word&lt;/span&gt;</code></pre>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Filter_And_Block_Have_Been_Correctly_Interpreted()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
             }
         }
     }
