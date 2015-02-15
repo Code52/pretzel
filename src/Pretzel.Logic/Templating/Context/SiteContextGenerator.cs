@@ -239,8 +239,8 @@ namespace Pretzel.Logic.Templating.Context
                 // resolve categories and tags
                 if (isPost)
                 {
-                    if (header.ContainsKey("categories"))
-                        page.Categories = header["categories"] as IEnumerable<string>;
+                    if (header.ContainsKey("categories") && header["categories"] is IEnumerable<string>)
+                        page.Categories = (IEnumerable<string>) header["categories"];
                     else if (header.ContainsKey("category"))
                         page.Categories = new[] { header["category"].ToString() };
 
@@ -397,8 +397,7 @@ namespace Pretzel.Logic.Templating.Context
         // https://github.com/mojombo/jekyll/wiki/permalinks
         private string EvaluatePermalink(string permalink, Page page)
         {
-            if (page.Categories != null)
-                permalink = permalink.Replace(":categories", string.Join("-", page.Categories.ToArray()));
+            permalink = permalink.Replace(":categories", string.Join("-", page.Categories.ToArray()));
             permalink = permalink.Replace(":year", page.Date.Year.ToString(CultureInfo.InvariantCulture));
             permalink = permalink.Replace(":month", page.Date.ToString("MM"));
             permalink = permalink.Replace(":day", page.Date.ToString("dd"));
