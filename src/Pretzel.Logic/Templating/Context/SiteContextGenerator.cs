@@ -397,7 +397,8 @@ namespace Pretzel.Logic.Templating.Context
         // https://github.com/mojombo/jekyll/wiki/permalinks
         private string EvaluatePermalink(string permalink, Page page)
         {
-            permalink = permalink.Replace(":categories", string.Join("-", page.Categories.ToArray()));
+			if (page.Categories != null)
+				permalink = permalink.Replace(":categories", string.Join("-", page.Categories.ToArray()));
             permalink = permalink.Replace(":year", page.Date.Year.ToString(CultureInfo.InvariantCulture));
             permalink = permalink.Replace(":month", page.Date.ToString("MM"));
             permalink = permalink.Replace(":day", page.Date.ToString("dd"));
