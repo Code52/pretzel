@@ -1337,6 +1337,34 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
         }
 
+        public class Given_Page_Has_A_Layout_With_An_Alternative_Extension : BakingEnvironment<LiquidEngine>
+        {
+            private const string TemplateContents = "<html><body>{{ content }}</body></html>";
+            private const string PageContents = "---\r\n layout: default \r\n---\r\n\r\n## Hello World!\r\n{{ page.layout }}";
+            private const string ExpectedfileContents = "<html><body><h2>Hello World!</h2><p>default</p></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.htm", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_The_Page_Layout()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
         public class Given_Page_Has_Comments_Metadata : BakingEnvironment<LiquidEngine>
         {
             private const string TemplateContents = "<html><body>{{ content }}</body></html>";

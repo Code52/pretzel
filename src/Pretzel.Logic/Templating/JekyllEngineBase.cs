@@ -161,9 +161,9 @@ namespace Pretzel.Logic.Templating
                     if ((string)layout == "nil" || layout == null)
                         break;
 
-                    var path = Path.Combine(Context.SourceFolder, "_layouts", layout + LayoutExtension);
+                    var path = FindLayoutPath(layout.ToString());
 
-                    if (!FileSystem.File.Exists(path))
+                    if (path == null)
                         break;
 
                     try
@@ -246,9 +246,10 @@ namespace Pretzel.Logic.Templating
                 FileSystem.Directory.CreateDirectory(directory);
         }
 
-        protected virtual string LayoutExtension
+        private static readonly string[] layoutExtensions = { ".html", ".htm" };
+        protected virtual string[] LayoutExtensions
         {
-            get { return ".html"; }
+            get { return layoutExtensions; }
         }
 
         private IDictionary<string, object> ProcessTemplate(PageContext pageContext, string path)
@@ -271,6 +272,19 @@ namespace Pretzel.Logic.Templating
             var engineInfo = GetType().GetCustomAttributes(typeof(SiteEngineInfoAttribute), true).SingleOrDefault() as SiteEngineInfoAttribute;
             if (engineInfo == null) return false;
             return context.Engine == engineInfo.Engine;
+        }
+
+
+        private string FindLayoutPath(string layout)
+        {
+            foreach (var extension in LayoutExtensions)
+            {
+                var path = Path.Combine(Context.SourceFolder, "_layouts", layout + extension);
+                if (FileSystem.File.Exists(path))
+                    return path;
+            }
+
+            return null;
         }
     }
 }

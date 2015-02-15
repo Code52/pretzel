@@ -20,9 +20,10 @@ namespace Pretzel.Logic.Templating.Razor
         {
         }
 
-        protected override string LayoutExtension
+        private static readonly string[] layoutExtensions = { ".cshtml" };
+        protected override string[] LayoutExtensions
         {
-            get { return ".cshtml"; }
+            get { return layoutExtensions; }
         }
 
         protected override string RenderTemplate(string content, PageContext pageData)
