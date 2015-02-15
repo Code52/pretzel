@@ -1207,6 +1207,33 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
         }
 
+        public class Given_Page_Has_HighlightBlock_With_Language : BakingEnvironment<LiquidEngine>
+        {
+            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight cs %}a word{% endhighlight %}";
+            private const string ExpectedfileContents = "<p><pre><code class=\"language-cs\">a word</code></pre></p>";
+
+            public override LiquidEngine Given()
+            {
+                Template.RegisterTag<HighlightBlock>("highlight");
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_Been_Highlighted()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
         public class Given_LiquidEngine_Is_Initialized : BakingEnvironment<LiquidEngine>
         {
             private const string HighlightPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight %}a word{% endhighlight %}";
