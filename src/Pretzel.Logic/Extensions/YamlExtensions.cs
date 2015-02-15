@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
 using YamlDotNet.RepresentationModel;
-using System.IO;
 using YamlDotNet.Serialization;
 
 namespace Pretzel.Logic.Extensions
 {
     public static class YamlExtensions
     {
-        static readonly Regex r = new Regex(@"(?s:^---(.*?)---)");
+        private static readonly Regex r = new Regex(@"(?s:^---(.*?)---)");
+
         public static IDictionary<string, object> YamlHeader(this string text, bool skipHeader = false)
         {
             StringReader input;
@@ -43,7 +44,7 @@ namespace Pretzel.Logic.Extensions
                     var node = entry.Key as YamlScalarNode;
                     if (node != null)
                     {
-                        results.Add(node.Value, GetValue(entry.Value));    
+                        results.Add(node.Value, GetValue(entry.Value));
                     }
                 }
             }
@@ -107,7 +108,7 @@ namespace Pretzel.Logic.Extensions
             if (m.Count == 0)
                 return text;
 
-            return text.Replace(m[0].Groups[0].Value, "").Trim();
+            return text.Replace(m[0].Groups[0].Value, "").TrimStart('\r', '\n').TrimEnd();
         }
     }
 }
