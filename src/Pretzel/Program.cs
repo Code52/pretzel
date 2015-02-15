@@ -1,22 +1,27 @@
-﻿using System;
+﻿using NDesk.Options;
+using Pretzel.Commands;
+using Pretzel.Logic.Commands;
+using Pretzel.Logic.Extensions;
+using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
-using NDesk.Options;
-using Pretzel.Commands;
-using Pretzel.Logic.Extensions;
 
 namespace Pretzel
 {
-    class Program
+    internal class Program
     {
         [Import]
         private CommandCollection Commands { get; set; }
 
-        static void Main(string[] args)
+        private AggregateCatalog catalog;
+
+        private CompositionContainer container;
+
+        private static void Main(string[] args)
         {
             Tracing.Logger.SetWriter(Console.Out);
             Tracing.Logger.AddCategory("info");
@@ -65,6 +70,7 @@ namespace Pretzel
                 return;
             }
 
+            LoadPlugins(commandArgs);
             Commands[commandName].Execute(commandArgs);
             WaitForClose();
         }
@@ -83,12 +89,26 @@ namespace Pretzel
             }
         }
 
+        private void LoadPlugins(string[] commandArgs)
+        {
+            var parameters = container.GetExport<CommandParameters>().Value;
+            parameters.Parse(commandArgs);
+
+            var pluginsPath = System.IO.Path.Combine(parameters.Path, "_plugins");
+
+            if (System.IO.Directory.Exists(pluginsPath))
+            {
+                catalog.Catalogs.Add(new DirectoryCatalog(pluginsPath));
+            }
+        }
+
         public void Compose()
         {
             try
             {
                 var first = new AssemblyCatalog(Assembly.GetExecutingAssembly());
-                var container = new CompositionContainer(first);
+                catalog = new AggregateCatalog(first);
+                container = new CompositionContainer(catalog);
 
                 var batch = new CompositionBatch();
                 batch.AddExportedValue<IFileSystem>(new FileSystem());
@@ -97,8 +117,8 @@ namespace Pretzel
             }
             catch (ReflectionTypeLoadException ex)
             {
-                Console.WriteLine(@"Unable to load: \r\n{0}", 
-                    string.Join("\r\n", ex.LoaderExceptions.Select(e=>e.Message)));
+                Console.WriteLine(@"Unable to load: \r\n{0}",
+                    string.Join("\r\n", ex.LoaderExceptions.Select(e => e.Message)));
 
                 throw;
             }

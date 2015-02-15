@@ -3,6 +3,7 @@ using Pretzel.Logic.Liquid;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Jekyll.Liquid;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Text.RegularExpressions;
 
@@ -15,6 +16,9 @@ namespace Pretzel.Logic.Templating.Jekyll
         private SiteContextDrop contextDrop;
         private readonly Regex emHtmlRegex = new Regex(@"(?<=\{[\{\%].*?)(</?em>)(?=.*?[\%\}]\})", RegexOptions.Compiled);
 
+        [ImportMany(AllowRecomposition = true)]
+        public IEnumerable<DotLiquid.Tag> Tags { get; set; }
+
         public LiquidEngine()
         {
             DotLiquid.Liquid.UseRubyDateFormat = true;
@@ -25,14 +29,24 @@ namespace Pretzel.Logic.Templating.Jekyll
             contextDrop = new SiteContextDrop(Context);
             if (Filters != null)
             {
-               foreach (var filter in Filters)
-               {
-                  Template.RegisterFilter(filter.GetType());
-               }
+                foreach (var filter in Filters)
+                {
+                    Template.RegisterFilter(filter.GetType());
+                }
+            }
+            if (Tags != null)
+            {
+                var registerTagMethod = typeof(Template).GetMethod("RegisterTag", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+
+                foreach (var tag in Tags)
+                {
+                    var registerTagGenericMethod = registerTagMethod.MakeGenericMethod(new[] { tag.GetType() });
+                    registerTagGenericMethod.Invoke(null, new[] { tag.Name });
+                }
             }
         }
 
-        Hash CreatePageData(PageContext pageContext)
+        private Hash CreatePageData(PageContext pageContext)
         {
             var y = Hash.FromDictionary(pageContext.Bag);
 
@@ -54,7 +68,7 @@ namespace Pretzel.Logic.Templating.Jekyll
                 wtftime = Hash.FromAnonymousObject(new { date = DateTime.Now }),
                 page = y,
                 content = pageContext.Content,
-                paginator = pageContext.Paginator, 
+                paginator = pageContext.Paginator,
             });
 
             return x;

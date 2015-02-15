@@ -1549,5 +1549,42 @@ namespace Pretzel.Tests.Templating.Jekyll
                 Assert.Equal(Context.Posts[0].Categories.First(), "mycategory");
             }
         }
+
+        public class Given_Engin_Has_Custom_Tag : BakingEnvironment<LiquidEngine>
+        {
+            private const string PageContent = "---\r\n \r\n---\r\n{% customtag %}";
+            private const string ExpectedPageContents = "<p>custom tag</p>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContent));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", false);
+                Subject.FileSystem = FileSystem;
+
+                Subject.Tags = new List<DotLiquid.Tag> { new CustomTag() };
+
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Page_should_contain_custom_tag()
+            {
+                Assert.Equal(ExpectedPageContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+
+            public class CustomTag : DotLiquid.Tag
+            {
+                public override void Render(DotLiquid.Context context, TextWriter result)
+                {
+                    result.WriteLine("custom tag");
+                }
+            }
+        }
     }
 }
