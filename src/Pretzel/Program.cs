@@ -29,12 +29,10 @@ namespace Pretzel
 
             var debug = false;
             var help = false;
-            var nopause = false;
             var defaultSet = new OptionSet
                 {
                     {"help", "Display help mode", p => help = true},
-                    {"debug", "Enable debugging", p => debug = true},
-                    {"nopause", "Don't show \"Press any key to continue...\" message after execution", p => nopause = true}
+                    {"debug", "Enable debugging", p => debug = true}
                 };
             defaultSet.Parse(args);
 
@@ -51,7 +49,7 @@ namespace Pretzel
                 return;
             }
 
-            program.Run(args, defaultSet, nopause);
+            program.Run(args, defaultSet);
         }
 
         private void ShowHelp(OptionSet defaultSet)
@@ -60,7 +58,7 @@ namespace Pretzel
             WaitForClose();
         }
 
-        private void Run(string[] args, OptionSet defaultSet, bool nopause)
+        private void Run(string[] args, OptionSet defaultSet)
         {
             var commandName = args[0];
             var commandArgs = args.Skip(1).ToArray();
@@ -74,7 +72,7 @@ namespace Pretzel
 
             LoadPlugins(commandArgs);
             Commands[commandName].Execute(commandArgs);
-            if (!nopause) WaitForClose();
+            WaitForClose();
         }
 
         [Conditional("DEBUG")]
