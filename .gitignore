@@ -21,3 +21,6 @@ tests/
 
 CommonAssemblyInfo.cs
 Thumbs.db
+
+# Roslyn cache directories
+*.ide/

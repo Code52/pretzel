@@ -239,8 +239,8 @@ namespace Pretzel.Logic.Templating.Context
                 // resolve categories and tags
                 if (isPost)
                 {
-                    if (header.ContainsKey("categories"))
-                        page.Categories = header["categories"] as IEnumerable<string>;
+                    if (header.ContainsKey("categories") && header["categories"] is IEnumerable<string>)
+                        page.Categories = (IEnumerable<string>) header["categories"];
                     else if (header.ContainsKey("category"))
                         page.Categories = new[] { header["category"].ToString() };
 
