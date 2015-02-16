@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.IO;
 
 namespace Pretzel
@@ -31,6 +32,21 @@ namespace Pretzel
             // Tell caller whether the file exists or not
             var file = GetRequestedPage(request);
             return File.Exists(file);
+        }
+
+        /// <summary>
+        /// Checks if request points to a directory
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public bool IsDirectory(string request)
+        {
+            if (string.IsNullOrEmpty(basePath))
+            {
+                throw new InvalidOperationException("basePath required");
+            }
+
+            return Directory.Exists(GetFullPath(request));
         }
 
         /// <summary>
@@ -78,6 +94,8 @@ namespace Pretzel
             return fileContents;
         }
 
+        private static readonly string[] defaultPages = { "index.html", "index.htm", "default.htm" };
+
     	/// <summary>
     	/// Get the path for the page to send to the user
     	/// </summary>
@@ -85,16 +103,31 @@ namespace Pretzel
     	/// <returns>Path to file</returns>
     	private string GetRequestedPage(string request)
         {
-			string requestString = basePath + request;
-            //#AS:2013/05/02: quick and dirty fix for issue #125
-            requestString = requestString.Replace("%20", " ");
-            if (requestString.EndsWith("/", StringComparison.Ordinal))
+            string requestString = GetFullPath(request);
+
+            //if it's a directory, try to find its default page
+            if (IsDirectory(request))
             {
-                // Load index.html as default
-                requestString = Path.Combine(requestString, "index.html");
+                string defaultPage = defaultPages
+                                        .Select(page => Path.Combine(requestString, page))
+                                        .Where(page => File.Exists(page))
+                                        .FirstOrDefault();
+
+                if (defaultPage != null)
+                    return defaultPage;
             }
 
             return requestString;
+        }
+
+        /// <summary>
+        /// Combines and unescapes the path for the request
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns>Path to the file</returns>
+        private string GetFullPath(string request) 
+        {
+            return Uri.UnescapeDataString(Path.Combine(basePath + request));
         }
     }
 }
