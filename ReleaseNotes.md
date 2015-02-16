@@ -1,5 +1,8 @@
 # vNext
 
+ - [#216](https://github.com/Code52/pretzel/pull/216) - Support to other default pages contributed by Wesley Alcoforado ([wesleyalcoforado](https://github.com/wesleyalcoforado)) +Enhancement
+ - [#213](https://github.com/Code52/pretzel/pull/213) - Adds .htm extension for layouts contributed by Wesley Alcoforado ([wesleyalcoforado](https://github.com/wesleyalcoforado))
+ - [#212](https://github.com/Code52/pretzel/issues/212) - If a post has invalid categories, it won't render contributed by ([vikingcode](https://github.com/vikingcode)) +fix
  - [#206](https://github.com/Code52/pretzel/pull/206) - Code block support contributed by Andrey Akinshin ([AndreyAkinshin](https://github.com/AndreyAkinshin))
  - [#157](https://github.com/Code52/pretzel/pull/157) - Add support to load dlls in "_plugins" path contributed by Miguel Román ([miguelerm](https://github.com/miguelerm))
  - [#203](https://github.com/Code52/pretzel/pull/203) - Support for 404 pages contributed by Damian Karzon ([dkarzon](https://github.com/dkarzon))
@@ -15,7 +18,7 @@
  - [#198](https://github.com/Code52/pretzel/issues/198) - Liquid tag/filter with underscore doesn't works in markdown files +fix
  - [#170](https://github.com/Code52/pretzel/issues/170) - update binary download
 
-Commits: [1436ac1f52...6aeae31f9a](https://github.com/Code52/pretzel/compare/1436ac1f52...6aeae31f9a)
+Commits: [1436ac1f52...9e5e5afdfc](https://github.com/Code52/pretzel/compare/1436ac1f52...9e5e5afdfc)
 
 
 # 0.2.0
