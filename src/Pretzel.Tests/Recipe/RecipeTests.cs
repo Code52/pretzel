@@ -17,10 +17,10 @@ namespace Pretzel.Tests.Recipe
 {
     public class RecipeTests
     {
-        const string BaseSite = @"c:\site\";
-        MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-        readonly StringBuilder sb = new StringBuilder();
-        readonly TextWriter writer;
+        private const string BaseSite = @"c:\site\";
+        private MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
+        private readonly StringBuilder sb = new StringBuilder();
+        private readonly TextWriter writer;
 
         public RecipeTests()
         {
@@ -185,6 +185,15 @@ namespace Pretzel.Tests.Recipe
 
             Assert.Contains(@"Error trying to create template: System.Exception: Error!!!", writer.ToString());
             Assert.Contains(@"at Pretzel.Tests.Recipe.RecipeTests.<error_is_traced>b__0(CallInfo x)", writer.ToString());
+        }
+
+        [Fact]
+        public void Drafts_Folders_Is_Created()
+        {
+            var recipe = new Logic.Recipe.Recipe(fileSystem, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, false, true);
+            recipe.Create();
+
+            Assert.True(fileSystem.Directory.Exists(BaseSite + @"_drafts\"));
         }
     }
 }

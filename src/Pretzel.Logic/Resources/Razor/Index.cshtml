@@ -49,7 +49,7 @@ title : SiteName
 
 <h3>OLDER</h3>
 <ul class="postArchive">
-@foreach(var post in Model.Site.Posts.Skip(5))
+@foreach(var post in Model.Site.Posts.Skip(numberPosts))
 {
     <li>
         <span class="olderpostdate">@post.Date.ToString("d m")</span> <a class="postlink" href="@post.Url">@post.Title</a>

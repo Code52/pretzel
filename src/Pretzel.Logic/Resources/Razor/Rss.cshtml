@@ -17,10 +17,10 @@ layout: nil
     {
         <item>
             <title>@post.Title</title>
-            <link>http://domain@post.Url</link>
+            @Raw("<link>")http://domain@(post.Url)@Raw("</link>") @* Workaround: RazorEngine is a HTML5 template engine, where link is a void element *@	
             <pubDate>@post.Date.ToString("ddd, dd MMM yyyy H:mm:ss K")</pubDate>
             <author>Author</author>
-            <guid>http://domain@post.Url</guid>
+            <guid>http://domain@(post.Url)</guid>
             <description>@post.Content</description>
         </item>
     }
