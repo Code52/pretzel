@@ -1581,7 +1581,8 @@ namespace Pretzel.Tests.Templating.Jekyll
         public class Given_Page_Has_Category : BakingEnvironment<LiquidEngine>
         {
             private SiteContext Context;
-            private const string ContentWithCategory = "---\r\n category: mycategory \r\n---\r\n";
+            private const string ContentWithCategory = "---\r\n category: mycategory \r\n---\r\n{{ site.categories[0].name }}";
+            private const string ExpectedPageContent = "<p>mycategory</p>";
 
             public override LiquidEngine Given()
             {
@@ -1590,10 +1591,11 @@ namespace Pretzel.Tests.Templating.Jekyll
 
             public override void When()
             {
-                FileSystem.AddFile(@"C:\website\_posts\ContentWithCategory.md", new MockFileData(ContentWithCategory));
+                FileSystem.AddFile(@"C:\website\_posts\2015-02-02-post.md", new MockFileData(ContentWithCategory));
                 var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
                 Context = generator.BuildContext(@"C:\website\", false);
                 Subject.FileSystem = FileSystem;
+                Subject.Process(Context);
             }
 
             [Fact]
@@ -1602,6 +1604,12 @@ namespace Pretzel.Tests.Templating.Jekyll
                 Assert.Equal(Context.Posts.Count, 1);
                 Assert.Equal(Context.Posts[0].Categories.Count(), 1);
                 Assert.Equal(Context.Posts[0].Categories.First(), "mycategory");
+            }
+
+            [Fact]
+            public void The_Category_must_appear_in_the_content()
+            {
+                Assert.Equal(ExpectedPageContent, FileSystem.File.ReadAllText(@"C:\website\_site\2015\02\02\post.html").RemoveWhiteSpace());
             }
         }
 
