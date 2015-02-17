@@ -13,13 +13,13 @@ namespace Pretzel.Tests
 {
     public class CommandParameterTests
     {
-        readonly CommandParameters subject;
-        const string ExpectedPath = @"D:\Code";
-        const string ExpectedImportFile = @"D:\Code\import.xml";
-        const string ExpectedImportType = "wordpress";
-        const string ExpectedTemplate = @"jekyll";
-        const string ExpectedPort = "8000";
-        const decimal ExpectedPortDecimal = 8000;
+        private readonly CommandParameters subject;
+        private const string ExpectedPath = @"D:\Code";
+        private const string ExpectedImportFile = @"D:\Code\import.xml";
+        private const string ExpectedImportType = "wordpress";
+        private const string ExpectedTemplate = @"jekyll";
+        private const string ExpectedPort = "8000";
+        private const decimal ExpectedPortDecimal = 8000;
 
         public CommandParameterTests()
         {
@@ -283,7 +283,7 @@ namespace Pretzel.Tests
         [Fact]
         public void CommandParameters_WhenSpecifyingAllParameters_ResultIsCorrect()
         {
-            var args = new List<string> { "-template=jekyll", @"-directory=c:\mysite", "-port=8182", "-import=blogger", "-file=BloggerExport.xml", "-drafts", "-nobrowser", "-withproject", "-wiki", "-cleantarget" };
+            var args = new List<string> { "-template=jekyll", @"-directory=c:\mysite", "-port=8182", "-import=blogger", "-file=BloggerExport.xml", "-drafts", "-nobrowser", "-withproject", "-wiki", "-cleantarget", "-safe" };
 
             subject.Parse(args);
 
@@ -297,6 +297,7 @@ namespace Pretzel.Tests
             Assert.True(subject.WithProject);
             Assert.True(subject.Wiki);
             Assert.True(subject.CleanTarget);
+            Assert.True(subject.Safe);
         }
 
         [Fact]
@@ -373,7 +374,7 @@ namespace Pretzel.Tests
             siteEngine2.CanProcess(Arg.Any<SiteContext>())
                 .Returns(ci => ci.Arg<SiteContext>().Engine == "engine2");
 
-            var siteEngines = new Dictionary<string, ISiteEngine> 
+            var siteEngines = new Dictionary<string, ISiteEngine>
             {
                 { "engine1", siteEngine1 },
                 { "engine2", siteEngine2 },
@@ -393,7 +394,7 @@ namespace Pretzel.Tests
             siteEngine1.CanProcess(Arg.Any<SiteContext>())
                 .Returns(ci => ci.Arg<SiteContext>().Engine == "engine1");
 
-            var siteEngines = new Dictionary<string, ISiteEngine> 
+            var siteEngines = new Dictionary<string, ISiteEngine>
             {
                 { "engine1", siteEngine1 }
             };
@@ -412,7 +413,7 @@ namespace Pretzel.Tests
             siteEngine1.CanProcess(Arg.Any<SiteContext>())
                 .Returns(ci => ci.Arg<SiteContext>().Engine == "engine1");
 
-            var siteEngines = new Dictionary<string, ISiteEngine> 
+            var siteEngines = new Dictionary<string, ISiteEngine>
             {
                 { "engine1", siteEngine1 }
             };
@@ -431,7 +432,7 @@ namespace Pretzel.Tests
             siteEngine1.CanProcess(Arg.Any<SiteContext>())
                 .Returns(ci => ci.Arg<SiteContext>().Engine == "engine1");
 
-            var siteEngines = new Dictionary<string, ISiteEngine> 
+            var siteEngines = new Dictionary<string, ISiteEngine>
             {
                 { "engine1", siteEngine1 }
             };
@@ -439,6 +440,30 @@ namespace Pretzel.Tests
             subject.DetectFromDirectory(siteEngines, siteContext);
 
             Assert.Equal("liquid", subject.Template);
+        }
+
+        [Fact]
+        public void LaunchBrowser_WhenSpecifyingSafetDoubleDash_IsTrue()
+        {
+            var args = new List<string> { "--safe" };
+            subject.Parse(args);
+            Assert.True(subject.Safe);
+        }
+
+        [Fact]
+        public void LaunchBrowser_WhenSpecifyingSafeSingleDash_IsTrue()
+        {
+            var args = new List<string> { "-safe" };
+            subject.Parse(args);
+            Assert.True(subject.Safe);
+        }
+
+        [Fact]
+        public void LaunchBrowser_WhenNotSpecifyingSafe_IsFalse()
+        {
+            var args = new List<string>();
+            subject.Parse(args);
+            Assert.False(subject.Safe);
         }
     }
 }

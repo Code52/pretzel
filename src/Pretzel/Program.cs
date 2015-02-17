@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
@@ -85,7 +86,7 @@ namespace Pretzel
             }
             catch (InvalidOperationException)
             {
-                //Output is redirected, we don't care to keep console open just let it close
+                // Output is redirected, we don't care to keep console open just let it close
             }
         }
 
@@ -94,11 +95,14 @@ namespace Pretzel
             var parameters = container.GetExport<CommandParameters>().Value;
             parameters.Parse(commandArgs);
 
-            var pluginsPath = System.IO.Path.Combine(parameters.Path, "_plugins");
-
-            if (System.IO.Directory.Exists(pluginsPath))
+            if (!parameters.Safe)
             {
-                catalog.Catalogs.Add(new DirectoryCatalog(pluginsPath));
+                var pluginsPath = Path.Combine(parameters.Path, "_plugins");
+
+                if (Directory.Exists(pluginsPath))
+                {
+                    catalog.Catalogs.Add(new DirectoryCatalog(pluginsPath));
+                }
             }
         }
 

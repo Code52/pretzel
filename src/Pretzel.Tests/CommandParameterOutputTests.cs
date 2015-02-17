@@ -1,16 +1,15 @@
-﻿using System.IO;
-using System.Linq;
-using NSubstitute;
-using Pretzel.Logic.Commands;
+﻿using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
+using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace Pretzel.Tests
 {
     public class CommandParameterOutputTests
     {
-        readonly CommandParameters subject;
-        readonly StringWriter writer;
+        private readonly CommandParameters subject;
+        private readonly StringWriter writer;
 
         public CommandParameterOutputTests()
         {
@@ -36,6 +35,7 @@ namespace Pretzel.Tests
             Assert.True(output.Contains("-f"));
             Assert.True(output.Contains("--file="));
             Assert.True(output.Contains("--cleantarget"));
+            Assert.True(output.Contains("--safe"));
         }
 
         [Fact]

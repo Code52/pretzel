@@ -32,7 +32,8 @@ namespace Pretzel.Logic.Commands
                     { "nobrowser", "Do not launch a browser", v => LaunchBrowser = false },
                     { "withproject", "Includes a layout VS Solution, to give intellisence when editing razor layout files", v => WithProject = (v!=null) },
                     { "wiki", "Creates a wiki instead of a blog (razor template only)", v => Wiki = (v!=null) },
-                    { "cleantarget", "Delete the target directory (_site by default)", v => CleanTarget = true }
+                    { "cleantarget", "Delete the target directory (_site by default)", v => CleanTarget = true },
+                    { "safe", "Disable custom plugins", v => Safe = true }
                 };
 
             // Allow extensions to register command line args
@@ -43,17 +44,28 @@ namespace Pretzel.Logic.Commands
         }
 
         public string Path { get; private set; }
+
         public string Template { get; private set; }
+
         public string ImportPath { get; private set; }
+
         public string ImportType { get; private set; }
+
         public bool WithProject { get; private set; }
+
         public bool Wiki { get; private set; }
+
         public bool IncludeDrafts { get; private set; }
+
         public bool CleanTarget { get; set; }
+
         public bool LaunchBrowser { get; private set; }
 
+        public bool Safe { get; private set; }
+
         private decimal port;
-        public decimal Port 
+
+        public decimal Port
         {
             get { return port; }
         }
