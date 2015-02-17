@@ -1,5 +1,7 @@
 # vNext
 
+ - [#218](https://github.com/Code52/pretzel/issues/218) - Add --safe parameter to disable custom plugins +Enhancement
+ - [#178](https://github.com/Code52/pretzel/pull/178) - Create command fixes contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz)) +fix
  - [#165](https://github.com/Code52/pretzel/pull/165) - Make category inherit Drop (so it can be used in templates) contributed by Jordan Wallwork ([jordanwallwork](https://github.com/jordanwallwork)) +Enhancement
  - [#216](https://github.com/Code52/pretzel/pull/216) - Support to other default pages contributed by Wesley Alcoforado ([wesleyalcoforado](https://github.com/wesleyalcoforado)) +Enhancement
  - [#213](https://github.com/Code52/pretzel/pull/213) - Adds .htm extension for layouts contributed by Wesley Alcoforado ([wesleyalcoforado](https://github.com/wesleyalcoforado)) +Enhancement
@@ -17,7 +19,7 @@
  ```
  - [#198](https://github.com/Code52/pretzel/issues/198) - Liquid tag/filter with underscore doesn't works in markdown files +fix
 
-Commits: [1436ac1f52...38ca5430be](https://github.com/Code52/pretzel/compare/1436ac1f52...38ca5430be)
+Commits: [1436ac1f52...2162dbc1f3](https://github.com/Code52/pretzel/compare/1436ac1f52...2162dbc1f3)
 
 
 # 0.2.0
