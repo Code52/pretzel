@@ -20,6 +20,7 @@ namespace Pretzel.Tests
         private const string ExpectedTemplate = @"jekyll";
         private const string ExpectedPort = "8000";
         private const decimal ExpectedPortDecimal = 8000;
+        private const string ExpectedDestinationPath = @"D:\Code\Generated";
 
         public CommandParameterTests()
         {
@@ -464,6 +465,54 @@ namespace Pretzel.Tests
             var args = new List<string>();
             subject.Parse(args);
             Assert.False(subject.Safe);
+        }
+
+        [Fact]
+        public void Parse_WhenSpecifyingSourcePathUsingShortParameter_MapsToPath()
+        {
+            var args = new List<string> { "--s", ExpectedPath };
+            subject.Parse(args);
+            Assert.Equal(ExpectedPath, subject.Path);
+        }
+
+        [Fact]
+        public void Parse_WhenSpecifyingSourcePathUsingFullParameter_MapsToPath()
+        {
+            var args = new List<string> { "--source", ExpectedPath };
+            subject.Parse(args);
+            Assert.Equal(ExpectedPath, subject.Path);
+        }
+
+        [Fact]
+        public void Parse_WhenSpecifyingSourcePathUsingShortParameterSingleDash_MapsToPath()
+        {
+            var args = new List<string> { "-s", ExpectedPath };
+            subject.Parse(args);
+            Assert.Equal(ExpectedPath, subject.Path);
+        }
+
+        [Fact]
+        public void Parse_WhenSpecifyingSourcePathUsingFullParameterSingleDash_MapsToPath()
+        {
+            var args = new List<string> { "-source", ExpectedPath };
+            subject.Parse(args);
+            Assert.Equal(ExpectedPath, subject.Path);
+        }
+
+        [Fact]
+        public void Parse_WhenSpecifyingDestinationPathUsingFullParameter_MapsToPath()
+        {
+            var args = new List<string> { "--destination", ExpectedDestinationPath };
+            subject.Parse(args);
+            Assert.Equal(ExpectedDestinationPath, subject.DestinationPath);
+        }
+
+        [Fact]
+        public void Parse_WhenSpecifyingDestinationPathUsingFullParameterSingleDash_MapsToPath()
+        {
+            var args = new List<string> { "-destination", ExpectedDestinationPath };
+            subject.Parse(args);
+            Assert.Equal(ExpectedDestinationPath, subject.DestinationPath);
         }
     }
 }

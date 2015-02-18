@@ -36,6 +36,8 @@ namespace Pretzel.Tests
             Assert.True(output.Contains("--file="));
             Assert.True(output.Contains("--cleantarget"));
             Assert.True(output.Contains("--safe"));
+            Assert.True(output.Contains("--source"));
+            Assert.True(output.Contains("--destination"));
         }
 
         [Fact]

@@ -24,13 +24,15 @@ namespace Pretzel.Logic.Commands
             Settings = new OptionSet
                 {
                     { "t|template=", "The templating engine to use", v => Template = v },
-                    { "d|directory=", "The path to site directory", p => Path = p },
+                    { "d|directory=", "[Obsolete, use --source instead] The path to site directory", p => Path = p },
                     { "p|port=", "The port to test the site locally", p => decimal.TryParse(p, out port) },
                     { "i|import=", "The import type", v => ImportType = v },
                     { "f|file=", "Path to import file", v => ImportPath = v },
+                    { "s|source=", "The path to the source site (default current directory)", p => Path = p},
+                    { "destination=", "The path to the destination site (default _site)", d => DestinationPath = d},
                     { "drafts", "Add the posts in the drafts folder", v => IncludeDrafts = true },
                     { "nobrowser", "Do not launch a browser", v => LaunchBrowser = false },
-                    { "withproject", "Includes a layout VS Solution, to give intellisence when editing razor layout files", v => WithProject = (v!=null) },
+                    { "withproject", "Includes a layout VS Solution, to give intellisense when editing razor layout files", v => WithProject = (v!=null) },
                     { "wiki", "Creates a wiki instead of a blog (razor template only)", v => Wiki = (v!=null) },
                     { "cleantarget", "Delete the target directory (_site by default)", v => CleanTarget = true },
                     { "safe", "Disable custom plugins", v => Safe = true }
@@ -57,11 +59,13 @@ namespace Pretzel.Logic.Commands
 
         public bool IncludeDrafts { get; private set; }
 
-        public bool CleanTarget { get; set; }
+        public bool CleanTarget { get; private set; }
 
         public bool LaunchBrowser { get; private set; }
 
         public bool Safe { get; private set; }
+
+        public string DestinationPath { get; private set; }
 
         private decimal port;
 
