@@ -56,7 +56,7 @@ namespace Pretzel
 
             host.Dispose();
             host = null;
-
+            IsRunning = false;
             return true;
         }
 

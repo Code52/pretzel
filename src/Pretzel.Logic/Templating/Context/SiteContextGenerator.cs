@@ -30,6 +30,7 @@ namespace Pretzel.Logic.Templating.Context
         {
             this.fileSystem = fileSystem;
             this.contentTransformers = contentTransformers;
+            Markdown.ExtraMode = true;
         }
 
         public SiteContext BuildContext(string path, bool includeDrafts)
@@ -361,6 +362,10 @@ namespace Pretzel.Logic.Templating.Context
                     {
                         return streamReader.ReadLine();
                     }
+                }
+                catch (FileNotFoundException ex)
+                {
+                    return null;
                 }
                 finally
                 {

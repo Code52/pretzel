@@ -1,0 +1,290 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{91E6507B-E17C-4A13-B7BA-EAC12F55A432}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Pretzel</RootNamespace>
+    <AssemblyName>Pretzel.Express</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
+    <FodyPath>..\packages\Fody.1.14.0</FodyPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;EXPRESS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>pretzel.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Firefly">
+      <HintPath>..\packages\Firefly.0.6.3\lib\Firefly.dll</HintPath>
+    </Reference>
+    <Reference Include="Hardcodet.Wpf.TaskbarNotification">
+      <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.5\lib\net45\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro">
+      <HintPath>..\packages\MahApps.Metro.0.11.0.0\lib\net45\MahApps.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="MarkdownDeep, Version=1.5.4615.26275, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MarkdownDeep.NET.1.5\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack">
+      <HintPath>..\packages\Windows7APICodePack-Core.1.1.0.0\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell">
+      <HintPath>..\packages\Windows7APICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="NDesk.Options, Version=0.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin.Builder">
+      <HintPath>..\packages\Owin.Builder.0.8.5\lib\net40\Owin.Builder.dll</HintPath>
+    </Reference>
+    <Reference Include="RazorEngine, Version=3.2.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RazorEngine.3.2.0\lib\net40\RazorEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Abstractions, Version=1.4.0.44, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\System.IO.Abstractions.1.4.0.44\lib\net35\System.IO.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.20715.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.0.11.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="YamlDotNet.Core, Version=0.2.4818.23331, Culture=neutral, PublicKeyToken=2b53052c5884d7a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\YamlDotNet.Core.1.2.1\lib\YamlDotNet.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="YamlDotNet.RepresentationModel, Version=0.2.4818.23331, Culture=neutral, PublicKeyToken=2b53052c5884d7a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\YamlDotNet.RepresentationModel.1.2.1\lib\YamlDotNet.RepresentationModel.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="MainViewModel.cs" />
+    <Compile Include="RelayCommand.cs" />
+    <Compile Include="ReverseBoolConverter.cs" />
+    <Compile Include="Site.cs" />
+    <Compile Include="SiteConfig.cs" />
+    <Compile Include="SiteSettings.cs" />
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="..\Pretzel\Commands\BakeCommand.cs">
+      <Link>Commands\BakeCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Pretzel\Commands\CommandCollection.cs">
+      <Link>Commands\CommandCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Pretzel\Commands\CommandInfoAttribute.cs">
+      <Link>Commands\CommandInfoAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\Pretzel\Commands\ICommand.cs">
+      <Link>Commands\ICommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Pretzel\Commands\ICommandInfo.cs">
+      <Link>Commands\ICommandInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Pretzel\Commands\ImportCommand.cs">
+      <Link>Commands\ImportCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Pretzel\Commands\RecipeCommand.cs">
+      <Link>Commands\RecipeCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Pretzel\Commands\TasteCommand.cs">
+      <Link>Commands\TasteCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Pretzel\Commands\TemplateEngineCollection.cs">
+      <Link>Commands\TemplateEngineCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Pretzel\Modules\IFileSystemWatcher.cs">
+      <Link>Modules\IFileSystemWatcher.cs</Link>
+    </Compile>
+    <Compile Include="..\Pretzel\Modules\SimpleFileSystemWatcher.cs">
+      <Link>Modules\SimpleFileSystemWatcher.cs</Link>
+    </Compile>
+    <Compile Include="..\Pretzel\WebHost\FileContentProvider.cs">
+      <Link>WebHost\FileContentProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\Pretzel\WebHost\IWebContent.cs">
+      <Link>WebHost\IWebContent.cs</Link>
+    </Compile>
+    <Compile Include="..\Pretzel\WebHost\MemoryContentProvider.cs">
+      <Link>WebHost\MemoryContentProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\Pretzel\WebHost\WebHost.cs">
+      <Link>WebHost\WebHost.cs</Link>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\Cascade.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\Chunked.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\ContentLength.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\ContentType.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\HeadSuppression.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\Mapping\AppBuilderMapExtensions.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\Mapping\MapBuilder.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\Mapping\UrlMapper.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\MethodOverride.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\NotFound.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\PassiveValidator.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\RequestLogger.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\RequestTracer.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\ShowExceptions.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\ShowExceptions.View.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\Static.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\StaticFiles\FileBody.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\StaticFiles\FileServer.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\StaticFiles\Mime.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\StaticFiles\TextBody.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\TraceMethod.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\Utils\FilterStream.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\Utils\HttpFormatExtensions.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\Utils\RangeHeader.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\Utils\TriggerStream.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\WebSockets\OpaqueToWebSocket.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\WebSockets\WebSocketLayer.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\Wilson.cs" />
+    <Compile Include="App_Packages\Gate.Middleware.Sources.0.27\XSendFile.cs" />
+    <Compile Include="App_Packages\Gate.Sources.0.27\BuilderProperties.cs" />
+    <Compile Include="App_Packages\Gate.Sources.0.27\Headers.cs" />
+    <Compile Include="App_Packages\Gate.Sources.0.27\OwinConstants.cs" />
+    <Compile Include="App_Packages\Gate.Sources.0.27\Request.cs" />
+    <Compile Include="App_Packages\Gate.Sources.0.27\Response.cs" />
+    <Compile Include="App_Packages\Gate.Sources.0.27\Utils\Net40Extensions.cs" />
+    <Compile Include="App_Packages\Gate.Sources.0.27\Utils\ParamDictionary.cs" />
+    <Compile Include="App_Packages\Gate.Sources.0.27\Utils\ReasonPhrases.cs" />
+    <Compile Include="App_Packages\Owin.Extensions.Sources.0.6.5\StartupExtensions.cs" />
+    <Compile Include="App_Packages\Owin.Extensions.Sources.0.6.5\StartupExtensions.Func.cs" />
+    <Compile Include="App_Packages\Owin.Extensions.Sources.0.6.5\StartupExtensions.Type.cs" />
+    <Compile Include="App_Packages\TaskHelpers.Sources.0.2\TaskHelpers.cs" />
+    <Compile Include="App_Packages\TaskHelpers.Sources.0.2\TaskHelpersExtensions.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Fody.targets" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Pretzel.Logic\Pretzel.Logic.csproj">
+      <Project>{f2e6664d-75ac-4830-8a55-e572027df710}</Project>
+      <Name>Pretzel.Logic</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="pretzel.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="FodyWeavers.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Import Project="Fody.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <!--<Target Name="AfterBuild" Condition="(($(MSBuildTargets) == '') Or ($(MSBuildTargets) == 'CSharp')) And '$(OS)' == 'Windows_NT' And '$(NCrunch)' == ''">
+    <CreateItem Include="@(ReferenceCopyLocalPaths)" Condition="'%(Extension)'=='.dll'">
+      <Output ItemName="AssembliesToMerge" TaskParameter="Include" />
+    </CreateItem>
+    <exec command="&quot;$(MSBuildProjectDirectory)\..\..\tools\Ilmerge\ILMerge.exe&quot; /out:@(MainAssembly) &quot;/targetplatform:v4,$(ProgramFiles)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0&quot; &quot;@(IntermediateAssembly)&quot; @(AssembliesToMerge->'&quot;%(FullPath)&quot;', ' ')" />
+    <delete files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
+  </Target>-->
+  <Target AfterTargets="AfterBuild;NonWinFodyTarget" Name="CleanReferenceCopyLocalPaths">
+    <Delete Files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
+  </Target>
+</Project>

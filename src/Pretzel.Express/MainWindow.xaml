@@ -1,0 +1,45 @@
+﻿<controls:MetroWindow x:Class="Pretzel.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:pretzel="clr-namespace:Pretzel"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        Icon="pretzel.ico"
+        Title="Pretzel Express" Height="350" Width="525"  WindowStartupLocation="CenterScreen" GlowBrush="{DynamicResource AccentColorBrush}">
+    <Window.Resources>
+        <pretzel:ReverseBoolConverter x:Key="ReverseBoolConverter" />
+    </Window.Resources>
+
+    <Grid>
+        <tb:TaskbarIcon x:Name="ni"
+                    Visibility="Visible"
+                    ToolTipText="Fallback ToolTip for Windows xp"
+                    IconSource="pretzel.ico"
+                        TrayMouseDoubleClick="Ni_OnTrayMouseDoubleClick"
+                    MenuActivation="LeftOrRightClick">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Start New Site" Click="StartNewSiteClick" />
+                    <Separator />
+                    <MenuItem Header="Exit" Click="ExitClick" />
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+
+        </tb:TaskbarIcon>
+        <ListBox ItemsSource="{Binding Sites}" Margin="10,10,10,65">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Directory}" />
+                        <TextBlock><Run>http://localhost:</Run><Run FontWeight="Bold" Text="{Binding Port}"/></TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <Button FontFamily="Segoe UI Symbol" Command="{Binding PlayCommand}" IsEnabled="{Binding IsRunning, Converter={StaticResource ReverseBoolConverter}}">&#xE102;</Button>
+                            <Button FontFamily="Segoe UI Symbol" Command="{Binding PauseCommand}"  IsEnabled="{Binding IsRunning}">&#xE103;</Button>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Button Content="New Site" Height="50" Width="100" Click="StartNewSiteClick" Margin="10,259,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" />
+    </Grid>
+</controls:MetroWindow>

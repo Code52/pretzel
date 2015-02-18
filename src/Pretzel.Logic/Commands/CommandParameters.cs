@@ -12,7 +12,7 @@ using System.Linq;
 namespace Pretzel.Logic.Commands
 {
     [Export]
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class CommandParameters
     {
         [ImportingConstructor]
