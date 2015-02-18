@@ -1,17 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 11
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pretzel", "Pretzel\Pretzel.csproj", "{198E7970-CBF7-4BD8-8E36-4E07BB29C3AF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pretzel.Logic", "Pretzel.Logic\Pretzel.Logic.csproj", "{F2E6664D-75AC-4830-8A55-E572027DF710}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pretzel.Tests", "Pretzel.Tests\Pretzel.Tests.csproj", "{B90C3F82-7B38-49E9-80D5-F9752F7B2C67}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BB146410-7034-4185-99B5-2C64DA92FABC}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5F558191-21D9-40C6-9173-C416DCEFDA21}"
 	ProjectSection(SolutionItems) = preProject
@@ -28,14 +24,14 @@ Global
 		{198E7970-CBF7-4BD8-8E36-4E07BB29C3AF}.Debug|x86.Build.0 = Debug|x86
 		{198E7970-CBF7-4BD8-8E36-4E07BB29C3AF}.Release|x86.ActiveCfg = Release|x86
 		{198E7970-CBF7-4BD8-8E36-4E07BB29C3AF}.Release|x86.Build.0 = Release|x86
-		{B90C3F82-7B38-49E9-80D5-F9752F7B2C67}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B90C3F82-7B38-49E9-80D5-F9752F7B2C67}.Debug|x86.Build.0 = Debug|Any CPU
-		{B90C3F82-7B38-49E9-80D5-F9752F7B2C67}.Release|x86.ActiveCfg = Release|Any CPU
-		{B90C3F82-7B38-49E9-80D5-F9752F7B2C67}.Release|x86.Build.0 = Release|Any CPU
 		{F2E6664D-75AC-4830-8A55-E572027DF710}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{F2E6664D-75AC-4830-8A55-E572027DF710}.Debug|x86.Build.0 = Debug|Any CPU
 		{F2E6664D-75AC-4830-8A55-E572027DF710}.Release|x86.ActiveCfg = Release|Any CPU
 		{F2E6664D-75AC-4830-8A55-E572027DF710}.Release|x86.Build.0 = Release|Any CPU
+		{B90C3F82-7B38-49E9-80D5-F9752F7B2C67}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B90C3F82-7B38-49E9-80D5-F9752F7B2C67}.Debug|x86.Build.0 = Debug|Any CPU
+		{B90C3F82-7B38-49E9-80D5-F9752F7B2C67}.Release|x86.ActiveCfg = Release|Any CPU
+		{B90C3F82-7B38-49E9-80D5-F9752F7B2C67}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
