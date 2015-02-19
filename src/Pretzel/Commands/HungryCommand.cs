@@ -58,7 +58,7 @@ Eat the pretzels warm, or reheat them in an oven or microwave.";
 
         public void WriteHelp(TextWriter writer)
         {
-            writer.Write(recipe);
+            writer.Write("   For use only when hungry\r\n");
         }
 
     }
