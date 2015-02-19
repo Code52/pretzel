@@ -59,14 +59,6 @@ Eat the pretzels warm, or reheat them in an oven or microwave.";
         public void WriteHelp(TextWriter writer)
         {
             writer.Write(recipe);
-            return;
-            var textWriter = new StringWriter();
-            var strings = recipe.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (var line in recipe)
-            {
-                writer.WriteLine(line);
-            }
         }
 
     }
