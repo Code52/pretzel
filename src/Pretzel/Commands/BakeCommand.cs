@@ -16,11 +16,22 @@ namespace Pretzel.Commands
     public sealed class BakeCommand : ICommand
     {
 #pragma warning disable 649
-        [Import] TemplateEngineCollection templateEngines;
-        [Import] SiteContextGenerator Generator { get; set; }
-        [Import] CommandParameters parameters;
-        [ImportMany] private IEnumerable<ITransform> transforms;
-        [Import] IFileSystem FileSystem;
+
+        [Import]
+        private TemplateEngineCollection templateEngines;
+
+        [Import]
+        private SiteContextGenerator Generator { get; set; }
+
+        [Import]
+        private CommandParameters parameters;
+
+        [ImportMany]
+        private IEnumerable<ITransform> transforms;
+
+        [Import]
+        private IFileSystem FileSystem;
+
 #pragma warning restore 649
 
         public void Execute(IEnumerable<string> arguments)
@@ -29,7 +40,7 @@ namespace Pretzel.Commands
 
             parameters.Parse(arguments);
 
-            var siteContext = Generator.BuildContext(parameters.Path, parameters.IncludeDrafts);
+            var siteContext = Generator.BuildContext(parameters.Path, parameters.DestinationPath, parameters.IncludeDrafts);
 
             if (parameters.CleanTarget && FileSystem.Directory.Exists(siteContext.OutputFolder))
             {
@@ -52,7 +63,7 @@ namespace Pretzel.Commands
                     t.Transform(siteContext);
 
                 engine.CompressSitemap(siteContext, FileSystem);
-                
+
                 watch.Stop();
                 Tracing.Info(string.Format("done - took {0}ms", watch.ElapsedMilliseconds));
             }

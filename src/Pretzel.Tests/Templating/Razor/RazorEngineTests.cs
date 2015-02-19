@@ -27,7 +27,7 @@ namespace Pretzel.Tests.Templating.Razor
         private void ProcessContents(string layout, string content, Dictionary<string, object> bag)
         {
             FileSystem.AddFile(@"C:\website\_layouts\Test.cshtml", new MockFileData(layout));
-            var context = new SiteContext { SourceFolder = @"C:\website\", Title = "My Web Site" };
+            var context = new SiteContext { SourceFolder = @"C:\website\", OutputFolder = @"C:\website\_site", Title = "My Web Site" };
             bag.Add("layout", "Test");
             context.Posts.Add(new Page { File = "index.cshtml", Content = content, OutputFile = @"C:\website\_site\index.html", Bag = bag });
             FileSystem.AddFile(@"C:\website\index.cshtml", new MockFileData(layout));
@@ -239,7 +239,7 @@ namespace Pretzel.Tests.Templating.Razor
             }
 
             var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
-            var context = generator.BuildContext(@"C:\website\", false);
+            var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
             Subject.FileSystem = FileSystem;
             Subject.Process(context);
         }

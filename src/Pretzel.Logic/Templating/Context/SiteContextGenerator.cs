@@ -19,11 +19,11 @@ namespace Pretzel.Logic.Templating.Context
         private static readonly Regex categoryRegex = new Regex(@":category(\d*)", RegexOptions.Compiled);
         private static readonly Regex slashesRegex = new Regex(@"/{1,}", RegexOptions.Compiled);
 
-        readonly Dictionary<string, Page> pageCache = new Dictionary<string, Page>();
-        readonly IFileSystem fileSystem;
-        readonly IEnumerable<IContentTransform> contentTransformers;
-        readonly List<string> includes = new List<string>();
-        readonly List<string> excludes = new List<string>();
+        private readonly Dictionary<string, Page> pageCache = new Dictionary<string, Page>();
+        private readonly IFileSystem fileSystem;
+        private readonly IEnumerable<IContentTransform> contentTransformers;
+        private readonly List<string> includes = new List<string>();
+        private readonly List<string> excludes = new List<string>();
 
         [ImportingConstructor]
         public SiteContextGenerator(IFileSystem fileSystem, [ImportMany]IEnumerable<IContentTransform> contentTransformers)
@@ -32,7 +32,7 @@ namespace Pretzel.Logic.Templating.Context
             this.contentTransformers = contentTransformers;
         }
 
-        public SiteContext BuildContext(string path, bool includeDrafts)
+        public SiteContext BuildContext(string path, string destinationPath, bool includeDrafts)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace Pretzel.Logic.Templating.Context
                 var context = new SiteContext
                 {
                     SourceFolder = path,
-                    OutputFolder = Path.Combine(path, "_site"),
+                    OutputFolder = destinationPath,
                     Posts = new List<Page>(),
                     Pages = new List<Page>(),
                     Config = config,
@@ -135,7 +135,6 @@ namespace Pretzel.Logic.Templating.Context
                 );
             }
 
-
             return posts;
         }
 
@@ -175,7 +174,6 @@ namespace Pretzel.Logic.Templating.Context
                         }
                     }
                 }
-
             }
 
             context.Tags = tags.Select(x => new Tag { Name = x.Key, Posts = x.Value }).OrderBy(x => x.Name).ToList();
@@ -240,7 +238,7 @@ namespace Pretzel.Logic.Templating.Context
                 if (isPost)
                 {
                     if (header.ContainsKey("categories") && header["categories"] is IEnumerable<string>)
-                        page.Categories = (IEnumerable<string>) header["categories"];
+                        page.Categories = (IEnumerable<string>)header["categories"];
                     else if (header.ContainsKey("category"))
                         page.Categories = new[] { header["category"].ToString() };
 
@@ -468,11 +466,13 @@ namespace Pretzel.Logic.Templating.Context
             return Path.Combine(outputDirectory, timestamp, title);
         }
 
-        static readonly Regex TimestampAndTitleFromPathRegex = new Regex(@"\\(?:(?<timestamp>\d+-\d+-\d+)-)?(?<title>[^\\]*)\.[^\.]+$");
+        private static readonly Regex TimestampAndTitleFromPathRegex = new Regex(@"\\(?:(?<timestamp>\d+-\d+-\d+)-)?(?<title>[^\\]*)\.[^\.]+$");
+
         public static string GetTitle(string file)
         {
             return TimestampAndTitleFromPathRegex.Match(file).Groups["title"].Value;
         }
+
         private string GetPageTitle(string file)
         {
             return Path.GetFileNameWithoutExtension(file);

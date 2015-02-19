@@ -38,14 +38,12 @@ namespace Pretzel.Logic.Templating
             Context = siteContext;
             PreProcess();
 
-            var outputDirectory = Path.Combine(Context.SourceFolder, "_site");
-
             for (int index = 0; index < siteContext.Posts.Count; index++)
             {
                 var p = siteContext.Posts[index];
                 var previous = GetPrevious(siteContext.Posts, index);
                 var next = GetNext(siteContext.Posts, index);
-                ProcessFile(outputDirectory, p, previous, next, skipFileOnError, p.Filepath);
+                ProcessFile(siteContext.OutputFolder, p, previous, next, skipFileOnError, p.Filepath);
             }
 
             for (int index = 0; index < siteContext.Pages.Count; index++)
@@ -53,7 +51,7 @@ namespace Pretzel.Logic.Templating
                 var p = siteContext.Pages[index];
                 var previous = GetPrevious(siteContext.Pages, index);
                 var next = GetNext(siteContext.Pages, index);
-                ProcessFile(outputDirectory, p, previous, next, skipFileOnError);
+                ProcessFile(siteContext.OutputFolder, p, previous, next, skipFileOnError);
             }
         }
 
@@ -65,12 +63,6 @@ namespace Pretzel.Logic.Templating
         private static Page GetPrevious(IList<Page> pages, int index)
         {
             return index >= 1 ? pages[index - 1] : null;
-        }
-
-        // TODO factorize with outputDirectory in Process(...)?
-        public virtual string GetOutputDirectory(string path)
-        {
-            return Path.Combine(path, "_site");
         }
 
         private void ProcessFile(string outputDirectory, Page page, Page previous, Page next, bool skipFileOnError, string relativePath = "")
@@ -247,6 +239,7 @@ namespace Pretzel.Logic.Templating
         }
 
         private static readonly string[] layoutExtensions = { ".html", ".htm" };
+
         protected virtual string[] LayoutExtensions
         {
             get { return layoutExtensions; }
@@ -273,7 +266,6 @@ namespace Pretzel.Logic.Templating
             if (engineInfo == null) return false;
             return context.Engine == engineInfo.Engine;
         }
-
 
         private string FindLayoutPath(string layout)
         {

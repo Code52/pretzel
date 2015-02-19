@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 
 namespace Pretzel.Logic.Commands
@@ -16,8 +17,10 @@ namespace Pretzel.Logic.Commands
     public class CommandParameters
     {
         [ImportingConstructor]
-        public CommandParameters([ImportMany] IEnumerable<IHaveCommandLineArgs> commandLineExtensions)
+        public CommandParameters([ImportMany] IEnumerable<IHaveCommandLineArgs> commandLineExtensions, IFileSystem fileSystem)
         {
+            this.fileSystem = fileSystem;
+
             port = 8080;
             LaunchBrowser = true;
 
@@ -76,6 +79,8 @@ namespace Pretzel.Logic.Commands
 
         private OptionSet Settings { get; set; }
 
+        private IFileSystem fileSystem;
+
         public void Parse(IEnumerable<string> arguments)
         {
             var argumentList = arguments.ToArray();
@@ -86,12 +91,21 @@ namespace Pretzel.Logic.Commands
 
             if (firstArgument != null && !firstArgument.StartsWith("-") && !firstArgument.StartsWith("/"))
             {
-                Path = System.IO.Path.IsPathRooted(firstArgument)
+                Path = fileSystem.Path.IsPathRooted(firstArgument)
                     ? firstArgument
-                    : System.IO.Path.Combine(Directory.GetCurrentDirectory(), firstArgument);
+                    : fileSystem.Path.Combine(fileSystem.Directory.GetCurrentDirectory(), firstArgument);
             }
 
-            Path = string.IsNullOrWhiteSpace(Path) ? Directory.GetCurrentDirectory() : System.IO.Path.GetFullPath(Path);
+            Path = string.IsNullOrWhiteSpace(Path) ? fileSystem.Directory.GetCurrentDirectory() : fileSystem.Path.GetFullPath(Path);
+
+            if (string.IsNullOrEmpty(DestinationPath))
+            {
+                DestinationPath = "_site";
+            }
+            if (!fileSystem.Path.IsPathRooted(DestinationPath))
+            {
+                DestinationPath = fileSystem.Path.Combine(Path, DestinationPath);
+            }
         }
 
         public void DetectFromDirectory(IDictionary<string, ISiteEngine> engines, SiteContext context)

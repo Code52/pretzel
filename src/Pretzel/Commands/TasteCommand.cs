@@ -19,16 +19,22 @@ namespace Pretzel.Commands
     {
         private ISiteEngine engine;
 #pragma warning disable 649
+
         [Import]
-        TemplateEngineCollection templateEngines;
+        private TemplateEngineCollection templateEngines;
+
         [Import]
-        SiteContextGenerator Generator { get; set; }
+        private SiteContextGenerator Generator { get; set; }
+
         [Import]
-        CommandParameters parameters;
+        private CommandParameters parameters;
+
         [ImportMany]
         private IEnumerable<ITransform> transforms;
+
         [Import]
-        IFileSystem FileSystem;
+        private IFileSystem FileSystem;
+
 #pragma warning restore 649
 
         public void Execute(IEnumerable<string> arguments)
@@ -37,7 +43,7 @@ namespace Pretzel.Commands
 
             parameters.Parse(arguments);
 
-            var context = Generator.BuildContext(parameters.Path, parameters.IncludeDrafts);
+            var context = Generator.BuildContext(parameters.Path, parameters.DestinationPath, parameters.IncludeDrafts);
 
             if (parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
@@ -64,11 +70,11 @@ namespace Pretzel.Commands
             foreach (var t in transforms)
                 t.Transform(context);
 
-            using (var watcher = new SimpleFileSystemWatcher())
+            using (var watcher = new SimpleFileSystemWatcher(parameters.DestinationPath))
             {
                 watcher.OnChange(parameters.Path, WatcherOnChanged);
-                // TODO see to replace engine.GetOutputDirectory by context.OutputFolder
-                using (var w = new WebHost(engine.GetOutputDirectory(parameters.Path), new FileContentProvider(), Convert.ToInt32(parameters.Port)))
+
+                using (var w = new WebHost(parameters.DestinationPath, new FileContentProvider(), Convert.ToInt32(parameters.Port)))
                 {
                     try
                     {
@@ -114,7 +120,7 @@ namespace Pretzel.Commands
         {
             Tracing.Info(string.Format("File change: {0}", file));
 
-            var context = Generator.BuildContext(parameters.Path, parameters.IncludeDrafts);
+            var context = Generator.BuildContext(parameters.Path, parameters.DestinationPath, parameters.IncludeDrafts);
             if (parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
                 FileSystem.Directory.Delete(context.OutputFolder, true);

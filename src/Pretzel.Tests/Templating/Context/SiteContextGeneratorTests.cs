@@ -1,20 +1,19 @@
-﻿using System;
+﻿using NSubstitute;
+using Pretzel.Logic.Extensibility;
+using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Templating.Context;
+using Pretzel.Tests.Templating.Jekyll;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
-using Pretzel.Logic.Extensibility;
-using Pretzel.Logic.Templating.Context;
-using Xunit;
-using Xunit.Extensions;
-using NSubstitute;
-using DotLiquid.FileSystems;
-using System.IO.Abstractions;
-using System.IO;
-using Pretzel.Logic.Extensions;
 using System.Text;
 using System.Threading;
-using Pretzel.Tests.Templating.Jekyll;
+using Xunit;
+using Xunit.Extensions;
 
 namespace Pretzel.Tests.Templating.Context
 {
@@ -36,7 +35,7 @@ namespace Pretzel.Tests.Templating.Context
             fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.md", new MockFileData(ToPageContent("# Title")));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal(1, siteContext.Posts.Count);
@@ -49,7 +48,7 @@ namespace Pretzel.Tests.Templating.Context
             fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.md", new MockFileData(ToPageContent("# Title")));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal("<h1>Title</h1>", siteContext.Posts[0].Content.Trim());
@@ -62,7 +61,7 @@ namespace Pretzel.Tests.Templating.Context
             fileSystem.AddFile(@"C:\TestSite\SubFolder\SomeFile.md", new MockFileData(ToPageContent("# Title")));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal(0, siteContext.Posts.Count);
@@ -71,12 +70,11 @@ namespace Pretzel.Tests.Templating.Context
         [Fact]
         public void posts_without_front_matter_get_processed()
         {
-
             // arrange
             fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData("# Title"));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal(1, siteContext.Posts.Count);
@@ -90,7 +88,7 @@ namespace Pretzel.Tests.Templating.Context
             var outputPath = string.Format("/{0}/{1}", DateTime.Now.ToString("yyyy'/'MM'/'dd"), "SomeFile.html");
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             var firstPost = siteContext.Posts.First();
 
@@ -106,7 +104,7 @@ namespace Pretzel.Tests.Templating.Context
             var outputPath = string.Format("/blog/{0}/{1}", DateTime.Now.ToString("yyyy'/'MM'/'dd"), "SomeFile.html");
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             var firstPost = siteContext.Posts.First();
 
@@ -120,7 +118,7 @@ namespace Pretzel.Tests.Templating.Context
             fileSystem.AddFile(@"C:\TestSite\SubFolder\SomeFile.md", new MockFileData("# Title"));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal(1, siteContext.Pages.Count);
@@ -134,7 +132,7 @@ namespace Pretzel.Tests.Templating.Context
             fileSystem.AddFile(@"C:\TestSite\SubFolder\SomeFile.md", new MockFileData(ToPageContent("# Title")));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal(1, siteContext.Pages.Count);
@@ -149,7 +147,7 @@ namespace Pretzel.Tests.Templating.Context
             fileSystem.AddFile(@"C:\TestSite\SubFolder\SomeFile2.md", new MockFileData(ToPageContent("# Title")));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal(2, siteContext.Pages[0].DirectoryPages.ToArray().Length);
@@ -163,25 +161,24 @@ namespace Pretzel.Tests.Templating.Context
             fileSystem.AddFile(@"C:\TestSite\SubFolder\SomeFile.md", new MockFileData(ToPageContent("# Title")));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal("/Index.html", siteContext.Pages[0].Url);
             Assert.Equal("/SubFolder/SomeFile.html", siteContext.Pages[1].Url);
         }
 
-
         [Fact]
         public void site_context_does_not_cache_page()
         {
             // arrange
             fileSystem.AddFile(@"C:\TestSite\SubFolder\SomeFile.md", new MockFileData(ToPageContent("# Title")));
-            generator.BuildContext(@"C:\TestSite", false);
+            generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
             fileSystem.RemoveFile(@"C:\TestSite\SubFolder\SomeFile.md");
             fileSystem.AddFile(@"C:\TestSite\SubFolder\SomeFile.md", new MockFileData(ToPageContent("# AnotherTitle")));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.True(siteContext.Pages[0].Content.Contains("AnotherTitle"), "Site context should not cache output");
@@ -202,7 +199,7 @@ title: Title
             fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-03-File3.md", new MockFileData("---\n\r tags: [\"tag4\"]\n\r categories: [\"cat1\"]\n\r---\n\r Test"));
             fileSystem.AddFile(@"C:\TestSite\page.md", new MockFileData("---\n\r tags: [\"tag2\",\"tag3\"]\n\r categories: [\"cat1\"]\n\r---\n\r Test"));
 
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(4, siteContext.Tags.Count());
             Assert.Equal(1, siteContext.Categories.Count());
@@ -235,7 +232,7 @@ title: Title
             fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-03-File3.md", new MockFileData("---\n\r categories: [\"cat4\"]\n\r tags: [\"tag1\"]\n\r---\n\r Test"));
             fileSystem.AddFile(@"C:\TestSite\page.md", new MockFileData("---\n\r categories: [\"cat2\",\"cat3\"]\n\r tags: [\"tag1\"]\n\r---\n\r Test"));
 
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(4, siteContext.Categories.Count());
             Assert.Equal(1, siteContext.Tags.Count());
@@ -311,7 +308,7 @@ title: Title
             fileSystem.AddFile(@"C:\TestSite\_drafts\SomeFile.md", new MockFileData(ToPageContent("# Draft")));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", true);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", true);
 
             // assert
             Assert.Equal(2, siteContext.Posts.Count);
@@ -322,7 +319,6 @@ title: Title
         [InlineData(@"C:\TestSite\UsingDefault.md", true)]
         public void site_context_pages_have_date_in_bag(string fileName, bool useDefault)
         {
-
             // note - this test does not include the time component.
 
             // arrange
@@ -333,9 +329,9 @@ title: Title
             fileSystem.AddFile(fileName, new MockFileData(ToPageContent("# Title")));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
-            // assert 
+            // assert
             Assert.True(siteContext.Pages[0].Bag.ContainsKey("date"));
             Assert.IsType<DateTime>(siteContext.Pages[0].Bag["date"]);
 
@@ -351,7 +347,7 @@ title: Title
             fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.mkd", new MockFileData(ToPageContent("# Title")));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal("<h1>Title</h1>", siteContext.Posts[0].Content.Trim());
@@ -364,7 +360,7 @@ title: Title
             fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.mkdn", new MockFileData(ToPageContent("# Title")));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal("<h1>Title</h1>", siteContext.Posts[0].Content.Trim());
@@ -377,7 +373,7 @@ title: Title
             fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.mdown", new MockFileData(ToPageContent("# Title")));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal("<h1>Title</h1>", siteContext.Posts[0].Content.Trim());
@@ -390,7 +386,7 @@ title: Title
             fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.markdown", new MockFileData(ToPageContent("# Title")));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal("<h1>Title</h1>", siteContext.Posts[0].Content.Trim());
@@ -424,11 +420,11 @@ title: Title
             // arrange
             Func<string, bool> function = generator.CanBeIncluded;
             fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
-pretzel: 
+pretzel:
   include: [_folder, .something-else, some-file.tmp, test\somefile.txt, subfolder\childfolder, anotherfolder\tempfile.tmp]
 ---"));
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.True(function("folder"));
@@ -454,11 +450,11 @@ pretzel:
             // arrange
             Func<string, bool> function = generator.CanBeIncluded;
             fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
-pretzel: 
+pretzel:
   exclude: [folder, .htaccess, some-file.tmp, test\somefile.txt, subfolder\childfolder, anotherfolder\tempfile.tmp]
 ---"));
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.False(function("folder"));
@@ -484,12 +480,12 @@ pretzel:
             // arrange
             Func<string, bool> function = generator.CanBeIncluded;
             fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
-pretzel: 
+pretzel:
   include: [_folder, .something-else]
   exclude: [folder, test\somefile.txt]
 ---"));
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // underscores are ignored
             Assert.False(function("folder"));
@@ -527,7 +523,7 @@ categories: [cat1, cat2]
             var outputPath = "/blog/cat2/cat1/index.html";
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             var firstPost = siteContext.Posts.First();
 
@@ -544,7 +540,7 @@ permalink: /blog/:category2/:category1/:category3/:category42/index.html
             var outputPath = "/blog/index.html";
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             var firstPost = siteContext.Posts.First();
 
@@ -562,7 +558,7 @@ category: cat
             var outputPath = "/blog/cat/index.html";
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             var firstPost = siteContext.Posts.First();
 
@@ -579,7 +575,7 @@ permalink: /blog/:category/index.html
             var outputPath = "/blog/index.html";
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             var firstPost = siteContext.Posts.First();
 
@@ -593,7 +589,7 @@ permalink: /blog/:category/index.html
             fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.markdown", new MockFileData(ToPageContent("# Title")));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal("/2012/01/01/SomeFile", siteContext.Posts[0].Id);
@@ -609,7 +605,7 @@ categories: [cat1, cat2]
 # Title"));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal("/2012/01/01/SomeFile", siteContext.Posts[0].Id);
@@ -626,7 +622,7 @@ permalink: /blog/:categories/:year/:month/:day/:title/index.html
 # Title"));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal("/blog/cat1-cat2/2012/01/01/SomeFile/", siteContext.Posts[0].Id);
@@ -639,7 +635,7 @@ permalink: /blog/:categories/:year/:month/:day/:title/index.html
             fileSystem.AddFile(@"C:\TestSite\about.md", new MockFileData(ToPageContent("# Title")));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal("/about", siteContext.Pages[0].Id);
@@ -655,7 +651,7 @@ permalink: /about/
 # Title"));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal("/about/", siteContext.Pages[0].Id);
@@ -671,7 +667,7 @@ id: my_page_id
 # Title"));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal("/about", siteContext.Pages[0].Id);
@@ -688,7 +684,7 @@ categories: [cat1, cat2]
             var outputPath = "/blog/cat1a/index.html";
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             var firstPost = siteContext.Posts.First();
 
@@ -701,8 +697,7 @@ categories: [cat1, cat2]
             fileSystem.AddFile(@"C:\TestSite\SomeFile.md", MockFileData.NullObject);
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
-
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(1, siteContext.Pages.Count);
             Assert.Equal(0, siteContext.Pages[0].Bag.Count);
@@ -716,8 +711,7 @@ published: false
 ---# Title"));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
-
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(0, siteContext.Pages.Count);
         }
@@ -730,7 +724,7 @@ param: value
 ---# Title"));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(1, siteContext.Pages.Count);
             Assert.Equal("this is a post", siteContext.Pages[0].Title);
@@ -754,7 +748,7 @@ param: value
             currentDate)));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(1, siteContext.Pages.Count);
             Assert.Equal("my title", siteContext.Pages[0].Title);
@@ -780,7 +774,7 @@ param: value
             currentDate)));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(1, siteContext.Pages.Count);
             Assert.Equal("this is a post", siteContext.Pages[0].Title);
@@ -803,7 +797,7 @@ param: value
             currentDate)));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(1, siteContext.Pages.Count);
             Assert.Equal("this is a post", siteContext.Pages[0].Title);
@@ -823,7 +817,7 @@ param: value
 ---# Title"));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(1, siteContext.Posts.Count);
             Assert.Equal("this is a post", siteContext.Posts[0].Title);
@@ -847,7 +841,7 @@ param: value
             currentDate)));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(1, siteContext.Posts.Count);
             Assert.Equal("my title", siteContext.Posts[0].Title);
@@ -873,7 +867,7 @@ param: value
             currentDate)));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(1, siteContext.Posts.Count);
             Assert.Equal("this is a post", siteContext.Posts[0].Title);
@@ -897,7 +891,7 @@ param: value
             currentDate)));
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(1, siteContext.Posts.Count);
             Assert.Equal("this is a post", siteContext.Posts[0].Title);
@@ -944,13 +938,10 @@ param: value
             fileSystemSubstitute.Directory.Returns(directorySubstitute);
             fileSystemSubstitute.FileInfo.Returns(fileInfoFactorySubstitute);
 
-
             var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>());
 
-
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
-
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal(1, siteContext.Pages.Count);
@@ -987,9 +978,8 @@ param: value
 
             var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>());
 
-
             // act & assert
-            Assert.Throws<IOException>(() => generator.BuildContext(@"C:\TestSite", false));
+            Assert.Throws<IOException>(() => generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false));
             // Check if the temp file have been deleted
             fileSubstitute.Received().Delete(filePath);
         }
@@ -1009,8 +999,7 @@ date: 20150127
             Tracing.Logger.AddCategory("debug");
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
-
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(0, siteContext.Pages.Count);
             Assert.Contains(@"Failed to build post from File: C:\TestSite\SomeFile.md", sb.ToString());
@@ -1030,8 +1019,7 @@ date: 20150127
             var generator = new SiteContextGenerator(fileSystem, new[] { contentTransformer });
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
-
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(1, siteContext.Pages.Count);
             Assert.Equal("<h1>Title</h1><p>bar</p>", siteContext.Pages[0].Content.RemoveWhiteSpace());
@@ -1053,8 +1041,7 @@ date: 20150127
             var generator = new SiteContextGenerator(fileSystem, new[] { contentTransformer });
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
-
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(1, siteContext.Pages.Count);
             Assert.Equal("<p><b>Error converting markdown</b></p><pre>---\r\n---# Title\r\n[foo]</pre>", siteContext.Pages[0].Content);
@@ -1098,13 +1085,10 @@ date: 20150127
             fileSystemSubstitute.Directory.Returns(directorySubstitute);
             fileSystemSubstitute.FileInfo.Returns(fileInfoFactorySubstitute);
 
-
             var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>());
 
-
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
-
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal(1, siteContext.Pages.Count);
@@ -1150,9 +1134,8 @@ date: 20150127
 
             var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>());
 
-
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal(0, siteContext.Pages.Count);
