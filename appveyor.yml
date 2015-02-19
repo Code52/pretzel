@@ -3,37 +3,42 @@ version: 0.2.1.{build}
 configuration: Release
 
 install:
-- GitVersion /output buildserver /UpdateAssemblyInfo true
-  
+  - GitVersion /output buildserver /UpdateAssemblyInfo true
+
 cache:
-- src\packages
-- C:\ProgramData\chocolatey\bin\OpenCover.Console.exe
-- C:\ProgramData\chocolatey\bin\coveralls.net.exe
-- C:\ProgramData\chocolatey\lib
+  - src\packages
+  - C:\ProgramData\chocolatey\bin\OpenCover.Console.exe
+  - C:\ProgramData\chocolatey\bin\coveralls.net.exe
+  - C:\ProgramData\chocolatey\lib
 
 environment:
   COVERALLS_REPO_TOKEN:
     secure: 7apBd6hzfYjVoClqPS+PlHPMqNbUe6Bhlku/45cB2cZiWff4M36qn3B3ibgnRU/+
 
+before_build:
+  - nuget restore src
+
 build:
   project: src\Pretzel.sln
   verbosity: minimal
-  
+
 after_build:
-- ps: .\AppVeyor-Build.ps1
+  - ps: .\AppVeyor-Build.ps1
 
 test_script:
-- cinst opencover -source https://nuget.org/api/v2/
-- cinst coveralls.io -source https://nuget.org/api/v2/
-- OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -target:"xunit.console.clr4.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"" /noshadow /appveyor" -output:coverage.xml -returntargetcode
-- coveralls.net --opencover coverage.xml
+  - cinst opencover -source https://nuget.org/api/v2/
+  - cinst coveralls.io -source https://nuget.org/api/v2/
+  - OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -target:"xunit.console.clr4.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"" /noshadow /appveyor" -output:coverage.xml -returntargetcode
+  - coveralls.net --opencover coverage.xml
 
 artifacts:
-- path: artifacts\Pretzel.*.nupkg
-  name: Pretzel.nupkg
-- path: coverage.xml
-- path: Pretzel.*.zip
-  name: Pretzel.zip
+  - path: artifacts\Pretzel.*.nupkg
+    name: Pretzel.nupkg
+
+  - path: coverage.xml
+
+  - path: Pretzel.*.zip
+    name: Pretzel.zip
 
 deploy:
   - provider: GitHub
@@ -43,7 +48,7 @@ deploy:
     description: $(releaseDescription)
     on:
       appveyor_repo_tag: true
-  
+
   - provider: NuGet
     server: https://chocolatey.org/
     api_key:
