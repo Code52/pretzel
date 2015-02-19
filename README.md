@@ -13,7 +13,7 @@ Pretzel follows the same conventions as  [Jekyll](https://github.com/mojombo/jek
 
 ### Usage
 
-We are working on a number of features for the initial release of Pretzel, which are represented by the commands **create**, **bake** and **taste**. 
+The principal commands are the following but more informations are available on the [wiki](https://github.com/Code52/pretzel/wiki)
 
 **Create** is used to create the folder structure for a new site.
 
