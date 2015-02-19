@@ -1,20 +1,19 @@
-﻿using System;
+﻿using NSubstitute;
+using Pretzel.Logic.Extensibility;
+using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Templating.Context;
+using Pretzel.Tests.Templating.Jekyll;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
-using Pretzel.Logic.Extensibility;
-using Pretzel.Logic.Templating.Context;
-using Xunit;
-using Xunit.Extensions;
-using NSubstitute;
-using DotLiquid.FileSystems;
-using System.IO.Abstractions;
-using System.IO;
-using Pretzel.Logic.Extensions;
 using System.Text;
 using System.Threading;
-using Pretzel.Tests.Templating.Jekyll;
+using Xunit;
+using Xunit.Extensions;
 
 namespace Pretzel.Tests.Templating.Context
 {
@@ -71,7 +70,6 @@ namespace Pretzel.Tests.Templating.Context
         [Fact]
         public void posts_without_front_matter_get_processed()
         {
-
             // arrange
             fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData("# Title"));
 
@@ -169,7 +167,6 @@ namespace Pretzel.Tests.Templating.Context
             Assert.Equal("/Index.html", siteContext.Pages[0].Url);
             Assert.Equal("/SubFolder/SomeFile.html", siteContext.Pages[1].Url);
         }
-
 
         [Fact]
         public void site_context_does_not_cache_page()
@@ -322,7 +319,6 @@ title: Title
         [InlineData(@"C:\TestSite\UsingDefault.md", true)]
         public void site_context_pages_have_date_in_bag(string fileName, bool useDefault)
         {
-
             // note - this test does not include the time component.
 
             // arrange
@@ -335,7 +331,7 @@ title: Title
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", false);
 
-            // assert 
+            // assert
             Assert.True(siteContext.Pages[0].Bag.ContainsKey("date"));
             Assert.IsType<DateTime>(siteContext.Pages[0].Bag["date"]);
 
@@ -424,7 +420,7 @@ title: Title
             // arrange
             Func<string, bool> function = generator.CanBeIncluded;
             fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
-pretzel: 
+pretzel:
   include: [_folder, .something-else, some-file.tmp, test\somefile.txt, subfolder\childfolder, anotherfolder\tempfile.tmp]
 ---"));
             // act
@@ -454,7 +450,7 @@ pretzel:
             // arrange
             Func<string, bool> function = generator.CanBeIncluded;
             fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
-pretzel: 
+pretzel:
   exclude: [folder, .htaccess, some-file.tmp, test\somefile.txt, subfolder\childfolder, anotherfolder\tempfile.tmp]
 ---"));
             // act
@@ -484,7 +480,7 @@ pretzel:
             // arrange
             Func<string, bool> function = generator.CanBeIncluded;
             fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
-pretzel: 
+pretzel:
   include: [_folder, .something-else]
   exclude: [folder, test\somefile.txt]
 ---"));
@@ -703,7 +699,6 @@ categories: [cat1, cat2]
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", false);
 
-
             Assert.Equal(1, siteContext.Pages.Count);
             Assert.Equal(0, siteContext.Pages[0].Bag.Count);
         }
@@ -717,7 +712,6 @@ published: false
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", false);
-
 
             Assert.Equal(0, siteContext.Pages.Count);
         }
@@ -909,91 +903,6 @@ param: value
             Assert.Equal("value", siteContext.Posts[0].Bag["param"]);
         }
 
-        [Fact(Skip = "The call to SanityCheck can provoke some errors")]
-        public void file_with_1_ioexception_is_processed_and_have_no_metadata()
-        {
-            // arrange
-            string filePath = Path.Combine(Path.GetTempPath(), "SomeFile.md");
-            bool alreadyOccured = false;
-            var fileSubstitute = Substitute.For<FileBase>();
-            fileSubstitute.OpenText(Arg.Any<string>()).Returns(x =>
-            {
-                if (alreadyOccured)
-                {
-                    return new StreamReader(new MemoryStream(0));
-                }
-                else
-                {
-                    alreadyOccured = true;
-                    throw new IOException();
-                }
-            });
-            fileSubstitute.Exists(filePath).Returns(true);
-
-            var directorySubstitute = Substitute.For<DirectoryBase>();
-            directorySubstitute.GetFiles(Arg.Any<string>(), "*.*", SearchOption.AllDirectories).Returns(new[] { @"C:\TestSite\SomeFile.md" });
-
-            var fileInfoSubstitute = Substitute.For<FileInfoBase>();
-            fileInfoSubstitute.Name.Returns("SomeFile.md");
-
-            var fileInfoFactorySubstitute = Substitute.For<IFileInfoFactory>();
-            fileInfoFactorySubstitute.FromFileName(Arg.Any<string>()).Returns(fileInfoSubstitute);
-
-            var fileSystemSubstitute = Substitute.For<System.IO.Abstractions.IFileSystem>();
-            fileSystemSubstitute.File.Returns(fileSubstitute);
-            fileSystemSubstitute.Directory.Returns(directorySubstitute);
-            fileSystemSubstitute.FileInfo.Returns(fileInfoFactorySubstitute);
-
-
-            var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>());
-
-
-            // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", false);
-
-
-            // assert
-            Assert.Equal(1, siteContext.Pages.Count);
-            Assert.Equal(0, siteContext.Pages[0].Bag.Count);
-            // Check if the temp file have been deleted
-            fileSubstitute.Received().Delete(filePath);
-        }
-
-        [Fact(Skip = "The call to SanityCheck can provoke some errors")]
-        public void file_with_2_ioexception_is_not_processed_and_throw_ioexception()
-        {
-            // arrange
-            string filePath = Path.Combine(Path.GetTempPath(), "SomeFile.md");
-            var fileSubstitute = Substitute.For<FileBase>();
-            fileSubstitute.OpenText(Arg.Any<string>()).Returns(x =>
-            {
-                throw new IOException();
-            });
-            fileSubstitute.Exists(filePath).Returns(true);
-
-            var directorySubstitute = Substitute.For<DirectoryBase>();
-            directorySubstitute.GetFiles(Arg.Any<string>(), "*.*", SearchOption.AllDirectories).Returns(new[] { @"C:\TestSite\SomeFile.md" });
-
-            var fileInfoSubstitute = Substitute.For<FileInfoBase>();
-            fileInfoSubstitute.Name.Returns("SomeFile.md");
-
-            var fileInfoFactorySubstitute = Substitute.For<IFileInfoFactory>();
-            fileInfoFactorySubstitute.FromFileName(Arg.Any<string>()).Returns(fileInfoSubstitute);
-
-            var fileSystemSubstitute = Substitute.For<System.IO.Abstractions.IFileSystem>();
-            fileSystemSubstitute.File.Returns(fileSubstitute);
-            fileSystemSubstitute.Directory.Returns(directorySubstitute);
-            fileSystemSubstitute.FileInfo.Returns(fileInfoFactorySubstitute);
-
-            var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>());
-
-
-            // act & assert
-            Assert.Throws<IOException>(() => generator.BuildContext(@"C:\TestSite", false));
-            // Check if the temp file have been deleted
-            fileSubstitute.Received().Delete(filePath);
-        }
-
         [Fact]
         public void page_with_false_date_is_not_processed()
         {
@@ -1010,7 +919,6 @@ date: 20150127
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", false);
-
 
             Assert.Equal(0, siteContext.Pages.Count);
             Assert.Contains(@"Failed to build post from File: C:\TestSite\SomeFile.md", sb.ToString());
@@ -1031,7 +939,6 @@ date: 20150127
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", false);
-
 
             Assert.Equal(1, siteContext.Pages.Count);
             Assert.Equal("<h1>Title</h1><p>bar</p>", siteContext.Pages[0].Content.RemoveWhiteSpace());
@@ -1054,7 +961,6 @@ date: 20150127
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", false);
-
 
             Assert.Equal(1, siteContext.Pages.Count);
             Assert.Equal("<p><b>Error converting markdown</b></p><pre>---\r\n---# Title\r\n[foo]</pre>", siteContext.Pages[0].Content);
@@ -1098,13 +1004,10 @@ date: 20150127
             fileSystemSubstitute.Directory.Returns(directorySubstitute);
             fileSystemSubstitute.FileInfo.Returns(fileInfoFactorySubstitute);
 
-
             var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>());
-
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", false);
-
 
             // assert
             Assert.Equal(1, siteContext.Pages.Count);
@@ -1149,7 +1052,6 @@ date: 20150127
             Tracing.Logger.AddCategory("debug");
 
             var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>());
-
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", false);

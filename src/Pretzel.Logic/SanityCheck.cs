@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
@@ -9,6 +10,7 @@ using System.Threading;
 
 namespace Pretzel.Logic
 {
+    [ExcludeFromCodeCoverage]
     public static class SanityCheck
     {
         public static bool IsLockedByAnotherProcess(string file)
@@ -18,6 +20,7 @@ namespace Pretzel.Logic
     }
 
     // borrowed from http://stackoverflow.com/a/3504251/1363815
+    [ExcludeFromCodeCoverage]
     public class Win32Processes
     {
         /// <summary>
@@ -73,7 +76,9 @@ namespace Pretzel.Logic
             return outp;
         }
 
-        private static void Ignore() { }
+        private static void Ignore()
+        {
+        }
 
         [HandleProcessCorruptedStateExceptions]
         private static List<string> UnsafeGetFilesLockedBy(Process process)
@@ -97,7 +102,8 @@ namespace Pretzel.Logic
             }
         }
 
-        const int CNST_SYSTEM_HANDLE_INFORMATION = 16;
+        private const int CNST_SYSTEM_HANDLE_INFORMATION = 16;
+
         private static string GetFilePath(Win32API.SYSTEM_HANDLE_INFORMATION systemHandleInformation, Process process)
         {
             var ipProcessHwnd = Win32API.OpenProcess(Win32API.ProcessAccessFlags.All, false, process.Id);
@@ -173,7 +179,6 @@ namespace Pretzel.Logic
 
             if (ipTemp != IntPtr.Zero)
             {
-
                 var baTemp = new byte[nLength];
                 try
                 {
@@ -295,13 +300,16 @@ namespace Pretzel.Logic
 
             [DllImport("kernel32.dll")]
             public static extern IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int dwProcessId);
+
             [DllImport("kernel32.dll")]
             public static extern int CloseHandle(IntPtr hObject);
+
             [DllImport("kernel32.dll", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
             public static extern bool DuplicateHandle(IntPtr hSourceProcessHandle,
                ushort hSourceHandle, IntPtr hTargetProcessHandle, out IntPtr lpTargetHandle,
                uint dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, uint dwOptions);
+
             [DllImport("kernel32.dll")]
             public static extern IntPtr GetCurrentProcess();
 
