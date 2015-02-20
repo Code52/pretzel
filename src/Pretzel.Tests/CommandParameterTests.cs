@@ -5,7 +5,8 @@ using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
 using System.Collections.Generic;
-using System.IO;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Xunit;
 
@@ -20,10 +21,13 @@ namespace Pretzel.Tests
         private const string ExpectedTemplate = @"jekyll";
         private const string ExpectedPort = "8000";
         private const decimal ExpectedPortDecimal = 8000;
+        private const string ExpectedDestinationPath = @"D:\Code\Generated";
+
+        private readonly IFileSystem FileSystem = new MockFileSystem();
 
         public CommandParameterTests()
         {
-            subject = new CommandParameters(Enumerable.Empty<IHaveCommandLineArgs>());
+            subject = new CommandParameters(Enumerable.Empty<IHaveCommandLineArgs>(), FileSystem);
         }
 
         [Fact]
@@ -31,7 +35,8 @@ namespace Pretzel.Tests
         {
             var args = new List<string>();
             subject.Parse(args);
-            Assert.Equal(Directory.GetCurrentDirectory(), subject.Path);
+            Assert.Equal(FileSystem.Directory.GetCurrentDirectory(), subject.Path);
+            Assert.Equal(FileSystem.Path.Combine(subject.Path, "_site"), subject.DestinationPath);
         }
 
         [Fact]
@@ -298,6 +303,7 @@ namespace Pretzel.Tests
             Assert.True(subject.Wiki);
             Assert.True(subject.CleanTarget);
             Assert.True(subject.Safe);
+            Assert.Equal(@"c:\mysite\_site", subject.DestinationPath);
         }
 
         [Fact]
@@ -310,13 +316,14 @@ namespace Pretzel.Tests
             Assert.Equal(8080, subject.Port);
             Assert.True(subject.LaunchBrowser);
             Assert.Null(subject.Template);
-            Assert.Equal(Directory.GetCurrentDirectory(), subject.Path);
+            Assert.Equal(FileSystem.Directory.GetCurrentDirectory(), subject.Path);
             Assert.Null(subject.ImportType);
             Assert.Null(subject.ImportPath);
             Assert.False(subject.IncludeDrafts);
             Assert.False(subject.WithProject);
             Assert.False(subject.Wiki);
             Assert.False(subject.CleanTarget);
+            Assert.Equal(FileSystem.Path.Combine(subject.Path, "_site"), subject.DestinationPath);
         }
 
         [Fact]
@@ -331,7 +338,7 @@ namespace Pretzel.Tests
                     options.Add<string>("newOption=", "description", v => NewOption = v);
                 });
 
-            var subject = new CommandParameters(new List<IHaveCommandLineArgs> { extension });
+            var subject = new CommandParameters(new List<IHaveCommandLineArgs> { extension }, new MockFileSystem());
             var args = new List<string> { "-newOption=test" };
 
             subject.Parse(args);
@@ -348,7 +355,8 @@ namespace Pretzel.Tests
 
             subject.Parse(args);
 
-            Assert.Equal(Path.Combine(Directory.GetCurrentDirectory(), "mySite"), subject.Path);
+            Assert.Equal(FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), "mySite"), subject.Path);
+            Assert.Equal(FileSystem.Path.Combine(subject.Path, "_site"), subject.DestinationPath);
         }
 
         [Fact]
@@ -464,6 +472,62 @@ namespace Pretzel.Tests
             var args = new List<string>();
             subject.Parse(args);
             Assert.False(subject.Safe);
+        }
+
+        [Fact]
+        public void Parse_WhenSpecifyingSourcePathUsingShortParameter_MapsToPath()
+        {
+            var args = new List<string> { "--s", ExpectedPath };
+            subject.Parse(args);
+            Assert.Equal(ExpectedPath, subject.Path);
+        }
+
+        [Fact]
+        public void Parse_WhenSpecifyingSourcePathUsingFullParameter_MapsToPath()
+        {
+            var args = new List<string> { "--source", ExpectedPath };
+            subject.Parse(args);
+            Assert.Equal(ExpectedPath, subject.Path);
+        }
+
+        [Fact]
+        public void Parse_WhenSpecifyingSourcePathUsingShortParameterSingleDash_MapsToPath()
+        {
+            var args = new List<string> { "-s", ExpectedPath };
+            subject.Parse(args);
+            Assert.Equal(ExpectedPath, subject.Path);
+        }
+
+        [Fact]
+        public void Parse_WhenSpecifyingSourcePathUsingFullParameterSingleDash_MapsToPath()
+        {
+            var args = new List<string> { "-source", ExpectedPath };
+            subject.Parse(args);
+            Assert.Equal(ExpectedPath, subject.Path);
+        }
+
+        [Fact]
+        public void Parse_WhenSpecifyingDestinationPathUsingFullParameter_MapsToPath()
+        {
+            var args = new List<string> { "--destination", ExpectedDestinationPath };
+            subject.Parse(args);
+            Assert.Equal(ExpectedDestinationPath, subject.DestinationPath);
+        }
+
+        [Fact]
+        public void Parse_WhenSpecifyingDestinationPathUsingFullParameterSingleDash_MapsToPath()
+        {
+            var args = new List<string> { "-destination", ExpectedDestinationPath };
+            subject.Parse(args);
+            Assert.Equal(ExpectedDestinationPath, subject.DestinationPath);
+        }
+
+        [Fact]
+        public void Parse_WhenNoParametersSet_MapsDestinationPathTo_siteInCurrentDirectory()
+        {
+            var args = new List<string>();
+            subject.Parse(args);
+            Assert.Equal(FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), "_site"), subject.DestinationPath);
         }
     }
 }

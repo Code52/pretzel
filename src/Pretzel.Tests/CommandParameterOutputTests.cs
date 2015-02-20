@@ -1,6 +1,7 @@
 ﻿using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using System.IO;
+using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Xunit;
 
@@ -13,7 +14,7 @@ namespace Pretzel.Tests
 
         public CommandParameterOutputTests()
         {
-            subject = new CommandParameters(Enumerable.Empty<IHaveCommandLineArgs>());
+            subject = new CommandParameters(Enumerable.Empty<IHaveCommandLineArgs>(), new MockFileSystem());
             writer = new StringWriter();
         }
 
@@ -36,6 +37,8 @@ namespace Pretzel.Tests
             Assert.True(output.Contains("--file="));
             Assert.True(output.Contains("--cleantarget"));
             Assert.True(output.Contains("--safe"));
+            Assert.True(output.Contains("--source"));
+            Assert.True(output.Contains("--destination"));
         }
 
         [Fact]

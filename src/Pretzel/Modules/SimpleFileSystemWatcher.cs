@@ -5,8 +5,15 @@ namespace Pretzel.Modules
 {
     public class SimpleFileSystemWatcher : IFileSystemWatcher, IDisposable
     {
-        readonly FileSystemWatcher watcher = new FileSystemWatcher();
-        Action<string> callback;
+        private readonly FileSystemWatcher watcher;
+        private readonly string destinationPath;
+        private Action<string> callback;
+
+        public SimpleFileSystemWatcher(string destinationPath)
+        {
+            watcher = new FileSystemWatcher();
+            this.destinationPath = destinationPath;
+        }
 
         public void OnChange(string path, Action<string> fileChangedCallback)
         {
@@ -27,10 +34,11 @@ namespace Pretzel.Modules
             watcher.Created -= WatcherOnChanged;
         }
 
-        string lastFile;
+        private string lastFile;
+
         private void WatcherOnChanged(object sender, FileSystemEventArgs args)
         {
-            if (args.FullPath.Contains("_site"))
+            if (args.FullPath.Contains(destinationPath))
                 return;
 
             if (args.FullPath == lastFile)

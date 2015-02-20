@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 
 namespace Pretzel.Logic.Commands
@@ -16,21 +17,25 @@ namespace Pretzel.Logic.Commands
     public class CommandParameters
     {
         [ImportingConstructor]
-        public CommandParameters([ImportMany] IEnumerable<IHaveCommandLineArgs> commandLineExtensions)
+        public CommandParameters([ImportMany] IEnumerable<IHaveCommandLineArgs> commandLineExtensions, IFileSystem fileSystem)
         {
+            this.fileSystem = fileSystem;
+
             port = 8080;
             LaunchBrowser = true;
 
             Settings = new OptionSet
                 {
                     { "t|template=", "The templating engine to use", v => Template = v },
-                    { "d|directory=", "The path to site directory", p => Path = p },
+                    { "d|directory=", "[Obsolete, use --source instead] The path to site directory", p => Path = p },
                     { "p|port=", "The port to test the site locally", p => decimal.TryParse(p, out port) },
                     { "i|import=", "The import type", v => ImportType = v },
                     { "f|file=", "Path to import file", v => ImportPath = v },
+                    { "s|source=", "The path to the source site (default current directory)", p => Path = p},
+                    { "destination=", "The path to the destination site (default _site)", d => DestinationPath = d},
                     { "drafts", "Add the posts in the drafts folder", v => IncludeDrafts = true },
                     { "nobrowser", "Do not launch a browser", v => LaunchBrowser = false },
-                    { "withproject", "Includes a layout VS Solution, to give intellisence when editing razor layout files", v => WithProject = (v!=null) },
+                    { "withproject", "Includes a layout VS Solution, to give intellisense when editing razor layout files", v => WithProject = (v!=null) },
                     { "wiki", "Creates a wiki instead of a blog (razor template only)", v => Wiki = (v!=null) },
                     { "cleantarget", "Delete the target directory (_site by default)", v => CleanTarget = true },
                     { "safe", "Disable custom plugins", v => Safe = true }
@@ -57,11 +62,13 @@ namespace Pretzel.Logic.Commands
 
         public bool IncludeDrafts { get; private set; }
 
-        public bool CleanTarget { get; set; }
+        public bool CleanTarget { get; private set; }
 
         public bool LaunchBrowser { get; private set; }
 
         public bool Safe { get; private set; }
+
+        public string DestinationPath { get; private set; }
 
         private decimal port;
 
@@ -71,6 +78,8 @@ namespace Pretzel.Logic.Commands
         }
 
         private OptionSet Settings { get; set; }
+
+        private IFileSystem fileSystem;
 
         public void Parse(IEnumerable<string> arguments)
         {
@@ -82,12 +91,21 @@ namespace Pretzel.Logic.Commands
 
             if (firstArgument != null && !firstArgument.StartsWith("-") && !firstArgument.StartsWith("/"))
             {
-                Path = System.IO.Path.IsPathRooted(firstArgument)
+                Path = fileSystem.Path.IsPathRooted(firstArgument)
                     ? firstArgument
-                    : System.IO.Path.Combine(Directory.GetCurrentDirectory(), firstArgument);
+                    : fileSystem.Path.Combine(fileSystem.Directory.GetCurrentDirectory(), firstArgument);
             }
 
-            Path = string.IsNullOrWhiteSpace(Path) ? Directory.GetCurrentDirectory() : System.IO.Path.GetFullPath(Path);
+            Path = string.IsNullOrWhiteSpace(Path) ? fileSystem.Directory.GetCurrentDirectory() : fileSystem.Path.GetFullPath(Path);
+
+            if (string.IsNullOrEmpty(DestinationPath))
+            {
+                DestinationPath = "_site";
+            }
+            if (!fileSystem.Path.IsPathRooted(DestinationPath))
+            {
+                DestinationPath = fileSystem.Path.Combine(Path, DestinationPath);
+            }
         }
 
         public void DetectFromDirectory(IDictionary<string, ISiteEngine> engines, SiteContext context)
