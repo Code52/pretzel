@@ -129,6 +129,7 @@
     <Compile Include="Commands\BakeCommand.cs" />
     <Compile Include="Commands\CommandCollection.cs" />
     <Compile Include="Commands\CommandInfoAttribute.cs" />
+    <Compile Include="Commands\HungryCommand.cs" />
     <Compile Include="Commands\ImportCommand.cs" />
     <Compile Include="Commands\RecipeCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
@@ -159,7 +160,6 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -173,3 +173,4 @@
     <delete files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
   </Target>
 </Project>
+

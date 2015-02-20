@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Composition;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Pretzel.Logic.Extensions
@@ -8,8 +9,9 @@ namespace Pretzel.Logic.Extensions
         string GetEntryAssemblyLocation();
     }
 
+    [ExcludeFromCodeCoverage]
     [Export(typeof(IAssembly))]
-    internal class AssemblyBase : IAssembly
+    internal sealed class AssemblyWrapper : IAssembly
     {
         public string GetEntryAssemblyLocation()
         {
