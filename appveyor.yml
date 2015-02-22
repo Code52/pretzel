@@ -1,15 +1,13 @@
-version: 0.2.1.{build}
-
 configuration: Release
 
 install:
   - GitVersion /output buildserver /UpdateAssemblyInfo true
 
 cache:
-  - src\packages
-  - C:\ProgramData\chocolatey\bin\OpenCover.Console.exe
-  - C:\ProgramData\chocolatey\bin\coveralls.net.exe
-  - C:\ProgramData\chocolatey\lib
+  - src\packages -> src/**/packages.config
+  - C:\ProgramData\chocolatey\bin\OpenCover.Console.exe -> appveyor.yml
+  - C:\ProgramData\chocolatey\bin\coveralls.net.exe -> appveyor.yml
+  - C:\ProgramData\chocolatey\lib -> appveyor.yml
 
 environment:
   COVERALLS_REPO_TOKEN:
