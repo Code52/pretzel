@@ -1743,5 +1743,33 @@ namespace Pretzel.Tests.Templating.Jekyll
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"D:\Result\_site\index.html").RemoveWhiteSpace());
             }
         }
+
+        public class Given_Page_Has_Tags : BakingEnvironment<LiquidEngine>
+        {
+            private const string PageContents = "---\r\n layout: nil \r\n tags: [tag, one, banana] \r\n---\r\n\r\n{% for tag in site.tags %}{{ tag.Name }}/ {% endfor %}";
+            private const string ExpectedfileContents = "<p>banana/ one/ tag/ </p>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_posts\2015-02-22-post.md", new MockFileData(PageContents));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var context = generator.BuildContext(@"C:\website\", @"D:\Result\_site", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_File_Should_Display_Tags()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"D:\Result\_site\2015\02\22\post.html").RemoveWhiteSpace());
+            }
+        }
     }
 }
