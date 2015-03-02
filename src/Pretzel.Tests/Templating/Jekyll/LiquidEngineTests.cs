@@ -1595,7 +1595,51 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
         }
 
-        public class Given_Engin_Has_Custom_Tag : BakingEnvironment<LiquidEngine>
+        public class Given_Posts_Folder_Is_In_Another_Folder : BakingEnvironment<LiquidEngine>
+        {
+            private SiteContext Context;
+            private const string ContentWithCategory = "---\r\n category: mycategory \r\n permalink: /:categories/:year/:month/:day/:title.html \r\n---\r\n{{ site.categories[0].name }}";
+            private const string ExpectedPageContent = "<p>my</p>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\oh\my\_posts\2015-02-02-post.md", new MockFileData(ContentWithCategory));
+                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                Context = generator.BuildContext(@"C:\website\", @"C:\website\_site\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(Context);
+            }
+
+            [Fact]
+            public void Layout_With_Bad_Header_Should_Not_Throw_Exception()
+            {
+                Assert.Equal(Context.Posts.Count, 1);
+                var categories = Context.Posts[0].Categories.ToList();
+                Assert.Equal(categories.Count, 3);
+                Assert.Equal(categories[0], "oh");
+                Assert.Equal(categories[1], "my");
+                Assert.Equal(categories[2], "mycategory");
+            }
+
+            [Fact]
+            public void The_permalink_should_use_all_categories()
+            {
+                Assert.True(FileSystem.File.Exists(@"C:\website\_site\oh-my-mycategory\2015\02\02\post.html"));
+            }
+
+            [Fact]
+            public void The_first_alphabetically_category_must_appear_in_the_content()
+            {
+                Assert.Equal(ExpectedPageContent, FileSystem.File.ReadAllText(@"C:\website\_site\oh-my-mycategory\2015\02\02\post.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Engine_Has_Custom_Tag : BakingEnvironment<LiquidEngine>
         {
             private const string PageContent = "---\r\n \r\n---\r\n{% customtag %}";
             private const string ExpectedPageContents = "<p>custom tag</p>";

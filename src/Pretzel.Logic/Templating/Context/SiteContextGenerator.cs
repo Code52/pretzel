@@ -115,8 +115,9 @@ namespace Pretzel.Logic.Templating.Context
         {
             var posts = new List<Page>();
 
-            var postsFolder = Path.Combine(context.SourceFolder, "_posts");
-            if (fileSystem.Directory.Exists(postsFolder))
+            var postsFolders = fileSystem.Directory.GetDirectories(context.SourceFolder, "_posts", SearchOption.AllDirectories);
+
+            foreach (var postsFolder in postsFolders)
             {
                 posts.AddRange(fileSystem.Directory
                     .GetFiles(postsFolder, "*.*", SearchOption.AllDirectories)
@@ -162,22 +163,27 @@ namespace Pretzel.Logic.Templating.Context
 
                 if (post.Categories != null)
                 {
-                    foreach (var catName in post.Categories)
+                    foreach (var categoryName in post.Categories)
                     {
-                        if (categories.ContainsKey(catName))
-                        {
-                            categories[catName].Add(post);
-                        }
-                        else
-                        {
-                            categories.Add(catName, new List<Page> { post });
-                        }
+                        AddCategory(categories, categoryName, post);
                     }
                 }
             }
 
             context.Tags = tags.Select(x => new Tag { Name = x.Key, Posts = x.Value }).OrderBy(x => x.Name).ToList();
             context.Categories = categories.Select(x => new Category { Name = x.Key, Posts = x.Value }).OrderBy(x => x.Name).ToList();
+        }
+
+        private static void AddCategory(Dictionary<string, List<Page>> categories, string categoryName, Page post)
+        {
+            if (categories.ContainsKey(categoryName))
+            {
+                categories[categoryName].Add(post);
+            }
+            else
+            {
+                categories.Add(categoryName, new List<Page> { post });
+            }
         }
 
         private bool ContainsYamlFrontMatter(string file)
@@ -205,6 +211,7 @@ namespace Pretzel.Logic.Templating.Context
         public static bool IsSpecialPath(string relativePath)
         {
             return relativePath.StartsWith("_")
+                    || relativePath.Contains("_posts")
                     || (relativePath.StartsWith(".") && relativePath != ".htaccess")
                     || relativePath.EndsWith(".TMP", StringComparison.OrdinalIgnoreCase);
         }
@@ -237,10 +244,7 @@ namespace Pretzel.Logic.Templating.Context
                 // resolve categories and tags
                 if (isPost)
                 {
-                    if (header.ContainsKey("categories") && header["categories"] is IEnumerable<string>)
-                        page.Categories = (IEnumerable<string>)header["categories"];
-                    else if (header.ContainsKey("category"))
-                        page.Categories = new[] { header["category"].ToString() };
+                    page.Categories = ResolveCategories(context, header, page);
 
                     if (header.ContainsKey("tags"))
                         page.Tags = header["tags"] as IEnumerable<string>;
@@ -277,6 +281,26 @@ namespace Pretzel.Logic.Templating.Context
             }
 
             return null;
+        }
+
+        private List<string> ResolveCategories(SiteContext context, IDictionary<string, object> header, Page page)
+        {
+            var categories = new List<string>();
+
+            var postPath = page.File.Replace(context.SourceFolder, string.Empty);
+            string rawCategories = postPath.Replace(fileSystem.Path.GetFileName(page.File), string.Empty).Replace("_posts", string.Empty);
+            categories.AddRange(rawCategories.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries));
+
+            if (header.ContainsKey("categories") && header["categories"] is IEnumerable<string>)
+            {
+                categories.AddRange((IEnumerable<string>)header["categories"]);
+            }
+            else if (header.ContainsKey("category"))
+            {
+                categories.Add((string)header["category"]);
+            }
+
+            return categories;
         }
 
         private string GetFilePathForPage(SiteContext context, string file)
