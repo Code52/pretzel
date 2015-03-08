@@ -21,7 +21,7 @@ If ($env:appveyor_repo_tag -eq $True)
 		  }
 		  Else
 		  {
-			$description += "$line`r`n"
+			$description += "$line`n"
 		  }
 		}
 	}
@@ -29,7 +29,7 @@ If ($env:appveyor_repo_tag -eq $True)
 		$reader.Close()
 	}
 		
-	$env:releaseDescription = $description
+	Set-AppveyorBuildVariable 'releaseDescription' $description
 }
 
 # build nupkg
