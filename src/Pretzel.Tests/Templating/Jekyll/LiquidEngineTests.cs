@@ -8,14 +8,21 @@ using Pretzel.Logic.Templating.Jekyll;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Xunit;
+using Xunit.Extensions;
 
 namespace Pretzel.Tests.Templating.Jekyll
 {
     public class LiquidEngineTests
     {
+        private static SiteContextGenerator GetSiteContextGenerator(IFileSystem fileSystem, IEnumerable<IContentTransform> contentTransforms = null)
+        {
+            return new SiteContextGenerator(fileSystem, contentTransforms ?? Enumerable.Empty<IContentTransform>(), new LinkHelper());
+        }
+
         public class When_Recieving_A_Folder_Containing_One_File : BakingEnvironment<LiquidEngine>
         {
             private const string FileContents = "<html><head></head><body></body></html>";
@@ -207,7 +214,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
 
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -250,7 +257,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                     FileSystem.AddFile(String.Format(@"C:\website\_posts\2012-02-0{0}-p{0}.md", i), new MockFileData(PostContents));
                 }
 
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -303,7 +310,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                     FileSystem.AddFile(String.Format(@"C:\website\_posts\2012-02-0{0}-p{0}.md", i), new MockFileData(PostContents));
                 }
 
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -376,7 +383,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_layouts\inner.html", new MockFileData(InnerTemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
 
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 context.Title = "My Web Site";
                 Subject.FileSystem = FileSystem;
@@ -409,7 +416,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\file.txt", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 context.Title = "My Web Site";
                 Subject.FileSystem = FileSystem;
@@ -435,7 +442,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 context.Title = "My Web Site";
                 Subject.FileSystem = FileSystem;
@@ -464,7 +471,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 context.Title = "My Web Site";
                 Subject.FileSystem = FileSystem;
@@ -494,7 +501,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
 
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -528,7 +535,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_layouts\default2.html", new MockFileData(TemplateContents_2));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents_1));
                 FileSystem.AddFile(@"C:\website\index2.md", new MockFileData(PageContents_2));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 context.Title = "My Web Site";
                 Subject.FileSystem = FileSystem;
@@ -565,7 +572,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_config.yml", new MockFileData(ConfigContents));
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -603,7 +610,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\image.jpg", new MockFileData("jpg image"));
                 FileSystem.AddFile(@"C:\website\image.png", new MockFileData("png image"));
                 FileSystem.AddFile(@"C:\website\image.gif", new MockFileData("gif image"));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -657,7 +664,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 Context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
             }
@@ -687,7 +694,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 Context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
             }
@@ -720,7 +727,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\BadFormat.md", new MockFileData(BadFormatPageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 Context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
             }
@@ -748,7 +755,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\BadFormat.md", new MockFileData(BadFormatPageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 Context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
             }
@@ -783,7 +790,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_site\BadFormat.md", new MockFileData(OriginalPageContents) { LastWriteTime = new DateTime(2010, 01, 2) });
                 FileSystem.AddFile(@"C:\website\BadFormat.md", new MockFileData(PageContents) { LastWriteTime = new DateTime(2010, 01, 3) });
 
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -811,7 +818,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_site\BadFormat.md", new MockFileData(OriginalPageContents) { LastWriteTime = new DateTime(2010, 01, 5) });
                 FileSystem.AddFile(@"C:\website\BadFormat.md", new MockFileData(PageContents) { LastWriteTime = new DateTime(2010, 01, 3) });
 
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -882,7 +889,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\index.html", new MockFileData(PageContents));
 
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -908,7 +915,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -935,7 +942,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -965,7 +972,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post.md", new MockFileData(PostContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -997,7 +1004,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post.md", new MockFileData(PostContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1029,7 +1036,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_config.yml", new MockFileData(ConfigContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post.md", new MockFileData(PostContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1059,7 +1066,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post.md", new MockFileData(PostContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1089,7 +1096,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post.md", new MockFileData(PostContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1119,7 +1126,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post.md", new MockFileData(PostContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1149,7 +1156,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post.md", new MockFileData(PostContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1176,7 +1183,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1203,7 +1210,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1246,7 +1253,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\UriEscape.md", new MockFileData(UriEscapePageContents));
                 FileSystem.AddFile(@"C:\website\NumberOfWords.md", new MockFileData(NumberOfWordsPageContents));
                 FileSystem.AddFile(@"C:\website\XmlEscape.md", new MockFileData(XmlEscapePageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1304,7 +1311,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 context.Title = "My Web Site";
                 Subject.FileSystem = FileSystem;
@@ -1333,7 +1340,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1361,7 +1368,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\_layouts\default.htm", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1389,7 +1396,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1418,7 +1425,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\_includes\foobar.html", new MockFileData(IncludePageContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
 
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 context.Title = "My Web Site";
                 Subject.FileSystem = FileSystem;
@@ -1452,7 +1459,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
 
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 context.Title = "My Web Site";
                 Subject.FileSystem = FileSystem;
@@ -1480,7 +1487,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
 
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 context.Title = "My Web Site";
                 Subject.FileSystem = FileSystem;
@@ -1510,7 +1517,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1546,7 +1553,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 FileSystem.AddFile(@"C:\website\pages.md", new MockFileData(Page2Contents));
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-02-post1.md", new MockFileData(Post1Contents));
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post2.md", new MockFileData(Post2Contents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1574,7 +1581,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-02-post.md", new MockFileData(ContentWithCategory));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 Context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(Context);
@@ -1591,7 +1598,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             [Fact]
             public void The_Category_must_appear_in_the_content()
             {
-                Assert.Equal(ExpectedPageContent, FileSystem.File.ReadAllText(@"C:\website\_site\2015\02\02\post.html").RemoveWhiteSpace());
+                Assert.Equal(ExpectedPageContent, FileSystem.File.ReadAllText(@"C:\website\_site\mycategory\2015\02\02\post.html").RemoveWhiteSpace());
             }
         }
 
@@ -1609,7 +1616,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\oh\my\_posts\2015-02-02-post.md", new MockFileData(ContentWithCategory));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 Context = generator.BuildContext(@"C:\website\", @"C:\website\_site\", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(Context);
@@ -1629,13 +1636,13 @@ namespace Pretzel.Tests.Templating.Jekyll
             [Fact]
             public void The_permalink_should_use_all_categories()
             {
-                Assert.True(FileSystem.File.Exists(@"C:\website\_site\oh-my-mycategory\2015\02\02\post.html"));
+                Assert.True(FileSystem.File.Exists(@"C:\website\_site\oh\my\mycategory\2015\02\02\post.html"));
             }
 
             [Fact]
             public void The_first_alphabetically_category_must_appear_in_the_content()
             {
-                Assert.Equal(ExpectedPageContent, FileSystem.File.ReadAllText(@"C:\website\_site\oh-my-mycategory\2015\02\02\post.html").RemoveWhiteSpace());
+                Assert.Equal(ExpectedPageContent, FileSystem.File.ReadAllText(@"C:\website\_site\oh\my\mycategory\2015\02\02\post.html").RemoveWhiteSpace());
             }
         }
 
@@ -1652,7 +1659,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContent));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
 
@@ -1691,7 +1698,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1719,7 +1726,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1747,7 +1754,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_mysite", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1775,7 +1782,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"D:\Result\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1803,7 +1810,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-22-post.md", new MockFileData(PageContents));
-                var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+                var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"D:\Result\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1814,6 +1821,43 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"D:\Result\_site\2015\02\22\post.html").RemoveWhiteSpace());
             }
+        }
+
+        [InlineData("date", @"cat1\cat2\2015\03\09\foobar-baz.html", "cat1,cat2")]
+        [InlineData("date", @"2015\03\09\foobar-baz.html", "")]
+        [InlineData("/:dashcategories/:year/:month/:day/:title.html", @"cat1-cat2\2015\03\09\foobar-baz.html", "cat1,cat2")]
+        [InlineData("/:dashcategories/:year/:month/:day/:title.html", @"2015\03\09\foobar-baz.html", "")]
+        [InlineData("pretty", @"cat1\cat2\2015\03\09\foobar-baz\index.html", "cat1,cat2")]
+        [InlineData("ordinal", @"cat1\cat2\2015\068\foobar-baz.html", "cat1,cat2")]
+        [InlineData("none", @"cat1\cat2\foobar-baz.html", "cat1,cat2")]
+        [InlineData("/:categories/:short_year/:i_month/:i_day/:title.html", @"cat1\cat2\15\3\9\foobar-baz.html", "cat1,cat2")]
+        [InlineData("/:category/:title.html", @"cat1\foobar-baz.html", "cat1,cat2")]
+        [InlineData("/:category/:title.html", @"foobar-baz.html", "")]
+        [InlineData("/:category1/:title.html", @"cat1/\foobar-baz.html", "cat1,cat2")]
+        [InlineData("/:category2/:title.html", @"cat2\foobar-baz.html", "cat1,cat2")]
+        [InlineData("/:category3/:title.html", @"foobar-baz.html", "cat1,cat2")]
+        [Theory]
+        public void Permalink_generates_expected_file_path(string permalink, string expectedUrl, string categories)
+        {
+            string ExpectedfileContents = "<h1>Title</h1>";
+
+            var fileSystem = new MockFileSystem();
+
+            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(string.Format("permalink: {0}", permalink)));
+            fileSystem.AddFile(@"C:\TestSite\_posts\2015-03-09-foobar-baz.md", new MockFileData(string.Format(@"---
+categories: [{0}]
+---# Title", categories)));
+
+            var generator = GetSiteContextGenerator(fileSystem);
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+
+            var engine = new LiquidEngine();
+            engine.Initialize();
+            engine.FileSystem = fileSystem;
+            engine.Process(siteContext);
+
+            // act
+            Assert.Equal(ExpectedfileContents, fileSystem.File.ReadAllText(string.Format(@"C:\TestSite\_site\{0}", expectedUrl)).RemoveWhiteSpace());
         }
     }
 }

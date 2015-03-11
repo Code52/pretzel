@@ -156,6 +156,7 @@
     </Compile>
     <Compile Include="SanityCheck.cs" />
     <Compile Include="Templating\Context\Category.cs" />
+    <Compile Include="Templating\Context\LinkHelper.cs" />
     <Compile Include="Templating\Context\NonProcessedPage.cs" />
     <Compile Include="Templating\Context\Page.cs" />
     <Compile Include="Templating\Context\Paginator.cs" />
@@ -287,4 +288,3 @@
   </Target>
   -->
 </Project>
-

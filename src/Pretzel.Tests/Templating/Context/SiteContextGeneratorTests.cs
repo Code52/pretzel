@@ -25,7 +25,7 @@ namespace Pretzel.Tests.Templating.Context
         public SiteContextGeneratorTests()
         {
             fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-            generator = new SiteContextGenerator(fileSystem, Enumerable.Empty<IContentTransform>());
+            generator = new SiteContextGenerator(fileSystem, Enumerable.Empty<IContentTransform>(), new LinkHelper());
         }
 
         [Fact]
@@ -255,27 +255,6 @@ title: Title
             Assert.Equal(1, cat4.Posts.Count());
             Assert.Equal(1, cat4.Posts.First().Categories.Count());
             Assert.True(cat4.Posts.First().File.Contains("File3"));
-        }
-
-        [Fact]
-        public void GetTitle_returns_original_value_when_no_timestamp()
-        {
-            var result = SiteContextGenerator.GetTitle(@"C:\temp\foobar_baz.md");
-            Assert.Equal("foobar_baz", result);
-        }
-
-        [Fact]
-        public void GetTitle_returns_strips_timestamp()
-        {
-            var result = SiteContextGenerator.GetTitle(@"C:\temp\2012-01-03-foobar_baz.md");
-            Assert.Equal("foobar_baz", result);
-        }
-
-        [Fact]
-        public void GetTitle_preserves_dash_separated_values_that_arent_timestamps()
-        {
-            var result = SiteContextGenerator.GetTitle(@"C:\temp\foo-bar-baz-qak-foobar_baz.md");
-            Assert.Equal("foo-bar-baz-qak-foobar_baz", result);
         }
 
         [Fact]
@@ -608,7 +587,7 @@ categories: [cat1, cat2]
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
-            Assert.Equal("/2012/01/01/SomeFile", siteContext.Posts[0].Id);
+            Assert.Equal("/cat1/cat2/2012/01/01/SomeFile", siteContext.Posts[0].Id);
         }
 
         [Fact]
@@ -625,7 +604,7 @@ permalink: /blog/:categories/:year/:month/:day/:title/index.html
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
-            Assert.Equal("/blog/cat1-cat2/2012/01/01/SomeFile/", siteContext.Posts[0].Id);
+            Assert.Equal("/blog/cat1/cat2/2012/01/01/SomeFile/", siteContext.Posts[0].Id);
         }
 
         [Fact]
@@ -935,7 +914,7 @@ date: 20150127
             var contentTransformer = Substitute.For<IContentTransform>();
             contentTransformer.Transform(Arg.Any<string>()).Returns(s => s[0].ToString().Replace("[foo]", "bar"));
 
-            var generator = new SiteContextGenerator(fileSystem, new[] { contentTransformer });
+            var generator = new SiteContextGenerator(fileSystem, new[] { contentTransformer }, new LinkHelper());
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
@@ -957,7 +936,7 @@ date: 20150127
             var contentTransformer = Substitute.For<IContentTransform>();
             contentTransformer.Transform(Arg.Any<string>()).Returns(s => { throw new Exception("foo bar"); });
 
-            var generator = new SiteContextGenerator(fileSystem, new[] { contentTransformer });
+            var generator = new SiteContextGenerator(fileSystem, new[] { contentTransformer }, new LinkHelper());
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
@@ -1004,7 +983,7 @@ date: 20150127
             fileSystemSubstitute.Directory.Returns(directorySubstitute);
             fileSystemSubstitute.FileInfo.Returns(fileInfoFactorySubstitute);
 
-            var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>());
+            var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>(), new LinkHelper());
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
@@ -1051,7 +1030,7 @@ date: 20150127
             Tracing.Logger.AddCategory("info");
             Tracing.Logger.AddCategory("debug");
 
-            var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>());
+            var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>(), new LinkHelper());
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
@@ -1075,6 +1054,46 @@ date: 20150127
         public void RemoveDiacritics_should_return_null_if_input_null()
         {
             Assert.Equal(null, SiteContextGenerator.RemoveDiacritics(null));
+        }
+
+        [Fact]
+        public void permalink_with_folder_categories()
+        {
+            fileSystem.AddFile(@"C:\TestSite\foo\bar\_posts\2015-03-09-SomeFile.md", new MockFileData(@"---
+categories: [cat1, cat2]
+---# Title"));
+            var outputPath = "/foo/bar/cat1/cat2/2015/03/09/SomeFile.html";
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+            var firstPost = siteContext.Posts.First();
+            Assert.Equal(outputPath, firstPost.Url);
+        }
+
+        [InlineData("date", "/cat1/cat2/2015/03/09/foobar-baz.html", "cat1,cat2")]
+        [InlineData("date", "/2015/03/09/foobar-baz.html", "")]
+        [InlineData("/:dashcategories/:year/:month/:day/:title.html", "/cat1-cat2/2015/03/09/foobar-baz.html", "cat1,cat2")]
+        [InlineData("/:dashcategories/:year/:month/:day/:title.html", "/2015/03/09/foobar-baz.html", "")]
+        [InlineData("pretty", "/cat1/cat2/2015/03/09/foobar-baz/", "cat1,cat2")]
+        [InlineData("ordinal", "/cat1/cat2/2015/068/foobar-baz.html", "cat1,cat2")]
+        [InlineData("none", "/cat1/cat2/foobar-baz.html", "cat1,cat2")]
+        [InlineData("/:categories/:short_year/:i_month/:i_day/:title.html", "/cat1/cat2/15/3/9/foobar-baz.html", "cat1,cat2")]
+        [InlineData("/:category/:title.html", "/cat1/foobar-baz.html", "cat1,cat2")]
+        [InlineData("/:category/:title.html", "/foobar-baz.html", "")]
+        [InlineData("/:category1/:title.html", "/cat1/foobar-baz.html", "cat1,cat2")]
+        [InlineData("/:category2/:title.html", "/cat2/foobar-baz.html", "cat1,cat2")]
+        [InlineData("/:category3/:title.html", "/foobar-baz.html", "cat1,cat2")]
+        [Theory]
+        public void permalink_is_well_formatted(string permalink, string expectedUrl, string categories)
+        {
+            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(string.Format("permalink: {0}", permalink)));
+            fileSystem.AddFile(@"C:\TestSite\_posts\2015-03-09-foobar-baz.md", new MockFileData(string.Format(@"---
+categories: [{0}]
+---# Title", categories)));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+            var firstPost = siteContext.Posts.First();
+            Assert.Equal(expectedUrl, firstPost.Url);
         }
     }
 }

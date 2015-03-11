@@ -8,7 +8,6 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Pretzel.Logic.Templating.Context
 {
@@ -16,20 +15,19 @@ namespace Pretzel.Logic.Templating.Context
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class SiteContextGenerator
     {
-        private static readonly Regex categoryRegex = new Regex(@":category(\d*)", RegexOptions.Compiled);
-        private static readonly Regex slashesRegex = new Regex(@"/{1,}", RegexOptions.Compiled);
-
         private readonly Dictionary<string, Page> pageCache = new Dictionary<string, Page>();
         private readonly IFileSystem fileSystem;
         private readonly IEnumerable<IContentTransform> contentTransformers;
         private readonly List<string> includes = new List<string>();
         private readonly List<string> excludes = new List<string>();
+        private readonly LinkHelper linkHelper;
 
         [ImportingConstructor]
-        public SiteContextGenerator(IFileSystem fileSystem, [ImportMany]IEnumerable<IContentTransform> contentTransformers)
+        public SiteContextGenerator(IFileSystem fileSystem, [ImportMany]IEnumerable<IContentTransform> contentTransformers, LinkHelper linkHelper)
         {
             this.fileSystem = fileSystem;
             this.contentTransformers = contentTransformers;
+            this.linkHelper = linkHelper;
         }
 
         public SiteContext BuildContext(string path, string destinationPath, bool includeDrafts)
@@ -42,7 +40,9 @@ namespace Pretzel.Logic.Templating.Context
                     config = (Dictionary<string, object>)fileSystem.File.ReadAllText(configPath).YamlHeader(true);
 
                 if (!config.ContainsKey("permalink"))
-                    config.Add("permalink", "/:year/:month/:day/:title.html");
+                {
+                    config.Add("permalink", "date");
+                }
 
                 if (config.ContainsKey("pretzel"))
                 {
@@ -252,11 +252,17 @@ namespace Pretzel.Logic.Templating.Context
 
                 // resolve permalink
                 if (header.ContainsKey("permalink"))
-                    page.Url = EvaluatePermalink(header["permalink"].ToString(), page);
+                {
+                    page.Url = linkHelper.EvaluatePermalink(header["permalink"].ToString(), page);
+                }
                 else if (isPost && config.ContainsKey("permalink"))
-                    page.Url = EvaluatePermalink(config["permalink"].ToString(), page);
+                {
+                    page.Url = linkHelper.EvaluatePermalink(config["permalink"].ToString(), page);
+                }
                 else
-                    page.Url = EvaluateLink(context, page);
+                {
+                    page.Url = linkHelper.EvaluateLink(context, page);
+                }
 
                 // resolve id
                 page.Id = page.Url.Replace(".html", string.Empty).Replace("index", string.Empty);
@@ -306,23 +312,6 @@ namespace Pretzel.Logic.Templating.Context
         private string GetFilePathForPage(SiteContext context, string file)
         {
             return Path.Combine(context.OutputFolder, MapToOutputPath(context, file));
-        }
-
-        private string EvaluateLink(SiteContext context, Page page)
-        {
-            var directory = Path.GetDirectoryName(page.Filepath);
-            var relativePath = directory.Replace(context.OutputFolder, string.Empty);
-            var fileExtension = Path.GetExtension(page.Filepath);
-
-            var htmlExtensions = new[] { ".markdown", ".mdown", ".mkdn", ".mkd", ".md", ".textile" };
-
-            if (htmlExtensions.Contains(fileExtension, StringComparer.InvariantCultureIgnoreCase))
-                fileExtension = ".html";
-
-            var link = relativePath.Replace('\\', '/').TrimStart('/') + "/" + GetPageTitle(page.Filepath) + fileExtension;
-            if (!link.StartsWith("/"))
-                link = "/" + link;
-            return link;
         }
 
         private IEnumerable<Page> GetDirectoryPages(SiteContext context, IDictionary<string, object> config, string forDirectory, bool isPost)
@@ -416,46 +405,6 @@ namespace Pretzel.Logic.Templating.Context
             }
         }
 
-        // https://github.com/mojombo/jekyll/wiki/permalinks
-        private string EvaluatePermalink(string permalink, Page page)
-        {
-            permalink = permalink.Replace(":categories", string.Join("-", page.Categories.ToArray()));
-            permalink = permalink.Replace(":year", page.Date.Year.ToString(CultureInfo.InvariantCulture));
-            permalink = permalink.Replace(":month", page.Date.ToString("MM"));
-            permalink = permalink.Replace(":day", page.Date.ToString("dd"));
-            permalink = permalink.Replace(":title", GetTitle(page.File));
-
-            if (permalink.Contains(":category"))
-            {
-                var matches = categoryRegex.Matches(permalink);
-                if (matches != null && matches.Count > 0)
-                {
-                    foreach (Match match in matches)
-                    {
-                        var replacementValue = string.Empty;
-                        int categoryIndex;
-                        if (match.Success)
-                        {
-                            if (int.TryParse(match.Groups[1].Value, out categoryIndex) && categoryIndex > 0)
-                            {
-                                replacementValue = page.Categories.Skip(categoryIndex - 1).FirstOrDefault();
-                            }
-                            else if (page.Categories.Any())
-                            {
-                                replacementValue = page.Categories.First();
-                            }
-                        }
-
-                        permalink = permalink.Replace(match.Value, replacementValue);
-                    }
-                }
-            }
-
-            permalink = slashesRegex.Replace(permalink, "/");
-
-            return permalink;
-        }
-
         // http://stackoverflow.com/questions/6716832/sanitizing-string-to-url-safe-format
         public static string RemoveDiacritics(string strThis)
         {
@@ -488,18 +437,6 @@ namespace Pretzel.Logic.Templating.Context
             var timestamp = string.Join("\\", tokens.Take(3)).Trim('\\');
             var title = string.Join("-", tokens.Skip(3));
             return Path.Combine(outputDirectory, timestamp, title);
-        }
-
-        private static readonly Regex TimestampAndTitleFromPathRegex = new Regex(@"\\(?:(?<timestamp>\d+-\d+-\d+)-)?(?<title>[^\\]*)\.[^\.]+$");
-
-        public static string GetTitle(string file)
-        {
-            return TimestampAndTitleFromPathRegex.Match(file).Groups["title"].Value;
-        }
-
-        private string GetPageTitle(string file)
-        {
-            return Path.GetFileNameWithoutExtension(file);
         }
     }
 }

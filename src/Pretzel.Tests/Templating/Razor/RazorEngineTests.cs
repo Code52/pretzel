@@ -238,7 +238,7 @@ namespace Pretzel.Tests.Templating.Razor
                 FileSystem.AddFile(String.Format(@"C:\website\_posts\2012-02-0{0}-p{0}.md", i), new MockFileData(String.Format(PostContents, i)));
             }
 
-            var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>());
+            var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>(), new LinkHelper());
             var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
             Subject.FileSystem = FileSystem;
             Subject.Process(context);
