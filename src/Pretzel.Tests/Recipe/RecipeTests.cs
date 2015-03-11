@@ -40,6 +40,7 @@ namespace Pretzel.Tests.Recipe
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"_layouts\"));
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"css\"));
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"img\"));
+            Assert.True(fileSystem.Directory.Exists(BaseSite + @"_includes\"));
 
             Assert.True(fileSystem.File.Exists(BaseSite + "sitemap.xml"));
             Assert.True(fileSystem.File.Exists(BaseSite + "rss.xml"));
@@ -54,6 +55,7 @@ namespace Pretzel.Tests.Recipe
             Assert.True(fileSystem.File.Exists(BaseSite + @"img\favicon.png"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"img\logo.png"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"img\favicon.ico"));
+            Assert.True(fileSystem.File.Exists(BaseSite + @"_includes\head.html"));
 
             Assert.True(writer.ToString().Contains("Pretzel site template has been created"));
         }
@@ -70,10 +72,16 @@ namespace Pretzel.Tests.Recipe
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"_layouts\"));
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"css\"));
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"img\"));
+            Assert.True(fileSystem.Directory.Exists(BaseSite + @"_includes\"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"_layouts\layout.cshtml"));
             Assert.True(fileSystem.File.Exists(BaseSite + "index.md"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"css\style.css"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"img\favicon.ico"));
+            
+            if(!wiki)
+            { 
+                Assert.True(fileSystem.File.Exists(BaseSite + @"_includes\head.cshtml"));
+            }
 
             Assert.Equal(!wiki, fileSystem.File.Exists(BaseSite + @"_layouts\post.cshtml"));
             Assert.Equal(!wiki, fileSystem.File.Exists(BaseSite + "about.md"));
@@ -151,7 +159,7 @@ namespace Pretzel.Tests.Recipe
             var recipe = new Logic.Recipe.Recipe(fileSystem, "razor", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), true, false);
             recipe.Create();
 
-            Assert.Equal(38, fileSystem.AllPaths.Count());
+            Assert.Equal(40, fileSystem.AllPaths.Count());
             Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\Properties\AssemblyInfo.cs"));
             Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\PretzelClasses\Category.cs"));
             Assert.True(fileSystem.AllFiles.Contains(@"c:\site\_layouts\LayoutProject.csproj"));
