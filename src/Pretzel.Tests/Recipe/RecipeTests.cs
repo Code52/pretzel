@@ -26,8 +26,8 @@ namespace Pretzel.Tests.Recipe
         {
             writer = new StringWriter(sb);
             Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory("info");
-            Tracing.Logger.AddCategory("error");
+            Tracing.Logger.AddCategory(Tracing.Category.Info);
+            Tracing.Logger.AddCategory(Tracing.Category.Error);
         }
 
         [Fact]

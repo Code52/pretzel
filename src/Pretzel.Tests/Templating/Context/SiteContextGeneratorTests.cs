@@ -893,8 +893,8 @@ date: 20150127
             StringBuilder sb = new StringBuilder();
             TextWriter writer = new StringWriter(sb);
             Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory("info");
-            Tracing.Logger.AddCategory("debug");
+            Tracing.Logger.AddCategory(Tracing.Category.Info);
+            Tracing.Logger.AddCategory(Tracing.Category.Error);
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
@@ -930,8 +930,8 @@ date: 20150127
             StringBuilder sb = new StringBuilder();
             TextWriter writer = new StringWriter(sb);
             Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory("info");
-            Tracing.Logger.AddCategory("debug");
+            Tracing.Logger.AddCategory(Tracing.Category.Info);
+            Tracing.Logger.AddCategory(Tracing.Category.Error);
 
             var contentTransformer = Substitute.For<IContentTransform>();
             contentTransformer.Transform(Arg.Any<string>()).Returns(s => { throw new Exception("foo bar"); });
@@ -1027,8 +1027,8 @@ date: 20150127
             StringBuilder sb = new StringBuilder();
             TextWriter writer = new StringWriter(sb);
             Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory("info");
-            Tracing.Logger.AddCategory("debug");
+            Tracing.Logger.AddCategory(Tracing.Category.Info);
+            Tracing.Logger.AddCategory(Tracing.Category.Error);
 
             var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>(), new LinkHelper());
 
