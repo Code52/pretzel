@@ -1,9 +1,9 @@
 ﻿using DotLiquid;
+using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Liquid;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Jekyll.Liquid;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Text.RegularExpressions;
 
@@ -16,9 +16,6 @@ namespace Pretzel.Logic.Templating.Jekyll
         private SiteContextDrop contextDrop;
         private readonly Regex emHtmlRegex = new Regex(@"(?<=\{[\{\%].*?)(</?em>)(?=.*?[\%\}]\})", RegexOptions.Compiled);
 
-        [ImportMany(AllowRecomposition = true)]
-        public IEnumerable<DotLiquid.Tag> Tags { get; set; }
-
         public LiquidEngine()
         {
             DotLiquid.Liquid.UseRubyDateFormat = true;
@@ -27,6 +24,9 @@ namespace Pretzel.Logic.Templating.Jekyll
         protected override void PreProcess()
         {
             contextDrop = new SiteContextDrop(Context);
+
+            Template.FileSystem = new Includes(Context.SourceFolder, FileSystem);
+
             if (Filters != null)
             {
                 foreach (var filter in Filters)
@@ -41,7 +41,7 @@ namespace Pretzel.Logic.Templating.Jekyll
                 foreach (var tag in Tags)
                 {
                     var registerTagGenericMethod = registerTagMethod.MakeGenericMethod(new[] { tag.GetType() });
-                    registerTagGenericMethod.Invoke(null, new[] { tag.Name });
+                    registerTagGenericMethod.Invoke(null, new[] { tag.Name.ToUnderscoreCase() });
                 }
             }
         }
@@ -78,10 +78,11 @@ namespace Pretzel.Logic.Templating.Jekyll
         {
             // Replace all em HTML tags in liquid tags ({{ or {%) by underscores
             templateContents = emHtmlRegex.Replace(templateContents, "_");
+
             var data = CreatePageData(pageData);
             var template = Template.Parse(templateContents);
-            Template.FileSystem = new Includes(Context.SourceFolder, FileSystem);
             var output = template.Render(data);
+
             return output;
         }
 
@@ -95,7 +96,6 @@ namespace Pretzel.Logic.Templating.Jekyll
             Template.RegisterFilter(typeof(UriEscapeFilter));
             Template.RegisterFilter(typeof(NumberOfWordsFilter));
             Template.RegisterTag<HighlightBlock>("highlight");
-            Template.RegisterTag<PostUrlBlock>("post_url");
         }
     }
 }

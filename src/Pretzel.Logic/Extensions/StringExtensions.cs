@@ -500,7 +500,7 @@ namespace Pretzel.Logic.Extensions
 			{      "vrm", "x-world/x-vrml" }
 		};
 
-		private static readonly List<string> binaryTypes = new List<string>
+        private static readonly List<string> binaryTypes = new List<string>
 		                                                   	{
             "image",
             "video",
@@ -555,6 +555,11 @@ namespace Pretzel.Logic.Extensions
 
             DateTime timestamp;
             return DateTime.TryParse(timestampText, out timestamp) ? timestamp : DateTime.Now;
+        }
+
+        public static string ToUnderscoreCase(this string str)
+        {
+            return string.Concat(str.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString())).ToLowerInvariant();
         }
     }
 }

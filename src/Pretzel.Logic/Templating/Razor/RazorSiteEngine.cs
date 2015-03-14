@@ -1,4 +1,5 @@
-﻿using Pretzel.Logic.Templating.Context;
+﻿using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Templating.Context;
 using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
@@ -15,12 +16,15 @@ namespace Pretzel.Logic.Templating.Razor
     {
         private static readonly string[] layoutExtensions = { ".cshtml" };
 
+        private string includesPath;
+
         public override void Initialize()
         {
         }
 
         protected override void PreProcess()
         {
+            includesPath = Path.Combine(Context.SourceFolder, "_includes");
         }
 
         protected override string[] LayoutExtensions
@@ -30,23 +34,23 @@ namespace Pretzel.Logic.Templating.Razor
 
         protected override string RenderTemplate(string content, PageContext pageData)
         {
-            var includesPath = Path.Combine(pageData.Site.SourceFolder, "_includes");
-            var serviceConfig = new TemplateServiceConfiguration
-                                {
-                                    TemplateManager = new IncludesResolver(FileSystem, includesPath),
-                                    BaseTemplateType = typeof(ExtensibleTemplate<>)
-                                };
-            serviceConfig.Activator = new ExtensibleActivator(serviceConfig.Activator, Filters);
-
-            Engine.Razor = RazorEngineService.Create(serviceConfig);
+            var serviceConfiguration = new TemplateServiceConfiguration
+            {
+                TemplateManager = new IncludesResolver(FileSystem, includesPath),
+                BaseTemplateType = typeof(ExtensibleTemplate<>)
+            };
+            serviceConfiguration.Activator = new ExtensibleActivator(serviceConfiguration.Activator, Filters, Tags);
+            Engine.Razor = RazorEngineService.Create(serviceConfiguration);
 
             content = Regex.Replace(content, "<p>(@model .*?)</p>", "$1");
+
             try
             {
                 return Engine.Razor.RunCompile(content, pageData.Page.File, typeof(PageContext), pageData);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Tracing.Debug(ex.Message + Environment.NewLine + ex.StackTrace);
                 Console.WriteLine(@"Failed to render template, falling back to direct content");
                 return content;
             }

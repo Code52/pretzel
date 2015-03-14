@@ -5,6 +5,7 @@ using Pretzel.Logic.Templating.Razor;
 using Pretzel.Tests.Templating.Jekyll;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Xunit;
@@ -212,6 +213,53 @@ namespace Pretzel.Tests.Templating.Razor
             ProcessContents(templateContents, pageContents, new Dictionary<string, object>());
             var output = FileSystem.File.ReadAllText(@"C:\website\_site\index.html");
             Assert.Equal(templateContents, output);
+        }
+
+        [Fact]
+        public void Custom_tag_should_be_used()
+        {
+            // arrange
+            const string templateContents = "<html><body>@Raw(Model.Content) @Tag.Custom()</body></html>";
+            const string pageContents = "<h1>Hello</h1>";
+            const string expected = "<html><body><h1>Hello</h1> custom tag</body></html>";
+            Subject.Tags = new ITag[] { new CustomTag() };
+
+            // act
+            ProcessContents(templateContents, pageContents, new Dictionary<string, object>());
+
+            // assert
+            Assert.Equal(expected, FileSystem.File.ReadAllText(@"C:\website\_site\index.html"));
+        }
+
+        [Fact]
+        public void PostUrlTag_should_be_used()
+        {
+            // arrange
+            const string templateContents = "<html><body>@Raw(Model.Content) @Tag.PostUrl(\"post-title.md\")</body></html>";
+            const string pageContents = "<h1>Hello</h1>";
+            const string expected = "<html><body><h1>Hello</h1> post/title.html</body></html>";
+            Subject.Tags = new ITag[] { new PostUrlTag() };
+
+            // act
+            ProcessContents(templateContents, pageContents, new Dictionary<string, object>());
+
+            // assert
+            Assert.Equal(expected, FileSystem.File.ReadAllText(@"C:\website\_site\index.html"));
+        }
+
+        public class CustomTag : DotLiquid.Tag, ITag
+        {
+            public new string Name { get { return "Custom"; } }
+
+            public static string Custom()
+            {
+                return "custom tag";
+            }
+
+            public override void Render(DotLiquid.Context context, TextWriter result)
+            {
+                result.WriteLine(Custom());
+            }
         }
     }
 

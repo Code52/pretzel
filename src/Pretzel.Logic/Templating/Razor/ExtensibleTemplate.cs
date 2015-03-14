@@ -3,28 +3,35 @@ using RazorEngine.Templating;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Reflection;
 
 namespace Pretzel.Logic.Templating.Razor
 {
     public interface IExtensibleTemplate
     {
         dynamic Filter { get; set; }
+
+        dynamic Tag { get; set; }
     }
 
     public class ExtensibleTemplate<T> : TemplateBase<T>, IExtensibleTemplate
     {
         public dynamic Filter { get; set; }
+
+        public dynamic Tag { get; set; }
     }
 
     public class ExtensibleActivator : IActivator
     {
         private readonly IActivator defaultActivator;
-        private readonly IEnumerable<IFilter> filters;
+        private readonly ExtensibleProxy<IFilter> filters;
+        private readonly ExtensibleProxy<ITag> tags;
 
-        public ExtensibleActivator(IActivator defaultActivator, IEnumerable<IFilter> filters)
+        public ExtensibleActivator(IActivator defaultActivator, IEnumerable<IFilter> filters, IEnumerable<ITag> tags)
         {
             this.defaultActivator = defaultActivator;
-            this.filters = filters;
+            this.filters = new ExtensibleProxy<IFilter>(filters);
+            this.tags = new ExtensibleProxy<ITag>(tags);
         }
 
         public ITemplate CreateInstance(InstanceContext context)
@@ -34,34 +41,39 @@ namespace Pretzel.Logic.Templating.Razor
             var extTemplate = template as IExtensibleTemplate;
             if (extTemplate != null)
             {
-                extTemplate.Filter = new FilterProxy(filters);
+                extTemplate.Filter = filters;
+                extTemplate.Tag = tags;
             }
 
             return template;
         }
     }
 
-    public class FilterProxy : DynamicObject
+    public class ExtensibleProxy<T> : DynamicObject where T : IName
     {
-        private readonly Dictionary<string, IFilter> filters;
+        private readonly Dictionary<string, MethodInfo> extensibleMethods;
 
-        public FilterProxy(IEnumerable<IFilter> filters)
+        public ExtensibleProxy(IEnumerable<T> extensibleMethods)
         {
-            this.filters = filters == null ? new Dictionary<string, IFilter>() : filters.ToDictionary(x => x.Name);
+            this.extensibleMethods = extensibleMethods == null ?
+                new Dictionary<string, MethodInfo>() :
+                extensibleMethods.ToDictionary(
+                    x => x.Name,
+                    x => x.GetType().GetMethod(x.Name)
+                );
         }
 
         public override IEnumerable<string> GetDynamicMemberNames()
         {
-            return filters.Keys;
+            return extensibleMethods.Keys;
         }
 
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
-            IFilter filter;
-            if (filters.TryGetValue(binder.Name, out filter))
+            MethodInfo extensibleMethod;
+            if (extensibleMethods.TryGetValue(binder.Name, out extensibleMethod))
             {
-                var methodInfo = filter.GetType().GetMethod(filter.Name);
-                result = methodInfo.Invoke(filter, args);
+                result = extensibleMethod.Invoke(null, args);
                 return true;
             }
 

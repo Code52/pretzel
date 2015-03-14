@@ -3,7 +3,7 @@
 namespace Pretzel.Logic.Extensibility
 {
     [InheritedExport]
-    public interface IFilter : IName
+    public interface ITag : IName
     {
     }
 }

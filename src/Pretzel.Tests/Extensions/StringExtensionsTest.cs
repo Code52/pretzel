@@ -1,5 +1,6 @@
 ﻿using Pretzel.Logic.Extensions;
 using Xunit;
+using Xunit.Extensions;
 
 namespace Pretzel.Tests.Extensions
 {
@@ -105,6 +106,16 @@ namespace Pretzel.Tests.Extensions
         public void IsBinaryMime_pgp_returns_true()
         {
             Assert.True("test.pgp".MimeType().IsBinaryMime());
+        }
+
+        [InlineData("CamelCase", "camel_case")]
+        [InlineData("Camel_Case", "camel__case")]
+        [InlineData("camelcase", "camelcase")]
+        [InlineData("pascalCase", "pascal_case")]
+        [Theory]
+        public void ToUnderscoreCase_should_convert(string input, string expectedResult)
+        {
+            Assert.Equal(expectedResult, input.ToUnderscoreCase());
         }
     }
 }

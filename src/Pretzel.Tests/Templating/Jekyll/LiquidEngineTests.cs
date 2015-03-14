@@ -935,7 +935,6 @@ namespace Pretzel.Tests.Templating.Jekyll
 
             public override LiquidEngine Given()
             {
-                Template.RegisterTag<PostUrlBlock>("post_url");
                 return new LiquidEngine();
             }
 
@@ -945,6 +944,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
+                Subject.Tags = new List<ITag> { new PostUrlTag() };
                 Subject.Process(context);
             }
 
@@ -1648,7 +1648,7 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Engine_Has_Custom_Tag : BakingEnvironment<LiquidEngine>
         {
-            private const string PageContent = "---\r\n \r\n---\r\n{% customtag %}";
+            private const string PageContent = "---\r\n \r\n---\r\n{% custom %}";
             private const string ExpectedPageContents = "<p>custom tag</p>";
 
             public override LiquidEngine Given()
@@ -1663,7 +1663,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
 
-                Subject.Tags = new List<DotLiquid.Tag> { new CustomTag() };
+                Subject.Tags = new List<ITag> { new CustomTag() };
 
                 Subject.Process(context);
             }
@@ -1674,11 +1674,18 @@ namespace Pretzel.Tests.Templating.Jekyll
                 Assert.Equal(ExpectedPageContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
             }
 
-            public class CustomTag : DotLiquid.Tag
+            public class CustomTag : DotLiquid.Tag, ITag
             {
+                public new string Name { get { return "Custom"; } }
+
+                public static string Custom()
+                {
+                    return "custom tag";
+                }
+
                 public override void Render(DotLiquid.Context context, TextWriter result)
                 {
-                    result.WriteLine("custom tag");
+                    result.WriteLine(Custom());
                 }
             }
         }

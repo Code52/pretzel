@@ -27,6 +27,9 @@ namespace Pretzel.Logic.Templating
         [ImportMany(AllowRecomposition = true)]
         public IEnumerable<IFilter> Filters { get; set; }
 
+        [ImportMany(AllowRecomposition = true)]
+        public IEnumerable<ITag> Tags { get; set; }
+
         public abstract void Initialize();
 
         protected abstract void PreProcess();

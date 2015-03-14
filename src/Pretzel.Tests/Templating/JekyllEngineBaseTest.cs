@@ -27,11 +27,10 @@ namespace Pretzel.Tests.Templating
                 throw new NotImplementedException();
             }
 
-            protected override string RenderTemplate(string content, Logic.Templating.Context.PageContext pageData)
+            protected override string RenderTemplate(string content, PageContext pageData)
             {
                 throw new NotImplementedException();
             }
         }
-
     }
 }

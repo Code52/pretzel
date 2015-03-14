@@ -90,6 +90,8 @@
     <Compile Include="Extensibility\Extensions\WebSequenceDiagrams.cs" />
     <Compile Include="Extensibility\IHaveCommandLineArgs.cs" />
     <Compile Include="Extensibility\IFilter.cs" />
+    <Compile Include="Extensibility\IName.cs" />
+    <Compile Include="Extensibility\ITag.cs" />
     <Compile Include="Extensions\IAssembly.cs" />
     <Compile Include="Extensions\Logger.cs" />
     <Compile Include="Extensions\Sitemap.cs" />
@@ -106,7 +108,7 @@
     <Compile Include="Liquid\DateToXmlSchemaFilter.cs" />
     <Compile Include="Liquid\HighlightBlock.cs" />
     <Compile Include="Liquid\NumberOfWordsFilter.cs" />
-    <Compile Include="Liquid\PostUrlBlock.cs" />
+    <Compile Include="Extensibility\Extensions\PostUrlTag.cs" />
     <Compile Include="Liquid\UriEscapeFilter.cs" />
     <Compile Include="Liquid\XmlEscapeFilter.cs" />
     <Compile Include="Minification\FileSystemExtensions.cs" />
