@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -80,6 +79,7 @@ namespace Pretzel.Logic.Templating.Context
             context.Content = page.Content;
             context.Bag = page.Bag;
             context.Bag["id"] = page.Id;
+            context.Bag.Add("url", page.Url);
             return context;
         }
     }
