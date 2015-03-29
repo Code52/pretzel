@@ -2,6 +2,7 @@
 using Pretzel.Commands;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
+using ScriptCs.ComponentModel.Composition;
 using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
@@ -102,6 +103,7 @@ namespace Pretzel
                 if (Directory.Exists(pluginsPath))
                 {
                     catalog.Catalogs.Add(new DirectoryCatalog(pluginsPath));
+                    catalog.Catalogs.Add(new ScriptCsCatalog(pluginsPath, new ScriptCsCatalogOptions { References = new[] { typeof(DotLiquid.Tag), typeof(Pretzel.Logic.Extensibility.ITag) } }));
                 }
             }
         }
@@ -110,8 +112,9 @@ namespace Pretzel
         {
             try
             {
-                var first = new AssemblyCatalog(Assembly.GetExecutingAssembly());
-                catalog = new AggregateCatalog(first);
+                var mainCatalog = new AssemblyCatalog(Assembly.GetExecutingAssembly());
+                var logicCatalog = new AssemblyCatalog(typeof(CommandParameters).Assembly);
+                catalog = new AggregateCatalog(mainCatalog, logicCatalog);
                 container = new CompositionContainer(catalog);
 
                 var batch = new CompositionBatch();
