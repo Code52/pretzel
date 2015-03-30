@@ -2,9 +2,11 @@
 using Pretzel.Commands;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
+using Pretzel.ScriptCs.Contracts;
 using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
@@ -102,6 +104,7 @@ namespace Pretzel
                 if (Directory.Exists(pluginsPath))
                 {
                     catalog.Catalogs.Add(new DirectoryCatalog(pluginsPath));
+                    AddScriptCs(catalog, pluginsPath);
                 }
             }
         }
@@ -110,8 +113,9 @@ namespace Pretzel
         {
             try
             {
-                var first = new AssemblyCatalog(Assembly.GetExecutingAssembly());
-                catalog = new AggregateCatalog(first);
+                var pretzelCatalog = new AssemblyCatalog(Assembly.GetExecutingAssembly());
+                //var logicCatalog = new AssemblyCatalog(typeof(CommandParameters).Assembly);
+                catalog = new AggregateCatalog(pretzelCatalog/*, logicCatalog*/);
                 container = new CompositionContainer(catalog);
 
                 var batch = new CompositionBatch();
@@ -125,6 +129,15 @@ namespace Pretzel
                     string.Join("\r\n", ex.LoaderExceptions.Select(e => e.Message)));
 
                 throw;
+            }
+        }
+
+        private void AddScriptCs(AggregateCatalog mainCatalog, string pluginsPath)
+        {
+            if (File.Exists("Pretzel.ScriptCs.dll"))
+            {
+                var catalog = (ComposablePartCatalog)Assembly.LoadFile(Path.GetFullPath("Pretzel.ScriptCs.dll")).GetType("Pretzel.ScriptCs.ScriptCsPluginsEngine").GetMethod("GetScriptCsCatalog").Invoke(null, new[] { new ScriptCsPluginsEngineOptions { PluginsFolderPath = pluginsPath, References = new[] { typeof(DotLiquid.Tag), typeof(Pretzel.Logic.Extensibility.ITag) } } });
+                mainCatalog.Catalogs.Add(catalog);
             }
         }
     }

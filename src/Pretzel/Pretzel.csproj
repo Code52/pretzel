@@ -42,6 +42,9 @@
     <ApplicationIcon>pretzel.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotLiquid">
+      <HintPath>..\packages\DotLiquid.1.8.0\lib\NET45\DotLiquid.dll</HintPath>
+    </Reference>
     <Reference Include="Firefly">
       <HintPath>..\packages\Firefly.0.6.3\lib\Firefly.dll</HintPath>
     </Reference>
@@ -156,6 +159,11 @@
       <Project>{F2E6664D-75AC-4830-8A55-E572027DF710}</Project>
       <Name>Pretzel.Logic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Pretzel.ScriptCs.Contracts\Pretzel.ScriptCs.Contracts.csproj">
+      <Project>{99c7f7d2-fcfe-4ff5-9a58-b1cd38d8a64d}</Project>
+      <Name>Pretzel.ScriptCs.Contracts</Name>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="pretzel.ico" />
@@ -169,6 +177,7 @@
   -->
   <Target Name="AfterBuild" Condition="(($(MSBuildTargets) == '') Or ($(MSBuildTargets) == 'CSharp')) And '$(OS)' == 'Windows_NT' And '$(NCrunch)' == ''">
     <CreateItem Include="@(ReferenceCopyLocalPaths)" Condition="'%(Extension)'=='.dll'">
+    <!--  And '%(Filename)'!='Pretzel.ScriptCs.Contracts' -->
       <Output ItemName="AssembliesToMerge" TaskParameter="Include" />
     </CreateItem>
     <exec command="&quot;$(MSBuildProjectDirectory)\..\..\tools\Ilmerge\ILMerge.exe&quot; /out:@(MainAssembly) &quot;/targetplatform:v4,$(ProgramFiles)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0&quot; &quot;@(IntermediateAssembly)&quot; @(AssembliesToMerge->'&quot;%(FullPath)&quot;', ' ')" />
