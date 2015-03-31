@@ -125,10 +125,6 @@ namespace Pretzel
         {
             if (!isDisposed)
             {
-                if (disposing)
-                {
-                }
-
                 if (host != null)
                 {
                     host.Dispose();
