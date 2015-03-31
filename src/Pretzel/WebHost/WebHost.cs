@@ -125,9 +125,9 @@ namespace Pretzel
         {
             if (!isDisposed)
             {
-                if (disposing)
-                {
-                }
+                //if (disposing)
+                //{
+                //}
 
                 if (host != null)
                 {
