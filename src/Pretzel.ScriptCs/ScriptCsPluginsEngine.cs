@@ -1,14 +1,14 @@
-﻿using Pretzel.ScriptCs.Contracts;
-using ScriptCs.ComponentModel.Composition;
+﻿using ScriptCs.ComponentModel.Composition;
+using System;
 using System.ComponentModel.Composition.Primitives;
 
 namespace Pretzel.ScriptCs
 {
-    public sealed class ScriptCsPluginsEngine
+    public sealed class ScriptCsCatalogFactory
     {
-        public static ComposablePartCatalog GetScriptCsCatalog(ScriptCsPluginsEngineOptions options)
+        public static ComposablePartCatalog CreateScriptCsCatalog(string pluginsFolderPath, Type[] references)
         {
-            return new ScriptCsCatalog(options.PluginsFolderPath, new ScriptCsCatalogOptions { References = options.References });
+            return new ScriptCsCatalog(pluginsFolderPath, new ScriptCsCatalogOptions { References = references });
         }
     }
 }

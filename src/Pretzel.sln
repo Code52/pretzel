@@ -11,12 +11,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pretzel.Tests", "Pretzel.Te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5F558191-21D9-40C6-9173-C416DCEFDA21}"
 	ProjectSection(SolutionItems) = preProject
+		..\AppVeyor-Build.ps1 = ..\AppVeyor-Build.ps1
+		..\appveyor.yml = ..\appveyor.yml
 		..\build.proj = ..\build.proj
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pretzel.ScriptCs", "Pretzel.ScriptCs\Pretzel.ScriptCs.csproj", "{23308D48-7EBF-4082-BFDA-B62C9404E9C7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pretzel.ScriptCs.Contracts", "Pretzel.ScriptCs.Contracts\Pretzel.ScriptCs.Contracts.csproj", "{99C7F7D2-FCFE-4FF5-9A58-B1CD38D8A64D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -72,16 +73,6 @@ Global
 		{23308D48-7EBF-4082-BFDA-B62C9404E9C7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{23308D48-7EBF-4082-BFDA-B62C9404E9C7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{23308D48-7EBF-4082-BFDA-B62C9404E9C7}.Release|x86.ActiveCfg = Release|Any CPU
-		{99C7F7D2-FCFE-4FF5-9A58-B1CD38D8A64D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99C7F7D2-FCFE-4FF5-9A58-B1CD38D8A64D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99C7F7D2-FCFE-4FF5-9A58-B1CD38D8A64D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{99C7F7D2-FCFE-4FF5-9A58-B1CD38D8A64D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{99C7F7D2-FCFE-4FF5-9A58-B1CD38D8A64D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{99C7F7D2-FCFE-4FF5-9A58-B1CD38D8A64D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99C7F7D2-FCFE-4FF5-9A58-B1CD38D8A64D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{99C7F7D2-FCFE-4FF5-9A58-B1CD38D8A64D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{99C7F7D2-FCFE-4FF5-9A58-B1CD38D8A64D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{99C7F7D2-FCFE-4FF5-9A58-B1CD38D8A64D}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,8 +1,8 @@
 ﻿using NDesk.Options;
 using Pretzel.Commands;
 using Pretzel.Logic.Commands;
+using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
-using Pretzel.ScriptCs.Contracts;
 using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
@@ -113,9 +113,7 @@ namespace Pretzel
         {
             try
             {
-                var pretzelCatalog = new AssemblyCatalog(Assembly.GetExecutingAssembly());
-                //var logicCatalog = new AssemblyCatalog(typeof(CommandParameters).Assembly);
-                catalog = new AggregateCatalog(pretzelCatalog/*, logicCatalog*/);
+                catalog = new AggregateCatalog(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
                 container = new CompositionContainer(catalog);
 
                 var batch = new CompositionBatch();
@@ -136,8 +134,31 @@ namespace Pretzel
         {
             if (File.Exists("Pretzel.ScriptCs.dll"))
             {
-                var catalog = (ComposablePartCatalog)Assembly.LoadFile(Path.GetFullPath("Pretzel.ScriptCs.dll")).GetType("Pretzel.ScriptCs.ScriptCsPluginsEngine").GetMethod("GetScriptCsCatalog").Invoke(null, new[] { new ScriptCsPluginsEngineOptions { PluginsFolderPath = pluginsPath, References = new[] { typeof(DotLiquid.Tag), typeof(Pretzel.Logic.Extensibility.ITag) } } });
-                mainCatalog.Catalogs.Add(catalog);
+                var pretzelScriptcsAssembly = Assembly.LoadFile(Path.GetFullPath("Pretzel.ScriptCs.dll"));
+                if (pretzelScriptcsAssembly != null)
+                {
+                    var factoryType = pretzelScriptcsAssembly.GetType("Pretzel.ScriptCs.ScriptCsCatalogFactory");
+                    if (factoryType != null)
+                    {
+                        var scriptCsCatalogMethod = factoryType.GetMethod("CreateScriptCsCatalog");
+                        if (scriptCsCatalogMethod != null)
+                        {
+                            var catalog = (ComposablePartCatalog)scriptCsCatalogMethod.Invoke(null, new object[] { pluginsPath, new[] { typeof(DotLiquid.Tag), typeof(ITag) } });
+                            mainCatalog.Catalogs.Add(catalog);
+                        }
+                        else
+                        {
+                            Tracing.Debug("Assembly 'Pretzel.ScriptCs.dll' detected and loaded, type 'Pretzel.ScriptCs.ScriptCsCatalogFactory' found but method 'CreateScriptCsCatalog' not found.");
+                        }
+                    }
+                    {
+                        Tracing.Debug("Assembly 'Pretzel.ScriptCs.dll' detected and loaded but type 'Pretzel.ScriptCs.ScriptCsCatalogFactory' not found.");
+                    }
+                }
+                else
+                {
+                    Tracing.Debug("Assembly 'Pretzel.ScriptCs.dll' detected but not loaded.");
+                }
             }
         }
     }
