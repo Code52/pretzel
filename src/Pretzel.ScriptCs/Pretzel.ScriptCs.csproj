@@ -80,8 +80,9 @@
     <Reference Include="Roslyn.Compilers.CSharp">
       <HintPath>..\packages\Roslyn.Compilers.CSharp.1.2.20906.2\lib\net45\Roslyn.Compilers.CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="ScriptCs.ComponentModel.Composition">
-      <HintPath>..\packages\ScriptCs.ComponentModel.Composition.0.1.1\lib\net45\ScriptCs.ComponentModel.Composition.dll</HintPath>
+    <Reference Include="ScriptCs.ComponentModel.Composition, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ScriptCs.ComponentModel.Composition.0.1.2\lib\net45\ScriptCs.ComponentModel.Composition.dll</HintPath>
     </Reference>
     <Reference Include="ScriptCs.Contracts">
       <HintPath>..\packages\ScriptCs.Contracts.0.14.0\lib\net45\ScriptCs.Contracts.dll</HintPath>
@@ -113,12 +114,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Pretzel.ScriptCs.Contracts\Pretzel.ScriptCs.Contracts.csproj">
-      <Project>{99c7f7d2-fcfe-4ff5-9a58-b1cd38d8a64d}</Project>
-      <Name>Pretzel.ScriptCs.Contracts</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
