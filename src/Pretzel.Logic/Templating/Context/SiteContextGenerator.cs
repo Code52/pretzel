@@ -59,6 +59,10 @@ namespace Pretzel.Logic.Templating.Context
                         }
                     }
                 }
+                if (config.ContainsKey("exclude"))
+                {
+                    excludes.AddRange((IEnumerable<string>)config["exclude"]);
+                }
 
                 var context = new SiteContext
                 {
@@ -193,9 +197,14 @@ namespace Pretzel.Logic.Templating.Context
             return postFirstLine != null && postFirstLine.StartsWith("---");
         }
 
+        private bool IsExcludedPath(string relativePath)
+        {
+            return excludes.Contains(relativePath) || excludes.Any(e => relativePath.StartsWith(e));
+        }
+
         public bool CanBeIncluded(string relativePath)
         {
-            if (excludes.Count > 0 && excludes.Contains(relativePath))
+            if (excludes.Count > 0 && IsExcludedPath(relativePath))
             {
                 return false;
             }
