@@ -420,8 +420,7 @@ title: Title
             // arrange
             Func<string, bool> function = generator.CanBeIncluded;
             fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
-pretzel:
-  include: [_folder, .something-else, some-file.tmp, test\somefile.txt, subfolder\childfolder, anotherfolder\tempfile.tmp]
+include: [_folder, .something-else, some-file.tmp, test\somefile.txt, subfolder\childfolder, anotherfolder\tempfile.tmp]
 ---"));
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
@@ -450,14 +449,14 @@ pretzel:
             // arrange
             Func<string, bool> function = generator.CanBeIncluded;
             fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
-pretzel:
-  exclude: [folder, .htaccess, some-file.tmp, test\somefile.txt, subfolder\childfolder, anotherfolder\tempfile.tmp]
+exclude: [folder, .htaccess, some-file.tmp, test\somefile.txt, subfolder\childfolder, anotherfolder\tempfile.tmp]
 ---"));
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.False(function("folder"));
+            Assert.False(function("folder\file.txt"));
             Assert.False(function("_folder"));
 
             // .htaccess is excluded
@@ -480,9 +479,8 @@ pretzel:
             // arrange
             Func<string, bool> function = generator.CanBeIncluded;
             fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
-pretzel:
-  include: [_folder, .something-else]
-  exclude: [folder, test\somefile.txt]
+include: [_folder, .something-else]
+exclude: [folder, test\somefile.txt]
 ---"));
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);

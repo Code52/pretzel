@@ -44,20 +44,9 @@ namespace Pretzel.Logic.Templating.Context
                 if (!config.ContainsKey("permalink"))
                     config.Add("permalink", "/:year/:month/:day/:title.html");
 
-                if (config.ContainsKey("pretzel"))
+                if (config.ContainsKey("include"))
                 {
-                    var pretzelSettings = config["pretzel"] as Dictionary<string, object>;
-                    if (pretzelSettings != null)
-                    {
-                        if (pretzelSettings.ContainsKey("include") && includes.Count == 0)
-                        {
-                            includes.AddRange((IEnumerable<string>)pretzelSettings["include"]);
-                        }
-                        if (pretzelSettings.ContainsKey("exclude") && excludes.Count == 0)
-                        {
-                            excludes.AddRange((IEnumerable<string>)pretzelSettings["exclude"]);
-                        }
-                    }
+                    includes.AddRange((IEnumerable<string>)config["include"]);
                 }
                 if (config.ContainsKey("exclude"))
                 {
