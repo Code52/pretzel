@@ -191,6 +191,11 @@ namespace Pretzel.Logic.Templating.Context
             return excludes.Contains(relativePath) || excludes.Any(e => relativePath.StartsWith(e));
         }
 
+        private bool IsIncludedPath(string relativePath)
+        {
+            return includes.Contains(relativePath) || includes.Any(e => relativePath.StartsWith(e));
+        }
+
         public bool CanBeIncluded(string relativePath)
         {
             if (excludes.Count > 0 && IsExcludedPath(relativePath))
@@ -198,7 +203,7 @@ namespace Pretzel.Logic.Templating.Context
                 return false;
             }
 
-            if (includes.Count > 0 && includes.Contains(relativePath))
+            if (includes.Count > 0 && IsIncludedPath(relativePath))
             {
                 return true;
             }

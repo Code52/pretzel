@@ -438,6 +438,8 @@ include: [_folder, .something-else, some-file.tmp, test\somefile.txt, subfolder\
             Assert.False(function("some-file.TMP"));
             Assert.True(function("another-file.bar"));
 
+            Assert.True(function("_folder\file.txt"));
+
             Assert.True(function(@"test\somefile.txt"));
             Assert.True(function(@"subfolder\childfolder"));
             Assert.True(function(@"anotherfolder\tempfile.tmp"));
