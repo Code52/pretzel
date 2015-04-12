@@ -127,7 +127,7 @@ namespace Pretzel
         /// <returns>Path to the file</returns>
         private string GetFullPath(string request) 
         {
-            return Uri.UnescapeDataString(Path.Combine(basePath + request));
+            return System.Web.HttpUtility.UrlDecode(Path.Combine(basePath + request));
         }
     }
 }
