@@ -44,20 +44,13 @@ namespace Pretzel.Logic.Templating.Context
                     config.Add("permalink", "date");
                 }
 
-                if (config.ContainsKey("pretzel"))
+                if (config.ContainsKey("include"))
                 {
-                    var pretzelSettings = config["pretzel"] as Dictionary<string, object>;
-                    if (pretzelSettings != null)
-                    {
-                        if (pretzelSettings.ContainsKey("include") && includes.Count == 0)
-                        {
-                            includes.AddRange((IEnumerable<string>)pretzelSettings["include"]);
-                        }
-                        if (pretzelSettings.ContainsKey("exclude") && excludes.Count == 0)
-                        {
-                            excludes.AddRange((IEnumerable<string>)pretzelSettings["exclude"]);
-                        }
-                    }
+                    includes.AddRange((IEnumerable<string>)config["include"]);
+                }
+                if (config.ContainsKey("exclude"))
+                {
+                    excludes.AddRange((IEnumerable<string>)config["exclude"]);
                 }
 
                 var context = new SiteContext
@@ -193,14 +186,24 @@ namespace Pretzel.Logic.Templating.Context
             return postFirstLine != null && postFirstLine.StartsWith("---");
         }
 
+        private bool IsExcludedPath(string relativePath)
+        {
+            return excludes.Contains(relativePath) || excludes.Any(e => relativePath.StartsWith(e));
+        }
+
+        private bool IsIncludedPath(string relativePath)
+        {
+            return includes.Contains(relativePath) || includes.Any(e => relativePath.StartsWith(e));
+        }
+
         public bool CanBeIncluded(string relativePath)
         {
-            if (excludes.Count > 0 && excludes.Contains(relativePath))
+            if (excludes.Count > 0 && IsExcludedPath(relativePath))
             {
                 return false;
             }
 
-            if (includes.Count > 0 && includes.Contains(relativePath))
+            if (includes.Count > 0 && IsIncludedPath(relativePath))
             {
                 return true;
             }
