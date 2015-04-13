@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CommandParameters.cs" />
+    <Compile Include="Commands\BaseParameters.cs" />
     <Compile Include="Exceptions\PageProcessingException.cs" />
     <Compile Include="Extensibility\Extensions\AzureHostSupport.cs" />
     <Compile Include="Extensibility\Extensions\PrettifyUrlFilter.cs" />

@@ -24,10 +24,10 @@ namespace Pretzel.Logic.Templating
 
 #pragma warning restore 0649
 
-        [ImportMany(AllowRecomposition = true)]
+        [ImportMany]
         public IEnumerable<IFilter> Filters { get; set; }
 
-        [ImportMany(AllowRecomposition = true)]
+        [ImportMany]
         public IEnumerable<ITag> Tags { get; set; }
 
         public abstract void Initialize();

@@ -20,39 +20,30 @@ namespace Pretzel
         [Import]
         private CommandCollection Commands { get; set; }
 
-        private AggregateCatalog catalog;
-
-        private CompositionContainer container;
-
         private static void Main(string[] args)
         {
             Tracing.Logger.SetWriter(Console.Out);
             Tracing.Logger.AddCategory("info");
             Tracing.Logger.AddCategory("error");
 
-            var debug = false;
-            var help = false;
-            var defaultSet = new OptionSet
-                {
-                    {"help", "Display help mode", p => help = true},
-                    {"debug", "Enable debugging", p => debug = true}
-                };
-            defaultSet.Parse(args);
+            var parameters = BaseParameters.Parse(args, new FileSystem());
 
-            if (debug)
+            if (parameters.Debug)
+            {
                 Tracing.Logger.AddCategory("debug");
+            }
 
             var program = new Program();
             Tracing.Info("starting pretzel...");
-            program.Compose();
+            program.Compose(parameters);
 
-            if (help || !args.Any())
+            if (parameters.Help || !args.Any())
             {
-                program.ShowHelp(defaultSet);
+                program.ShowHelp(parameters.Options);
                 return;
             }
 
-            program.Run(args, defaultSet);
+            program.Run(args, parameters);
         }
 
         private void ShowHelp(OptionSet defaultSet)
@@ -61,20 +52,16 @@ namespace Pretzel
             WaitForClose();
         }
 
-        private void Run(string[] args, OptionSet defaultSet)
+        private void Run(string[] args, BaseParameters baseParameters)
         {
-            var commandName = args[0];
-            var commandArgs = args.Skip(1).ToArray();
-
-            if (Commands[commandName] == null)
+            if (Commands[baseParameters.CommandName] == null)
             {
-                Console.WriteLine(@"Can't find command ""{0}""", commandName);
-                Commands.WriteHelp(defaultSet);
+                Console.WriteLine(@"Can't find command ""{0}""", baseParameters.CommandName);
+                Commands.WriteHelp(baseParameters.Options);
                 return;
             }
 
-            LoadPlugins(commandArgs);
-            Commands[commandName].Execute(commandArgs);
+            Commands[baseParameters.CommandName].Execute(baseParameters.CommandArgs);
             WaitForClose();
         }
 
@@ -92,11 +79,32 @@ namespace Pretzel
             }
         }
 
-        private void LoadPlugins(string[] commandArgs)
+        public void Compose(BaseParameters parameters)
         {
-            var parameters = container.GetExport<CommandParameters>().Value;
-            parameters.Parse(commandArgs);
+            try
+            {
+                var catalog = new AggregateCatalog(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
 
+                LoadPlugins(catalog, parameters);
+
+                var container = new CompositionContainer(catalog);
+
+                var batch = new CompositionBatch();
+                batch.AddPart(this);
+                batch.AddPart(parameters);
+                container.Compose(batch);
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                Console.WriteLine(@"Unable to load: \r\n{0}",
+                    string.Join("\r\n", ex.LoaderExceptions.Select(e => e.Message)));
+
+                throw;
+            }
+        }
+
+        private void LoadPlugins(AggregateCatalog catalog, BaseParameters parameters)
+        {
             if (!parameters.Safe)
             {
                 var pluginsPath = Path.Combine(parameters.Path, "_plugins");
@@ -106,27 +114,6 @@ namespace Pretzel
                     catalog.Catalogs.Add(new DirectoryCatalog(pluginsPath));
                     AddScriptCs(catalog, pluginsPath);
                 }
-            }
-        }
-
-        public void Compose()
-        {
-            try
-            {
-                catalog = new AggregateCatalog(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
-                container = new CompositionContainer(catalog);
-
-                var batch = new CompositionBatch();
-                batch.AddExportedValue<IFileSystem>(new FileSystem());
-                batch.AddPart(this);
-                container.Compose(batch);
-            }
-            catch (ReflectionTypeLoadException ex)
-            {
-                Console.WriteLine(@"Unable to load: \r\n{0}",
-                    string.Join("\r\n", ex.LoaderExceptions.Select(e => e.Message)));
-
-                throw;
             }
         }
 
