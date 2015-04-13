@@ -77,8 +77,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandParameterOutputTests.cs" />
-    <Compile Include="CommandParameterTests.cs" />
+    <Compile Include="Commands\CommandParameterOutputTests.cs" />
+    <Compile Include="Commands\CommandParameterTests.cs" />
+    <Compile Include="Commands\BaseParameterTests.cs" />
     <Compile Include="Commands\CommandExtensions.cs" />
     <Compile Include="Extensibility\Extensions\AzureHostSupportTest.cs" />
     <Compile Include="Extensibility\Extensions\VirtualDirectorySupportTests.cs" />

@@ -27,24 +27,7 @@ namespace Pretzel.Tests
 
         public CommandParameterTests()
         {
-            subject = new CommandParameters(Enumerable.Empty<IHaveCommandLineArgs>(), FileSystem);
-        }
-
-        [Fact]
-        public void Parse_WhenNoParametersSet_MapsPathToCurrentDirectory()
-        {
-            var args = new List<string>();
-            subject.Parse(args);
-            Assert.Equal(FileSystem.Directory.GetCurrentDirectory(), subject.Path);
-            Assert.Equal(FileSystem.Path.Combine(subject.Path, "_site"), subject.DestinationPath);
-        }
-
-        [Fact]
-        public void Parse_WhenOneParameterSet_MapsToPath()
-        {
-            var args = new List<string> { ExpectedPath };
-            subject.Parse(args);
-            Assert.Equal(ExpectedPath, subject.Path);
+            subject = new CommandParameters(Enumerable.Empty<IHaveCommandLineArgs>(), FileSystem) { Path = ExpectedPath };
         }
 
         [Fact]
@@ -77,38 +60,6 @@ namespace Pretzel.Tests
             var args = new List<string> { "-template", ExpectedTemplate };
             subject.Parse(args);
             Assert.Equal(ExpectedTemplate, subject.Template);
-        }
-
-        [Fact]
-        public void Parse_WhenSpecifyingPathUsingShortParameter_MapsToPath()
-        {
-            var args = new List<string> { "--d", ExpectedPath };
-            subject.Parse(args);
-            Assert.Equal(ExpectedPath, subject.Path);
-        }
-
-        [Fact]
-        public void Parse_WhenSpecifyingPathUsingFullParameter_MapsToPath()
-        {
-            var args = new List<string> { "--directory", ExpectedPath };
-            subject.Parse(args);
-            Assert.Equal(ExpectedPath, subject.Path);
-        }
-
-        [Fact]
-        public void Parse_WhenSpecifyingPathUsingShortParameterSingleDash_MapsToPath()
-        {
-            var args = new List<string> { "-d", ExpectedPath };
-            subject.Parse(args);
-            Assert.Equal(ExpectedPath, subject.Path);
-        }
-
-        [Fact]
-        public void Parse_WhenSpecifyingPathUsingFullParameterSingleDash_MapsToPath()
-        {
-            var args = new List<string> { "-directory", ExpectedPath };
-            subject.Parse(args);
-            Assert.Equal(ExpectedPath, subject.Path);
         }
 
         [Fact]
@@ -288,12 +239,11 @@ namespace Pretzel.Tests
         [Fact]
         public void CommandParameters_WhenSpecifyingAllParameters_ResultIsCorrect()
         {
-            var args = new List<string> { "-template=jekyll", @"-directory=c:\mysite", "-port=8182", "-import=blogger", "-file=BloggerExport.xml", "-drafts", "-nobrowser", "-withproject", "-wiki", "-cleantarget", "-safe" };
+            var args = new List<string> { "-template=jekyll", "-port=8182", "-import=blogger", "-file=BloggerExport.xml", "-drafts", "-nobrowser", "-withproject", "-wiki", "-cleantarget" };
 
             subject.Parse(args);
 
             Assert.Equal("jekyll", subject.Template);
-            Assert.Equal(@"c:\mysite", subject.Path);
             Assert.Equal(8182, subject.Port);
             Assert.Equal("blogger", subject.ImportType);
             Assert.Equal("BloggerExport.xml", subject.ImportPath);
@@ -302,8 +252,7 @@ namespace Pretzel.Tests
             Assert.True(subject.WithProject);
             Assert.True(subject.Wiki);
             Assert.True(subject.CleanTarget);
-            Assert.True(subject.Safe);
-            Assert.Equal(@"c:\mysite\_site", subject.DestinationPath);
+            Assert.Equal(FileSystem.Path.Combine(subject.Path, "_site"), subject.DestinationPath);
         }
 
         [Fact]
@@ -316,7 +265,6 @@ namespace Pretzel.Tests
             Assert.Equal(8080, subject.Port);
             Assert.True(subject.LaunchBrowser);
             Assert.Null(subject.Template);
-            Assert.Equal(FileSystem.Directory.GetCurrentDirectory(), subject.Path);
             Assert.Null(subject.ImportType);
             Assert.Null(subject.ImportPath);
             Assert.False(subject.IncludeDrafts);
@@ -338,7 +286,7 @@ namespace Pretzel.Tests
                     options.Add<string>("newOption=", "description", v => NewOption = v);
                 });
 
-            var subject = new CommandParameters(new List<IHaveCommandLineArgs> { extension }, new MockFileSystem());
+            var subject = new CommandParameters(new List<IHaveCommandLineArgs> { extension }, new MockFileSystem()) { Path = ExpectedPath };
             var args = new List<string> { "-newOption=test" };
 
             subject.Parse(args);
@@ -347,17 +295,6 @@ namespace Pretzel.Tests
         }
 
         protected string NewOption { get; set; }
-
-        [Fact]
-        public void Parse_WhenOneParameterSet_MapsToPath_RelativePath()
-        {
-            var args = new List<string> { "mySite" };
-
-            subject.Parse(args);
-
-            Assert.Equal(FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), "mySite"), subject.Path);
-            Assert.Equal(FileSystem.Path.Combine(subject.Path, "_site"), subject.DestinationPath);
-        }
 
         [Fact]
         public void DetectFromDirectory_WhenSpecifyingNoSiteEngines_DefaultValueIsLiquid()
@@ -451,62 +388,6 @@ namespace Pretzel.Tests
         }
 
         [Fact]
-        public void LaunchBrowser_WhenSpecifyingSafetDoubleDash_IsTrue()
-        {
-            var args = new List<string> { "--safe" };
-            subject.Parse(args);
-            Assert.True(subject.Safe);
-        }
-
-        [Fact]
-        public void LaunchBrowser_WhenSpecifyingSafeSingleDash_IsTrue()
-        {
-            var args = new List<string> { "-safe" };
-            subject.Parse(args);
-            Assert.True(subject.Safe);
-        }
-
-        [Fact]
-        public void LaunchBrowser_WhenNotSpecifyingSafe_IsFalse()
-        {
-            var args = new List<string>();
-            subject.Parse(args);
-            Assert.False(subject.Safe);
-        }
-
-        [Fact]
-        public void Parse_WhenSpecifyingSourcePathUsingShortParameter_MapsToPath()
-        {
-            var args = new List<string> { "--s", ExpectedPath };
-            subject.Parse(args);
-            Assert.Equal(ExpectedPath, subject.Path);
-        }
-
-        [Fact]
-        public void Parse_WhenSpecifyingSourcePathUsingFullParameter_MapsToPath()
-        {
-            var args = new List<string> { "--source", ExpectedPath };
-            subject.Parse(args);
-            Assert.Equal(ExpectedPath, subject.Path);
-        }
-
-        [Fact]
-        public void Parse_WhenSpecifyingSourcePathUsingShortParameterSingleDash_MapsToPath()
-        {
-            var args = new List<string> { "-s", ExpectedPath };
-            subject.Parse(args);
-            Assert.Equal(ExpectedPath, subject.Path);
-        }
-
-        [Fact]
-        public void Parse_WhenSpecifyingSourcePathUsingFullParameterSingleDash_MapsToPath()
-        {
-            var args = new List<string> { "-source", ExpectedPath };
-            subject.Parse(args);
-            Assert.Equal(ExpectedPath, subject.Path);
-        }
-
-        [Fact]
         public void Parse_WhenSpecifyingDestinationPathUsingFullParameter_MapsToPath()
         {
             var args = new List<string> { "--destination", ExpectedDestinationPath };
@@ -527,7 +408,7 @@ namespace Pretzel.Tests
         {
             var args = new List<string>();
             subject.Parse(args);
-            Assert.Equal(FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), "_site"), subject.DestinationPath);
+            Assert.Equal(FileSystem.Path.Combine(subject.Path, "_site"), subject.DestinationPath);
         }
     }
 }
