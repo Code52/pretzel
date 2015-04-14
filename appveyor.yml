@@ -33,16 +33,22 @@ artifacts:
   - path: artifacts\Pretzel.*.nupkg
     name: Pretzel.nupkg
 
+  - path: artifacts\Pretzel.ScriptCs.*.nupkg
+    name: Pretzel.ScriptCs.nupkg
+
   - path: coverage.xml
 
   - path: Pretzel.*.zip
     name: Pretzel.zip
+    
+  - path: Pretzel.ScriptCs.*.zip
+    name: Pretzel.ScriptCs.zip
 
 deploy:
   - provider: GitHub
     auth_token:
       secure: piWk1xd/YxJK+HJOFwJyBORP+Go1p4XO6148zeePdyVEGPxk4wGXk5tP2jYkM4eU
-    artifact: Pretzel.zip
+    artifact: Pretzel.zip, Pretzel.ScriptCs.zip
     description: $(releaseDescription)
     on:
       appveyor_repo_tag: true
@@ -52,6 +58,6 @@ deploy:
     api_key:
       secure: 2GBJF71EQfU+kIL5NHVM4wYoCRcFf/gM/voNIgud8vDWUE+uA1ye/hRWjJPQWA5w
     skip_symbols: true
-    artifact: Pretzel.nupkg
+    artifact: /.*\.nupkg/
     on:
       appveyor_repo_tag: true
