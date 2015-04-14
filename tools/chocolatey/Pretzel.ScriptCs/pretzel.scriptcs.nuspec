@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>pretzel.scriptcs</id>
+    <version>$version$</version>
+    <title>Pretzel.ScriptCs</title>
+    <authors>Code52</authors>
+    <owners>Code52</owners>
+    <projectUrl>https://github.com/Code52/pretzel</projectUrl>
+    <iconUrl>https://cdn.rawgit.com/Code52/pretzel/master/pretzel.png</iconUrl>
+    <licenseUrl>https://github.com/Code52/pretzel/blob/master/LICENSE.md</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>An addin for Pretzel allowing to add plugin from a ScriptCs script.</description>
+    <tags>Pretzel ScriptCs plugin</tags>
+  </metadata>
+</package>
