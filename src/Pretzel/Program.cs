@@ -119,9 +119,10 @@ namespace Pretzel
 
         private void AddScriptCs(AggregateCatalog mainCatalog, string pluginsPath)
         {
-            if (File.Exists("Pretzel.ScriptCs.dll"))
+            var pretzelScriptCsPath = Assembly.GetEntryAssembly().Location.Replace("Pretzel.exe", "Pretzel.ScriptCs.dll");
+            if (File.Exists(pretzelScriptCsPath))
             {
-                var pretzelScriptcsAssembly = Assembly.LoadFile(Path.GetFullPath("Pretzel.ScriptCs.dll"));
+                var pretzelScriptcsAssembly = Assembly.LoadFile(pretzelScriptCsPath);
                 if (pretzelScriptcsAssembly != null)
                 {
                     var factoryType = pretzelScriptcsAssembly.GetType("Pretzel.ScriptCs.ScriptCsCatalogFactory");
