@@ -1,8 +1,10 @@
 $packageName = 'Pretzel'
 
+Write-Debug "Uninstall $packageName"
+
 try {
   $binRoot = Get-BinRoot
-  $pretzelPath = "$binRoot\pretzel"
+  $pretzelPath = "$binRoot\$packageName"
    
   # Remove folder
   If (Test-Path $pretzelPath){

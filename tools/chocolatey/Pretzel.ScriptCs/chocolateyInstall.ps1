@@ -3,7 +3,7 @@ $url = 'https://github.com/Code52/Pretzel/releases/download/{{tag}}/Pretzel.Scri
 
 try {
   $binRoot = Get-BinRoot
-  $pretzelPath = "$binRoot\pretzel"
+  $pretzelPath = "$binRoot\Pretzel"
     
   Install-ChocolateyZipPackage "$packageName" "$url" $pretzelPath
   
