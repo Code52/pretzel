@@ -53,8 +53,12 @@ nuget pack chocoTemp\Pretzel\pretzel.nuspec -OutputDirectory artifacts -Version 
 mkdir chocoTemp\Pretzel.ScriptCs\tools
 move tools\chocolatey\Pretzel.ScriptCs\pretzel.scriptcs.nuspec chocoTemp\Pretzel.ScriptCs\pretzel.scriptcs.nuspec
 move tools\chocolatey\Pretzel.ScriptCs\chocolateyInstall.ps1 chocoTemp\Pretzel.ScriptCs\tools\chocolateyInstall.ps1
+move tools\chocolatey\Pretzel.ScriptCs\chocolateyUninstall.ps1 chocoTemp\Pretzel.ScriptCs\tools\chocolateyUninstall.ps1
 (gc chocoTemp\Pretzel.ScriptCs\tools\chocolateyInstall.ps1).replace('{{version}}',$version).replace('{{tag}}',$tag)|sc chocoTemp\Pretzel.ScriptCs\tools\chocolateyInstall.ps1
 nuget pack chocoTemp\Pretzel.ScriptCs\pretzel.scriptcs.nuspec -OutputDirectory artifacts -Version $version -NoPackageAnalysis
 
 # create Pretzel.ScriptCs zip
+get-childitem src\Pretzel.ScriptCs\bin\Release -filter *.dll | % { $_.Name } | out-file artifacts\Pretzel.ScriptCs.Files.txt
+
 7z a Pretzel.ScriptCs.$version.zip $env:appveyor_build_folder\src\Pretzel.ScriptCs\bin\Release\*.dll
+7z a Pretzel.ScriptCs.$version.zip $env:appveyor_build_folder\artifacts\Pretzel.ScriptCs.Files.txt
