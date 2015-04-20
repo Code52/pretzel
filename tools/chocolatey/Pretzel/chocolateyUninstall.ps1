@@ -1,38 +1,30 @@
-$packageName = 'Pretzel'
+Write-Debug "Uninstall Pretzel"
 
-Write-Debug "Uninstall $packageName"
+$binRoot = Get-BinRoot
+$installDir = Join-Path $binRoot "Pretzel"
 
-try {
-  $binRoot = Get-BinRoot
-  $pretzelPath = "$binRoot\$packageName"
-   
-  # Remove folder
-  If (Test-Path $pretzelPath){
-    Remove-Item $pretzelPath
-  }
-   
-  # Remove path
-   
-  #get the PATH variable
-  $envPath = $env:PATH
-  $pathType = [System.EnvironmentVariableTarget]::User
-   
-  if ($envPath.ToLower().Contains($pretzelPath.ToLower()))
-  {
+# Remove folder
+If (Test-Path $installDir){
+    Remove-Item $installDir -Recurse
+}
+
+# Remove path
+
+#get the PATH variable
+$envPath = $env:PATH
+$pathType = [System.EnvironmentVariableTarget]::User
+
+if ($envPath.ToLower().Contains($installDir.ToLower()))
+{
     $statementTerminator = ";"
-    Write-Host "PATH environment variable contains old pretzel path $pretzelPath. Removing..."
+    Write-Debug "PATH environment variable contains old pretzel path $installDir. Removing..."
     $actualPath = [System.Collections.ArrayList](Get-EnvironmentVariable -Name 'Path' -Scope $pathType).split($statementTerminator)
- 
-    $actualPath.Remove($pretzelPath)
+
+    $actualPath.Remove($installDir)
     $newPath = $actualPath -Join $statementTerminator
- 
+
     Set-EnvironmentVariable -Name 'Path' -Value $newPath -Scope $pathType
-     
-  } else {
-    Write-Debug " The path to uninstall `'$pretzelPath`' was not found in the `'$pathType`' PATH. Could not remove."
-  }
-   
-} catch {
-  Write-ChocolateyFailure '$packageName uninstallation' $($_.Exception.Message)
-  throw 
+
+} else {
+    Write-Debug " The path to uninstall `'$installDir`' was not found in the `'$pathType`' PATH. Could not remove."
 }
