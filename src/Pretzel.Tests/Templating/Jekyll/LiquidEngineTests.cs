@@ -1242,6 +1242,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 var engine = new LiquidEngine();
                 engine.Initialize();
+                engine.Tags = new List<ITag> { new PostUrlTag() };
                 return engine;
             }
 
