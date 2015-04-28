@@ -110,8 +110,19 @@ namespace Pretzel
         {
             try
             {
-                var first = new AssemblyCatalog(Assembly.GetExecutingAssembly());
-                catalog = new AggregateCatalog(first);
+                var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+
+                loadedAssemblies
+                    .SelectMany(x => x.GetReferencedAssemblies())
+                    .Distinct()
+                    .Where(y => loadedAssemblies.Any((a) => a.FullName == y.FullName) == false)
+                    .ToList()
+                    .ForEach(x => loadedAssemblies.Add(AppDomain.CurrentDomain.Load(x)));
+
+                catalog = new AggregateCatalog();
+
+                foreach (var l in loadedAssemblies)
+                    catalog.Catalogs.Add(new AssemblyCatalog(l));
                 container = new CompositionContainer(catalog);
 
                 var batch = new CompositionBatch();
