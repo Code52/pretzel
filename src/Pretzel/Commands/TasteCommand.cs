@@ -132,7 +132,7 @@ namespace Pretzel.Commands
 
         public void WriteHelp(TextWriter writer)
         {
-            parameters.WriteOptions(writer, "-t", "-d", "-p", "--nobrowser", "-cleantarget");
+            parameters.WriteOptions(writer, "-t", "-d", "-p", "--nobrowser", "-cleantarget", "-s", "-destination");
         }
     }
 }

@@ -32,19 +32,33 @@ If ($env:appveyor_repo_tag -eq $True)
 	Set-AppveyorBuildVariable 'releaseDescription' $description
 }
 
-# build nupkg
-
 mkdir artifacts
-mkdir chocoTemp\tools
 
-move tools\chocolatey\pretzel.nuspec chocoTemp\pretzel.nuspec
-move tools\chocolatey\chocolateyInstall.ps1 chocoTemp\tools\chocolateyInstall.ps1
+# build Pretzel nupkg
+mkdir chocoTemp\Pretzel\tools
 
-(gc chocoTemp\tools\chocolateyInstall.ps1).replace('{{version}}',$version).replace('{{tag}}',$tag)|sc chocoTemp\tools\chocolateyInstall.ps1
+move tools\chocolatey\Pretzel\pretzel.nuspec chocoTemp\Pretzel\pretzel.nuspec
+move tools\chocolatey\Pretzel\chocolateyInstall.ps1 chocoTemp\Pretzel\tools\chocolateyInstall.ps1
+move tools\chocolatey\Pretzel\chocolateyUninstall.ps1 chocoTemp\Pretzel\tools\chocolateyUninstall.ps1
 
-nuget pack chocoTemp\pretzel.nuspec -OutputDirectory artifacts -Version $version -NoPackageAnalysis
+(gc chocoTemp\Pretzel\tools\chocolateyInstall.ps1).replace('{{version}}',$version).replace('{{tag}}',$tag)|sc chocoTemp\Pretzel\tools\chocolateyInstall.ps1
 
-# create zip
+nuget pack chocoTemp\Pretzel\pretzel.nuspec -OutputDirectory artifacts -Version $version -NoPackageAnalysis
 
+# create Pretzel zip
 7z a Pretzel.$version.zip $env:appveyor_build_folder\src\Pretzel\bin\Release\Pretzel.exe*
 7z a Pretzel.$version.zip ReleaseNotes.md
+
+# build Pretzel.ScriptCs nupkg
+mkdir chocoTemp\Pretzel.ScriptCs\tools
+move tools\chocolatey\Pretzel.ScriptCs\pretzel.scriptcs.nuspec chocoTemp\Pretzel.ScriptCs\pretzel.scriptcs.nuspec
+move tools\chocolatey\Pretzel.ScriptCs\chocolateyInstall.ps1 chocoTemp\Pretzel.ScriptCs\tools\chocolateyInstall.ps1
+move tools\chocolatey\Pretzel.ScriptCs\chocolateyUninstall.ps1 chocoTemp\Pretzel.ScriptCs\tools\chocolateyUninstall.ps1
+(gc chocoTemp\Pretzel.ScriptCs\tools\chocolateyInstall.ps1).replace('{{version}}',$version).replace('{{tag}}',$tag)|sc chocoTemp\Pretzel.ScriptCs\tools\chocolateyInstall.ps1
+nuget pack chocoTemp\Pretzel.ScriptCs\pretzel.scriptcs.nuspec -OutputDirectory artifacts -Version $version -NoPackageAnalysis
+
+# create Pretzel.ScriptCs zip
+get-childitem src\Pretzel.ScriptCs\bin\Release -filter *.dll | % { $_.Name } | out-file artifacts\Pretzel.ScriptCs.Files.txt
+
+7z a Pretzel.ScriptCs.$version.zip $env:appveyor_build_folder\src\Pretzel.ScriptCs\bin\Release\*.dll
+7z a Pretzel.ScriptCs.$version.zip $env:appveyor_build_folder\artifacts\Pretzel.ScriptCs.Files.txt
