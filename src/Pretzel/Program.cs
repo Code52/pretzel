@@ -35,6 +35,8 @@ namespace Pretzel
 
             var program = new Program();
             Tracing.Info("starting pretzel...");
+            Tracing.Debug(string.Format("V{0}", Assembly.GetExecutingAssembly().GetName().Version));
+
             program.Compose(parameters);
 
             if (parameters.Help || !args.Any())
