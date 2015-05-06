@@ -1,9 +1,7 @@
 <Project ToolsVersion="4.0" DefaultTargets="Compile;Test;Chocolatey" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
   <!-- TODO: mono build -->
   <!-- TODO: package step to merge code into one binary -->
   <Import Project="$(MSBuildProjectDirectory)\tools\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
-  
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)'==''">Release</Configuration>
     <Version>$(BUILD_NUMBER)</Version>
@@ -14,98 +12,75 @@
     <ArtifactsDir>$(MSBuildProjectDirectory)\artifacts\</ArtifactsDir>
     <TestsDir>$(MSBuildProjectDirectory)\tests\</TestsDir>
     <SourceDir>$(MSBuildProjectDirectory)\src\</SourceDir>
-	<CurrentYear>$([System.DateTime]::Now.ToString(yyyy))</CurrentYear>
+    <CurrentYear>$([System.DateTime]::Now.ToString(yyyy))</CurrentYear>
   </PropertyGroup>
-
   <UsingTask AssemblyFile=".\tools\xunit\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit" />
-
   <Target Name="Version">
-
     <GitVersion LocalPath="$(SourceDir)\..\" Condition=" '$(GitCommitHash)' == '' ">
       <Output TaskParameter="CommitHash" PropertyName="GitCommitHash" />
     </GitVersion>
-
-    <AssemblyInfo CodeLanguage="CS" 
+    <AssemblyInfo CodeLanguage="CS"
                   OutputFile="$(SourceDir)\Pretzel\Properties\AssemblyInfo.cs"
-                  AssemblyCopyright="Copyright © Code52 '$(CurrentYear)'" 
-                  ComVisible="false" 
+                  AssemblyCopyright="Copyright © Code52 '$(CurrentYear)'"
+                  ComVisible="false"
                   AssemblyInformationalVersion="Built from hash '$(GitCommitHash)'" />
-
     <Message Text="Building version $(Version) from hash $(GitCommitHash)"  Importance="High" />
-
   </Target>
-
   <Target Name="Compile">
-	<ItemGroup>
-		<TestsDll Include="$(MSBuildProjectDirectory)\**\bin\$(Configuration)\*.dll" />
-		<DataDir Include="$(MSBuildProjectDirectory)\**\bin\$(Configuration)\data\*.*" />
-	</ItemGroup>
-  
+    <ItemGroup>
+      <NuGet Include="$(MSBuildProjectDirectory)\src\.Nuget\NuGet.exe" />
+      <TestsDll Include="$(MSBuildProjectDirectory)\**\bin\$(Configuration)\*.dll" />
+      <DataDir Include="$(MSBuildProjectDirectory)\**\bin\$(Configuration)\data\*.*" />
+    </ItemGroup>
+    <Message Text="=========== Restore Nuget packages ===========" Importance="High" />
+
+    <Exec Command='"@(NuGet)" restore src' />
+
     <Message Text="=========== Compile ===========" Importance="High" />
-    
+
     <MSBuild Projects="$(SourceDir)\Pretzel.sln" Properties="Configuration=$(Configuration)" Targets="Rebuild" />
-
     <MakeDir Directories="$(ArtifactsDir)" />
-	<RemoveDir Directories="$(TestsDir)" />
-
+    <RemoveDir Directories="$(TestsDir)" />
     <Copy SourceFiles="$(SourceDir)\Pretzel\bin\$(Configuration)\Pretzel.exe"
           DestinationFolder="$(ArtifactsDir)" />
-	
     <Copy SourceFiles="@(TestsDll)"
           DestinationFolder="$(TestsDir)" />
-	
     <Copy SourceFiles="@(DataDir)"
           DestinationFolder="$(TestsDir)\data" />
-		  
     <Message Text="=========== Compile Done ===========" Importance="High" />
     <Message Text="Pretzel.exe is available at $(ArtifactsDir)" Importance="High"  />
     <Message Text="All tests are available at $(TestsDir)" Importance="High"  />
-
   </Target>
-
   <Target Name="Test">
-
     <Message Text="=========== Run Tests ===========" Importance="High" />
-
     <ItemGroup>
       <TestFiles Include="$(MSBuildProjectDirectory)\**\bin\$(Configuration)\*Tests.dll" />
     </ItemGroup>
-
     <xunit Assemblies="@(TestFiles)" />
-
     <Message Text="=========== Tests Passed ===========" Importance="High" />
   </Target>
-
   <Target Name="Chocolatey">
-
     <Message Text="=========== Chocolatey Package ===========" Importance="High" />
-
     <ItemGroup>
-      <NuGet Include="$(MSBuildProjectDirectory)\src\.Nuget\NuGet.exe" />
-	  <OldPackages Include="$(MSBuildProjectDirectory)\artifacts\*.nupkg" />
+      <OldPackages Include="$(MSBuildProjectDirectory)\artifacts\*.nupkg" />
     </ItemGroup>
-
     <PropertyGroup>
       <ChocolateyInstall>$(MSBuildProjectDirectory)\build\chocolatey\tools\chocolateyInstall.ps1</ChocolateyInstall>
     </PropertyGroup>
-	
-	<Delete Files="@(OldPackages)" />
-
+    <Delete Files="@(OldPackages)" />
     <MakeDir Directories="$(MSBuildProjectDirectory)\build\chocolatey\tools" />
-
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\tools\chocolatey\pretzel.nuspec"
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\tools\chocolatey\Pretzel\pretzel.nuspec"
           DestinationFiles="$(MSBuildProjectDirectory)\build\chocolatey\pretzel.nuspec" />
-
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\tools\chocolatey\chocolateyInstall.ps1"
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\tools\chocolatey\Pretzel\chocolateyInstall.ps1"
           DestinationFiles="$(ChocolateyInstall)" />
-    
+
     <FileUpdate Files="$(ChocolateyInstall)"
                 Regex="{{version}}"
                 ReplacementText="$(Version)"/>
-    
-    <Exec Command='"@(NuGet)" pack "$(MSBuildProjectDirectory)\build\chocolatey\pretzel.nuspec" -OutputDirectory "$(MSBuildProjectDirectory)\artifacts" -Version $(Version) -NoPackageAnalysis' />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\tools\chocolatey\Pretzel\chocolateyUninstall.ps1"
+      DestinationFiles="$(MSBuildProjectDirectory)\build\chocolatey\tools\chocolateyUninstall.ps1" />
 
+    <Exec Command='"@(NuGet)" pack "$(MSBuildProjectDirectory)\build\chocolatey\pretzel.nuspec" -OutputDirectory "$(MSBuildProjectDirectory)\artifacts" -Version $(Version) -NoPackageAnalysis' />
     <Message Text="=========== Package Done ===========" Importance="High" />
   </Target>
-
 </Project>
