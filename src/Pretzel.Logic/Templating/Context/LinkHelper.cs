@@ -33,6 +33,11 @@ namespace Pretzel.Logic.Templating.Context
                 permalink = BuiltInPermalinks[permalink];
             }
 
+            if (!permalink.EndsWith("/") && string.IsNullOrEmpty(Path.GetExtension(permalink)))
+            {
+                permalink += "/";
+            }
+
             permalink = permalink.Replace(":categories", string.Join("/", page.Categories.ToArray()));
             permalink = permalink.Replace(":dashcategories", string.Join("-", page.Categories.ToArray()));
             permalink = permalink.Replace(":year", page.Date.Year.ToString(CultureInfo.InvariantCulture));

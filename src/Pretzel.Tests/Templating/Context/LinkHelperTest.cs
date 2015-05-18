@@ -66,6 +66,8 @@ namespace Pretzel.Tests.Templating.Context
         [InlineData("/:category1/:title.html", "/cat1/foobar-baz.html", "cat1,cat2")]
         [InlineData("/:category2/:title.html", "/cat2/foobar-baz.html", "cat1,cat2")]
         [InlineData("/:category3/:title.html", "/foobar-baz.html", "cat1,cat2")]
+        [InlineData("/:categories/:title/", "/cat1/cat2/foobar-baz/", "cat1,cat2")]
+        [InlineData("/:categories/:title", "/cat1/cat2/foobar-baz/", "cat1,cat2")]
         [Theory]
         public void EvaluatePermalink_url_is_well_formatted(string permalink, string expectedUrl, string categories)
         {
