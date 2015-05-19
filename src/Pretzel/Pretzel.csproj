@@ -48,9 +48,6 @@
     <Reference Include="Firefly">
       <HintPath>..\packages\Firefly.0.6.3\lib\Firefly.dll</HintPath>
     </Reference>
-    <Reference Include="MarkdownDeep">
-      <HintPath>..\packages\MarkdownDeep.NET.1.5\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
-    </Reference>
     <Reference Include="NDesk.Options">
       <HintPath>..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
     </Reference>
