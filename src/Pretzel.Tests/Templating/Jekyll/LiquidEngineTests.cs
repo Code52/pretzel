@@ -1607,7 +1607,7 @@ namespace Pretzel.Tests.Templating.Jekyll
         {
             private SiteContext Context;
             private const string ContentWithCategory = "---\r\n category: mycategory \r\n permalink: /:categories/:year/:month/:day/:title.html \r\n---\r\n{{ site.categories[0].name }}";
-            private const string ExpectedPageContent = "<p>my</p>";
+            private const string ExpectedPageContent = "<p>mycategory</p>";
 
             public override LiquidEngine Given()
             {
@@ -1628,22 +1628,20 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 Assert.Equal(Context.Posts.Count, 1);
                 var categories = Context.Posts[0].Categories.ToList();
-                Assert.Equal(categories.Count, 3);
-                Assert.Equal(categories[0], "oh");
-                Assert.Equal(categories[1], "my");
-                Assert.Equal(categories[2], "mycategory");
+                Assert.Equal(categories.Count, 1);
+                Assert.Equal(categories[0], "mycategory");
             }
 
             [Fact]
             public void The_permalink_should_use_all_categories()
             {
-                Assert.True(FileSystem.File.Exists(@"C:\website\_site\oh\my\mycategory\2015\02\02\post.html"));
+                Assert.True(FileSystem.File.Exists(@"C:\website\_site\mycategory\2015\02\02\post.html"));
             }
 
             [Fact]
             public void The_first_alphabetically_category_must_appear_in_the_content()
             {
-                Assert.Equal(ExpectedPageContent, FileSystem.File.ReadAllText(@"C:\website\_site\oh\my\mycategory\2015\02\02\post.html").RemoveWhiteSpace());
+                Assert.Equal(ExpectedPageContent, FileSystem.File.ReadAllText(@"C:\website\_site\mycategory\2015\02\02\post.html").RemoveWhiteSpace());
             }
         }
 

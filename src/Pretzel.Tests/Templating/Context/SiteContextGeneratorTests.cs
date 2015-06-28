@@ -1057,12 +1057,37 @@ date: 20150127
         }
 
         [Fact]
-        public void permalink_with_folder_categories()
+        public void permalink_with_folder_and_post_categories()
         {
             fileSystem.AddFile(@"C:\TestSite\foo\bar\_posts\2015-03-09-SomeFile.md", new MockFileData(@"---
 categories: [cat1, cat2]
 ---# Title"));
-            var outputPath = "/foo/bar/cat1/cat2/2015/03/09/SomeFile.html";
+            var outputPath = "/cat1/cat2/2015/03/09/SomeFile.html";
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+            var firstPost = siteContext.Posts.First();
+            Assert.Equal(outputPath, firstPost.Url);
+        }
+
+        [Fact]
+        public void permalink_with_folder_categories()
+        {
+            fileSystem.AddFile(@"C:\TestSite\foo\bar\_posts\2015-03-09-SomeFile.md", new MockFileData(@"---
+---# Title"));
+            var outputPath = "/foo/bar/2015/03/09/SomeFile.html";
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+            var firstPost = siteContext.Posts.First();
+            Assert.Equal(outputPath, firstPost.Url);
+        }
+
+        [Fact]
+        public void permalink_with_post_categories()
+        {
+            fileSystem.AddFile(@"C:\TestSite\_posts\2015-03-09-SomeFile.md", new MockFileData(@"---
+categories: [cat1, cat2]
+---# Title"));
+            var outputPath = "/cat1/cat2/2015/03/09/SomeFile.html";
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
             var firstPost = siteContext.Posts.First();

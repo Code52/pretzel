@@ -296,10 +296,6 @@ namespace Pretzel.Logic.Templating.Context
         {
             var categories = new List<string>();
 
-            var postPath = page.File.Replace(context.SourceFolder, string.Empty);
-            string rawCategories = postPath.Replace(fileSystem.Path.GetFileName(page.File), string.Empty).Replace("_posts", string.Empty);
-            categories.AddRange(rawCategories.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries));
-
             if (header.ContainsKey("categories") && header["categories"] is IEnumerable<string>)
             {
                 categories.AddRange((IEnumerable<string>)header["categories"]);
@@ -307,6 +303,13 @@ namespace Pretzel.Logic.Templating.Context
             else if (header.ContainsKey("category"))
             {
                 categories.Add((string)header["category"]);
+            }
+
+            if (categories.Count == 0)
+            {
+                var postPath = page.File.Replace(context.SourceFolder, string.Empty);
+                string rawCategories = postPath.Replace(fileSystem.Path.GetFileName(page.File), string.Empty).Replace("_posts", string.Empty);
+                categories.AddRange(rawCategories.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries));
             }
 
             return categories;
