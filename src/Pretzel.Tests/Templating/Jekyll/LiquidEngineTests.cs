@@ -237,10 +237,10 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class When_Paginate_With_Default_Pagelink : BakingEnvironment<LiquidEngine>
         {
-            private const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            private const string TemplateContents = "<html><head><title>{{ page.title }}</title><link rel=\"canonical\" href=\"{{ page.url }}\" /></head><body>{{ content }}</body></html>";
             private const string PostContents = "---\r\n layout: default \r\n title: 'Post'\r\n---\r\n\r\n## Hello World!";
             private const string IndexContents = "---\r\n layout: default \r\n paginate: 1 \r\n title: 'A different title'\r\n---\r\n\r\n<h2>Hello World!</h2><p>{{ paginator.previous_page }} / {{ paginator.page }} / {{ paginator.next_page }}</p>";
-            private const string ExpectedfileContents = "<html><head><title>A different title</title></head><body><h2>Hello World!</h2><p>{0} / {1} / {2}</p></body></html>";
+            private const string ExpectedfileContents = "<html><head><title>A different title</title><link rel=\"canonical\" href=\"{3}\" /></head><body><h2>Hello World!</h2><p>{0} / {1} / {2}</p></body></html>";
 
             public override LiquidEngine Given()
             {
@@ -269,7 +269,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 for (var i = 2; i <= 5; i++)
                 {
                     var fileName = String.Format(@"C:\website\_site\page\{0}\index.html", i);
-                    var expectedContents = string.Format(ExpectedfileContents, i - 1, i, i + 1);
+                    var expectedContents = string.Format(ExpectedfileContents, i - 1, i, i + 1, "/page/" + i + "/index.html");
                     Assert.Equal(expectedContents, FileSystem.File.ReadAllText(fileName).RemoveWhiteSpace());
                 }
             }
@@ -283,7 +283,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             [Fact]
             public void But_Index_Is_Generated()
             {
-                var expectedContents = string.Format(ExpectedfileContents, 0, 1, 2);
+                var expectedContents = string.Format(ExpectedfileContents, 0, 1, 2, "/index.html");
                 Assert.Equal(expectedContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
             }
         }
