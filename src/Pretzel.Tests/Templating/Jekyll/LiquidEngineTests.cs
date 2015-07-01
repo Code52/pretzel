@@ -1895,5 +1895,53 @@ categories: [{0}]
             // act
             Assert.Equal(ExpectedfileContents, fileSystem.File.ReadAllText(string.Format(@"C:\TestSite\_site\{0}", expectedUrl)).RemoveWhiteSpace());
         }
+
+        public class Given_Page_Without_Explicit_Date : BakingEnvironment<LiquidEngine> {
+            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ page.date | date_to_xmlschema }}";
+            private const string ExpectedfileContents = "<p>2015-02-22T00:00:00+01:00</p>";
+
+            public override LiquidEngine Given() {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When() {
+                FileSystem.AddFile(@"C:\website\_posts\2015-02-22-post.md", new MockFileData(PageContents));
+                var generator = GetSiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\website\", @"D:\Result\_site", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_File_Should_Display_The_Page_Url() {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"D:\Result\_site\2015\02\22\post.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_With_Explicit_Date : BakingEnvironment<LiquidEngine> {
+            private const string PageContents = "---\r\n layout: nil \r\n date: 2015-02-23 12:00:00\r\n---\r\n\r\n{{ page.date | date_to_xmlschema }}";
+            private const string ExpectedfileContents = "<p>2015-02-23T12:00:00+01:00</p>";
+
+            public override LiquidEngine Given() {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When() {
+                FileSystem.AddFile(@"C:\website\_posts\2015-02-22-post.md", new MockFileData(PageContents));
+                var generator = GetSiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\website\", @"D:\Result\_site", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_File_Should_Display_The_Page_Url() {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"D:\Result\_site\2015\02\23\post.html").RemoveWhiteSpace());
+            }
+        }
     }
 }
