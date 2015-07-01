@@ -1898,7 +1898,7 @@ categories: [{0}]
 
         public class Given_Page_Without_Explicit_Date : BakingEnvironment<LiquidEngine> {
             private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ page.date | date_to_xmlschema }}";
-            private const string ExpectedfileContents = "<p>2015-02-22T00:00:00+01:00</p>";
+            private readonly string ExpectedfileContents = new DateTime(2015, 2, 22).ToString("<p>yyyy-MM-ddTHH:mm:sszzz<\\/p>");
 
             public override LiquidEngine Given() {
                 var engine = new LiquidEngine();
@@ -1921,8 +1921,8 @@ categories: [{0}]
         }
 
         public class Given_Page_With_Explicit_Date : BakingEnvironment<LiquidEngine> {
-            private const string PageContents = "---\r\n layout: nil \r\n date: 2015-02-23 12:00:00\r\n---\r\n\r\n{{ page.date | date_to_xmlschema }}";
-            private const string ExpectedfileContents = "<p>2015-02-23T12:00:00+01:00</p>";
+            private const string PageContents = "---\r\n layout: nil \r\n date: 2015-02-23 12:30:00\r\n---\r\n\r\n{{ page.date | date_to_xmlschema }}";
+            private readonly string ExpectedfileContents = new DateTime(2015, 2, 23, 12, 30, 0).ToString("<p>yyyy-MM-ddTHH:mm:sszzz<\\/p>");
 
             public override LiquidEngine Given() {
                 var engine = new LiquidEngine();
