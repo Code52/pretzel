@@ -428,7 +428,7 @@ namespace Pretzel.Logic.Templating.Context
 
         private string MapToOutputPath(SiteContext context, string file)
         {
-            return file.Replace(context.SourceFolder, "").TrimStart('\\');
+            return Path.GetFileName(file);
         }
 
         private string GetPathWithTimestamp(string outputDirectory, string file)
