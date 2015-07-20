@@ -119,33 +119,33 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="About" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\liquid\about.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\Liquid\About.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Atom" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\liquid\atom.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
+    <value>..\Resources\Liquid\Atom.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="Config" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\liquid\config.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\Liquid\Config.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="FirstPost" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\liquid\firstpost.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\Liquid\FirstPost.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Head" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Liquid\Head.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Index" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\liquid\index.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\Liquid\Index.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Layout" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\liquid\layout.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\Liquid\Layout.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Post" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\liquid\post.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\Liquid\Post.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Rss" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\liquid\rss.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\Liquid\Rss.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Sitemap" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\liquid\sitemap.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\Liquid\Sitemap.liquid;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>
