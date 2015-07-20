@@ -79,7 +79,7 @@ namespace Pretzel.Logic.Templating.Context
             context.Content = page.Content;
             context.Bag = page.Bag;
             context.Bag["id"] = page.Id;
-            context.Bag.Add("url", page.Url);
+            context.Bag["url"] = page.Url;
             return context;
         }
     }
