@@ -102,7 +102,8 @@ namespace Pretzel.Logic.Templating.Context
 
         public string GetTitle(string file)
         {
-            return TimestampAndTitleFromPathRegex.Match(file).Groups["title"].Value;
+            var tokens = Path.GetFileNameWithoutExtension(file).Split('-');
+            return String.Join("-", tokens.Skip(3));
         }
 
         private string GetPageTitle(string file)
