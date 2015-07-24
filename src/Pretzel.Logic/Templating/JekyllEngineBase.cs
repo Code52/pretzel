@@ -260,7 +260,10 @@ namespace Pretzel.Logic.Templating
 
         private string MapToOutputPath(string file)
         {
-            return Path.GetFileName(file);
+            var temp = file.Replace(Context.SourceFolder, "")
+                .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            
+            return temp;
         }
 
         public bool CanProcess(SiteContext context)
