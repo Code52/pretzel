@@ -545,7 +545,7 @@ namespace Pretzel.Logic.Extensions
 
         public static DateTime Datestamp(this string file)
         {
-            var fileName = file.Substring(file.LastIndexOf("\\"));
+            var fileName = System.IO.Path.GetFileName(file);
             var tokens = fileName.Split('-');
 
             if (tokens.Length < 3)
