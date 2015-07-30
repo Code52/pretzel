@@ -267,6 +267,7 @@
     <None Include="Resources\RazorWiki\layout.cshtml" />
     <None Include="Resources\Razor\About.cshtml" />
     <None Include="Resources\Razor\Head.cshtml" />
+    <None Include="Resources\Razor\Main.cshtml" />
     <None Include="Resources\Razor\Sitemap.cshtml" />
     <None Include="Resources\Razor\Atom.cshtml" />
     <None Include="Resources\Razor\Config.cshtml" />

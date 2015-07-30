@@ -150,7 +150,8 @@ namespace Pretzel.Logic.Properties {
         ///		&lt;link href=&quot;/atom.xml&quot; type=&quot;application/atom+xml&quot; rel=&quot;alternate&quot; title=&quot;Blog Feed&quot; /&gt;
         ///		&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, maximum-scale=1&quot; /&gt;
         ///		&lt;title&gt;{{ page.title }}&lt;/title&gt;
-        ///		&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;/css/style.css&quot; /&gt;        /// [rest of string was truncated]&quot;;.
+        ///		&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;/css/style.css&quot; /&gt;
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Head {
             get {
