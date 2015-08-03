@@ -71,7 +71,7 @@ namespace Pretzel.Logic.Minification
 
 
                         var n = cssfile.Replace(".css", ".less");
-                        n = n.Replace('/', '\\');
+                        n = n.Replace('/', Path.DirectorySeparatorChar);
 
                         var cssPageToCompile = siteContext.Pages.FirstOrDefault(f => f.OutputFile.Contains(n));
                         if (cssPageToCompile != null && !shouldCompile.Contains(cssPageToCompile))

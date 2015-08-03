@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Pretzel.Logic.Extensions
@@ -551,7 +552,7 @@ namespace Pretzel.Logic.Extensions
             if (tokens.Length < 3)
                 return DateTime.Now;
 
-            var timestampText = string.Join("-", tokens.Take(3)).Trim('\\');
+            var timestampText = string.Join("-", tokens.Take(3)).Trim(Path.DirectorySeparatorChar);
 
             DateTime timestamp;
             return DateTime.TryParse(timestampText, out timestamp) ? timestamp : DateTime.Now;

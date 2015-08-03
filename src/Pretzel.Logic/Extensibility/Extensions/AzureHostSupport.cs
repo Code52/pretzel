@@ -43,13 +43,13 @@ namespace Pretzel.Logic.Extensibility.Extensions
 
             foreach (var file in fileSystem.Directory.GetFiles(directory))
             {
-                var trimStart = file.Replace(directory, string.Empty).TrimStart('/', '\\');
+                var trimStart = file.Replace(directory, string.Empty).TrimStart(Path.DirectorySeparatorChar);
                 fileSystem.File.Move(file, Path.Combine(sourceFolder, trimStart));
             }
 
             foreach (var directoryToMove in fileSystem.Directory.GetDirectories(directory).Where(n => new DirectoryInfo(n).Name != "_source"))
             {
-                var trimStart = directoryToMove.Replace(directory, string.Empty).TrimStart('/', '\\');
+                var trimStart = directoryToMove.Replace(directory, string.Empty).TrimStart(Path.DirectorySeparatorChar);
                 fileSystem.Directory.Move(directoryToMove, Path.Combine(sourceFolder, trimStart));
             }
             
