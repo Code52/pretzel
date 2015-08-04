@@ -116,8 +116,8 @@ namespace Pretzel.Tests.Import
             StringBuilder sb = new StringBuilder();
             TextWriter writer = new StringWriter(sb);
             Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory("info");
-            Tracing.Logger.AddCategory("debug");
+            Tracing.Logger.AddCategory(Tracing.Category.Info);
+            Tracing.Logger.AddCategory(Tracing.Category.Debug);
 
             var fileSubstitute = Substitute.For<FileBase>();
             fileSubstitute.ReadAllText(ImportFile).Returns(ImportContent);
