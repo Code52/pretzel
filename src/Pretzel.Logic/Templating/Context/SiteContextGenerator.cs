@@ -270,11 +270,8 @@ namespace Pretzel.Logic.Templating.Context
                 // resolve id
                 page.Id = page.Url.Replace(".html", string.Empty).Replace("index", string.Empty);
 
-                // ensure the date is accessible in the hash
-                if (!page.Bag.ContainsKey("date"))
-                {
-                    page.Bag["date"] = page.Date;
-                }
+                // always write date back to Bag as DateTime
+                page.Bag["date"] = page.Date;
 
                 // The GetDirectoryPage method is reentrant, we need a cache to stop a stack overflow :)
                 pageCache.Add(file, page);

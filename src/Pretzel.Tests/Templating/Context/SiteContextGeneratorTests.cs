@@ -718,20 +718,20 @@ param: value
         [Fact]
         public void page_metadata_values()
         {
-            var currentDate = new DateTime(2015, 1, 27).ToShortDateString();
+            var currentDate = new DateTime(2015, 1, 27);
             fileSystem.AddFile(@"C:\TestSite\SomeFile.md", new MockFileData(string.Format(@"---
 title: my title
 date: {0}
 param: value
 ---# Title",
-            currentDate)));
+            currentDate.ToShortDateString())));
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(1, siteContext.Pages.Count);
             Assert.Equal("my title", siteContext.Pages[0].Title);
-            Assert.Equal(new DateTime(2015, 1, 27), siteContext.Pages[0].Date);
+            Assert.Equal(currentDate, siteContext.Pages[0].Date);
             Assert.Equal("<h1>Title</h1>", siteContext.Pages[0].Content.RemoveWhiteSpace());
             Assert.Equal(@"C:\TestSite\_site\SomeFile.md", siteContext.Pages[0].Filepath);
             Assert.Equal(@"C:\TestSite\SomeFile.md", siteContext.Pages[0].File);
@@ -811,20 +811,20 @@ param: value
         [Fact]
         public void post_metadata_values()
         {
-            var currentDate = new DateTime(2015, 1, 27).ToShortDateString();
+            var currentDate = new DateTime(2015, 1, 27);
             fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData(string.Format(@"---
 title: my title
 date: {0}
 param: value
 ---# Title",
-            currentDate)));
+            currentDate.ToShortDateString())));
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(1, siteContext.Posts.Count);
             Assert.Equal("my title", siteContext.Posts[0].Title);
-            Assert.Equal(new DateTime(2015, 1, 27), siteContext.Posts[0].Date);
+            Assert.Equal(currentDate, siteContext.Posts[0].Date);
             Assert.Equal("<h1>Title</h1>", siteContext.Posts[0].Content.RemoveWhiteSpace());
             Assert.Equal(@"C:\TestSite\_site\SomeFile.md", siteContext.Posts[0].Filepath);
             Assert.Equal(@"C:\TestSite\_posts\SomeFile.md", siteContext.Posts[0].File);
@@ -893,8 +893,8 @@ date: 20150127
             StringBuilder sb = new StringBuilder();
             TextWriter writer = new StringWriter(sb);
             Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory("info");
-            Tracing.Logger.AddCategory("debug");
+            Tracing.Logger.AddCategory(Tracing.Category.Info);
+            Tracing.Logger.AddCategory(Tracing.Category.Error);
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
@@ -930,8 +930,8 @@ date: 20150127
             StringBuilder sb = new StringBuilder();
             TextWriter writer = new StringWriter(sb);
             Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory("info");
-            Tracing.Logger.AddCategory("debug");
+            Tracing.Logger.AddCategory(Tracing.Category.Info);
+            Tracing.Logger.AddCategory(Tracing.Category.Error);
 
             var contentTransformer = Substitute.For<IContentTransform>();
             contentTransformer.Transform(Arg.Any<string>()).Returns(s => { throw new Exception("foo bar"); });
@@ -1027,8 +1027,8 @@ date: 20150127
             StringBuilder sb = new StringBuilder();
             TextWriter writer = new StringWriter(sb);
             Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory("info");
-            Tracing.Logger.AddCategory("debug");
+            Tracing.Logger.AddCategory(Tracing.Category.Info);
+            Tracing.Logger.AddCategory(Tracing.Category.Error);
 
             var generator = new SiteContextGenerator(fileSystemSubstitute, Enumerable.Empty<IContentTransform>(), new LinkHelper());
 

@@ -151,7 +151,7 @@ namespace Pretzel.Tests.Import
             StringBuilder sb = new StringBuilder();
             TextWriter writer = new StringWriter(sb);
             Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory("info");
+            Tracing.Logger.AddCategory(Tracing.Category.Info);
 
             // act
             string markdown = converter.Convert("<body><b>hello</b><br/><em>world</em></body>");

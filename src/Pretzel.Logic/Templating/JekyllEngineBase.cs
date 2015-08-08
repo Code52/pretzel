@@ -125,7 +125,9 @@ namespace Pretzel.Logic.Templating
                     if (path.EndsWith(FileSystem.Path.DirectorySeparatorChar.ToString())) {
                         path = Path.Combine(path, "index.html");
                     }
-                    pageContexts.Add(new PageContext(pageContext) { Paginator = newPaginator, OutputPath = path });
+                    var context = new PageContext(pageContext) { Paginator = newPaginator, OutputPath = path };
+                    context.Bag["url"] = link;
+                    pageContexts.Add(context);
                 }
             }
 

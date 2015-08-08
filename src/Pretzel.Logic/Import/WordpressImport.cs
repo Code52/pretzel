@@ -26,8 +26,8 @@ namespace Pretzel.Logic.Import
             var xml = fileSystem.File.ReadAllText(pathToImportFile);
             var root = XElement.Parse(CleanXml(xml));
 
-            XNamespace wp = "http://wordpress.org/export/1.1/";
-            XNamespace content = "http://purl.org/rss/1.0/modules/content/";
+            XNamespace wp = root.Attribute("{http://www.w3.org/2000/xmlns/}wp").Value;
+            XNamespace content = root.Attribute("{http://www.w3.org/2000/xmlns/}content").Value;
 
             var posts = from e in root.Descendants("item")
                         select new WordpressPost
