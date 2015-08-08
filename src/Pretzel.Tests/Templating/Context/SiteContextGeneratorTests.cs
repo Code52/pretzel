@@ -807,7 +807,7 @@ param: value
         [Fact]
         public void post_default_values()
         {
-            var filename = @"C:\TestSite\SomeFile.md";
+            var filename = @"C:\TestSite\_posts\SomeFile.md";
             var file = new MockFileData(@"---
 param: value
 ---# Title");
@@ -818,14 +818,14 @@ param: value
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
-            Assert.Equal(1, siteContext.Pages.Count);
-            Assert.Equal("this is a post", siteContext.Pages[0].Title);
-            Assert.Equal(lastmod, siteContext.Pages[0].Date.Date);
-            Assert.Equal("<h1>Title</h1>", siteContext.Pages[0].Content.RemoveWhiteSpace());
-            Assert.Equal(@"C:\TestSite\_site\SomeFile.md", siteContext.Pages[0].Filepath);
-            Assert.Equal(@"C:\TestSite\SomeFile.md", siteContext.Pages[0].File);
-            Assert.Equal(2, siteContext.Pages[0].Bag.Count); // param, date
-            Assert.Equal("value", siteContext.Pages[0].Bag["param"]);
+            Assert.Equal(1, siteContext.Posts.Count);
+            Assert.Equal("this is a post", siteContext.Posts[0].Title);
+            Assert.Equal(lastmod, siteContext.Posts[0].Date.Date);
+            Assert.Equal("<h1>Title</h1>", siteContext.Posts[0].Content.RemoveWhiteSpace());
+            Assert.Equal(@"C:\TestSite\_site\SomeFile.md", siteContext.Posts[0].Filepath);
+            Assert.Equal(@"C:\TestSite\_posts\SomeFile.md", siteContext.Posts[0].File);
+            Assert.Equal(2, siteContext.Posts[0].Bag.Count); // param, date
+            Assert.Equal("value", siteContext.Posts[0].Bag["param"]);
         }
 
         [Fact]
