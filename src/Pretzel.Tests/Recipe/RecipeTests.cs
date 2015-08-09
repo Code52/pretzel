@@ -28,6 +28,7 @@ namespace Pretzel.Tests.Recipe
             Tracing.Logger.SetWriter(writer);
             Tracing.Logger.AddCategory(Tracing.Category.Info);
             Tracing.Logger.AddCategory(Tracing.Category.Error);
+            Tracing.Logger.AddCategory(Tracing.Category.Debug);
         }
 
         [Fact]

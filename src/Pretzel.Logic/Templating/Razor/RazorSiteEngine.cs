@@ -7,7 +7,6 @@ using System;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Text.RegularExpressions;
-using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Logic.Templating.Razor
 {
