@@ -2,18 +2,18 @@
 layout: nil
 ---
 @model Pretzel.Logic.Templating.Context.PageContext
-
 <?xml version="1.0" encoding="UTF-8" ?>
+@{
+    var domain = Model.Site.Config.ContainsKey("domain") ? (string)Model.Site.Config["domain"] : "http://domain.local";
+}
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemalocation="http://www.sitemaps.org/schemas/sitemap/0.9
   http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
     <!-- Generated with pretzel -->
-
-    @foreach (var post in Model.Site.Posts)
-    {
+    @foreach (var post in Model.Site.Posts) {
         <url>
-            <loc>http://domain/@post.Url</loc>
+            <loc>@domain@post.Url</loc>
             <lastmod>@post.Date.ToString("s")</lastmod>
             <changefreq>daily</changefreq>
             <priority>1.00</priority>

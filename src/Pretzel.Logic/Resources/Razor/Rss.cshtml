@@ -3,27 +3,34 @@ layout: nil
 ---
 @model Pretzel.Logic.Templating.Context.PageContext
 <?xml version="1.0" ?>
+@{
+    var sitename = Model.Site.Config.ContainsKey("sitename") ? (string)Model.Site.Config["sitename"] : "Site Name";
+    var domain = Model.Site.Config.ContainsKey("domain") ? (string)Model.Site.Config["domain"] : "http://domain.local";
+    var author = Model.Site.Config.ContainsKey("author") ? (string)Model.Site.Config["author"] : "Author";
+    var email = Model.Site.Config.ContainsKey("email") ? (string)Model.Site.Config["email"] : "author@domain.local";
+    var language = Model.Site.Config.ContainsKey("language") ? (string)Model.Site.Config["language"] : "en-au";
+}
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-<channel>
-    <title>Feed Name</title>
-    <link>http://domain/</link>
-    <atom:link href="http://domain/rss.xml" rel="self" type="application/rss+xml" />
-    <description></description>
-    <language>en-au</language>
-    <pubDate>@Model.Site.Time.ToString("ddd, dd MMM yyyy H:mm:ss K")</pubDate>
-    <lastBuildDate>@Model.Site.Time.ToString("ddd, dd MMM yyyy H:mm:ss K")</lastBuildDate>
+    <channel>
+        <title>@sitename</title>
+        <link>@domain</link>
+        <atom:link href="@domain/rss.xml" rel="self" type="application/rss+xml" />
+        <description></description>
+        <language>@language</language>
+        <pubdate>@Model.Site.Time.ToString("ddd, dd MMM yyyy H:mm:ss K")</pubdate>
+        <lastbuilddate>@Model.Site.Time.ToString("ddd, dd MMM yyyy H:mm:ss K")</lastbuilddate>
 
-    @foreach (var post in Model.Site.Posts)
-    {
-        <item>
-            <title>@post.Title</title>
-            @Raw("<link>")http://domain@(post.Url)@Raw("</link>") @* Workaround: RazorEngine is a HTML5 template engine, where link is a void element *@	
-            <pubDate>@post.Date.ToString("ddd, dd MMM yyyy H:mm:ss K")</pubDate>
-            <author>Author</author>
-            <guid>http://domain@(post.Url)</guid>
-            <description>@post.Content</description>
-        </item>
-    }
-
-  </channel> 
+        @foreach (var post in Model.Site.Posts) {
+            var posturl = domain + post.Url;
+            var description = post.ContainsKey("excerpt") ? (string)post["excerpt"] : post.Content;
+            <item>
+                <title>@post.Title</title>
+                @Raw("<link>")@posturl@Raw("</link>") @* Workaround: RazorEngine is a HTML5 template engine, where link is a void element *@
+                <pubdate>@post.Date.ToString("ddd, dd MMM yyyy H:mm:ss K")</pubdate>
+                <author>@author</author>
+                <guid>@posturl</guid>
+                <description>@description</description>
+            </item>
+        }
+    </channel>
 </rss>

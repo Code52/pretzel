@@ -2,31 +2,37 @@
 layout: nil
 ---
 @model Pretzel.Logic.Templating.Context.PageContext
-
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
+@{
+    var sitename = Model.Site.Config.ContainsKey("sitename") ? (string)Model.Site.Config["sitename"] : "Site Name";
+    var domain = Model.Site.Config.ContainsKey("domain") ? (string)Model.Site.Config["domain"] : "http://domain.local";
+    var author = Model.Site.Config.ContainsKey("author") ? (string)Model.Site.Config["author"] : "Author";
+    var email = Model.Site.Config.ContainsKey("email") ? (string)Model.Site.Config["email"] : "author@domain.local";
+}
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Feed Name</title>
-  <link href="http://domain/"/>
-  <link type="application/atom+xml" rel="self" href="http://domain/atom.xml"/>
-  <updated>@Model.Site.Time.ToString("s")</updated>
-  <id>http://domain/</id>
-  <author>
-    <name>Author</name>
-    <email>Email</email>
-  </author>
+    <title>@sitename</title>
+    <link href="@domain" />
+    <link type="application/atom+xml" rel="self" href="@domain/atom.xml" />
+    <updated>@Model.Site.Time.ToString("s")</updated>
+    <id>@domain</id>
+    <author>
+        <name>@author</name>
+        <email>@email</email>
+    </author>
 
-  @foreach (var post in Model.Site.Posts)
-  {
-      <entry>
-          <id>http://domain/@post.Url</id>
-          <link type="text/html" rel="alternate" href="http://domain/@post.Url"/>
-          <title>@post.Title</title>
-          <updated>@post.Date.ToString("s")</updated>
-          <author>
-              <name>Author</name>
-              <uri>http://domain/</uri>
-          </author>
-          <content type="html">@post.Content</content>
-      </entry>
-  }
+    @foreach (var post in Model.Site.Posts) {
+        var posturl = domain + post.Url;
+        var description = post.ContainsKey("excerpt") ? (string)post["excerpt"] : post.Content;
+        <entry>
+            <id>@posturl</id>
+            <link type="text/html" rel="alternate" href="@posturl" />
+            <title>@post.Title</title>
+            <updated>@post.Date.ToString("s")</updated>
+            <author>
+                <name>@author</name>
+                <uri>@domain</uri>
+            </author>
+            <content type="html">@description</content>
+        </entry>
+    }
 </feed>

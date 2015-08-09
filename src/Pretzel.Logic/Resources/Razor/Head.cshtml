@@ -1,6 +1,9 @@
 ﻿@inherits RazorEngine.Templating.TemplateBase<Pretzel.Logic.Templating.Context.PageContext>
+@{
+    var language = Model.Site.Config.ContainsKey("language") ? Model.Site.Config["language"] : "en-au";
+}
 <head>
-    <meta content="en-au" http-equiv="Content-Language" />
+    <meta content="@language" http-equiv="Content-Language" />
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
     <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Blog Feed" />
     <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Blog Feed" />
