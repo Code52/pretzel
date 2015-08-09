@@ -15,7 +15,7 @@ namespace Pretzel.Logic.Templating.Context
         {
             Title = context.Title;
             OutputPath = context.OutputPath;
-            Bag = context.Bag;
+            Bag = new Dictionary<string, object>(context.Bag);
             Content = context.Content;
             Site = context.Site;
             Page = context.Page;

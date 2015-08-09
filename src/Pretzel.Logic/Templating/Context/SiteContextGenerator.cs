@@ -237,7 +237,7 @@ namespace Pretzel.Logic.Templating.Context
                 var page = new Page
                                 {
                                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
-                                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
+                                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(fileSystem),
                                     Content = content,
                                     Filepath = isPost ? GetPathWithTimestamp(context.OutputFolder, file) : GetFilePathForPage(context, file),
                                     File = file,
@@ -270,11 +270,8 @@ namespace Pretzel.Logic.Templating.Context
                 // resolve id
                 page.Id = page.Url.Replace(".html", string.Empty).Replace("index", string.Empty);
 
-                // ensure the date is accessible in the hash
-                if (!page.Bag.ContainsKey("date"))
-                {
-                    page.Bag["date"] = page.Date;
-                }
+                // always write date back to Bag as DateTime
+                page.Bag["date"] = page.Date;
 
                 // The GetDirectoryPage method is reentrant, we need a cache to stop a stack overflow :)
                 pageCache.Add(file, page);

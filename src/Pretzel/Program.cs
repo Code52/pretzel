@@ -23,14 +23,14 @@ namespace Pretzel
         private static void Main(string[] args)
         {
             Tracing.Logger.SetWriter(Console.Out);
-            Tracing.Logger.AddCategory("info");
-            Tracing.Logger.AddCategory("error");
+            Tracing.Logger.AddCategory(Tracing.Category.Info);
+            Tracing.Logger.AddCategory(Tracing.Category.Error);
 
             var parameters = BaseParameters.Parse(args, new FileSystem());
 
             if (parameters.Debug)
             {
-                Tracing.Logger.AddCategory("debug");
+                Tracing.Logger.AddCategory(Tracing.Category.Debug);
             }
 
             var program = new Program();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 
 namespace Pretzel.Logic.Extensions
@@ -544,18 +545,20 @@ namespace Pretzel.Logic.Extensions
             return false;
         }
 
-        public static DateTime Datestamp(this string file)
+        public static DateTime Datestamp(this string file, IFileSystem fs)
         {
-            var fileName = System.IO.Path.GetFileName(file);
+            var fileName = fs.Path.GetFileName(file);
             var tokens = fileName.Split('-');
 
-            if (tokens.Length < 3)
-                return DateTime.Now;
+            if (tokens.Length < 3) 
+            {
+                return  fs.FileInfo.FromFileName(file).LastWriteTime;
+            }
 
-            var timestampText = string.Join("-", tokens.Take(3)).Trim(Path.DirectorySeparatorChar);
+            var timestampText = string.Join("-", tokens.Take(3)).Trim(fs.Path.DirectorySeparatorChar);
 
             DateTime timestamp;
-            return DateTime.TryParse(timestampText, out timestamp) ? timestamp : DateTime.Now;
+            return DateTime.TryParse(timestampText, out timestamp) ? timestamp : fs.FileInfo.FromFileName(file).LastWriteTime;
         }
 
         public static string ToUnderscoreCase(this string str)
