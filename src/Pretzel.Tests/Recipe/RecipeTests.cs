@@ -193,7 +193,8 @@ namespace Pretzel.Tests.Recipe
             recipe.Create();
 
             Assert.Contains(@"Error trying to create template: System.Exception: Error!!!", writer.ToString());
-            Assert.Contains(@"at Pretzel.Tests.Recipe.RecipeTests.<error_is_traced>b__0(CallInfo x)", writer.ToString());
+            Assert.Contains(@"at Pretzel.Tests.Recipe.RecipeTests", writer.ToString());
+            Assert.Contains(@"<error_is_traced>", writer.ToString());
         }
 
         [Fact]
