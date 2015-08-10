@@ -119,33 +119,33 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="About" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razor\about.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\Razor\About.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Atom" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razor\atom.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\Razor\Atom.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Config" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razor\config.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\Razor\Config.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="FirstPost" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razor\firstpost.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\Razor\FirstPost.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Head" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Razor\Head.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Index" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razor\index.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\Razor\Index.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Layout" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razor\layout.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\Razor\Layout.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Post" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razor\post.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\Razor\Post.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Rss" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razor\rss.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\Razor\Rss.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Sitemap" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razor\sitemap.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\Razor\Sitemap.cshtml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

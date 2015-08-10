@@ -63,9 +63,10 @@ namespace Pretzel.Logic.Import
 
             var yamlHeader = string.Format("---\r\n{0}---\r\n\r\n", header.ToYaml());
             var postContent = yamlHeader + p.Content; //todo would be nice to convert to proper md
-            var fileName = string.Format(@"_posts\{0}-{1}.md", p.Published.ToString("yyyy-MM-dd"), p.PostName.Replace(' ', '-')); //not sure about post name
+            var postsFolder = "_posts";
+            var fileName = string.Format("{0}-{1}.md", p.Published.ToString("yyyy-MM-dd"), p.PostName.Replace(' ', '-')); //not sure about post name
 
-            fileSystem.File.WriteAllText(Path.Combine(pathToSite, fileName), postContent);
+            fileSystem.File.WriteAllText(Path.Combine(pathToSite, postsFolder, fileName), postContent);
         }
 
 

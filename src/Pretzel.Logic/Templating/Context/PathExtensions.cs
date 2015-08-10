@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 
 namespace Pretzel.Logic.Templating.Context
@@ -20,7 +21,7 @@ namespace Pretzel.Logic.Templating.Context
 
         public static string ToRelativeFile(this string path)
         {
-            return path.Replace(@"/", @"\").TrimStart('\\');
+            return path.Replace('/', Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar);
         }
 
         public static bool IsImageFormat(this string extension)

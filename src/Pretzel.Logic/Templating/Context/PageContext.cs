@@ -61,7 +61,7 @@ namespace Pretzel.Logic.Templating.Context
                 page.Bag.Add("permalink", page.File);
             }
 
-            if (context.OutputPath.EndsWith("\\"))
+            if (context.OutputPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
             {
                 context.OutputPath = Path.Combine(context.OutputPath, "index.html");
             }
@@ -79,7 +79,7 @@ namespace Pretzel.Logic.Templating.Context
             context.Content = page.Content;
             context.Bag = page.Bag;
             context.Bag["id"] = page.Id;
-            context.Bag.Add("url", page.Url);
+            context.Bag["url"] = page.Url;
             return context;
         }
     }

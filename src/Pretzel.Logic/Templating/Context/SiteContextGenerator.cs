@@ -425,18 +425,18 @@ namespace Pretzel.Logic.Templating.Context
 
         private string MapToOutputPath(SiteContext context, string file)
         {
-            return file.Replace(context.SourceFolder, "").TrimStart('\\');
+            return file.Replace(context.SourceFolder, "")
+                .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
 
         private string GetPathWithTimestamp(string outputDirectory, string file)
         {
             // TODO: detect mode from site config
-            var fileName = file.Substring(file.LastIndexOf("\\"));
+            var fileName = Path.GetFileName(file);
 
             var tokens = fileName.Split('-');
-            var timestamp = string.Join("\\", tokens.Take(3)).Trim('\\');
-            var title = string.Join("-", tokens.Skip(3));
-            return Path.Combine(outputDirectory, timestamp, title);
+            var timePath = Path.Combine(tokens);
+            return Path.Combine(outputDirectory, timePath);
         }
     }
 }
