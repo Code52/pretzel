@@ -118,6 +118,15 @@ namespace Pretzel.Commands
 
         private void WatcherOnChanged(string file)
         {
+            if(file.StartsWith(parameters.Path))
+            {
+                var relativeFile = file.Substring(parameters.Path.Length).ToRelativeFile();
+                if (!Generator.CanBeIncluded(relativeFile))
+                {
+                    return;
+                }
+            }
+
             Tracing.Info(string.Format("File change: {0}", file));
 
             var context = Generator.BuildContext(parameters.Path, parameters.DestinationPath, parameters.IncludeDrafts);
