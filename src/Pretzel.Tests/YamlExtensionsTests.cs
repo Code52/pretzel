@@ -121,6 +121,106 @@ This is a test of YAML parsing
                 Assert.Equal("True", result["other"].ToString());
             }
 
+            [Fact]
+            public void YamlHeader_WithListOfList_CanBeAccessed() {
+                const string header = @"---
+text: is a simple string
+nestedlist:
+ - [this, is, a]
+ - [nested, list]
+---
+
+# Test
+
+This is a test of YAML parsing";
+                var result = header.YamlHeader();
+
+                Assert.Equal("is a simple string", (string)result["text"]);
+
+                var nestedlist = (List<object>)result["nestedlist"];
+                Assert.Equal(2, nestedlist.Count);
+                var nested0 = (List<string>)nestedlist[0];
+                var nested1 = (List<string>)nestedlist[1];
+                Assert.Equal(3, nested0.Count);
+                Assert.Equal(2, nested1.Count);
+            }
+
+
+            [Fact]
+            public void YamlHeader_WithDictionary_CanBeAccessed() {
+                const string header = @"---
+text: is a simple string
+adictionary:
+ a_field: true
+ otherfield: 3
+ facts:
+  - it
+  - should
+  - work
+ inception:
+  furternested: it is
+  but_it_works: false
+  coeff: 1.0
+---
+
+# Test
+
+This is a test of YAML parsing";
+                var result = header.YamlHeader();
+
+                Assert.Equal("is a simple string", (string)result["text"]);
+
+                var adictionary = (Dictionary<string,object>)result["adictionary"];
+
+                Assert.Equal(true, (bool)adictionary["a_field"]);
+                Assert.Equal("3", adictionary["otherfield"]);
+                Assert.Equal(new []{"it","should", "work"}, (List<string>)adictionary["facts"]);
+
+                var inception = (Dictionary<string, object>)adictionary["inception"];
+                Assert.Equal("it is", (string)inception["furternested"]);
+                Assert.Equal(false, (bool)inception["but_it_works"]);
+                Assert.Equal("1.0", inception["coeff"]);
+            }
+
+            [Fact]
+            public void YamlHeader_WithListOfDictionary_CanBeAccessed() {
+                const string header = @"---
+text: is a simple string
+adictlist:
+ - nr: 1
+   name: John Doe
+   skip: false
+ - nr: 2
+   name: John Smith
+   skip: true
+ - nr: 3
+   name: Lady Lorem
+   skip: false
+---
+
+# Test
+
+This is a test of YAML parsing";
+                var result = header.YamlHeader();
+
+                Assert.Equal("is a simple string", (string)result["text"]);
+
+                var adictlist = (List<object>)result["adictlist"];
+
+                var items = new [] {
+                    new { nr = "1", name = "John Doe", skip = false },
+                    new { nr = "2", name = "John Smith", skip = true },
+                    new { nr = "3", name = "Lady Lorem", skip = false }
+                };
+                
+                Assert.Equal(items.Length, adictlist.Count);
+                for(int i=0; i< items.Length; i++){
+                    var item = (Dictionary<string,object>)adictlist[i];
+                    Assert.Equal(items[i].nr, (string)item["nr"]);
+                    Assert.Equal(items[i].name, (string)item["name"]);
+                    Assert.Equal(items[i].skip, (bool)item["skip"]);
+                }
+            }
         }
     }
 }
