@@ -186,12 +186,12 @@ namespace Pretzel.Logic.Templating.Context
             return postFirstLine != null && postFirstLine.StartsWith("---");
         }
 
-        private bool IsExcludedPath(string relativePath)
+        public bool IsExcludedPath(string relativePath)
         {
             return excludes.Contains(relativePath) || excludes.Any(e => relativePath.StartsWith(e));
         }
 
-        private bool IsIncludedPath(string relativePath)
+        public bool IsIncludedPath(string relativePath)
         {
             return includes.Contains(relativePath) || includes.Any(e => relativePath.StartsWith(e));
         }

@@ -121,7 +121,7 @@ namespace Pretzel.Commands
             if(file.StartsWith(parameters.Path))
             {
                 var relativeFile = file.Substring(parameters.Path.Length).ToRelativeFile();
-                if (!Generator.CanBeIncluded(relativeFile))
+                if (Generator.IsExcludedPath(relativeFile))
                 {
                     return;
                 }
