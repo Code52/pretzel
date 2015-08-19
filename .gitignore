@@ -27,3 +27,4 @@ Thumbs.db
 
 # Roslyn cache directories
 *.ide/
+src/.vs/config/applicationhost.config
