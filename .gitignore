@@ -27,4 +27,6 @@ Thumbs.db
 
 # Roslyn cache directories
 *.ide/
-src/.vs/config/applicationhost.config
+
+# Visual Studio 2015 cache/options directory
+.vs/
