@@ -1863,7 +1863,7 @@ namespace Pretzel.Tests.Templating.Jekyll
         public class Given_Page_Has_Page_Previous_Url : BakingEnvironment<LiquidEngine>
         {
             private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ page.previous.url }}";
-            private const string ExpectedfileContents = "<p>/2015/03/22/previouspost.html</p>";
+            private const string ExpectedfileContents = "<p>/2015/01/22/previouspost.html</p>";
 
             public override LiquidEngine Given()
             {
@@ -1875,7 +1875,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-22-post.md", new MockFileData(PageContents));
-                FileSystem.AddFile(@"C:\website\_posts\2015-03-22-previouspost.md", new MockFileData("---\r\n layout: nil \r\n---\r\n\r\n"));
+                FileSystem.AddFile(@"C:\website\_posts\2015-01-22-previouspost.md", new MockFileData("---\r\n layout: nil \r\n---\r\n\r\n"));
                 var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"D:\Result\_site", false);
                 Subject.FileSystem = FileSystem;
@@ -1883,7 +1883,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
 
             [Fact]
-            public void The_File_Should_Display_The_Page_Url()
+            public void The_File_Should_Display_The_Previous_Page_Url()
             {
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"D:\Result\_site\2015\02\22\post.html").RemoveWhiteSpace());
             }
@@ -1892,7 +1892,7 @@ namespace Pretzel.Tests.Templating.Jekyll
         public class Given_Page_Has_Page_Next_Url : BakingEnvironment<LiquidEngine>
         {
             private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ page.next.url }}";
-            private const string ExpectedfileContents = "<p>/2015/01/22/nextpost.html</p>";
+            private const string ExpectedfileContents = "<p>/2015/03/22/nextpost.html</p>";
 
             public override LiquidEngine Given()
             {
@@ -1904,7 +1904,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-22-post.md", new MockFileData(PageContents));
-                FileSystem.AddFile(@"C:\website\_posts\2015-01-22-nextpost.md", new MockFileData("---\r\n layout: nil \r\n---\r\n\r\n"));
+                FileSystem.AddFile(@"C:\website\_posts\2015-03-22-nextpost.md", new MockFileData("---\r\n layout: nil \r\n---\r\n\r\n"));
                 var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"D:\Result\_site", false);
                 Subject.FileSystem = FileSystem;
@@ -1912,7 +1912,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
 
             [Fact]
-            public void The_File_Should_Display_The_Page_Url()
+            public void The_File_Should_Display_The_Next_Page_Url()
             {
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"D:\Result\_site\2015\02\22\post.html").RemoveWhiteSpace());
             }
