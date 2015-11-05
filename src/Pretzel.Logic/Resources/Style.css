@@ -99,6 +99,17 @@ img
 	margin-bottom: 5px;
 }
 
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.clear {
+    clear: both;
+}
 
 /* min-device-width: 800px instead? */
 @media screen and (max-width:900px)
