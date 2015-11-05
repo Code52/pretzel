@@ -30,6 +30,9 @@ namespace Pretzel.Logic.Templating
         [ImportMany]
         public IEnumerable<ITag> Tags { get; set; }
 
+        [ImportMany]
+        public IEnumerable<TagFactoryBase> TagFactories { get; set; }
+        
         public abstract void Initialize();
 
         protected abstract void PreProcess();
@@ -151,7 +154,7 @@ namespace Pretzel.Logic.Templating
                         throw new PageProcessingException(message, ex);
                     }
 
-                    Console.WriteLine(@"Failed to process {0}, see inner exception for more details", context.OutputPath);
+                    Console.WriteLine(@"Failed to process {0}: {1}", context.OutputPath, ex);
                     continue;
                 }
 
@@ -198,7 +201,7 @@ namespace Pretzel.Logic.Templating
                         throw new PageProcessingException(message, ex);
                     }
 
-                    Console.WriteLine(@"Failed to process {0}, see inner exception for more details", context.OutputPath);
+                    Console.WriteLine(@"Failed to process {0}: {1}", context.OutputPath, ex);
                     continue;
                 }
 

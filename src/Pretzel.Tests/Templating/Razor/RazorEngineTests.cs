@@ -30,7 +30,7 @@ namespace Pretzel.Tests.Templating.Razor
             FileSystem.AddFile(@"C:\website\_layouts\Test.cshtml", new MockFileData(layout));
             var context = new SiteContext { SourceFolder = @"C:\website\", OutputFolder = @"C:\website\_site", Title = "My Web Site" };
             bag.Add("layout", "Test");
-            context.Posts.Add(new Page { File = "index.cshtml", Content = content, OutputFile = @"C:\website\_site\index.html", Bag = bag });
+            context.Posts.Add(new Page { File = "index.cshtml", Content = content, OutputFile = @"C:\website\_site\index.html", Bag = bag, Url = "/index.html" });
             FileSystem.AddFile(@"C:\website\index.cshtml", new MockFileData(layout));
             Subject.FileSystem = FileSystem;
             Subject.Process(context);
@@ -235,10 +235,11 @@ namespace Pretzel.Tests.Templating.Razor
         public void PostUrlTag_should_be_used()
         {
             // arrange
-            const string templateContents = "<html><body>@Raw(Model.Content) @Tag.PostUrl(\"post-title.md\")</body></html>";
+            const string templateContents = "<html><body>@Raw(Model.Content) @Tag.PostUrl(\"index.cshtml\")</body></html>";
             const string pageContents = "<h1>Hello</h1>";
-            const string expected = "<html><body><h1>Hello</h1> post/title.html</body></html>";
-            Subject.Tags = new ITag[] { new PostUrlTag() };
+            const string expected = "<html><body><h1>Hello</h1> /index.html</body></html>";
+
+            Subject.TagFactories = new List<TagFactoryBase> { new PostUrlTagFactory() };
 
             // act
             ProcessContents(templateContents, pageContents, new Dictionary<string, object>());

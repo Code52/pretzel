@@ -24,7 +24,7 @@ namespace Pretzel.Logic.Templating.Jekyll
         protected override void PreProcess()
         {
             contextDrop = new SiteContextDrop(Context);
-
+            
             Template.FileSystem = new Includes(Context.SourceFolder, FileSystem);
 
             if (Filters != null)
@@ -40,8 +40,16 @@ namespace Pretzel.Logic.Templating.Jekyll
 
                 foreach (var tag in Tags)
                 {
-                    var registerTagGenericMethod = registerTagMethod.MakeGenericMethod(new[] { tag.GetType() });
-                    registerTagGenericMethod.Invoke(null, new[] { tag.Name.ToUnderscoreCase() });
+                        var registerTagGenericMethod = registerTagMethod.MakeGenericMethod(new[] { tag.GetType() });
+                        registerTagGenericMethod.Invoke(null, new[] { tag.Name.ToUnderscoreCase() });
+                }
+            }
+            if(TagFactories!=null)
+            {
+                foreach (var tagFactory in TagFactories)
+                {
+                    tagFactory.Initialize(Context);
+                    Template.RegisterTagFactory(tagFactory);
                 }
             }
         }

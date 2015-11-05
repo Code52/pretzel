@@ -763,13 +763,15 @@ namespace Pretzel.Tests.Templating.Jekyll
             [Fact]
             public void File_With_Bad_Liquid_Format_Should_Be_Traced()
             {
+                const string ExpectedStartFile = @"Failed to process C:\website\_site\BadFormat.html: DotLiquid.Exceptions.SyntaxException: Variable '{{}' was not properly terminated with regexp: (?-mix:\}\})";
+
                 using (StringWriter sw = new StringWriter())
                 {
                     Console.SetOut(sw);
 
                     Subject.Process(Context, true);
 
-                    Assert.Equal(@"Failed to process C:\website\_site\BadFormat.html, see inner exception for more details" + Environment.NewLine, sw.ToString());
+                    Assert.StartsWith(ExpectedStartFile, sw.ToString());
                 }
                 Assert.False(FileSystem.AllFiles.Contains(@"C:\website\_site\BadFormat.html"));
             }
@@ -930,8 +932,8 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_PostUrlBlock : BakingEnvironment<LiquidEngine>
         {
-            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n<p>{% post_url post-title.md %}</p>";
-            private const string ExpectedfileContents = "<p>post/title.html</p>";
+            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n<p>{% post_url index.md %}</p>";
+            private const string ExpectedfileContents = "<p>/index.html</p>";
 
             public override LiquidEngine Given()
             {
@@ -944,7 +946,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
-                Subject.Tags = new List<ITag> { new PostUrlTag() };
+                Subject.TagFactories = new List<TagFactoryBase> { new PostUrlTagFactory() };
                 Subject.Process(context);
             }
 
@@ -1227,8 +1229,8 @@ namespace Pretzel.Tests.Templating.Jekyll
         {
             private const string HighlightPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight %}a word{% endhighlight %}";
             private const string HighlightExpectedfileContents = "<p><pre>a word</pre></p>";
-            private const string PostUrlPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% post_url post-title.md %}";
-            private const string PostUrlExpectedfileContents = "<p>post/title.html</p>";
+            private const string PostUrlPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% post_url NumberOfWords.md %}";
+            private const string PostUrlExpectedfileContents = "<p>/NumberOfWords.html</p>";
             private const string CgiEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'foo,bar;baz?' | cgi_escape }}";
             private const string CgiEscapeExpectedfileContents = "<p>foo%2Cbar%3Bbaz%3F</p>";
             private const string UriEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'foo, bar \\baz?' | uri_escape }}";
@@ -1242,7 +1244,6 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 var engine = new LiquidEngine();
                 engine.Initialize();
-                engine.Tags = new List<ITag> { new PostUrlTag() };
                 return engine;
             }
 
@@ -1257,6 +1258,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
+                Subject.TagFactories = new List<TagFactoryBase> { new PostUrlTagFactory() };
                 Subject.Process(context);
             }
 
@@ -1505,14 +1507,13 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_Liquid_Tag_And_Block_With_Underscores : BakingEnvironment<LiquidEngine>
         {
-            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n_any_ word {% highlight %}a word{% endhighlight %}\r\n{% post_url post-title.md %}\r\n{{ 'This is a test' | number_of_words }}";
-            private const string ExpectedfileContents = "<p><em>any</em> word <pre>a word</pre>post/title.html4</p>";
+            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n_any_ word {% highlight %}a word{% endhighlight %}\r\n{% post_url index.md %}\r\n{{ 'This is a test' | number_of_words }}";
+            private const string ExpectedfileContents = "<p><em>any</em> word <pre>a word</pre>/index.html4</p>";
 
             public override LiquidEngine Given()
             {
                 var engine = new LiquidEngine();
                 engine.Initialize();
-                engine.Tags = new List<ITag> { new PostUrlTag() };
                 return engine;
             }
 
@@ -1522,6 +1523,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
+                Subject.TagFactories = new List<TagFactoryBase> { new PostUrlTagFactory() };
                 Subject.Process(context);
             }
 
