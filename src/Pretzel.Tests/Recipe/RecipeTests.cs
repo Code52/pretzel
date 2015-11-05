@@ -75,7 +75,16 @@ namespace Pretzel.Tests.Recipe
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"img\"));
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"_includes\"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"_layouts\layout.cshtml"));
-            Assert.True(fileSystem.File.Exists(BaseSite + "index.md"));
+
+            if (wiki)
+            {
+                Assert.True(fileSystem.File.Exists(BaseSite + "index.md"));
+            }
+            else
+            {
+                Assert.True(fileSystem.File.Exists(BaseSite + "index.cshtml"));
+            }
+
             Assert.True(fileSystem.File.Exists(BaseSite + @"css\style.css"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"img\favicon.ico"));
             
