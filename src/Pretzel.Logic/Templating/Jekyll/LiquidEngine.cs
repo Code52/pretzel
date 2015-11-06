@@ -62,6 +62,9 @@ namespace Pretzel.Logic.Templating.Jekyll
                 y.Add("title", Context.Title);
             }
 
+            y.Add("previous", pageContext.Previous);
+            y.Add("next", pageContext.Next);
+
             var x = Hash.FromAnonymousObject(new
             {
                 site = contextDrop.ToHash(),

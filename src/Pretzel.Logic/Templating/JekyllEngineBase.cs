@@ -58,12 +58,12 @@ namespace Pretzel.Logic.Templating
             }
         }
 
-        private static Page GetNext(IList<Page> pages, int index)
+        private static Page GetPrevious(IList<Page> pages, int index)
         {
             return index < pages.Count - 1 ? pages[index + 1] : null;
         }
 
-        private static Page GetPrevious(IList<Page> pages, int index)
+        private static Page GetNext(IList<Page> pages, int index)
         {
             return index >= 1 ? pages[index - 1] : null;
         }
