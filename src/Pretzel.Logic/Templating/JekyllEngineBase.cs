@@ -1,5 +1,6 @@
 ﻿using Pretzel.Logic.Exceptions;
 using Pretzel.Logic.Extensibility;
+using Pretzel.Logic.Extensibility.Extensions;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
 using System;
@@ -33,6 +34,9 @@ namespace Pretzel.Logic.Templating
         [ImportMany]
         public IEnumerable<IContentTransform> ContentTransformers;
 
+        [Import(AllowDefault = true)]
+        private ILightweightMarkupEngine _lightweightMarkupEngine;
+        
         public abstract void Initialize();
 
         protected abstract void PreProcess();
@@ -41,6 +45,14 @@ namespace Pretzel.Logic.Templating
 
         public void Process(SiteContext siteContext, bool skipFileOnError = false)
         {
+            // Default rendering engine
+            if (_lightweightMarkupEngine == null)
+            {
+                _lightweightMarkupEngine = new CommonMarkEngine();
+            }
+
+            Tracing.Logger.Write(string.Format("LightweightMarkupEngine: {0}", _lightweightMarkupEngine.GetType().Name), Tracing.Category.Debug);
+
             Context = siteContext;
             PreProcess();
 
@@ -225,7 +237,7 @@ namespace Pretzel.Logic.Templating
                 var contentsWithoutHeader = contents.ExcludeHeader();
 
                 html = Path.GetExtension(file).IsMarkdownFile()
-                       ? CommonMark.CommonMarkConverter.Convert(contentsWithoutHeader).Trim()
+                       ? _lightweightMarkupEngine.Convert(contentsWithoutHeader).Trim()
                        : contentsWithoutHeader;
                 
                 if (ContentTransformers != null)
