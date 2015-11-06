@@ -643,9 +643,10 @@ published: false
         public void page_default_values()
         {
             var filename = @"C:\TestSite\SomeFile.md";
-            var file = new MockFileData(@"---
+            var expectedContent = @"---
 param: value
----# Title");
+---# Title";
+            var file = new MockFileData(expectedContent);
             var lastmod = new DateTime(2012,03,21);
             file.LastWriteTime = lastmod;
             fileSystem.AddFile(filename, file);
@@ -656,7 +657,7 @@ param: value
             Assert.Equal(1, siteContext.Pages.Count);
             Assert.Equal("this is a post", siteContext.Pages[0].Title);
             Assert.Equal(lastmod, siteContext.Pages[0].Date.Date);
-            Assert.Equal("---\r\nparam: value\r\n---# Title", siteContext.Pages[0].Content);
+            Assert.Equal(expectedContent, siteContext.Pages[0].Content);
             Assert.Equal(@"C:\TestSite\_site\SomeFile.md", siteContext.Pages[0].Filepath);
             Assert.Equal(@"C:\TestSite\SomeFile.md", siteContext.Pages[0].File);
             Assert.Equal(2, siteContext.Pages[0].Bag.Count); // param, date
