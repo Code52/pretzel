@@ -30,6 +30,9 @@ namespace Pretzel.Logic.Templating
         [ImportMany]
         public IEnumerable<ITag> Tags { get; set; }
 
+        [ImportMany]
+        public IEnumerable<IContentTransform> ContentTransformers;
+
         public abstract void Initialize();
 
         protected abstract void PreProcess();
@@ -144,7 +147,7 @@ namespace Pretzel.Logic.Templating
                     : Context.ExcerptSeparator;
                 try
                 {
-                    context.Content = RenderTemplate(context.Content, context);
+                    context.Content = RenderContent(page.File, RenderTemplate(context.Content, context));
                     context.FullContent = context.Content;
                     context.Bag["excerpt"] = GetContentExcerpt(context.Content, excerptSeparator);
                 }
@@ -212,6 +215,31 @@ namespace Pretzel.Logic.Templating
                 CreateOutputDirectory(context.OutputPath);
                 FileSystem.File.WriteAllText(context.OutputPath, context.FullContent);
             }
+        }
+
+        private string RenderContent(string file, string contents)
+        {
+            string html;
+            try
+            {
+                var contentsWithoutHeader = contents.ExcludeHeader();
+
+                html = Path.GetExtension(file).IsMarkdownFile()
+                       ? CommonMark.CommonMarkConverter.Convert(contentsWithoutHeader).Trim()
+                       : contentsWithoutHeader;
+                
+                if (ContentTransformers != null)
+                {
+                    html = ContentTransformers.Aggregate(html, (current, contentTransformer) => contentTransformer.Transform(current));
+                }
+            }
+            catch (Exception e)
+            {
+                Tracing.Info(String.Format("Error ({0}) converting {1}", e.Message, file));
+                Tracing.Debug(e.ToString());
+                html = String.Format("<p><b>Error converting markdown</b></p><pre>{0}</pre>", contents);
+            }
+            return html;
         }
 
         private static string GetContentExcerpt(string content, string excerptSeparator)

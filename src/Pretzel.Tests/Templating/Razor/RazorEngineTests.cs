@@ -266,10 +266,10 @@ namespace Pretzel.Tests.Templating.Razor
     public class When_Paginate_Razor : BakingEnvironment<RazorSiteEngine>
     {
         private const string TemplateContents = "@model Pretzel.Logic.Templating.Context.PageContext \r\n<html><body>@Raw(Model.Content)</body></html>";
-        private const string PostContents = "---\r\n layout: default \r\n title: 'Post'\r\n---\r\n<h1>Post{0}</h1>";
+        private const string PostContents = "---\r\n layout: default \r\n title: 'Post'\r\n---\r\n# Post{0}";
         private const string IndexContents = "---\r\n layout: default \r\n paginate: 2 \r\n paginate_link: /blog/page:page/index.html \r\n---\r\n @model Pretzel.Logic.Templating.Context.PageContext \r\n @foreach(var post in Model.Paginator.Posts) { @Raw(post.Content) }";
-        private const string ExpectedFileContents = "<html><body><p><h1>Post{0}</h1><h1>Post{1}</h1></p></body></html>";
-        private const string ExpectedLastFileContents = "<html><body><p><h1>Post{0}</h1></p></body></html>";
+        private const string ExpectedFileContents = "<html><body><h1>Post{0}</h1><h1>Post{1}</h1></body></html>";
+        private const string ExpectedLastFileContents = "<html><body><h1>Post{0}</h1></body></html>";
 
         public override RazorSiteEngine Given()
         {
@@ -286,7 +286,7 @@ namespace Pretzel.Tests.Templating.Razor
                 FileSystem.AddFile(String.Format(@"C:\website\_posts\2012-02-0{0}-p{0}.md", i), new MockFileData(String.Format(PostContents, i)));
             }
 
-            var generator = new SiteContextGenerator(FileSystem, Enumerable.Empty<IContentTransform>(), new LinkHelper());
+            var generator = new SiteContextGenerator(FileSystem, new LinkHelper());
             var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
             Subject.FileSystem = FileSystem;
             Subject.Process(context);
