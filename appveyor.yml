@@ -44,6 +44,12 @@ artifacts:
   - path: Pretzel.ScriptCs.*.zip
     name: Pretzel.ScriptCs.zip
 
+  - path: artifacts\Pretzel.Logic.*.nupkg
+    name: Pretzel.Logic.nupkg
+
+  - path: artifacts\Pretzel.Logic.*.symbols.nupkg
+    name: Pretzel.Logic.symbols.nupkg
+
 deploy:
   - provider: GitHub
     auth_token:
@@ -58,6 +64,13 @@ deploy:
     api_key:
       secure: 2GBJF71EQfU+kIL5NHVM4wYoCRcFf/gM/voNIgud8vDWUE+uA1ye/hRWjJPQWA5w
     skip_symbols: true
-    artifact: /.*\.nupkg/
+    artifact: Pretzel.nupkg, Pretzel.ScriptCs.nupkg
+    on:
+      appveyor_repo_tag: true
+      
+  - provider: NuGet
+    api_key:
+      secure: NmM24h0TPsfINvy/1Qr4iJkmRjVztuY5umCJ6mzpxSjvuKl48AXjGEcgow+iJwL8
+    artifact: Pretzel.Logic.nupkg, Pretzel.Logic.symbols.nupkg
     on:
       appveyor_repo_tag: true

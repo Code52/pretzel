@@ -170,11 +170,4 @@
   <Target Name="BeforeBuild">
   </Target>
   -->
-  <Target Name="AfterBuild" Condition="(($(MSBuildTargets) == '') Or ($(MSBuildTargets) == 'CSharp')) And '$(OS)' == 'Windows_NT' And '$(NCrunch)' == ''">
-    <CreateItem Include="@(ReferenceCopyLocalPaths)" Condition="'%(Extension)'=='.dll'">
-      <Output ItemName="AssembliesToMerge" TaskParameter="Include" />
-    </CreateItem>
-    <exec command="&quot;$(MSBuildProjectDirectory)\..\..\tools\Ilmerge\ILMerge.exe&quot; /out:@(MainAssembly) &quot;/targetplatform:v4,$(ProgramFiles)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0&quot; &quot;@(IntermediateAssembly)&quot; @(AssembliesToMerge->'&quot;%(FullPath)&quot;', ' ')" />
-    <delete files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
-  </Target>
 </Project>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Pretzel.Logic</id>
+    <version>$version$</version>
+    <title>Pretzel.Logic</title>
+    <authors>Code52</authors>
+    <owners>laedit</owners>
+    <licenseUrl>https://github.com/Code52/pretzel/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/code52/pretzel</projectUrl>
+    <iconUrl>https://cdn.rawgit.com/Code52/pretzel/master/pretzel.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Logic library for [Pretzel](https://github.com/code52/pretzel), useful to make plugins.</description>
+    <releaseNotes>https://github.com/Code52/pretzel/releases</releaseNotes>
+    <tags>Pretzel, Jekyll, HTML, Markdown, Liquid, Razor, static</tags>
+  </metadata>
+</package>
