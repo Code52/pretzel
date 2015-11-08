@@ -1,7 +1,7 @@
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/rp8nq03r4b7mdecf?svg=true)](https://ci.appveyor.com/project/laedit/pretzel)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/3949/badge.svg)](https://scan.coverity.com/projects/3949)
 [![Coverage Status](https://coveralls.io/repos/Code52/pretzel/badge.svg)](https://coveralls.io/r/Code52/pretzel)
-[![Chocolatey](https://img.shields.io/chocolatey/v/pretzel.svg?style=flat)](https://chocolatey.org/packages/pretzel/)
+[![Chocolatey](https://img.shields.io/chocolatey/v/pretzel.svg?style=flat)](https://chocolatey.org/packages/pretzel/) [![Nuget](https://img.shields.io/nuget/v/Pretzel.Logic.svg)](https://www.nuget.org/packages/Pretzel.Logic/)
 
 
 ## Pretzel

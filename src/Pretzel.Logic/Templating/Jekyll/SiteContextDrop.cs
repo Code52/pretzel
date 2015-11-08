@@ -10,7 +10,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
     public class SiteContextDrop : Drop
     {
         private readonly SiteContext context;
-        //private IList<Hash> posts;
+        
         public DateTime Time
         {
             get
@@ -18,12 +18,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
                 return context.Time;
             }
         }
-
-        public IList<Hash> Posts
-        {
-            get { return context.Posts.Select(p => p.ToHash()).ToList(); }
-        }
-
+        
         public string Title
         {
             get { return context.Title; }
@@ -39,7 +34,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
             if (!context.Config.ContainsKey("date"))
                 context.Config.Add("date", "2012-01-01");
             var x = Hash.FromDictionary(context.Config);
-            x["posts"] = Posts;
+            x["posts"] = context.Posts.Select(p => p.ToHash()).ToList();
             x["pages"] = context.Pages.Select(p => p.ToHash()).ToList();
             x["title"] = context.Title;
             x["tags"] = context.Tags;

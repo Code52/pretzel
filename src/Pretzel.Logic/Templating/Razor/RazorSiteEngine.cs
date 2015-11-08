@@ -56,9 +56,12 @@ namespace Pretzel.Logic.Templating.Razor
             var serviceConfiguration = new TemplateServiceConfiguration
             {
                 TemplateManager = new IncludesResolver(FileSystem, includesPath),
-                BaseTemplateType = typeof(ExtensibleTemplate<>)
+                BaseTemplateType = typeof(ExtensibleTemplate<>),
+                DisableTempFileLocking = true,
+                CachingProvider = new DefaultCachingProvider(t => { })
             };
             serviceConfiguration.Activator = new ExtensibleActivator(serviceConfiguration.Activator, Filters, _allTags);
+
             Engine.Razor = RazorEngineService.Create(serviceConfiguration);
 
             content = Regex.Replace(content, "<p>(@model .*?)</p>", "$1");

@@ -56,7 +56,7 @@ namespace Pretzel.Logic.Recipe
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"sitemap.xml"), Properties.Razor.Sitemap);
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts", "layout.cshtml"), Properties.Razor.Layout);
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts", "post.cshtml"), Properties.Razor.Post);
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"index.md"), Properties.Razor.Index);
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"index.cshtml"), Properties.Razor.Index);
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"about.md"), Properties.Razor.About);
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"_posts", string.Format("{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Razor.FirstPost);
                         fileSystem.File.WriteAllText(Path.Combine(directory, @"css", "style.css"), Properties.Resources.Style);
@@ -82,7 +82,7 @@ namespace Pretzel.Logic.Recipe
 
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts", "layout.html"), Properties.Liquid.Layout);
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts", "post.html"), Properties.Liquid.Post);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"index.md"), Properties.Liquid.Index);
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"index.html"), Properties.Liquid.Index);
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"about.md"), Properties.Liquid.About);
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"_posts", string.Format("{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Liquid.FirstPost);
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"css", "style.css"), Properties.Resources.Style);

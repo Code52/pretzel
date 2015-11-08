@@ -1,25 +1,55 @@
-# vNext
+# 0.3.0
 
- - [#218](https://github.com/Code52/pretzel/issues/218) - Add --safe parameter to disable custom plugins +Enhancement
- - [#178](https://github.com/Code52/pretzel/pull/178) - Create command fixes contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz)) +fix
- - [#165](https://github.com/Code52/pretzel/pull/165) - Make category inherit Drop (so it can be used in templates) contributed by Jordan Wallwork ([jordanwallwork](https://github.com/jordanwallwork)) +Enhancement
- - [#216](https://github.com/Code52/pretzel/pull/216) - Support to other default pages contributed by Wesley Alcoforado ([wesleyalcoforado](https://github.com/wesleyalcoforado)) +Enhancement
- - [#213](https://github.com/Code52/pretzel/pull/213) - Adds .htm extension for layouts contributed by Wesley Alcoforado ([wesleyalcoforado](https://github.com/wesleyalcoforado)) +Enhancement
- - [#212](https://github.com/Code52/pretzel/issues/212) - If a post has invalid categories, it won't render contributed by ([vikingcode](https://github.com/vikingcode)) +fix
- - [#206](https://github.com/Code52/pretzel/pull/206) - Code block support contributed by Andrey Akinshin ([AndreyAkinshin](https://github.com/AndreyAkinshin)) +Feature
- - [#157](https://github.com/Code52/pretzel/pull/157) - Add support to load dlls in "_plugins" path contributed by Miguel Román ([miguelerm](https://github.com/miguelerm)) +Enhancement
- - [#203](https://github.com/Code52/pretzel/pull/203) - Support for 404 pages contributed by Damian Karzon ([dkarzon](https://github.com/dkarzon)) +Enhancement
- - [#202](https://github.com/Code52/pretzel/pull/202) - Add Excerpt feature for pages contributed by Andrey Akinshin ([AndreyAkinshin](https://github.com/AndreyAkinshin)) +Enhancement
- - [#201](https://github.com/Code52/pretzel/issues/201) - Custom metadatas in pages are not available from site.pages in liquid +fix
- - [#200](https://github.com/Code52/pretzel/pull/200) - Single category support for liquid posts contributed by Andrey Akinshin ([AndreyAkinshin](https://github.com/AndreyAkinshin)) +Enhancement
- - [#199](https://github.com/Code52/pretzel/issues/199) - PostUrl should be a Liquid Tag +breaking change
- It should now be used like this
- ```
- {% post_url post-title.md %}
- ```
- - [#198](https://github.com/Code52/pretzel/issues/198) - Liquid tag/filter with underscore doesn't works in markdown files +fix
+## Breaking changes
+- [#199](https://github.com/Code52/pretzel/issues/199) - PostUrl should be a Liquid Tag
+It should now be used like this
+```
+{% post_url post-title.md %}
+```
+- [#266](https://github.com/Code52/pretzel/issues/266) - Merging of dependencies to Pretzel.exe make developing plugins a pain
+Pretzel is no longer one unique exe file but a exe, a dll Pretzel.Logic and all of the dependecies dll.
+All existing plugins must be recompiled with referencing only Pretzel.Logic.
 
-Commits: [1436ac1f52...2162dbc1f3](https://github.com/Code52/pretzel/compare/1436ac1f52...2162dbc1f3)
+## Features
+- [#200](https://github.com/Code52/pretzel/pull/200) - Single category support for liquid posts contributed by Andrey Akinshin ([AndreyAkinshin](https://github.com/AndreyAkinshin))
+- [#202](https://github.com/Code52/pretzel/pull/202) - Add Excerpt feature for pages contributed by Andrey Akinshin ([AndreyAkinshin](https://github.com/AndreyAkinshin))
+- [#203](https://github.com/Code52/pretzel/pull/203) - Support for 404 pages contributed by Damian Karzon ([dkarzon](https://github.com/dkarzon))
+- [#157](https://github.com/Code52/pretzel/pull/157) - Add support to load dlls in "_plugins" path contributed by Miguel Román ([miguelerm](https://github.com/miguelerm))
+- [#206](https://github.com/Code52/pretzel/pull/206) - Code block support contributed by Andrey Akinshin ([AndreyAkinshin](https://github.com/AndreyAkinshin))
+- [#213](https://github.com/Code52/pretzel/pull/213) - Adds .htm extension for layouts contributed by Wesley Alcoforado ([wesleyalcoforado](https://github.com/wesleyalcoforado))
+- [#216](https://github.com/Code52/pretzel/pull/216) - Support to other default pages contributed by Wesley Alcoforado ([wesleyalcoforado](https://github.com/wesleyalcoforado))
+- [#165](https://github.com/Code52/pretzel/pull/165) - Make category inherit Drop (so it can be used in templates) contributed by Jordan Wallwork ([jordanwallwork](https://github.com/jordanwallwork))
+- [#218](https://github.com/Code52/pretzel/issues/218) - Add --safe parameter to disable custom plugins
+- [#220](https://github.com/Code52/pretzel/pull/220) - Add source and destination options contributed by Jérémie Bertrand ([laedit](https://github.com/laedit))
+- [#221](https://github.com/Code52/pretzel/pull/221) - New command, 'Hungry' contributed by ([vikingcode](https://github.com/vikingcode))
+- [#225](https://github.com/Code52/pretzel/issues/225) - Update permalinks to jekyll's level
+- [#229](https://github.com/Code52/pretzel/pull/229) - Add Scriptcs plugins support contributed by Jérémie Bertrand ([laedit](https://github.com/laedit))
+- [#233](https://github.com/Code52/pretzel/pull/233) - Better support for exclude config setting contributed by Damian Karzon ([dkarzon](https://github.com/dkarzon))
+- [#241](https://github.com/Code52/pretzel/issues/241) - Should support --version switch
+- [#244](https://github.com/Code52/pretzel/issues/244) - Extensionless permalinks
+- [#253](https://github.com/Code52/pretzel/pull/253) - Run on Mono contributed by Thiago 'Jedi' Abreu ([thiagoabreu](https://github.com/thiagoabreu))
+- [#259](https://github.com/Code52/pretzel/pull/259) - Changed date guessing heuristic to use last modification time of posts instead of current time, if no better data is available. contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz))
+- [#260](https://github.com/Code52/pretzel/pull/260) - Refactor logging contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz))
+
+## Fixes
+- [#198](https://github.com/Code52/pretzel/issues/198) - Liquid tag/filter with underscore doesn't works in markdown files +fix
+- [#201](https://github.com/Code52/pretzel/issues/201) - Custom metadatas in pages are not available from site.pages in liquid
+- [#212](https://github.com/Code52/pretzel/issues/212) - If a post has invalid categories, it won't render contributed by ([vikingcode](https://github.com/vikingcode))
+- [#178](https://github.com/Code52/pretzel/pull/178) - Create command fixes contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz))
+- [#223](https://github.com/Code52/pretzel/issues/223) - Tag doesn't inherit from Drop
+- [#228](https://github.com/Code52/pretzel/issues/228) - page.url contains broken in latest master version
+- [#235](https://github.com/Code52/pretzel/pull/235) - Update FileContentProvider.cs contributed by mark van tilburg ([markvantilburg](https://github.com/markvantilburg))
+- [#240](https://github.com/Code52/pretzel/issues/240) - Error when baking brand new razor template site
+- [#246](https://github.com/Code52/pretzel/issues/246) - created site doesn't process liquid tags in posts when shown on homepage
+- [#249](https://github.com/Code52/pretzel/pull/249) - Fix for page.url when paginating contributed by Thomas Freudenberg ([thoemmi](https://github.com/thoemmi))
+- [#250](https://github.com/Code52/pretzel/pull/250) - Inconsistent page.date handling contributed by Thomas Freudenberg ([thoemmi](https://github.com/thoemmi))
+- [#255](https://github.com/Code52/pretzel/pull/255) - Fix pagination when paginate_link points to a directory contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz))
+- [#257](https://github.com/Code52/pretzel/pull/257) - Reading namespaces from attributes contributed by Thiago 'Jedi' Abreu ([thiagoabreu](https://github.com/thiagoabreu))
+- [#263](https://github.com/Code52/pretzel/pull/263) - Enhanced front matter contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz))
+- [#269](https://github.com/Code52/pretzel/pull/269) - Update Rss.liquid contributed by mark van tilburg ([markvantilburg](https://github.com/markvantilburg))
+- [#271](https://github.com/Code52/pretzel/pull/271) - Added missing next and previous items in the page Hash in the Liquid engine contributed by Keuvain ([k94ll13nn3](https://github.com/k94ll13nn3))
+
+Commits: [1436ac1f52...27587ad5b3](https://github.com/Code52/pretzel/compare/1436ac1f52...27587ad5b3)
 
 
 # 0.2.0

@@ -41,7 +41,7 @@
       <HintPath>..\packages\AjaxMin.5.14.5506.26202\lib\net40\AjaxMin.dll</HintPath>
     </Reference>
     <Reference Include="CommonMark, Version=0.1.0.0, Culture=neutral, PublicKeyToken=001ef8810438905d, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommonMark.NET.0.9.1\lib\net45\CommonMark.dll</HintPath>
+      <HintPath>..\packages\CommonMark.NET.0.10.0\lib\net45\CommonMark.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="dotless.ClientOnly, Version=1.5.1.0, Culture=neutral, PublicKeyToken=96b446c9e63eae34, processorArchitecture=MSIL">
@@ -90,6 +90,7 @@
     <Compile Include="Commands\BaseParameters.cs" />
     <Compile Include="Exceptions\PageProcessingException.cs" />
     <Compile Include="Extensibility\Extensions\AzureHostSupport.cs" />
+    <Compile Include="Extensibility\Extensions\CommonMarkEngine.cs" />
     <Compile Include="Extensibility\Extensions\PrettifyUrlFilter.cs" />
     <Compile Include="Extensibility\Extensions\VirtualDirectorySupport.cs" />
     <Compile Include="Extensibility\Extensions\SlugifyFilter.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Extensibility\Extensions\WebSequenceDiagrams.cs" />
     <Compile Include="Extensibility\IHaveCommandLineArgs.cs" />
     <Compile Include="Extensibility\IFilter.cs" />
+    <Compile Include="Extensibility\ILightweightMarkupEngine.cs" />
     <Compile Include="Extensibility\IName.cs" />
     <Compile Include="Extensibility\ITag.cs" />
     <Compile Include="Extensibility\TagFactoryBase.cs" />
@@ -172,12 +174,10 @@
     <Compile Include="Templating\Context\NonProcessedPage.cs" />
     <Compile Include="Templating\Context\Page.cs" />
     <Compile Include="Templating\Context\Paginator.cs" />
-    <Compile Include="Templating\Context\Post.cs" />
     <Compile Include="Templating\Context\SiteContextGenerator.cs" />
     <Compile Include="Templating\Context\Tag.cs" />
     <Compile Include="Templating\Jekyll\Extensions\PageExtensions.cs" />
     <Compile Include="Templating\Jekyll\Includes.cs" />
-    <Compile Include="Templating\Jekyll\PostDrop.cs" />
     <Compile Include="Templating\Jekyll\SiteContextDrop.cs" />
     <Compile Include="Templating\Razor\ExtensibleTemplate.cs" />
     <Compile Include="Templating\Razor\IncludesResolver.cs" />

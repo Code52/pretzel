@@ -85,7 +85,8 @@ namespace Pretzel
         {
             try
             {
-                var catalog = new AggregateCatalog(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
+                var catalog = new AggregateCatalog(new AssemblyCatalog(Assembly.GetExecutingAssembly()),
+                                                   new AssemblyCatalog(typeof(Logic.SanityCheck).Assembly));
 
                 LoadPlugins(catalog, parameters);
 

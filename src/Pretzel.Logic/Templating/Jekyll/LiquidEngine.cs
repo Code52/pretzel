@@ -70,12 +70,15 @@ namespace Pretzel.Logic.Templating.Jekyll
                 y.Add("title", Context.Title);
             }
 
+            y.Add("previous", pageContext.Previous);
+            y.Add("next", pageContext.Next);
+
             var x = Hash.FromAnonymousObject(new
             {
                 site = contextDrop.ToHash(),
                 wtftime = Hash.FromAnonymousObject(new { date = DateTime.Now }),
                 page = y,
-                content = pageContext.Content,
+                content = pageContext.FullContent,
                 paginator = pageContext.Paginator,
             });
 
