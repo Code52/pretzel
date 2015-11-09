@@ -51,24 +51,9 @@ To stop the site, press q.
 
 *More infos on the [wiki](https://github.com/Code52/pretzel/wiki)*
 
-### Getting started
-
-**Getting started with Git and GitHub**
-
- * [Setting up Git for Windows and connecting to GitHub](http://help.github.com/win-set-up-git/)
- * [Forking a GitHub repository](http://help.github.com/fork-a-repo/)
- * [The simple guide to GIT guide](http://rogerdudler.github.com/git-guide/)
-
-Once you're familiar with Git and GitHub, clone the repository and run the ```.\build.cmd``` script to compile the code and run all the unit tests. You can use this script to test your changes quickly.
-
-### Discussing ideas 
-
-* [Trello Board](https://trello.com/board/pretzel/4f25ffb3dbbed1ab5a4f0f5a) - add ideas, or claim an idea and start working on it!
-* [JabbR Chatroom](http://jabbr.net/#/rooms/code52) - discuss things in real-time with people all over the world!
-
 ### Contributing
 
-All PRs are welcome but don't forget the tests with your new shiny feature.
+All contributions are welcome, please read our [contributing guide](CONTRIBUTING.md).
 
 
 ### Attribution
