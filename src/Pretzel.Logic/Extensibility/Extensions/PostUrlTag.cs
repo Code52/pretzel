@@ -61,7 +61,7 @@ namespace Pretzel.Logic.Extensibility.Extensions
             : base("PostUrl")
         { }
 
-        internal override ITag CreateTag()
+        public override ITag CreateTag()
         {
             return new PostUrlTag(SiteContext);
         }

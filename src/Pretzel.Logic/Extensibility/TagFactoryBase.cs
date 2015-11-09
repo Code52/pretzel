@@ -29,7 +29,7 @@ namespace Pretzel.Logic.Extensibility
             return (DotLiquid.Tag)CreateTag();
         }
 
-        internal abstract ITag CreateTag();
+        public abstract ITag CreateTag();
 
         internal void Initialize(SiteContext siteContext)
         {

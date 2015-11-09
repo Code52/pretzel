@@ -309,4 +309,70 @@ namespace Pretzel.Tests.Templating.Razor
                          FileSystem.File.ReadAllText(@"C:\website\_site\blog\page4\index.html").RemoveWhiteSpace());
         }
     }
+
+    public class Given_Engine_Has_Custom_TagFactory : BakingEnvironment<RazorSiteEngine>
+    {
+        private const string ConfigContents = "---\r\n title: Site Title\r\n---";
+        private const string PageContent = "---\r\n \r\n---\r\n@Tag.Custom()";
+        private const string ExpectedPageContents = "<p>custom tag: Site Title</p>";
+
+        public override RazorSiteEngine Given()
+        {
+            return new RazorSiteEngine();
+        }
+
+        public override void When()
+        {
+            FileSystem.AddFile(@"C:\website\_config.yml", new MockFileData(ConfigContents));
+            FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContent));
+            var generator = new SiteContextGenerator(FileSystem, new LinkHelper());
+            var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
+            Subject.FileSystem = FileSystem;
+
+            Subject.TagFactories = new List<TagFactoryBase> { new CustomTagFactory() };
+
+            Subject.Process(context);
+        }
+
+        [Fact]
+        public void Page_should_contain_custom_tag()
+        {
+            Assert.Equal(ExpectedPageContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+        }
+
+        public class CustomTag : DotLiquid.Tag, ITag
+        {
+            private SiteContext _siteContext;
+
+            public new string Name { get { return "Custom"; } }
+
+            public CustomTag(SiteContext siteContext)
+            {
+                _siteContext = siteContext;
+            }
+
+            public string Custom()
+            {
+                return string.Format("custom tag: {0}", _siteContext.Config["title"]);
+            }
+
+            public override void Render(DotLiquid.Context context, TextWriter result)
+            {
+                result.WriteLine(Custom());
+            }
+        }
+
+        public class CustomTagFactory : TagFactoryBase
+        {
+            public CustomTagFactory() : base("Custom")
+            {
+
+            }
+
+            public override ITag CreateTag()
+            {
+                return new CustomTag(this.SiteContext);
+            }
+        }
+    }
 }
