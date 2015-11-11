@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pretzel", "Pretzel\Pretzel.csproj", "{198E7970-CBF7-4BD8-8E36-4E07BB29C3AF}"
 EndProject
@@ -11,10 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pretzel.Tests", "Pretzel.Te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5F558191-21D9-40C6-9173-C416DCEFDA21}"
 	ProjectSection(SolutionItems) = preProject
-		..\AppVeyor-Build.ps1 = ..\AppVeyor-Build.ps1
+		..\.editorconfig = ..\.editorconfig
 		..\appveyor.yml = ..\appveyor.yml
-		..\build.cmd = ..\build.cmd
-		..\build.proj = ..\build.proj
+		..\CONTRIBUTING.md = ..\CONTRIBUTING.md
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
