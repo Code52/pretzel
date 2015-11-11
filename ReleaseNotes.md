@@ -32,7 +32,7 @@ All existing plugins must be recompiled with referencing only Pretzel.Logic.
 - [#260](https://github.com/Code52/pretzel/pull/260) - Refactor logging contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz))
 
 ## Fixes
-- [#198](https://github.com/Code52/pretzel/issues/198) - Liquid tag/filter with underscore doesn't works in markdown files +fix
+- [#198](https://github.com/Code52/pretzel/issues/198) - Liquid tag/filter with underscore doesn't works in markdown files
 - [#201](https://github.com/Code52/pretzel/issues/201) - Custom metadatas in pages are not available from site.pages in liquid
 - [#212](https://github.com/Code52/pretzel/issues/212) - If a post has invalid categories, it won't render contributed by ([vikingcode](https://github.com/vikingcode))
 - [#178](https://github.com/Code52/pretzel/pull/178) - Create command fixes contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz))
