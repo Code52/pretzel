@@ -41,7 +41,7 @@ To explicitly specify the input - we should support inferring the input based on
 
 To test a site locally, run:
 
-	pretzel taste 
+    pretzel taste 
 
 To specify the port to serve the site from (default will be 4000), run:
 
