@@ -1,4 +1,4 @@
-$env:appveyor_build_folder = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptDir = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 $env:GitVersion_NuGetVersionV2 = "0.42.0"
 # if release test
 $env:appveyor_repo_tag = $true
@@ -11,4 +11,4 @@ function Set-AppveyorBuildVariable ($variableName, $variablevalue)
 }
 
 # Packaging
-.\AppVeyor-Build.ps1
+& $scriptDir\AppVeyor-Build.ps1

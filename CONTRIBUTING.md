@@ -8,7 +8,7 @@
  * [Forking a GitHub repository](http://help.github.com/fork-a-repo/)
  * [The simple guide to GIT guide](http://rogerdudler.github.com/git-guide/)
 
-Once you're familiar with Git and GitHub, clone the repository and run the ```.\build.cmd``` script to compile the code and run all the unit tests. You can use this script to test your changes quickly.
+Once you're familiar with Git and GitHub, clone the repository and run the ```.\BuildScripts\build.cmd``` script to compile the code and run all the unit tests. You can use this script to test your changes quickly.
 
 ## Discussing ideas 
 

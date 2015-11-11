@@ -21,7 +21,7 @@ build:
   verbosity: minimal
 
 after_build:
-  - ps: .\AppVeyor-Build.ps1
+  - ps: .\BuildScripts\AppVeyor-Build.ps1
 
 test_script:
   - cinst opencover -source https://nuget.org/api/v2/
@@ -38,10 +38,10 @@ artifacts:
 
   - path: coverage.xml
 
-  - path: Pretzel.*.zip
+  - path: artifacts\Pretzel.*.zip
     name: Pretzel.zip
     
-  - path: Pretzel.ScriptCs.*.zip
+  - path: artifacts\Pretzel.ScriptCs.*.zip
     name: Pretzel.ScriptCs.zip
 
   - path: artifacts\Pretzel.Logic.*.nupkg
