@@ -20,7 +20,8 @@ Once you're familiar with Git and GitHub, clone the repository and run the ```.\
 ## Coding conventions
 
 We are following as much as possible the [C# coding conventions](https://msdn.microsoft.com/en-us/library/ff926074.aspx).  
-We prefer spaces over tab for indentation.
+We prefer spaces over tab for indentation.  
+We have an [editorconfig](http://EditorConfig.org) [file](./.editorconfig) if you use an editor or plugin respecting it.
 
 ## Testing
 
