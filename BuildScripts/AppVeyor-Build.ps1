@@ -139,14 +139,16 @@ function Build()
         {
             # Coverity
             cinst PublishCoverity -source https://nuget.org/api/v2/
-
+            
+            cov-configure --config cov-config.xml --cs
+            
             $buildArgs = @(
                           "$src\Pretzel.sln"
                           "/p:Configuration=Release",
                           "/verbosity:minimal",
                           "/logger:C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll");
-
-            & cov-build --dir $artifacts\cov-int msbuild $buildArgs
+            
+            & cov-build --config cov-config.xml --dir $artifacts\cov-int msbuild $buildArgs
 
             & PublishCoverity compress -o $artifacts\coverity.zip -i $artifacts\cov-int;
 
