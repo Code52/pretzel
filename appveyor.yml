@@ -12,22 +12,16 @@ install:
 environment:
   COVERALLS_REPO_TOKEN:
     secure: 7apBd6hzfYjVoClqPS+PlHPMqNbUe6Bhlku/45cB2cZiWff4M36qn3B3ibgnRU/+
+  CoverityProjectToken:
+    secure: 8BZT5bnory1d0llayVIHpbKdpDsfqwnTX6QCOA1LJdw=
+  CoverityEmailDistribution:
+    secure: bVPyDjOtyByKm9rSo/rjN79B6Z6/pI1hhbhYZHiAJ/E=
 
 before_build:
   - nuget restore src
 
-build:
-  project: src\Pretzel.sln
-  verbosity: minimal
-
-after_build:
+build_script:
   - ps: .\BuildScripts\AppVeyor-Build.ps1
-
-test_script:
-  - cinst opencover -source https://nuget.org/api/v2/
-  - cinst coveralls.io -source https://nuget.org/api/v2/
-  - OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -target:"%xunit20%\xunit.console.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"" -noshadow -appveyor" -output:coverage.xml -returntargetcode
-  - coveralls.net --opencover coverage.xml
 
 artifacts:
   - path: artifacts\Pretzel.*.nupkg
@@ -36,7 +30,7 @@ artifacts:
   - path: artifacts\Pretzel.ScriptCs.*.nupkg
     name: Pretzel.ScriptCs.nupkg
 
-  - path: coverage.xml
+  - path: artifacts\coverage.xml
 
   - path: artifacts\Pretzel.*.zip
     name: Pretzel.zip

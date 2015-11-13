@@ -1,4 +1,9 @@
 $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+# if AppVeyor AppVeyor build
+$env:APPVEYOR = $false
+# scheduled build
+$env:APPVEYOR_SCHEDULED_BUILD = $false
+# version
 $env:GitVersion_NuGetVersionV2 = "0.42.0"
 # if release test
 $env:appveyor_repo_tag = $true
