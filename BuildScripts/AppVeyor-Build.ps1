@@ -69,7 +69,6 @@ function SetVersion
 # Packaging
 function CreatePackage($version)
 {
-    CreateCleanDirectory $artifacts
     CreateCleanDirectory chocoTemp
     
     # build Pretzel nupkg
@@ -130,6 +129,8 @@ function ExecuteTests($cover)
 # build
 function Build()
 {
+    CreateCleanDirectory $artifacts
+    
     # AppVeyor
     If ($env:APPVEYOR -eq $true)
     {
