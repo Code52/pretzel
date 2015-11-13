@@ -149,8 +149,8 @@ function Build()
                           "/p:Configuration=Release"
                           );
             
-            & cov-build --config cov-config.xml --dir $artifacts\cov-int msbuild $src\Pretzel.sln /l:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /m /p:Configuration=Release
-
+            & cov-build --config cov-config.xml --dir $artifacts\cov-int msbuild $src\Pretzel.sln /p:Configuration=Release
+            Push-AppveyorArtifact $artifacts\cov-int\build-log.txt
             & PublishCoverity compress -o $artifacts\coverity.zip -i $artifacts\cov-int;
 
             & PublishCoverity publish -z $artifacts\coverity.zip -r Code52/Pretzel -t $env:CoverityProjectToken -e $env:CoverityEmailDistribution -d "AppVeyor scheduled build." --codeVersion $env:GitVersion_NuGetVersionV2;
