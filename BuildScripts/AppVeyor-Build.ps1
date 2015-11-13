@@ -142,9 +142,9 @@ function Build()
 
             $buildArgs = @(
                           "$src\Pretzel.sln"
-                          "/p:Configuration=""Release""",
+                          "/p:Configuration=Release",
                           "/verbosity:minimal",
-                          "/logger:""C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll""");
+                          "/logger:C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll");
 
             & cov-build --dir $artifacts\cov-int msbuild $buildArgs
 
