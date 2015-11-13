@@ -116,8 +116,8 @@ function ExecuteTests($cover)
     {
         cinst opencover -source https://nuget.org/api/v2/
         cinst coveralls.io -source https://nuget.org/api/v2/
-        OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -target:"%xunit20%\xunit.console.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"" -noshadow -appveyor" -output:coverage.xml -returntargetcode
-        coveralls.net --opencover $artifacts\coverage.xml
+        & OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -target:"%xunit20%\xunit.console.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"" -noshadow -appveyor" -output:$artifacts\coverage.xml -returntargetcode
+        & coveralls.net --opencover $artifacts\coverage.xml
     }
     Else
     {
@@ -141,7 +141,7 @@ function Build()
 
             $buildArgs = @(
                           "$src\Pretzel.sln"
-                          "p:Configuration=""Release""",
+                          "/p:Configuration=""Release""",
                           "/verbosity:minimal",
                           "/logger:""C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll""");
 
@@ -154,7 +154,7 @@ function Build()
         }
         Else
         {
-            msbuild "$src\Pretzel.sln" /p:Configuration="Release" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+            & msbuild "$src\Pretzel.sln" /p:Configuration="Release" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
             if ($LastExitCode -ne 0) { throw "Building solution failed" }
 
