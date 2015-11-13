@@ -23,6 +23,8 @@ before_build:
 build_script:
   - ps: .\BuildScripts\AppVeyor-Build.ps1
 
+test: off
+
 artifacts:
   - path: artifacts\Pretzel.*.nupkg
     name: Pretzel.nupkg
