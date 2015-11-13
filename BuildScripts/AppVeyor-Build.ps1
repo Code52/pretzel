@@ -144,9 +144,10 @@ function Build()
             
             $buildArgs = @(
                           "$src\Pretzel.sln"
-                          "/p:Configuration=Release",
-                          "/verbosity:minimal",
-                          "/logger:C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll");
+                          "/l:C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll",
+                          "/m",
+                          "/p:Configuration=Release"
+                          );
             
             & cov-build --config cov-config.xml --dir $artifacts\cov-int msbuild $buildArgs
 
