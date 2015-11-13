@@ -149,7 +149,7 @@ function Build()
                           "/p:Configuration=Release"
                           );
             
-            & cov-build --config cov-config.xml --dir $artifacts\cov-int msbuild $buildArgs
+            & cov-build --config cov-config.xml --dir $artifacts\cov-int msbuild $src\Pretzel.sln /l:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /m /p:Configuration=Release
 
             & PublishCoverity compress -o $artifacts\coverity.zip -i $artifacts\cov-int;
 
