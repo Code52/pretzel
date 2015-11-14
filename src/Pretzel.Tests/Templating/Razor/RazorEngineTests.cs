@@ -30,7 +30,7 @@ namespace Pretzel.Tests.Templating.Razor
             FileSystem.AddFile(@"C:\website\_layouts\Test.cshtml", new MockFileData(layout));
             var context = new SiteContext { SourceFolder = @"C:\website\", OutputFolder = @"C:\website\_site", Title = "My Web Site" };
             bag.Add("layout", "Test");
-            context.Posts.Add(new Page { File = "index.cshtml", Content = content, OutputFile = @"C:\website\_site\index.html", Bag = bag });
+            context.Posts.Add(new Page { File = "index.cshtml", Content = content, OutputFile = @"C:\website\_site\index.html", Bag = bag, Url = "/index.html" });
             FileSystem.AddFile(@"C:\website\index.cshtml", new MockFileData(layout));
             Subject.FileSystem = FileSystem;
             Subject.Process(context);
@@ -235,10 +235,11 @@ namespace Pretzel.Tests.Templating.Razor
         public void PostUrlTag_should_be_used()
         {
             // arrange
-            const string templateContents = "<html><body>@Raw(Model.Content) @Tag.PostUrl(\"post-title.md\")</body></html>";
+            const string templateContents = "<html><body>@Raw(Model.Content) @Tag.PostUrl(\"index.cshtml\")</body></html>";
             const string pageContents = "<h1>Hello</h1>";
-            const string expected = "<html><body><h1>Hello</h1> post/title.html</body></html>";
-            Subject.Tags = new ITag[] { new PostUrlTag() };
+            const string expected = "<html><body><h1>Hello</h1> /index.html</body></html>";
+
+            Subject.TagFactories = new List<TagFactoryBase> { new PostUrlTagFactory() };
 
             // act
             ProcessContents(templateContents, pageContents, new Dictionary<string, object>());
@@ -306,6 +307,72 @@ namespace Pretzel.Tests.Templating.Razor
 
             Assert.Equal(String.Format(ExpectedLastFileContents, 1),
                          FileSystem.File.ReadAllText(@"C:\website\_site\blog\page4\index.html").RemoveWhiteSpace());
+        }
+    }
+
+    public class Given_Engine_Has_Custom_TagFactory : BakingEnvironment<RazorSiteEngine>
+    {
+        private const string ConfigContents = "---\r\n title: Site Title\r\n---";
+        private const string PageContent = "---\r\n \r\n---\r\n@Tag.Custom()";
+        private const string ExpectedPageContents = "<p>custom tag: Site Title</p>";
+
+        public override RazorSiteEngine Given()
+        {
+            return new RazorSiteEngine();
+        }
+
+        public override void When()
+        {
+            FileSystem.AddFile(@"C:\website\_config.yml", new MockFileData(ConfigContents));
+            FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContent));
+            var generator = new SiteContextGenerator(FileSystem, new LinkHelper());
+            var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
+            Subject.FileSystem = FileSystem;
+
+            Subject.TagFactories = new List<TagFactoryBase> { new CustomTagFactory() };
+
+            Subject.Process(context);
+        }
+
+        [Fact]
+        public void Page_should_contain_custom_tag()
+        {
+            Assert.Equal(ExpectedPageContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+        }
+
+        public class CustomTag : DotLiquid.Tag, ITag
+        {
+            private SiteContext _siteContext;
+
+            public new string Name { get { return "Custom"; } }
+
+            public CustomTag(SiteContext siteContext)
+            {
+                _siteContext = siteContext;
+            }
+
+            public string Custom()
+            {
+                return string.Format("custom tag: {0}", _siteContext.Config["title"]);
+            }
+
+            public override void Render(DotLiquid.Context context, TextWriter result)
+            {
+                result.WriteLine(Custom());
+            }
+        }
+
+        public class CustomTagFactory : TagFactoryBase
+        {
+            public CustomTagFactory() : base("Custom")
+            {
+
+            }
+
+            public override ITag CreateTag()
+            {
+                return new CustomTag(this.SiteContext);
+            }
         }
     }
 }
