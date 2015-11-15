@@ -40,7 +40,7 @@ namespace Pretzel.Tests.Templating.Context
             // assert
             Assert.Equal(1, siteContext.Posts.Count);
         }
-        
+
         [Fact]
         public void posts_do_not_include_pages()
         {
@@ -991,6 +991,20 @@ date: 20150127
 categories: [cat1, cat2]
 ---# Title"));
             var outputPath = "/foo/bar/cat1/cat2/2015/03/09/SomeFile.html";
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+            var firstPost = siteContext.Posts.First();
+            Assert.Equal(outputPath, firstPost.Url);
+        }
+
+        [Fact]
+        public void permalink_with_folder_categories_frontmatter_only()
+        {
+            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"only_frontmatter_categories: true"));
+            fileSystem.AddFile(@"C:\TestSite\foo\bar\_posts\2015-03-09-SomeFile.md", new MockFileData(@"---
+categories: [cat1, cat2]
+---# Title"));
+            var outputPath = "/cat1/cat2/2015/03/09/SomeFile.html";
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
             var firstPost = siteContext.Posts.First();
