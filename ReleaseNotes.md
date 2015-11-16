@@ -30,6 +30,7 @@ All existing plugins must be recompiled with referencing only Pretzel.Logic.
 - [#253](https://github.com/Code52/pretzel/pull/253) - Run on Mono contributed by Thiago 'Jedi' Abreu ([thiagoabreu](https://github.com/thiagoabreu))
 - [#259](https://github.com/Code52/pretzel/pull/259) - Changed date guessing heuristic to use last modification time of posts instead of current time, if no better data is available. contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz))
 - [#260](https://github.com/Code52/pretzel/pull/260) - Refactor logging contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz))
+- [#274](https://github.com/Code52/pretzel/pull/274) - Added option to only use categories found in posts's frontmatter by Thomas Freudenberg ([thoemmi](https://github.com/thoemmi))
 
 ## Fixes
 - [#198](https://github.com/Code52/pretzel/issues/198) - Liquid tag/filter with underscore doesn't works in markdown files

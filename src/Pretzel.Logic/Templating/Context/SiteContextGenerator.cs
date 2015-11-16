@@ -290,10 +290,12 @@ namespace Pretzel.Logic.Templating.Context
         {
             var categories = new List<string>();
 
-            var postPath = page.File.Replace(context.SourceFolder, string.Empty);
-            string rawCategories = postPath.Replace(fileSystem.Path.GetFileName(page.File), string.Empty).Replace("_posts", string.Empty);
-            categories.AddRange(rawCategories.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries));
-
+            if (!IsOnlyFrontmatterCategories(context))
+            {
+                var postPath = page.File.Replace(context.SourceFolder, string.Empty);
+                string rawCategories = postPath.Replace(fileSystem.Path.GetFileName(page.File), string.Empty).Replace("_posts", string.Empty);
+                categories.AddRange(rawCategories.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries));
+            }
             if (header.ContainsKey("categories") && header["categories"] is IEnumerable<string>)
             {
                 categories.AddRange((IEnumerable<string>)header["categories"]);
@@ -304,6 +306,16 @@ namespace Pretzel.Logic.Templating.Context
             }
 
             return categories;
+        }
+
+        private static bool IsOnlyFrontmatterCategories(SiteContext context)
+        {
+            object onlyFrontmatterCategories;
+            if (!context.Config.TryGetValue("only_frontmatter_categories", out onlyFrontmatterCategories))
+            {
+                return false;
+            }
+            return onlyFrontmatterCategories is bool && (bool) onlyFrontmatterCategories;
         }
 
         private string GetFilePathForPage(SiteContext context, string file)
