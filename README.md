@@ -1,7 +1,7 @@
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/rp8nq03r4b7mdecf?svg=true)](https://ci.appveyor.com/project/laedit/pretzel)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/3949/badge.svg)](https://scan.coverity.com/projects/3949)
 [![Coverage Status](https://coveralls.io/repos/Code52/pretzel/badge.svg)](https://coveralls.io/r/Code52/pretzel)
-[![Chocolatey](https://img.shields.io/chocolatey/v/pretzel.svg?style=flat)](https://chocolatey.org/packages/pretzel/)
+[![Chocolatey](https://img.shields.io/chocolatey/v/pretzel.svg?style=flat)](https://chocolatey.org/packages/pretzel/) [![Nuget](https://img.shields.io/nuget/v/Pretzel.Logic.svg)](https://www.nuget.org/packages/Pretzel.Logic/)
 
 
 ## Pretzel
@@ -41,7 +41,7 @@ To explicitly specify the input - we should support inferring the input based on
 
 To test a site locally, run:
 
-	pretzel taste 
+    pretzel taste 
 
 To specify the port to serve the site from (default will be 4000), run:
 
@@ -51,27 +51,9 @@ To stop the site, press q.
 
 *More infos on the [wiki](https://github.com/Code52/pretzel/wiki)*
 
-### Getting started
-
-**Getting started with Git and GitHub**
-
- * [Setting up Git for Windows and connecting to GitHub](http://help.github.com/win-set-up-git/)
- * [Forking a GitHub repository](http://help.github.com/fork-a-repo/)
- * [The simple guide to GIT guide](http://rogerdudler.github.com/git-guide/)
-
-Once you're familiar with Git and GitHub, clone the repository and run the ```.\build.cmd``` script to compile the code and run all the unit tests. You can use this script to test your changes quickly.
-
-### Discussing ideas 
-
-* [Trello Board](https://trello.com/board/pretzel/4f25ffb3dbbed1ab5a4f0f5a) - add ideas, or claim an idea and start working on it!
-* [JabbR Chatroom](http://jabbr.net/#/rooms/code52) - discuss things in real-time with people all over the world!
-
 ### Contributing
 
-All PRs are welcome but don't forget the tests with your new shiny feature.
-
-### Links
-- [ColorCode Fork](https://github.com/csainty/ColorCode) - Switch from inline html to stylesheet approach 
+All contributions are welcome, please read our [contributing guide](CONTRIBUTING.md).
 
 
 ### Attribution

@@ -119,48 +119,48 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="AssemblyInfo_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razorcsproject\assemblyinfo_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RazorCsProject\AssemblyInfo_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Category_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razorcsproject\category_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RazorCsProject\Category_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="LayoutProject_csproj" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razorcsproject\layoutproject_csproj;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RazorCsProject\LayoutProject_csproj;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="LayoutSolution_sln" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razorcsproject\layoutsolution_sln;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RazorCsProject\LayoutSolution_sln;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="NonProcessedPage_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razorcsproject\nonprocessedpage_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RazorCsProject\NonProcessedPage_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="NuGet_Config" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razorcsproject\nuget_config;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RazorCsProject\NuGet_Config;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="NuGet_exe" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razorcsproject\nuget_exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RazorCsProject\NuGet_exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="NuGet_targets" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razorcsproject\nuget_targets;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RazorCsProject\NuGet_targets;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="packages_config" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razorcsproject\packages_config;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RazorCsProject\packages_config;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="PageContext_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razorcsproject\pagecontext_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RazorCsProject\PageContext_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Page_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razorcsproject\page_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RazorCsProject\Page_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Paginator_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razorcsproject\paginator_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RazorCsProject\Paginator_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="SiteContext_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razorcsproject\sitecontext_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RazorCsProject\SiteContext_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Tag_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razorcsproject\tag_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RazorCsProject\Tag_cs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Web_config" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\razorcsproject\web_config;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\RazorCsProject\Web_config;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

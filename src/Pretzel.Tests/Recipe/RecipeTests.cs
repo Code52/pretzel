@@ -26,8 +26,9 @@ namespace Pretzel.Tests.Recipe
         {
             writer = new StringWriter(sb);
             Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory("info");
-            Tracing.Logger.AddCategory("error");
+            Tracing.Logger.AddCategory(Tracing.Category.Info);
+            Tracing.Logger.AddCategory(Tracing.Category.Error);
+            Tracing.Logger.AddCategory(Tracing.Category.Debug);
         }
 
         [Fact]
@@ -47,7 +48,7 @@ namespace Pretzel.Tests.Recipe
             Assert.True(fileSystem.File.Exists(BaseSite + "atom.xml"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"_layouts\layout.html"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"_layouts\post.html"));
-            Assert.True(fileSystem.File.Exists(BaseSite + "index.md"));
+            Assert.True(fileSystem.File.Exists(BaseSite + "index.html"));
             Assert.True(fileSystem.File.Exists(BaseSite + "about.md"));
             Assert.True(fileSystem.File.Exists(BaseSite + string.Format(@"_posts\{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))));
             Assert.True(fileSystem.File.Exists(BaseSite + @"css\style.css"));
@@ -74,7 +75,16 @@ namespace Pretzel.Tests.Recipe
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"img\"));
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"_includes\"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"_layouts\layout.cshtml"));
-            Assert.True(fileSystem.File.Exists(BaseSite + "index.md"));
+
+            if (wiki)
+            {
+                Assert.True(fileSystem.File.Exists(BaseSite + "index.md"));
+            }
+            else
+            {
+                Assert.True(fileSystem.File.Exists(BaseSite + "index.cshtml"));
+            }
+
             Assert.True(fileSystem.File.Exists(BaseSite + @"css\style.css"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"img\favicon.ico"));
             
@@ -192,7 +202,8 @@ namespace Pretzel.Tests.Recipe
             recipe.Create();
 
             Assert.Contains(@"Error trying to create template: System.Exception: Error!!!", writer.ToString());
-            Assert.Contains(@"at Pretzel.Tests.Recipe.RecipeTests.<error_is_traced>b__0(CallInfo x)", writer.ToString());
+            Assert.Contains(@"at Pretzel.Tests.Recipe.RecipeTests", writer.ToString());
+            Assert.Contains(@"<error_is_traced>", writer.ToString());
         }
 
         [Fact]

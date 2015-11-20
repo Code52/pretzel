@@ -26,8 +26,8 @@ namespace Pretzel.Logic.Import
             var xml = fileSystem.File.ReadAllText(pathToImportFile);
             var root = XElement.Parse(CleanXml(xml));
 
-            XNamespace wp = "http://wordpress.org/export/1.1/";
-            XNamespace content = "http://purl.org/rss/1.0/modules/content/";
+            XNamespace wp = root.Attribute("{http://www.w3.org/2000/xmlns/}wp").Value;
+            XNamespace content = root.Attribute("{http://www.w3.org/2000/xmlns/}content").Value;
 
             var posts = from e in root.Descendants("item")
                         select new WordpressPost
@@ -63,9 +63,10 @@ namespace Pretzel.Logic.Import
 
             var yamlHeader = string.Format("---\r\n{0}---\r\n\r\n", header.ToYaml());
             var postContent = yamlHeader + p.Content; //todo would be nice to convert to proper md
-            var fileName = string.Format(@"_posts\{0}-{1}.md", p.Published.ToString("yyyy-MM-dd"), p.PostName.Replace(' ', '-')); //not sure about post name
+            var postsFolder = "_posts";
+            var fileName = string.Format("{0}-{1}.md", p.Published.ToString("yyyy-MM-dd"), p.PostName.Replace(' ', '-')); //not sure about post name
 
-            fileSystem.File.WriteAllText(Path.Combine(pathToSite, fileName), postContent);
+            fileSystem.File.WriteAllText(Path.Combine(pathToSite, postsFolder, fileName), postContent);
         }
 
 

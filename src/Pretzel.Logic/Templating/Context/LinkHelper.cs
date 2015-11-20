@@ -11,7 +11,11 @@ namespace Pretzel.Logic.Templating.Context
     [Export]
     public sealed class LinkHelper
     {
-        private static readonly Regex TimestampAndTitleFromPathRegex = new Regex(@"\\(?:(?<timestamp>\d+-\d+-\d+)-)?(?<title>[^\\]*)\.[^\.]+$", RegexOptions.Compiled);
+
+        private static readonly Regex TimestampAndTitleFromPathRegex = new Regex(
+           string.Format(@"{0}(?:(?<timestamp>\d+-\d+-\d+)-)?(?<title>[^{0}]*)\.[^\.]+$",
+               Regex.Escape(Path.DirectorySeparatorChar.ToString())),
+           RegexOptions.Compiled);
         private static readonly Regex CategoryRegex = new Regex(@":category(\d*)", RegexOptions.Compiled);
         private static readonly Regex SlashesRegex = new Regex(@"/{1,}", RegexOptions.Compiled);
 

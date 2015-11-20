@@ -1,5 +1,6 @@
 ﻿using Pretzel.Logic.Extensibility;
 using RazorEngine.Templating;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -49,17 +50,27 @@ namespace Pretzel.Logic.Templating.Razor
         }
     }
 
-    public class ExtensibleProxy<T> : DynamicObject where T : IName
+    public class ExtensibleProxy<T> : DynamicObject where T : class, IName
     {
-        private readonly Dictionary<string, MethodInfo> extensibleMethods;
+        private readonly Dictionary<string, Tuple<T, MethodInfo>> extensibleMethods;
 
         public ExtensibleProxy(IEnumerable<T> extensibleMethods)
         {
             this.extensibleMethods = extensibleMethods == null ?
-                new Dictionary<string, MethodInfo>() :
+                new Dictionary<string, Tuple<T, MethodInfo>>() :
                 extensibleMethods.ToDictionary(
                     x => x.Name,
-                    x => x.GetType().GetMethod(x.Name)
+                    x => {
+                        var method = x.GetType().GetMethod(x.Name);
+                        if(method.IsStatic)
+                        {
+                            return new Tuple<T, MethodInfo>((T)null, method);
+                        }
+                          else
+                        {
+                            return new Tuple<T, MethodInfo>(x, method);
+                        }
+                        }
                 );
         }
 
@@ -70,10 +81,10 @@ namespace Pretzel.Logic.Templating.Razor
 
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
-            MethodInfo extensibleMethod;
+            Tuple<T, MethodInfo> extensibleMethod;
             if (extensibleMethods.TryGetValue(binder.Name, out extensibleMethod))
             {
-                result = extensibleMethod.Invoke(null, args);
+                result = extensibleMethod.Item2.Invoke(extensibleMethod.Item1, args);
                 return true;
             }
 

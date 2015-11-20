@@ -1,7 +1,6 @@
 ﻿using NDesk.Options;
 using Pretzel.Commands;
 using Pretzel.Logic.Commands;
-using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using System;
 using System.ComponentModel.Composition;
@@ -23,14 +22,14 @@ namespace Pretzel
         private static void Main(string[] args)
         {
             Tracing.Logger.SetWriter(Console.Out);
-            Tracing.Logger.AddCategory("info");
-            Tracing.Logger.AddCategory("error");
+            Tracing.Logger.AddCategory(Tracing.Category.Info);
+            Tracing.Logger.AddCategory(Tracing.Category.Error);
 
             var parameters = BaseParameters.Parse(args, new FileSystem());
 
             if (parameters.Debug)
             {
-                Tracing.Logger.AddCategory("debug");
+                Tracing.Logger.AddCategory(Tracing.Category.Debug);
             }
 
             var program = new Program();
@@ -85,7 +84,8 @@ namespace Pretzel
         {
             try
             {
-                var catalog = new AggregateCatalog(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
+                var catalog = new AggregateCatalog(new AssemblyCatalog(Assembly.GetExecutingAssembly()),
+                                                   new AssemblyCatalog(typeof(Logic.SanityCheck).Assembly));
 
                 LoadPlugins(catalog, parameters);
 
@@ -133,7 +133,16 @@ namespace Pretzel
                         var scriptCsCatalogMethod = factoryType.GetMethod("CreateScriptCsCatalog");
                         if (scriptCsCatalogMethod != null)
                         {
-                            var catalog = (ComposablePartCatalog)scriptCsCatalogMethod.Invoke(null, new object[] { pluginsPath, new[] { typeof(DotLiquid.Tag), typeof(ITag) } });
+                            var catalog = (ComposablePartCatalog)scriptCsCatalogMethod.Invoke(null, new object[] 
+                                {
+                                    pluginsPath,
+                                    new[] 
+                                    {
+                                        typeof(DotLiquid.Tag),
+                                        typeof(Logic.Extensibility.ITag),
+                                        typeof(Logic.Templating.Context.SiteContext)
+                                    }
+                                });
                             mainCatalog.Catalogs.Add(catalog);
                         }
                         else

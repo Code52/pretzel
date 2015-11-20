@@ -17,16 +17,14 @@ namespace Pretzel.Logic.Templating.Context
     {
         private readonly Dictionary<string, Page> pageCache = new Dictionary<string, Page>();
         private readonly IFileSystem fileSystem;
-        private readonly IEnumerable<IContentTransform> contentTransformers;
         private readonly List<string> includes = new List<string>();
         private readonly List<string> excludes = new List<string>();
         private readonly LinkHelper linkHelper;
 
         [ImportingConstructor]
-        public SiteContextGenerator(IFileSystem fileSystem, [ImportMany]IEnumerable<IContentTransform> contentTransformers, LinkHelper linkHelper)
+        public SiteContextGenerator(IFileSystem fileSystem, LinkHelper linkHelper)
         {
             this.fileSystem = fileSystem;
-            this.contentTransformers = contentTransformers;
             this.linkHelper = linkHelper;
         }
 
@@ -225,9 +223,8 @@ namespace Pretzel.Logic.Templating.Context
             {
                 if (pageCache.ContainsKey(file))
                     return pageCache[file];
-                var contents = SafeReadContents(file);
-                var header = contents.YamlHeader();
-                var content = RenderContent(file, contents, header);
+                var content = SafeReadContents(file);
+                var header = content.YamlHeader();
 
                 if (header.ContainsKey("published") && header["published"].ToString().ToLower() == "false")
                 {
@@ -237,7 +234,7 @@ namespace Pretzel.Logic.Templating.Context
                 var page = new Page
                                 {
                                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
-                                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(),
+                                    Date = header.ContainsKey("date") ? DateTime.Parse(header["date"].ToString()) : file.Datestamp(fileSystem),
                                     Content = content,
                                     Filepath = isPost ? GetPathWithTimestamp(context.OutputFolder, file) : GetFilePathForPage(context, file),
                                     File = file,
@@ -270,11 +267,8 @@ namespace Pretzel.Logic.Templating.Context
                 // resolve id
                 page.Id = page.Url.Replace(".html", string.Empty).Replace("index", string.Empty);
 
-                // ensure the date is accessible in the hash
-                if (!page.Bag.ContainsKey("date"))
-                {
-                    page.Bag["date"] = page.Date;
-                }
+                // always write date back to Bag as DateTime
+                page.Bag["date"] = page.Date;
 
                 // The GetDirectoryPage method is reentrant, we need a cache to stop a stack overflow :)
                 pageCache.Add(file, page);
@@ -296,10 +290,12 @@ namespace Pretzel.Logic.Templating.Context
         {
             var categories = new List<string>();
 
-            var postPath = page.File.Replace(context.SourceFolder, string.Empty);
-            string rawCategories = postPath.Replace(fileSystem.Path.GetFileName(page.File), string.Empty).Replace("_posts", string.Empty);
-            categories.AddRange(rawCategories.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries));
-
+            if (!IsOnlyFrontmatterCategories(context))
+            {
+                var postPath = page.File.Replace(context.SourceFolder, string.Empty);
+                string rawCategories = postPath.Replace(fileSystem.Path.GetFileName(page.File), string.Empty).Replace("_posts", string.Empty);
+                categories.AddRange(rawCategories.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries));
+            }
             if (header.ContainsKey("categories") && header["categories"] is IEnumerable<string>)
             {
                 categories.AddRange((IEnumerable<string>)header["categories"]);
@@ -310,6 +306,16 @@ namespace Pretzel.Logic.Templating.Context
             }
 
             return categories;
+        }
+
+        private static bool IsOnlyFrontmatterCategories(SiteContext context)
+        {
+            object onlyFrontmatterCategories;
+            if (!context.Config.TryGetValue("only_frontmatter_categories", out onlyFrontmatterCategories))
+            {
+                return false;
+            }
+            return onlyFrontmatterCategories is bool && (bool) onlyFrontmatterCategories;
         }
 
         private string GetFilePathForPage(SiteContext context, string file)
@@ -324,28 +330,6 @@ namespace Pretzel.Logic.Templating.Context
                 .GetFiles(forDirectory, "*.*", SearchOption.TopDirectoryOnly)
                 .Select(file => CreatePage(context, config, file, isPost))
                 .Where(page => page != null);
-        }
-
-        private string RenderContent(string file, string contents, IDictionary<string, object> header)
-        {
-            string html;
-            try
-            {
-                var contentsWithoutHeader = contents.ExcludeHeader();
-
-                html = Path.GetExtension(file).IsMarkdownFile()
-                       ? CommonMark.CommonMarkConverter.Convert(contentsWithoutHeader).Trim()
-                       : contentsWithoutHeader;
-
-                html = contentTransformers.Aggregate(html, (current, contentTransformer) => contentTransformer.Transform(current));
-            }
-            catch (Exception e)
-            {
-                Tracing.Info(String.Format("Error ({0}) converting {1}", e.Message, file));
-                Tracing.Debug(e.ToString());
-                html = String.Format("<p><b>Error converting markdown</b></p><pre>{0}</pre>", contents);
-            }
-            return html;
         }
 
         private string SafeReadLine(string file)
@@ -428,18 +412,18 @@ namespace Pretzel.Logic.Templating.Context
 
         private string MapToOutputPath(SiteContext context, string file)
         {
-            return file.Replace(context.SourceFolder, "").TrimStart('\\');
+            return file.Replace(context.SourceFolder, "")
+                .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
 
         private string GetPathWithTimestamp(string outputDirectory, string file)
         {
             // TODO: detect mode from site config
-            var fileName = file.Substring(file.LastIndexOf("\\"));
+            var fileName = Path.GetFileName(file);
 
             var tokens = fileName.Split('-');
-            var timestamp = string.Join("\\", tokens.Take(3)).Trim('\\');
-            var title = string.Join("-", tokens.Skip(3));
-            return Path.Combine(outputDirectory, timestamp, title);
+            var timePath = Path.Combine(tokens);
+            return Path.Combine(outputDirectory, timePath);
         }
     }
 }
