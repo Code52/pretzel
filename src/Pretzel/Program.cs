@@ -133,14 +133,15 @@ namespace Pretzel
                         var scriptCsCatalogMethod = factoryType.GetMethod("CreateScriptCsCatalog");
                         if (scriptCsCatalogMethod != null)
                         {
-                            var catalog = (ComposablePartCatalog)scriptCsCatalogMethod.Invoke(null, new object[] 
+                            var catalog = (ComposablePartCatalog)scriptCsCatalogMethod.Invoke(null, new object[]
                                 {
                                     pluginsPath,
-                                    new[] 
+                                    new[]
                                     {
                                         typeof(DotLiquid.Tag),
                                         typeof(Logic.Extensibility.ITag),
-                                        typeof(Logic.Templating.Context.SiteContext)
+                                        typeof(Logic.Templating.Context.SiteContext),
+                                        typeof(IFileSystem),
                                     }
                                 });
                             mainCatalog.Catalogs.Add(catalog);
