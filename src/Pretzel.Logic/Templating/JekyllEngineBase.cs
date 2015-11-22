@@ -1,5 +1,6 @@
 ﻿using Pretzel.Logic.Exceptions;
 using Pretzel.Logic.Extensibility;
+using Pretzel.Logic.Extensibility.Extensions;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
 using System;
@@ -30,6 +31,15 @@ namespace Pretzel.Logic.Templating
         [ImportMany]
         public IEnumerable<ITag> Tags { get; set; }
 
+        [ImportMany]
+        public IEnumerable<TagFactoryBase> TagFactories { get; set; }
+
+        [ImportMany]
+        public IEnumerable<IContentTransform> ContentTransformers;
+
+        [Import(AllowDefault = true)]
+        private ILightweightMarkupEngine _lightweightMarkupEngine;
+        
         public abstract void Initialize();
 
         protected abstract void PreProcess();
@@ -38,6 +48,14 @@ namespace Pretzel.Logic.Templating
 
         public void Process(SiteContext siteContext, bool skipFileOnError = false)
         {
+            // Default rendering engine
+            if (_lightweightMarkupEngine == null)
+            {
+                _lightweightMarkupEngine = new CommonMarkEngine();
+            }
+
+            Tracing.Logger.Write(string.Format("LightweightMarkupEngine: {0}", _lightweightMarkupEngine.GetType().Name), Tracing.Category.Debug);
+
             Context = siteContext;
             PreProcess();
 
@@ -58,12 +76,12 @@ namespace Pretzel.Logic.Templating
             }
         }
 
-        private static Page GetNext(IList<Page> pages, int index)
+        private static Page GetPrevious(IList<Page> pages, int index)
         {
             return index < pages.Count - 1 ? pages[index + 1] : null;
         }
 
-        private static Page GetPrevious(IList<Page> pages, int index)
+        private static Page GetNext(IList<Page> pages, int index)
         {
             return index >= 1 ? pages[index - 1] : null;
         }
@@ -91,7 +109,9 @@ namespace Pretzel.Logic.Templating
             }
 
             if (extension.IsMarkdownFile() || extension.IsRazorFile())
+            {
                 page.OutputFile = page.OutputFile.Replace(extension, ".html");
+            }
 
             var pageContext = PageContext.FromPage(Context, page, outputDirectory, page.OutputFile);
 
@@ -122,7 +142,8 @@ namespace Pretzel.Logic.Templating
                     prevLink = link;
 
                     var path = Path.Combine(outputDirectory, link.ToRelativeFile());
-                    if (path.EndsWith(FileSystem.Path.DirectorySeparatorChar.ToString())) {
+                    if (path.EndsWith(FileSystem.Path.DirectorySeparatorChar.ToString()))
+                    {
                         path = Path.Combine(path, "index.html");
                     }
                     var context = new PageContext(pageContext) { Paginator = newPaginator, OutputPath = path };
@@ -141,7 +162,9 @@ namespace Pretzel.Logic.Templating
                     : Context.ExcerptSeparator;
                 try
                 {
-                    context.Bag["excerpt"] = GetContentExcerpt(RenderTemplate(context.Content, context), excerptSeparator);
+                    context.Content = RenderContent(page.File, RenderTemplate(context.Content, context));
+                    context.FullContent = context.Content;
+                    context.Bag["excerpt"] = GetContentExcerpt(context.Content, excerptSeparator);
                 }
                 catch (Exception ex)
                 {
@@ -151,7 +174,7 @@ namespace Pretzel.Logic.Templating
                         throw new PageProcessingException(message, ex);
                     }
 
-                    Console.WriteLine(@"Failed to process {0}, see inner exception for more details", context.OutputPath);
+                    Console.WriteLine(@"Failed to process {0}: {1}", context.OutputPath, ex);
                     continue;
                 }
 
@@ -184,11 +207,13 @@ namespace Pretzel.Logic.Templating
                     }
                 }
                 if (failed)
+                {
                     continue;
+                }
 
                 try
                 {
-                    context.Content = RenderTemplate(context.Content, context);
+                    context.FullContent = RenderTemplate(context.FullContent, context);
                 }
                 catch (Exception ex)
                 {
@@ -198,13 +223,38 @@ namespace Pretzel.Logic.Templating
                         throw new PageProcessingException(message, ex);
                     }
 
-                    Console.WriteLine(@"Failed to process {0}, see inner exception for more details", context.OutputPath);
+                    Console.WriteLine(@"Failed to process {0}: {1}", context.OutputPath, ex);
                     continue;
                 }
 
                 CreateOutputDirectory(context.OutputPath);
-                FileSystem.File.WriteAllText(context.OutputPath, context.Content);
+                FileSystem.File.WriteAllText(context.OutputPath, context.FullContent);
             }
+        }
+
+        private string RenderContent(string file, string contents)
+        {
+            string html;
+            try
+            {
+                var contentsWithoutHeader = contents.ExcludeHeader();
+
+                html = Path.GetExtension(file).IsMarkdownFile()
+                       ? _lightweightMarkupEngine.Convert(contentsWithoutHeader).Trim()
+                       : contentsWithoutHeader;
+                
+                if (ContentTransformers != null)
+                {
+                    html = ContentTransformers.Aggregate(html, (current, contentTransformer) => contentTransformer.Transform(current));
+                }
+            }
+            catch (Exception e)
+            {
+                Tracing.Info(String.Format("Error ({0}) converting {1}", e.Message, file));
+                Tracing.Debug(e.ToString());
+                html = String.Format("<p><b>Error converting markdown</b></p><pre>{0}</pre>", contents);
+            }
+            return html;
         }
 
         private static string GetContentExcerpt(string content, string excerptSeparator)
@@ -259,7 +309,8 @@ namespace Pretzel.Logic.Templating
             var metadata = templateFile.YamlHeader();
             var templateContent = templateFile.ExcludeHeader();
 
-            pageContext.Content = RenderTemplate(templateContent, pageContext);
+            pageContext.FullContent = RenderTemplate(templateContent, pageContext);
+
             return metadata;
         }
 
@@ -267,7 +318,7 @@ namespace Pretzel.Logic.Templating
         {
             var temp = file.Replace(Context.SourceFolder, "")
                 .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-            
+
             return temp;
         }
 

@@ -17,16 +17,14 @@ namespace Pretzel.Logic.Templating.Context
     {
         private readonly Dictionary<string, Page> pageCache = new Dictionary<string, Page>();
         private readonly IFileSystem fileSystem;
-        private readonly IEnumerable<IContentTransform> contentTransformers;
         private readonly List<string> includes = new List<string>();
         private readonly List<string> excludes = new List<string>();
         private readonly LinkHelper linkHelper;
 
         [ImportingConstructor]
-        public SiteContextGenerator(IFileSystem fileSystem, [ImportMany]IEnumerable<IContentTransform> contentTransformers, LinkHelper linkHelper)
+        public SiteContextGenerator(IFileSystem fileSystem, LinkHelper linkHelper)
         {
             this.fileSystem = fileSystem;
-            this.contentTransformers = contentTransformers;
             this.linkHelper = linkHelper;
         }
 
@@ -225,9 +223,8 @@ namespace Pretzel.Logic.Templating.Context
             {
                 if (pageCache.ContainsKey(file))
                     return pageCache[file];
-                var contents = SafeReadContents(file);
-                var header = contents.YamlHeader();
-                var content = RenderContent(file, contents, header);
+                var content = SafeReadContents(file);
+                var header = content.YamlHeader();
 
                 if (header.ContainsKey("published") && header["published"].ToString().ToLower() == "false")
                 {
@@ -293,10 +290,12 @@ namespace Pretzel.Logic.Templating.Context
         {
             var categories = new List<string>();
 
-            var postPath = page.File.Replace(context.SourceFolder, string.Empty);
-            string rawCategories = postPath.Replace(fileSystem.Path.GetFileName(page.File), string.Empty).Replace("_posts", string.Empty);
-            categories.AddRange(rawCategories.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries));
-
+            if (!IsOnlyFrontmatterCategories(context))
+            {
+                var postPath = page.File.Replace(context.SourceFolder, string.Empty);
+                string rawCategories = postPath.Replace(fileSystem.Path.GetFileName(page.File), string.Empty).Replace("_posts", string.Empty);
+                categories.AddRange(rawCategories.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries));
+            }
             if (header.ContainsKey("categories") && header["categories"] is IEnumerable<string>)
             {
                 categories.AddRange((IEnumerable<string>)header["categories"]);
@@ -307,6 +306,16 @@ namespace Pretzel.Logic.Templating.Context
             }
 
             return categories;
+        }
+
+        private static bool IsOnlyFrontmatterCategories(SiteContext context)
+        {
+            object onlyFrontmatterCategories;
+            if (!context.Config.TryGetValue("only_frontmatter_categories", out onlyFrontmatterCategories))
+            {
+                return false;
+            }
+            return onlyFrontmatterCategories is bool && (bool) onlyFrontmatterCategories;
         }
 
         private string GetFilePathForPage(SiteContext context, string file)
@@ -321,28 +330,6 @@ namespace Pretzel.Logic.Templating.Context
                 .GetFiles(forDirectory, "*.*", SearchOption.TopDirectoryOnly)
                 .Select(file => CreatePage(context, config, file, isPost))
                 .Where(page => page != null);
-        }
-
-        private string RenderContent(string file, string contents, IDictionary<string, object> header)
-        {
-            string html;
-            try
-            {
-                var contentsWithoutHeader = contents.ExcludeHeader();
-
-                html = Path.GetExtension(file).IsMarkdownFile()
-                       ? CommonMark.CommonMarkConverter.Convert(contentsWithoutHeader).Trim()
-                       : contentsWithoutHeader;
-
-                html = contentTransformers.Aggregate(html, (current, contentTransformer) => contentTransformer.Transform(current));
-            }
-            catch (Exception e)
-            {
-                Tracing.Info(String.Format("Error ({0}) converting {1}", e.Message, file));
-                Tracing.Debug(e.ToString());
-                html = String.Format("<p><b>Error converting markdown</b></p><pre>{0}</pre>", contents);
-            }
-            return html;
         }
 
         private string SafeReadLine(string file)

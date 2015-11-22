@@ -7,6 +7,9 @@ using System;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Linq;
+using Pretzel.Logic.Extensibility;
+using System.Collections.Generic;
 
 namespace Pretzel.Logic.Templating.Razor
 {
@@ -18,6 +21,8 @@ namespace Pretzel.Logic.Templating.Razor
 
         private string includesPath;
 
+        private List<ITag> _allTags = new List<ITag>();
+
         public override void Initialize()
         {
         }
@@ -25,6 +30,20 @@ namespace Pretzel.Logic.Templating.Razor
         protected override void PreProcess()
         {
             includesPath = Path.Combine(Context.SourceFolder, "_includes");
+
+            if (Tags != null)
+            {
+                _allTags.AddRange(Tags);
+            }
+            
+            if (TagFactories != null)
+            {
+                _allTags.AddRange(TagFactories.Select(factory =>
+                    {
+                        factory.Initialize(Context);
+                        return factory.CreateTag();
+                    }));
+            }
         }
 
         protected override string[] LayoutExtensions
@@ -37,9 +56,12 @@ namespace Pretzel.Logic.Templating.Razor
             var serviceConfiguration = new TemplateServiceConfiguration
             {
                 TemplateManager = new IncludesResolver(FileSystem, includesPath),
-                BaseTemplateType = typeof(ExtensibleTemplate<>)
+                BaseTemplateType = typeof(ExtensibleTemplate<>),
+                DisableTempFileLocking = true,
+                CachingProvider = new DefaultCachingProvider(t => { })
             };
-            serviceConfiguration.Activator = new ExtensibleActivator(serviceConfiguration.Activator, Filters, Tags);
+            serviceConfiguration.Activator = new ExtensibleActivator(serviceConfiguration.Activator, Filters, _allTags);
+
             Engine.Razor = RazorEngineService.Create(serviceConfiguration);
 
             content = Regex.Replace(content, "<p>(@model .*?)</p>", "$1");

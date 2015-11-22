@@ -13,7 +13,7 @@ namespace Pretzel.Logic.Liquid
             result.Write("<pre>");
             if (addCode)
             {
-                result.Write("<code class=\"language-{0}\">", Markup.Trim());
+                result.Write("<code class=\"language-{0}\">", markup);
             }
             base.Render(context, result);
             if (addCode)

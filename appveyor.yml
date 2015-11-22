@@ -12,22 +12,18 @@ install:
 environment:
   COVERALLS_REPO_TOKEN:
     secure: 7apBd6hzfYjVoClqPS+PlHPMqNbUe6Bhlku/45cB2cZiWff4M36qn3B3ibgnRU/+
+  CoverityProjectToken:
+    secure: 8BZT5bnory1d0llayVIHpbKdpDsfqwnTX6QCOA1LJdw=
+  CoverityEmailDistribution:
+    secure: bVPyDjOtyByKm9rSo/rjN79B6Z6/pI1hhbhYZHiAJ/E=
 
 before_build:
   - nuget restore src
 
-build:
-  project: src\Pretzel.sln
-  verbosity: minimal
+build_script:
+  - ps: .\BuildScripts\AppVeyor-Build.ps1
 
-after_build:
-  - ps: .\AppVeyor-Build.ps1
-
-test_script:
-  - cinst opencover -source https://nuget.org/api/v2/
-  - cinst coveralls.io -source https://nuget.org/api/v2/
-  - OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -target:"%xunit20%\xunit.console.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"" -noshadow -appveyor" -output:coverage.xml -returntargetcode
-  - coveralls.net --opencover coverage.xml
+test: off
 
 artifacts:
   - path: artifacts\Pretzel.*.nupkg
@@ -36,13 +32,19 @@ artifacts:
   - path: artifacts\Pretzel.ScriptCs.*.nupkg
     name: Pretzel.ScriptCs.nupkg
 
-  - path: coverage.xml
+  - path: artifacts\coverage.xml
 
-  - path: Pretzel.*.zip
+  - path: artifacts\Pretzel.*.zip
     name: Pretzel.zip
     
-  - path: Pretzel.ScriptCs.*.zip
+  - path: artifacts\Pretzel.ScriptCs.*.zip
     name: Pretzel.ScriptCs.zip
+
+  - path: artifacts\Pretzel.Logic.*.nupkg
+    name: Pretzel.Logic.nupkg
+
+  - path: artifacts\Pretzel.Logic.*.symbols.nupkg
+    name: Pretzel.Logic.symbols.nupkg
 
 deploy:
   - provider: GitHub
@@ -58,6 +60,13 @@ deploy:
     api_key:
       secure: 2GBJF71EQfU+kIL5NHVM4wYoCRcFf/gM/voNIgud8vDWUE+uA1ye/hRWjJPQWA5w
     skip_symbols: true
-    artifact: /.*\.nupkg/
+    artifact: Pretzel.nupkg, Pretzel.ScriptCs.nupkg
+    on:
+      appveyor_repo_tag: true
+      
+  - provider: NuGet
+    api_key:
+      secure: NmM24h0TPsfINvy/1Qr4iJkmRjVztuY5umCJ6mzpxSjvuKl48AXjGEcgow+iJwL8
+    artifact: Pretzel.Logic.nupkg, Pretzel.Logic.symbols.nupkg
     on:
       appveyor_repo_tag: true

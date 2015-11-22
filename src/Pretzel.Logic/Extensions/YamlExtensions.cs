@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
 using YamlDotNet.RepresentationModel;
@@ -73,16 +74,24 @@ namespace Pretzel.Logic.Extensions
             var list = value as YamlSequenceNode;
             if (list != null)
             {
-                var listResults = new List<string>();
-                foreach (var entry in list.Children)
-                {
-                    var node = entry as YamlScalarNode;
-                    if (node != null)
+                if (list.Children.All(_ => _ is YamlScalarNode)) {
+                    var listString = new List<string>();
+                    foreach (var entry in list.Children)
                     {
-                        listResults.Add(node.Value);
+                        var node = entry as YamlScalarNode;
+                        if (node != null) {
+                            listString.Add(node.Value);
+                        }
                     }
+                    return listString;
+                } else {
+                    var listResults = new List<object>();
+                    foreach (var entry in list.Children)
+                    {
+                        listResults.Add(GetValue(entry));
+                    }
+                    return listResults;
                 }
-                return listResults;
             }
 
             bool valueBool;

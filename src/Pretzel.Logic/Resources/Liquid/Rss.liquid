@@ -9,13 +9,13 @@ layout: nil
     <atom:link href="http://domain/rss.xml" rel="self" type="application/rss+xml" />
     <description></description>
     <language>en-au</language>
-    <pubDate>{{ site.time | date: "%a, %d %b %Y %H:%M:%S %z" }}</pubDate>
-    <lastBuildDate>{{ site.time | date: "%a, %d %b %Y %H:%M:%S %z" }}</lastBuildDate>
+    <pubDate>{{ site.time | date: "%a, %d %b %Y %H:%M:%S %Z" }}</pubDate>
+    <lastBuildDate>{{ site.time | date: "%a, %d %b %Y %H:%M:%S %Z" }}</lastBuildDate>
     {% for post in site.posts %}
     <item>
       <title>{{ post.title | xml_escape }}</title>
       <link>http://domain{{ post.url }}</link>
-      <pubDate>{{ post.date | date: "%a, %d %b %Y %H:%M:%S %z" }}</pubDate>
+      <pubDate>{{ post.date | date: "%a, %d %b %Y %H:%M:%S %Z" }}</pubDate>
       <author>Author</author>
       <guid>http://domain{{ post.url }}</guid>
       <description>{{ post.content | xml_escape }}</description>

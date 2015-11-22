@@ -1,7 +1,9 @@
 ﻿using DotLiquid;
+using NSubstitute;
 using Pretzel.Logic.Exceptions;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensibility.Extensions;
+using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Liquid;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Jekyll;
@@ -11,6 +13,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
+using System.Text;
 using Xunit;
 using Xunit.Extensions;
 
@@ -18,9 +21,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 {
     public class LiquidEngineTests
     {
-        private static SiteContextGenerator GetSiteContextGenerator(IFileSystem fileSystem, IEnumerable<IContentTransform> contentTransforms = null)
+        private static SiteContextGenerator GetSiteContextGenerator(IFileSystem fileSystem)
         {
-            return new SiteContextGenerator(fileSystem, contentTransforms ?? Enumerable.Empty<IContentTransform>(), new LinkHelper());
+            return new SiteContextGenerator(fileSystem, new LinkHelper());
         }
 
         public class When_Recieving_A_Folder_Containing_One_File : BakingEnvironment<LiquidEngine>
@@ -763,13 +766,15 @@ namespace Pretzel.Tests.Templating.Jekyll
             [Fact]
             public void File_With_Bad_Liquid_Format_Should_Be_Traced()
             {
+                const string ExpectedStartFile = @"Failed to process C:\website\_site\BadFormat.html: DotLiquid.Exceptions.SyntaxException: Variable '{{}' was not properly terminated with regexp: (?-mix:\}\})";
+
                 using (StringWriter sw = new StringWriter())
                 {
                     Console.SetOut(sw);
 
                     Subject.Process(Context, true);
 
-                    Assert.Equal(@"Failed to process C:\website\_site\BadFormat.html, see inner exception for more details" + Environment.NewLine, sw.ToString());
+                    Assert.StartsWith(ExpectedStartFile, sw.ToString());
                 }
                 Assert.False(FileSystem.AllFiles.Contains(@"C:\website\_site\BadFormat.html"));
             }
@@ -930,8 +935,8 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_PostUrlBlock : BakingEnvironment<LiquidEngine>
         {
-            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n<p>{% post_url post-title.md %}</p>";
-            private const string ExpectedfileContents = "<p>post/title.html</p>";
+            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n<p>{% post_url index.md %}</p>";
+            private const string ExpectedfileContents = "<p>/index.html</p>";
 
             public override LiquidEngine Given()
             {
@@ -944,7 +949,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
-                Subject.Tags = new List<ITag> { new PostUrlTag() };
+                Subject.TagFactories = new List<TagFactoryBase> { new PostUrlTagFactory() };
                 Subject.Process(context);
             }
 
@@ -959,7 +964,7 @@ namespace Pretzel.Tests.Templating.Jekyll
         {
             private const string IndexContents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n{% for post in site.posts %}{{ post.excerpt }}{% endfor %}";
             private const string PostContents = "---\r\n layout: nil\r\n title: post \r\n---\r\n\r\n<p>One {{ page.title }}<!--more-->Two</p>";
-            private const string ExpectedIndexContents = "<p><p>One post</p></p>";
+            private const string ExpectedIndexContents = "<p>One post</p>";
 
             public override LiquidEngine Given()
             {
@@ -1172,7 +1177,7 @@ namespace Pretzel.Tests.Templating.Jekyll
         public class Given_Page_Has_HighlightBlock : BakingEnvironment<LiquidEngine>
         {
             private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight %}a word{% endhighlight %}";
-            private const string ExpectedfileContents = "<p><pre>a word</pre></p>";
+            private const string ExpectedfileContents = "<pre>a word</pre>";
 
             public override LiquidEngine Given()
             {
@@ -1199,7 +1204,7 @@ namespace Pretzel.Tests.Templating.Jekyll
         public class Given_Page_Has_HighlightBlock_With_Language : BakingEnvironment<LiquidEngine>
         {
             private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight cs %}a word{% endhighlight %}";
-            private const string ExpectedfileContents = "<p><pre><code class=\"language-cs\">a word</code></pre></p>";
+            private const string ExpectedfileContents = "<pre><code class=\"language-cs\">a word</code></pre>";
 
             public override LiquidEngine Given()
             {
@@ -1226,9 +1231,9 @@ namespace Pretzel.Tests.Templating.Jekyll
         public class Given_LiquidEngine_Is_Initialized : BakingEnvironment<LiquidEngine>
         {
             private const string HighlightPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% highlight %}a word{% endhighlight %}";
-            private const string HighlightExpectedfileContents = "<p><pre>a word</pre></p>";
-            private const string PostUrlPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% post_url post-title.md %}";
-            private const string PostUrlExpectedfileContents = "<p>post/title.html</p>";
+            private const string HighlightExpectedfileContents = "<pre>a word</pre>";
+            private const string PostUrlPageContents = "---\r\n layout: nil \r\n---\r\n\r\n{% post_url NumberOfWords.md %}";
+            private const string PostUrlExpectedfileContents = "<p>/NumberOfWords.html</p>";
             private const string CgiEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'foo,bar;baz?' | cgi_escape }}";
             private const string CgiEscapeExpectedfileContents = "<p>foo%2Cbar%3Bbaz%3F</p>";
             private const string UriEscapePageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ 'foo, bar \\baz?' | uri_escape }}";
@@ -1242,7 +1247,6 @@ namespace Pretzel.Tests.Templating.Jekyll
             {
                 var engine = new LiquidEngine();
                 engine.Initialize();
-                engine.Tags = new List<ITag> { new PostUrlTag() };
                 return engine;
             }
 
@@ -1257,6 +1261,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
+                Subject.TagFactories = new List<TagFactoryBase> { new PostUrlTagFactory() };
                 Subject.Process(context);
             }
 
@@ -1449,7 +1454,7 @@ namespace Pretzel.Tests.Templating.Jekyll
         public class When_A_Page_Has_A_Non_Existing_Include_Value : BakingEnvironment<LiquidEngine>
         {
             private const string PageContents = "---\r\ntest: value\r\n---# {{ page.title }}\r\n{% include foobar.html %}";
-            private const string ExpectedfileContents = "<h1>My Web Site</h1><p></p>";
+            private const string ExpectedfileContents = "<h1>My Web Site</h1>";
 
             public override LiquidEngine Given()
             {
@@ -1505,14 +1510,13 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_Has_Liquid_Tag_And_Block_With_Underscores : BakingEnvironment<LiquidEngine>
         {
-            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n_any_ word {% highlight %}a word{% endhighlight %}\r\n{% post_url post-title.md %}\r\n{{ 'This is a test' | number_of_words }}";
-            private const string ExpectedfileContents = "<p><em>any</em> word <pre>a word</pre>post/title.html4</p>";
+            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n_any_ word {% highlight %}a word{% endhighlight %}\r\n{% post_url index.md %}\r\n{{ 'This is a test' | number_of_words }}";
+            private const string ExpectedfileContents = "<p><em>any</em> word <pre>a word</pre>/index.html4</p>";
 
             public override LiquidEngine Given()
             {
                 var engine = new LiquidEngine();
                 engine.Initialize();
-                engine.Tags = new List<ITag> { new PostUrlTag() };
                 return engine;
             }
 
@@ -1522,6 +1526,7 @@ namespace Pretzel.Tests.Templating.Jekyll
                 var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
+                Subject.TagFactories = new List<TagFactoryBase> { new PostUrlTagFactory() };
                 Subject.Process(context);
             }
 
@@ -1534,9 +1539,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
         public class Given_Page_And_Posts_Have_Custom_Metadatas : BakingEnvironment<LiquidEngine>
         {
-            private const string Page1Contents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n{% for post in site.posts %}\r\n{{ post.title }}/{{ post.show }}-\r\n{% endfor %}";
+            private const string Page1Contents = "---\r\n title: index\r\n show: true \r\n---\r\n\r\n{% for post in site.posts %}{{ post.title }}/{{ post.show }}-{% endfor %}";
             private const string ExpectedPage1Contents = "<p>post2/false-post1/true-</p>";
-            private const string Page2Contents = "---\r\n title: pages\r\n show: false \r\n---\r\n\r\n{% for page in site.pages %}\r\n{{ page.title }}/{{ page.show }}-\r\n{% endfor %}";
+            private const string Page2Contents = "---\r\n title: pages\r\n show: false \r\n---\r\n\r\n{% for page in site.pages %}{{ page.title }}/{{ page.show }}-{% endfor %}";
             private const string ExpectedPage2Contents = "<p>index/true-pages/false-</p>";
 
             private const string Post1Contents = "---\r\n title: post1\r\n show: true \r\n---\r\n# Title1\r\nContent1";
@@ -1645,6 +1650,49 @@ namespace Pretzel.Tests.Templating.Jekyll
             public void The_first_alphabetically_category_must_appear_in_the_content()
             {
                 Assert.Equal(ExpectedPageContent, FileSystem.File.ReadAllText(@"C:\website\_site\oh\my\mycategory\2015\02\02\post.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Posts_Folder_Is_In_Another_Folder_With_Frontmatter_Only_Categories : BakingEnvironment<LiquidEngine>
+        {
+            private SiteContext Context;
+            private const string ContentWithCategory = "---\r\n category: mycategory \r\n permalink: /:categories/:year/:month/:day/:title.html \r\n---\r\n{{ site.categories[0].name }}";
+            private const string ExpectedPageContent = "<p>mycategory</p>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_config.yml", new MockFileData(@"only_frontmatter_categories: true"));
+                FileSystem.AddFile(@"C:\website\oh\my\_posts\2015-02-02-post.md", new MockFileData(ContentWithCategory));
+                var generator = GetSiteContextGenerator(FileSystem);
+                Context = generator.BuildContext(@"C:\website\", @"C:\website\_site\", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(Context);
+            }
+
+            [Fact]
+            public void Layout_With_Bad_Header_Should_Not_Throw_Exception()
+            {
+                Assert.Equal(Context.Posts.Count, 1);
+                var categories = Context.Posts[0].Categories.ToList();
+                Assert.Equal(categories.Count, 1);
+                Assert.Equal(categories[0], "mycategory");
+            }
+
+            [Fact]
+            public void The_permalink_should_use_all_categories()
+            {
+                Assert.True(FileSystem.File.Exists(@"C:\website\_site\mycategory\2015\02\02\post.html"));
+            }
+
+            [Fact]
+            public void The_first_alphabetically_category_must_appear_in_the_content()
+            {
+                Assert.Equal(ExpectedPageContent, FileSystem.File.ReadAllText(@"C:\website\_site\mycategory\2015\02\02\post.html").RemoveWhiteSpace());
             }
         }
 
@@ -1807,7 +1855,7 @@ namespace Pretzel.Tests.Templating.Jekyll
         public class Given_Page_Has_Tags : BakingEnvironment<LiquidEngine>
         {
             private const string PageContents = "---\r\n layout: nil \r\n tags: [tag, one, banana] \r\n---\r\n\r\n{% for tag in site.tags %}{{ tag.Name }}/ {% endfor %}";
-            private const string ExpectedfileContents = "<p>banana/ one/ tag/ </p>";
+            private const string ExpectedfileContents = "<p>banana/ one/ tag/</p>";
 
             public override LiquidEngine Given()
             {
@@ -1855,6 +1903,64 @@ namespace Pretzel.Tests.Templating.Jekyll
 
             [Fact]
             public void The_File_Should_Display_The_Page_Url()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"D:\Result\_site\2015\02\22\post.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_Page_Previous_Url : BakingEnvironment<LiquidEngine>
+        {
+            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ page.previous.url }}";
+            private const string ExpectedfileContents = "<p>/2015/01/22/previouspost.html</p>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_posts\2015-02-22-post.md", new MockFileData(PageContents));
+                FileSystem.AddFile(@"C:\website\_posts\2015-01-22-previouspost.md", new MockFileData("---\r\n layout: nil \r\n---\r\n\r\n"));
+                var generator = GetSiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\website\", @"D:\Result\_site", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_File_Should_Display_The_Previous_Page_Url()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"D:\Result\_site\2015\02\22\post.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Has_Page_Next_Url : BakingEnvironment<LiquidEngine>
+        {
+            private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ page.next.url }}";
+            private const string ExpectedfileContents = "<p>/2015/03/22/nextpost.html</p>";
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_posts\2015-02-22-post.md", new MockFileData(PageContents));
+                FileSystem.AddFile(@"C:\website\_posts\2015-03-22-nextpost.md", new MockFileData("---\r\n layout: nil \r\n---\r\n\r\n"));
+                var generator = GetSiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\website\", @"D:\Result\_site", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_File_Should_Display_The_Next_Page_Url()
             {
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"D:\Result\_site\2015\02\22\post.html").RemoveWhiteSpace());
             }
@@ -1942,6 +2048,188 @@ categories: [{0}]
             [Fact]
             public void The_File_Should_Display_The_Page_Url() {
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"D:\Result\_site\2015\02\23\post.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Engine_Has_Transformers_With_Exception : BakingEnvironment<LiquidEngine>
+        {
+            private StringBuilder _log;
+
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+
+                var contentTransformer = Substitute.For<IContentTransform>();
+                contentTransformer.Transform(Arg.Any<string>()).Returns(s => { throw new Exception("foo bar"); });
+                engine.ContentTransformers = new[] { contentTransformer };
+
+                return engine;
+            }
+
+            public override void When()
+            {
+                _log = new StringBuilder();
+                TextWriter writer = new StringWriter(_log);
+                Tracing.Logger.SetWriter(writer);
+                Tracing.Logger.AddCategory(Tracing.Category.Info);
+                Tracing.Logger.AddCategory(Tracing.Category.Error);
+                Tracing.Logger.AddCategory(Tracing.Category.Debug);
+
+                FileSystem.AddFile(@"C:\TestSite\SomeFile.md", new MockFileData("---\r\n---# Title\r\n[foo]"));
+                var generator = GetSiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\TestSite\", @"D:\Result\_site", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Render_with_ContentTransformer_exception_should_trace_the_error()
+            {
+                Assert.Equal("<p><b>Error converting markdown</b></p><pre>---\r\n---# Title\r\n[foo]</pre>", FileSystem.File.ReadAllText(@"D:\Result\_site\SomeFile.html"));
+                Assert.Contains(@"Error (foo bar) converting C:\TestSite\SomeFile.md", _log.ToString());
+                Assert.Contains(@"System.Exception: foo bar", _log.ToString());
+            }
+        }
+
+        public class Given_Engine_Has_Transformers : BakingEnvironment<LiquidEngine>
+        {
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+
+                var contentTransformer = Substitute.For<IContentTransform>();
+                contentTransformer.Transform(Arg.Any<string>()).Returns(s => s[0].ToString().Replace("[foo]", "bar"));
+                engine.ContentTransformers = new[] { contentTransformer };
+
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\TestSite\SomeFile.md", new MockFileData("---\r\n---# Title\r\n[foo]"));
+                var generator = GetSiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\TestSite\", @"D:\Result\_site", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Render_with_ContentTransformer_should_transform_content()
+            {
+                Assert.Equal("<h1>Title</h1>\r\n<p>bar</p>", FileSystem.File.ReadAllText(@"D:\Result\_site\SomeFile.html"));
+            }
+        }
+
+        public class Given_Engine_With_Many_Files : BakingEnvironment<LiquidEngine>
+        {
+            public override LiquidEngine Given()
+            {
+                var engine = new LiquidEngine();
+                engine.Initialize();
+                return engine;
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.markdown", new MockFileData("---\r\ntitle: Title\r\n---\r\n# Title"));
+                FileSystem.AddFile(@"C:\TestSite\_posts\2012-01-02-SomeFile.mdown", new MockFileData("---\r\ntitle: Title\r\n---\r\n# Title"));
+                FileSystem.AddFile(@"C:\TestSite\_posts\2012-01-03-SomeFile.mkdn", new MockFileData("---\r\ntitle: Title\r\n---\r\n# Title"));
+                FileSystem.AddFile(@"C:\TestSite\_posts\2012-01-04-SomeFile.mkd", new MockFileData("---\r\ntitle: Title\r\n---\r\n# Title"));
+                var generator = GetSiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\TestSite\", @"D:\Result\_site", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Markdown_File_Should_Be_Rendered()
+            {
+                Assert.Equal("<h1>Title</h1>", FileSystem.File.ReadAllText(@"D:\Result\_site\2012\01\01\SomeFile.html"));
+            }
+
+            [Fact]
+            public void Mdown_File_Should_Be_Rendered()
+            {
+                Assert.Equal("<h1>Title</h1>", FileSystem.File.ReadAllText(@"D:\Result\_site\2012\01\02\SomeFile.html"));
+            }
+
+            [Fact]
+            public void Mkdn_File_Should_Be_Rendered()
+            {
+                Assert.Equal("<h1>Title</h1>", FileSystem.File.ReadAllText(@"D:\Result\_site\2012\01\03\SomeFile.html"));
+            }
+
+            [Fact]
+            public void Mkd_File_Should_Be_Rendered()
+            {
+                Assert.Equal("<h1>Title</h1>", FileSystem.File.ReadAllText(@"D:\Result\_site\2012\01\04\SomeFile.html"));
+            }
+        }
+        public class Given_Engine_Has_Custom_TagFactory : BakingEnvironment<LiquidEngine>
+        {
+            private const string ConfigContents = "---\r\n title: Site Title\r\n---";
+            private const string PageContent = "---\r\n \r\n---\r\n{% custom %}";
+            private const string ExpectedPageContents = "<p>custom tag: Site Title</p>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_config.yml", new MockFileData(ConfigContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContent));
+                var generator = GetSiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
+                Subject.FileSystem = FileSystem;
+
+                Subject.TagFactories = new List<TagFactoryBase> { new CustomTagFactory() };
+
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Page_should_contain_custom_tag()
+            {
+                Assert.Equal(ExpectedPageContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+
+            public class CustomTag : DotLiquid.Tag, ITag
+            {
+                private SiteContext _siteContext;
+
+                public new string Name { get { return "Custom"; } }
+
+                public CustomTag(SiteContext siteContext)
+                {
+                    _siteContext = siteContext;
+                }
+
+                public string Custom()
+                {
+                    return string.Format("custom tag: {0}", _siteContext.Config["title"]);
+                }
+
+                public override void Render(DotLiquid.Context context, TextWriter result)
+                {
+                    result.WriteLine(Custom());
+                }
+            }
+
+            public class CustomTagFactory : TagFactoryBase
+            {
+                public CustomTagFactory():base("Custom")
+                {
+
+                }
+
+                public override ITag CreateTag()
+                {
+                    return new CustomTag(this.SiteContext);
+                }
             }
         }
     }

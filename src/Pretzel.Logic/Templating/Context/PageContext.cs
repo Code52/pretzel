@@ -5,6 +5,8 @@ namespace Pretzel.Logic.Templating.Context
 {
     public class PageContext
     {
+        private string _content;
+
         public PageContext(SiteContext context, Page page)
         {
             Site = context;
@@ -16,7 +18,8 @@ namespace Pretzel.Logic.Templating.Context
             Title = context.Title;
             OutputPath = context.OutputPath;
             Bag = new Dictionary<string, object>(context.Bag);
-            Content = context.Content;
+            _content = context.Content;
+            FullContent = context.Content;
             Site = context.Site;
             Page = context.Page;
             Previous = context.Previous;
@@ -30,7 +33,15 @@ namespace Pretzel.Logic.Templating.Context
 
         public IDictionary<string, object> Bag { get; set; }
 
-        public string Content { get; set; }
+        public string Content
+        {
+            get { return _content; }
+            set
+            {
+                _content = value;
+                Page.Content = value;
+            }
+        }
 
         public SiteContext Site { get; private set; }
 
@@ -46,6 +57,8 @@ namespace Pretzel.Logic.Templating.Context
         {
             get { return Bag.ContainsKey("comments") && bool.Parse(Bag["comments"].ToString()); }
         }
+
+        public string FullContent { get; set; }
 
         public static PageContext FromPage(SiteContext siteContext, Page page, string outputPath, string defaultOutputPath)
         {
@@ -74,9 +87,12 @@ namespace Pretzel.Logic.Templating.Context
             }
 
             if (string.IsNullOrEmpty(context.Title))
+            {
                 context.Title = siteContext.Title;
+            }
 
             context.Content = page.Content;
+            context.FullContent = page.Content;
             context.Bag = page.Bag;
             context.Bag["id"] = page.Id;
             context.Bag["url"] = page.Url;
