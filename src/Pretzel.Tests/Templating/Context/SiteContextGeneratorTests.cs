@@ -436,6 +436,66 @@ exclude: [folder, test\somefile.txt]
         }
 
         [Fact]
+        public void SiteContextGenerator_IsIncludedPath() {
+            // arrange
+            var fs = new MockFileSystem(new Dictionary<string, MockFileData>());
+            var gen = new SiteContextGenerator(fs, new LinkHelper());
+            Func<string, bool> function = gen.IsIncludedPath;
+            fs.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
+include: [_folder, .something-else]
+exclude: [folder, test\somefile.txt, .git]
+---"));
+
+            // act
+            var siteContext = gen.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+
+            // include entires and subentries are included
+            Assert.True(function("_folder"));
+            Assert.True(function("_folder/somefile"));
+            Assert.True(function(".something-else"));
+
+            // exluded entries are not included
+            Assert.False(function("folder"));
+            Assert.False(function("folder/somefile"));
+            Assert.False(function(@"test\somefile.txt"));
+            Assert.False(function(".git"));
+
+            // other entries are not included
+            Assert.False(function("test"));
+            Assert.False(function("asdf"));
+        }
+
+        [Fact]
+        public void SiteContextGenerator_IsExcludedPath() {
+            // arrange
+            var fs = new MockFileSystem(new Dictionary<string, MockFileData>());
+            var gen = new SiteContextGenerator(fs, new LinkHelper());
+            Func<string, bool> function = gen.IsExcludedPath;
+            fs.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
+include: [_folder, .something-else]
+exclude: [folder, test\somefile.txt, .git]
+---"));
+
+            // act
+            var siteContext = gen.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+
+            // include entires and subentries are not excluded
+            Assert.False(function("_folder"));
+            Assert.False(function("_folder/somefile"));
+            Assert.False(function(".something-else"));
+
+            // exluded entries are exluded
+            Assert.True(function("folder"));
+            Assert.True(function("folder/somefile"));
+            Assert.True(function(@"test\somefile.txt"));
+            Assert.True(function(".git"));
+
+            // other entries are not excluded
+            Assert.False(function("test"));
+            Assert.False(function("asdf"));
+        }
+
+        [Fact]
         public void permalink_with_numbered_category()
         {
             fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", new MockFileData(@"---
