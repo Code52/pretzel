@@ -10,8 +10,9 @@
     <projectUrl>https://github.com/code52/pretzel</projectUrl>
     <iconUrl>https://cdn.rawgit.com/Code52/pretzel/master/pretzel.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Logic library for [Pretzel](https://github.com/code52/pretzel), useful to make plugins.</description>
+    <description>Logic library for Pretzel (https://github.com/code52/pretzel), useful to make plugins.</description>
     <releaseNotes>https://github.com/Code52/pretzel/releases</releaseNotes>
     <tags>Pretzel, Jekyll, HTML, Markdown, Liquid, Razor, static</tags>
   </metadata>
+  <files />
 </package>

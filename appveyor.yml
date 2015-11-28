@@ -26,17 +26,11 @@ build_script:
 test: off
 
 artifacts:
-  - path: artifacts\Pretzel.*.nupkg
-    name: Pretzel.nupkg
+  - path: artifacts\coverage.xml
 
   - path: artifacts\Pretzel.ScriptCs.*.nupkg
     name: Pretzel.ScriptCs.nupkg
 
-  - path: artifacts\coverage.xml
-
-  - path: artifacts\Pretzel.*.zip
-    name: Pretzel.zip
-    
   - path: artifacts\Pretzel.ScriptCs.*.zip
     name: Pretzel.ScriptCs.zip
 
@@ -45,6 +39,13 @@ artifacts:
 
   - path: artifacts\Pretzel.Logic.*.symbols.nupkg
     name: Pretzel.Logic.symbols.nupkg
+
+  - path: artifacts\Pretzel.*.nupkg
+    name: Pretzel.nupkg
+
+  - path: artifacts\Pretzel.*.zip
+    name: Pretzel.zip
+
 
 deploy:
   - provider: GitHub

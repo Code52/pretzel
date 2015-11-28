@@ -56,19 +56,22 @@ function SetVersion
 {
     $version = $env:GitVersion_NuGetVersionV2
     $tag = $version
-    If ($env:appveyor_repo_tag -eq $True)
+    If ($env:APPVEYOR_REPO_TAG -eq $True)
     {
-        $tag = $env:appveyor_repo_tag_name
+        $tag = $env:APPVEYOR_REPO_TAG_NAME
         
         Set-AppveyorBuildVariable 'releaseDescription' (GetDescriptionFromReleaseNotes)
     }
     
-    return $version
+    return New-Object PsObject -Property @{version=$version ; tag=$tag}
 }
 
 # Packaging
-function CreatePackage($version)
+function CreatePackage($versionInfos)
 {
+    $version = $versionInfos.version
+    $tag = $versionInfos.tag
+    
     CreateCleanDirectory chocoTemp
     
     # build Pretzel nupkg
@@ -164,9 +167,9 @@ function Build()
 
             ExecuteTests $true
 
-            $version = SetVersion
+            $versionInfos = SetVersion
 
-            CreatePackage $version
+            CreatePackage $versionInfos
         }
     }
     #Local build
@@ -186,9 +189,9 @@ function Build()
         
         ExecuteTests $false
 
-        $version = SetVersion
+        $versionInfos = SetVersion
 
-        CreatePackage $version
+        CreatePackage $versionInfos
     }
 }
 
