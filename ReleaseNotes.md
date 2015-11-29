@@ -31,6 +31,8 @@ All existing plugins must be recompiled with referencing only Pretzel.Logic.
 - [#259](https://github.com/Code52/pretzel/pull/259) - Changed date guessing heuristic to use last modification time of posts instead of current time, if no better data is available. contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz))
 - [#260](https://github.com/Code52/pretzel/pull/260) - Refactor logging contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz))
 - [#274](https://github.com/Code52/pretzel/pull/274) - Added option to only use categories found in posts's frontmatter by Thomas Freudenberg ([thoemmi](https://github.com/thoemmi))
+- [#274](https://github.com/Code52/pretzel/pull/274) - added option only_frontmatter_categories contributed by Thomas Freudenberg ([thoemmi](https://github.com/thoemmi))
+- [#277](https://github.com/Code52/pretzel/pull/277) - allow System.IO.Abstractions in ScriptCs contributed by Thomas Freudenberg ([thoemmi](https://github.com/thoemmi))
 
 ## Fixes
 - [#198](https://github.com/Code52/pretzel/issues/198) - Liquid tag/filter with underscore doesn't works in markdown files
@@ -47,10 +49,12 @@ All existing plugins must be recompiled with referencing only Pretzel.Logic.
 - [#255](https://github.com/Code52/pretzel/pull/255) - Fix pagination when paginate_link points to a directory contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz))
 - [#257](https://github.com/Code52/pretzel/pull/257) - Reading namespaces from attributes contributed by Thiago 'Jedi' Abreu ([thiagoabreu](https://github.com/thiagoabreu))
 - [#263](https://github.com/Code52/pretzel/pull/263) - Enhanced front matter contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz))
+- [#265](https://github.com/Code52/pretzel/pull/265) - Fix regenerating site for change in excluded files while tasting contributed by Gábor Gergely ([kodfodrasz](https://github.com/kodfodrasz))
 - [#269](https://github.com/Code52/pretzel/pull/269) - Update Rss.liquid contributed by mark van tilburg ([markvantilburg](https://github.com/markvantilburg))
 - [#271](https://github.com/Code52/pretzel/pull/271) - Added missing next and previous items in the page Hash in the Liquid engine contributed by Keuvain ([k94ll13nn3](https://github.com/k94ll13nn3))
+- [#273](https://github.com/Code52/pretzel/pull/273) - Fix post_url tag contributed by Jérémie Bertrand ([laedit](https://github.com/laedit))
 
-Commits: [1436ac1f52...27587ad5b3](https://github.com/Code52/pretzel/compare/1436ac1f52...27587ad5b3)
+Commits: [1436ac1f52...d6fa9b28b6](https://github.com/Code52/pretzel/compare/1436ac1f52...d6fa9b28b6)
 
 
 # 0.2.0
