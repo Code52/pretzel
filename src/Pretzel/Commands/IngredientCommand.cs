@@ -11,8 +11,8 @@ using Pretzel.Logic.Extensibility.Extensions;
 namespace Pretzel.Commands
 {
     [PartCreationPolicy(CreationPolicy.Shared)]
-    [CommandInfo(CommandName = "spice")]
-    public sealed class SpiceCommand : ICommand
+    [CommandInfo(CommandName = "ingredient")]
+    public sealed class IngredientCommand : ICommand
     {
 #pragma warning disable 649
 
@@ -26,7 +26,7 @@ namespace Pretzel.Commands
 
         public void Execute(IEnumerable<string> arguments)
         {
-            Tracing.Info("spice - create a new post");
+            Tracing.Info("ingredient - create a new post");
 
             parameters.Parse(arguments);
 
@@ -61,7 +61,7 @@ namespace Pretzel.Commands
         public void WriteHelp(TextWriter writer)
         {
             writer.Write("   Create a new post\r\n");
-            parameters.WriteOptions(writer, "draft", "-s");
+            parameters.WriteOptions(writer, "drafts", "-s");
         }
     }
 }
