@@ -61,7 +61,7 @@ namespace Pretzel.Commands
         public void WriteHelp(TextWriter writer)
         {
             writer.Write("   Create a new post\r\n");
-            parameters.WriteOptions(writer, "drafts", "-s");
+            parameters.WriteOptions(writer, "newposttitle", "drafts", "-s");
         }
     }
 }
