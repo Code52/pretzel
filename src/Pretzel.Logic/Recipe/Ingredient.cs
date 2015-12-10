@@ -32,7 +32,7 @@ namespace Pretzel.Logic.Recipe
 
             if (!fileSystem.Directory.Exists(postPath))
             {
-                Tracing.Info(string.Format("{0} folder not found.", postPath));
+                Tracing.Info(string.Format("{0} folder not found", postPath));
                 return;
             }
 
