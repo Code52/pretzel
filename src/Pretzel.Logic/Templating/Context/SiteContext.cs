@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 
 namespace Pretzel.Logic.Templating.Context
 {
+    [Export]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     public class SiteContext
     {
         private const string ExcerptSeparatorDefault = "<!--more-->";
