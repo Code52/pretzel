@@ -1,12 +1,10 @@
 ﻿using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
-using System;
-using System.Linq;
+using Pretzel.Logic.Recipe;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
-using Pretzel.Logic.Extensibility.Extensions;
 
 namespace Pretzel.Commands
 {
@@ -30,32 +28,10 @@ namespace Pretzel.Commands
 
             parameters.Parse(arguments);
 
-            if (arguments.Count() == 0)
-            {
-                Tracing.Info("A title must be provided.");
-                return;
-            }
+            var title = parameters.NewPostTitle;
 
-            var title = arguments.First();
-            var postPath = fileSystem.Path.Combine(fileSystem.Directory.GetCurrentDirectory(), @"_posts");
-            var postName = string.Format("{0}-{1}.md", DateTime.Today.ToString("yyyy-MM-dd"), SlugifyFilter.Slugify(title));
-            var pageContents = string.Format("---\r\n layout: post \r\n title: {0}\r\n comments: true\r\n---\r\n", title);
-
-            if (!fileSystem.Directory.Exists(postPath))
-            {
-                Tracing.Info("_posts folder not found.");
-                return;
-            }
-
-            if (fileSystem.File.Exists(fileSystem.Path.Combine(postPath, postName)))
-            {
-                Tracing.Info(String.Format("The \"{0}\" file already exists", postName));
-                return;
-            }
-
-            fileSystem.File.WriteAllText(fileSystem.Path.Combine(postPath, postName), pageContents);
-
-            Tracing.Info(String.Format("Created the \"{0}\" post ({1})", title, postName));
+            var ingredient = new Ingredient(fileSystem, parameters.NewPostTitle, parameters.Path, parameters.IncludeDrafts);
+            ingredient.Create();
         }
 
         public void WriteHelp(TextWriter writer)
