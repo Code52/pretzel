@@ -1,5 +1,4 @@
-﻿using Pretzel.Logic.Extensibility;
-using Pretzel.Logic.Extensions;
+﻿using Pretzel.Logic.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -20,12 +19,14 @@ namespace Pretzel.Logic.Templating.Context
         private readonly List<string> includes = new List<string>();
         private readonly List<string> excludes = new List<string>();
         private readonly LinkHelper linkHelper;
+        private readonly SiteContext siteContext;
 
         [ImportingConstructor]
-        public SiteContextGenerator(IFileSystem fileSystem, LinkHelper linkHelper)
+        public SiteContextGenerator(IFileSystem fileSystem, LinkHelper linkHelper, SiteContext siteContext = null)
         {
             this.fileSystem = fileSystem;
             this.linkHelper = linkHelper;
+            this.siteContext = siteContext ?? new SiteContext();
         }
 
         public SiteContext BuildContext(string path, string destinationPath, bool includeDrafts)
@@ -51,23 +52,18 @@ namespace Pretzel.Logic.Templating.Context
                     excludes.AddRange((IEnumerable<string>)config["exclude"]);
                 }
 
-                var context = new SiteContext
-                {
-                    SourceFolder = path,
-                    OutputFolder = destinationPath,
-                    Posts = new List<Page>(),
-                    Pages = new List<Page>(),
-                    Config = config,
-                    Time = DateTime.Now,
-                    UseDrafts = includeDrafts
-                };
+                siteContext.SourceFolder = path;
+                siteContext.OutputFolder = destinationPath;
+                siteContext.Config = config;
+                siteContext.Time = DateTime.Now;
+                siteContext.UseDrafts = includeDrafts;
 
-                context.Posts = BuildPosts(config, context).OrderByDescending(p => p.Date).ToList();
-                BuildTagsAndCategories(context);
+                siteContext.Posts = BuildPosts(config, siteContext).OrderByDescending(p => p.Date).ToList();
+                BuildTagsAndCategories(siteContext);
 
-                context.Pages = BuildPages(config, context).ToList();
+                siteContext.Pages = BuildPages(config, siteContext).ToList();
 
-                return context;
+                return siteContext;
             }
             finally
             {
