@@ -35,7 +35,8 @@ namespace Pretzel.Logic.Commands
                     { "nobrowser", "Do not launch a browser", v => LaunchBrowser = false },
                     { "withproject", "Includes a layout VS Solution, to give intellisense when editing razor layout files", v => WithProject = (v!=null) },
                     { "wiki", "Creates a wiki instead of a blog (razor template only)", v => Wiki = (v!=null) },
-                    { "cleantarget", "Delete the target directory (_site by default)", v => CleanTarget = true }
+                    { "cleantarget", "Delete the target directory (_site by default)", v => CleanTarget = true },
+                    { "n|newposttitle=", "The title of the new post (\"New post\" by default)", v => NewPostTitle = v }
                 };
 
             // Allow extensions to register command line args
@@ -66,6 +67,8 @@ namespace Pretzel.Logic.Commands
 
         public string DestinationPath { get; private set; }
 
+        public string NewPostTitle { get; internal set; }
+
         private decimal port;
 
         public decimal Port
@@ -90,6 +93,10 @@ namespace Pretzel.Logic.Commands
             if (!fileSystem.Path.IsPathRooted(DestinationPath))
             {
                 DestinationPath = fileSystem.Path.Combine(Path, DestinationPath);
+            }
+            if (string.IsNullOrEmpty(NewPostTitle))
+            {
+                NewPostTitle = "New post";
             }
         }
 
