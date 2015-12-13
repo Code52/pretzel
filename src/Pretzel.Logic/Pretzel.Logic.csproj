@@ -168,6 +168,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Recipe\Ingredient.cs" />
     <Compile Include="SanityCheck.cs" />
     <Compile Include="Templating\Context\Category.cs" />
     <Compile Include="Templating\Context\LinkHelper.cs" />

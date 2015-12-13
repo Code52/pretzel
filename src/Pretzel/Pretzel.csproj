@@ -132,6 +132,7 @@
     <Compile Include="Commands\CommandInfoAttribute.cs" />
     <Compile Include="Commands\HungryCommand.cs" />
     <Compile Include="Commands\ImportCommand.cs" />
+    <Compile Include="Commands\IngredientCommand.cs" />
     <Compile Include="Commands\RecipeCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommandInfo.cs" />

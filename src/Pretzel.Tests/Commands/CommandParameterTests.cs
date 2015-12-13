@@ -22,6 +22,7 @@ namespace Pretzel.Tests
         private const string ExpectedPort = "8000";
         private const decimal ExpectedPortDecimal = 8000;
         private const string ExpectedDestinationPath = @"D:\Code\Generated";
+        private const string ExpectedNewPostTitle = @"Post title";
 
         private readonly IFileSystem FileSystem = new MockFileSystem();
 
@@ -237,6 +238,38 @@ namespace Pretzel.Tests
         }
 
         [Fact]
+        public void Parse_WhenSpecifyingNewPostTitleUsingShortParameter_MapsToPath()
+        {
+            var args = new List<string> { "--n", ExpectedNewPostTitle };
+            subject.Parse(args);
+            Assert.Equal(ExpectedNewPostTitle, subject.NewPostTitle);
+        }
+
+        [Fact]
+        public void Parse_WhenSpecifyingNewPostTitleUsingFullParameter_MapsToPath()
+        {
+            var args = new List<string> { "--newposttitle", ExpectedNewPostTitle };
+            subject.Parse(args);
+            Assert.Equal(ExpectedNewPostTitle, subject.NewPostTitle);
+        }
+
+        [Fact]
+        public void Parse_WhenSpecifyingNewPostTitleUsingShortParameterSingleDash_MapsToPath()
+        {
+            var args = new List<string> { "-n", ExpectedNewPostTitle };
+            subject.Parse(args);
+            Assert.Equal(ExpectedNewPostTitle, subject.NewPostTitle);
+        }
+
+        [Fact]
+        public void Parse_WhenSpecifyingNewPostTitleUsingFullParameterSingleDash_MapsToPath()
+        {
+            var args = new List<string> { "-newposttitle", ExpectedNewPostTitle };
+            subject.Parse(args);
+            Assert.Equal(ExpectedNewPostTitle, subject.NewPostTitle);
+        }
+
+        [Fact]
         public void CommandParameters_WhenSpecifyingAllParameters_ResultIsCorrect()
         {
             var args = new List<string> { "-template=jekyll", "-port=8182", "-import=blogger", "-file=BloggerExport.xml", "-drafts", "-nobrowser", "-withproject", "-wiki", "-cleantarget" };
@@ -409,6 +442,14 @@ namespace Pretzel.Tests
             var args = new List<string>();
             subject.Parse(args);
             Assert.Equal(FileSystem.Path.Combine(subject.Path, "_site"), subject.DestinationPath);
+        }
+
+        [Fact]
+        public void Parse_WhenNoParametersSet_MapsNewPostTileToNewPost()
+        {
+            var args = new List<string>();
+            subject.Parse(args);
+            Assert.Equal("New post", subject.NewPostTitle);
         }
     }
 }
