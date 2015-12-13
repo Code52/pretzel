@@ -1,5 +1,6 @@
 ﻿using DotLiquid;
 using NSubstitute;
+using Pretzel.Logic;
 using Pretzel.Logic.Exceptions;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensibility.Extensions;
@@ -21,9 +22,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 {
     public class LiquidEngineTests
     {
-        private static SiteContextGenerator GetSiteContextGenerator(IFileSystem fileSystem)
+        private static SiteContextGenerator GetSiteContextGenerator(IFileSystem fileSystem, IConfiguration configuration = null)
         {
-            return new SiteContextGenerator(fileSystem, new LinkHelper());
+            return new SiteContextGenerator(fileSystem, new LinkHelper(), configuration ?? new Configuration());
         }
 
         public class When_Recieving_A_Folder_Containing_One_File : BakingEnvironment<LiquidEngine>
@@ -39,7 +40,8 @@ namespace Pretzel.Tests.Templating.Jekyll
                 {
                     Content = FileContents,
                     File = "index.html",
-                    Filepath = @"C:\website\index.html"
+                    Filepath = @"C:\website\index.html",
+                    Url = "index.html"
                 });
 
                 return new LiquidEngine();
@@ -83,7 +85,8 @@ namespace Pretzel.Tests.Templating.Jekyll
                 {
                     Content = FileContents,
                     File = "index.html",
-                    Filepath = @"C:\website\index.html"
+                    Filepath = @"C:\website\index.html",
+                    Url = "index.html"
                 });
                 return new LiquidEngine();
             }
@@ -114,7 +117,8 @@ namespace Pretzel.Tests.Templating.Jekyll
                 {
                     Content = FileContents,
                     File = @"content\index.html",
-                    Filepath = @"C:\website\content\index.html"
+                    Filepath = @"C:\website\content\index.html",
+                    Url = "content/index.html"
                 });
                 return new LiquidEngine();
             }
@@ -158,7 +162,8 @@ namespace Pretzel.Tests.Templating.Jekyll
                 {
                     Content = FileContents,
                     File = @"index.html",
-                    Filepath = @"C:\website\index.html"
+                    Filepath = @"C:\website\index.html",
+                    Url = "index.html"
                 });
 
                 return new LiquidEngine();
@@ -350,7 +355,8 @@ namespace Pretzel.Tests.Templating.Jekyll
                 {
                     Content = PageContents,
                     File = @"index.md",
-                    Filepath = @"C:\website\index.html"
+                    Filepath = @"C:\website\index.html",
+                    Url = "index.html"
                 });
                 return new LiquidEngine();
             }
@@ -533,12 +539,11 @@ namespace Pretzel.Tests.Templating.Jekyll
 
             public override void When()
             {
-                FileSystem.AddFile(@"C:\website\_config.yml", new MockFileData(ConfigContents));
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents_1));
                 FileSystem.AddFile(@"C:\website\_layouts\default2.html", new MockFileData(TemplateContents_2));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents_1));
                 FileSystem.AddFile(@"C:\website\index2.md", new MockFileData(PageContents_2));
-                var generator = GetSiteContextGenerator(FileSystem);
+                var generator = GetSiteContextGenerator(FileSystem, new ConfigurationMock(ConfigContents));
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 context.Title = "My Web Site";
                 Subject.FileSystem = FileSystem;
@@ -572,10 +577,10 @@ namespace Pretzel.Tests.Templating.Jekyll
 
             public override void When()
             {
-                FileSystem.AddFile(@"C:\website\_config.yml", new MockFileData(ConfigContents));
+
                 FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
-                var generator = GetSiteContextGenerator(FileSystem);
+                var generator = GetSiteContextGenerator(FileSystem, new ConfigurationMock(ConfigContents));
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -848,7 +853,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 context = new SiteContext();
-                context.Config.Add("pretzel", new Dictionary<string, object> { { "engine", "liquid" } });
+                context.Config = new ConfigurationMock(new Dictionary<string, object> { { "pretzel", new Dictionary<string, object> { { "engine", "liquid" } } } });
             }
 
             [Fact]
@@ -870,7 +875,9 @@ namespace Pretzel.Tests.Templating.Jekyll
             public override void When()
             {
                 context = new SiteContext();
-                context.Config.Add("pretzel", new Dictionary<string, object> { { "engine", "myengine" } });
+                var configMock = Substitute.For<IConfiguration>();
+                configMock["pretzel"].Returns(new Dictionary<string, object> { { "engine", "myengine" } });
+                context.Config = configMock;
             }
 
             [Fact]
@@ -1038,10 +1045,9 @@ namespace Pretzel.Tests.Templating.Jekyll
 
             public override void When()
             {
-                FileSystem.AddFile(@"C:\website\_config.yml", new MockFileData(ConfigContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-03-post.md", new MockFileData(PostContents));
-                var generator = GetSiteContextGenerator(FileSystem);
+                var generator = GetSiteContextGenerator(FileSystem, new ConfigurationMock(ConfigContents));
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(context);
@@ -1666,9 +1672,8 @@ namespace Pretzel.Tests.Templating.Jekyll
 
             public override void When()
             {
-                FileSystem.AddFile(@"C:\website\_config.yml", new MockFileData(@"only_frontmatter_categories: true"));
                 FileSystem.AddFile(@"C:\website\oh\my\_posts\2015-02-02-post.md", new MockFileData(ContentWithCategory));
-                var generator = GetSiteContextGenerator(FileSystem);
+                var generator = GetSiteContextGenerator(FileSystem, new ConfigurationMock("only_frontmatter_categories: true"));
                 Context = generator.BuildContext(@"C:\website\", @"C:\website\_site\", false);
                 Subject.FileSystem = FileSystem;
                 Subject.Process(Context);
@@ -1986,12 +1991,11 @@ namespace Pretzel.Tests.Templating.Jekyll
 
             var fileSystem = new MockFileSystem();
 
-            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(string.Format("permalink: {0}", permalink)));
             fileSystem.AddFile(@"C:\TestSite\_posts\2015-03-09-foobar-baz.md", new MockFileData(string.Format(@"---
 categories: [{0}]
 ---# Title", categories)));
 
-            var generator = GetSiteContextGenerator(fileSystem);
+            var generator = GetSiteContextGenerator(fileSystem, new ConfigurationMock(string.Format("permalink: {0}", permalink)));
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             var engine = new LiquidEngine();
@@ -2003,17 +2007,20 @@ categories: [{0}]
             Assert.Equal(ExpectedfileContents, fileSystem.File.ReadAllText(string.Format(@"C:\TestSite\_site\{0}", expectedUrl)).RemoveWhiteSpace());
         }
 
-        public class Given_Page_Without_Explicit_Date : BakingEnvironment<LiquidEngine> {
+        public class Given_Page_Without_Explicit_Date : BakingEnvironment<LiquidEngine>
+        {
             private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n{{ page.date | date_to_xmlschema }}";
             private readonly string ExpectedfileContents = new DateTime(2015, 2, 22).ToString("<p>yyyy-MM-ddTHH:mm:sszzz<\\/p>");
 
-            public override LiquidEngine Given() {
+            public override LiquidEngine Given()
+            {
                 var engine = new LiquidEngine();
                 engine.Initialize();
                 return engine;
             }
 
-            public override void When() {
+            public override void When()
+            {
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-22-post.md", new MockFileData(PageContents));
                 var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"D:\Result\_site", false);
@@ -2022,22 +2029,26 @@ categories: [{0}]
             }
 
             [Fact]
-            public void The_File_Should_Display_The_Page_Url() {
+            public void The_File_Should_Display_The_Page_Url()
+            {
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"D:\Result\_site\2015\02\22\post.html").RemoveWhiteSpace());
             }
         }
 
-        public class Given_Page_With_Explicit_Date : BakingEnvironment<LiquidEngine> {
+        public class Given_Page_With_Explicit_Date : BakingEnvironment<LiquidEngine>
+        {
             private const string PageContents = "---\r\n layout: nil \r\n date: 2015-02-23 12:30:00\r\n---\r\n\r\n{{ page.date | date_to_xmlschema }}";
             private readonly string ExpectedfileContents = new DateTime(2015, 2, 23, 12, 30, 0).ToString("<p>yyyy-MM-ddTHH:mm:sszzz<\\/p>");
 
-            public override LiquidEngine Given() {
+            public override LiquidEngine Given()
+            {
                 var engine = new LiquidEngine();
                 engine.Initialize();
                 return engine;
             }
 
-            public override void When() {
+            public override void When()
+            {
                 FileSystem.AddFile(@"C:\website\_posts\2015-02-22-post.md", new MockFileData(PageContents));
                 var generator = GetSiteContextGenerator(FileSystem);
                 var context = generator.BuildContext(@"C:\website\", @"D:\Result\_site", false);
@@ -2046,7 +2057,8 @@ categories: [{0}]
             }
 
             [Fact]
-            public void The_File_Should_Display_The_Page_Url() {
+            public void The_File_Should_Display_The_Page_Url()
+            {
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"D:\Result\_site\2015\02\23\post.html").RemoveWhiteSpace());
             }
         }
@@ -2180,9 +2192,8 @@ categories: [{0}]
 
             public override void When()
             {
-                FileSystem.AddFile(@"C:\website\_config.yml", new MockFileData(ConfigContents));
                 FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContent));
-                var generator = GetSiteContextGenerator(FileSystem);
+                var generator = GetSiteContextGenerator(FileSystem, new ConfigurationMock(ConfigContents));
                 var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
                 Subject.FileSystem = FileSystem;
 
@@ -2221,7 +2232,7 @@ categories: [{0}]
 
             public class CustomTagFactory : TagFactoryBase
             {
-                public CustomTagFactory():base("Custom")
+                public CustomTagFactory() : base("Custom")
                 {
 
                 }

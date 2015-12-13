@@ -1,5 +1,6 @@
 ﻿using NDesk.Options;
 using NSubstitute;
+using Pretzel.Logic;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Templating;
@@ -309,7 +310,7 @@ namespace Pretzel.Tests
         [Fact]
         public void DetectFromDirectory_WhenSpecifyingTwoSiteEngines_CorrectValueIsPicked()
         {
-            var siteContext = new SiteContext { Config = new Dictionary<string, object> { { "pretzel", new Dictionary<string, object> { { "engine", "engine2" } } } } };
+            var siteContext = new SiteContext { Config = new ConfigurationMock(new Dictionary<string, object> { { "pretzel", new Dictionary<string, object> { { "engine", "engine2" } } } }) };
 
             var siteEngine1 = Substitute.For<ISiteEngine>();
             siteEngine1.CanProcess(Arg.Any<SiteContext>())
@@ -333,7 +334,7 @@ namespace Pretzel.Tests
         [Fact]
         public void DetectFromDirectory_WhenSpecifyingNoPretzelConfig_DefaultValueIsLiquid()
         {
-            var siteContext = new SiteContext { Config = new Dictionary<string, object> { } };
+            var siteContext = new SiteContext { Config = new Configuration() };
 
             var siteEngine1 = Substitute.For<ISiteEngine>();
             siteEngine1.CanProcess(Arg.Any<SiteContext>())
@@ -352,7 +353,7 @@ namespace Pretzel.Tests
         [Fact]
         public void DetectFromDirectory_WhenSpecifyingNoEnginInPretzelConfig_DefaultValueIsLiquid()
         {
-            var siteContext = new SiteContext { Config = new Dictionary<string, object> { { "pretzel", new Dictionary<string, object> { } } } };
+            var siteContext = new SiteContext { Config = new ConfigurationMock(new Dictionary<string, object> { { "pretzel", new Dictionary<string, object> { } } }) };
 
             var siteEngine1 = Substitute.For<ISiteEngine>();
             siteEngine1.CanProcess(Arg.Any<SiteContext>())
@@ -371,7 +372,7 @@ namespace Pretzel.Tests
         [Fact]
         public void DetectFromDirectory_WhenSpecifyingPretzelConfigSimpleValue_DefaultValueIsLiquid()
         {
-            var siteContext = new SiteContext { Config = new Dictionary<string, object> { { "pretzel", 42 } } };
+            var siteContext = new SiteContext { Config = new ConfigurationMock(new Dictionary<string, object> { { "pretzel", 42 } }) };
 
             var siteEngine1 = Substitute.For<ISiteEngine>();
             siteEngine1.CanProcess(Arg.Any<SiteContext>())

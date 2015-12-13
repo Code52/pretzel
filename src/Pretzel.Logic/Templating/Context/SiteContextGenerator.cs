@@ -1,5 +1,4 @@
-﻿using Pretzel.Logic.Extensibility;
-using Pretzel.Logic.Extensions;
+﻿using Pretzel.Logic.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -20,52 +19,44 @@ namespace Pretzel.Logic.Templating.Context
         private readonly List<string> includes = new List<string>();
         private readonly List<string> excludes = new List<string>();
         private readonly LinkHelper linkHelper;
+        private readonly IConfiguration _config;
 
         [ImportingConstructor]
-        public SiteContextGenerator(IFileSystem fileSystem, LinkHelper linkHelper)
+        public SiteContextGenerator(IFileSystem fileSystem, LinkHelper linkHelper, IConfiguration config)
         {
             this.fileSystem = fileSystem;
             this.linkHelper = linkHelper;
+            _config = config;
+
+            if (_config.ContainsKey("include"))
+            {
+                includes.AddRange((IEnumerable<string>)_config["include"]);
+            }
+            if (_config.ContainsKey("exclude"))
+            {
+                excludes.AddRange((IEnumerable<string>)_config["exclude"]);
+            }
         }
 
         public SiteContext BuildContext(string path, string destinationPath, bool includeDrafts)
         {
             try
             {
-                var config = new Dictionary<string, object>();
-                var configPath = Path.Combine(path, "_config.yml");
-                if (fileSystem.File.Exists(configPath))
-                    config = (Dictionary<string, object>)fileSystem.File.ReadAllText(configPath).YamlHeader(true);
-
-                if (!config.ContainsKey("permalink"))
-                {
-                    config.Add("permalink", "date");
-                }
-
-                if (config.ContainsKey("include"))
-                {
-                    includes.AddRange((IEnumerable<string>)config["include"]);
-                }
-                if (config.ContainsKey("exclude"))
-                {
-                    excludes.AddRange((IEnumerable<string>)config["exclude"]);
-                }
-
                 var context = new SiteContext
                 {
                     SourceFolder = path,
                     OutputFolder = destinationPath,
                     Posts = new List<Page>(),
                     Pages = new List<Page>(),
-                    Config = config,
+                    Config = _config,
                     Time = DateTime.Now,
                     UseDrafts = includeDrafts
                 };
 
-                context.Posts = BuildPosts(config, context).OrderByDescending(p => p.Date).ToList();
+                context.Posts = BuildPosts(_config, context).OrderByDescending(p => p.Date).ToList();
                 BuildTagsAndCategories(context);
 
-                context.Pages = BuildPages(config, context).ToList();
+                context.Pages = BuildPages(_config, context).ToList();
 
                 return context;
             }
@@ -75,7 +66,7 @@ namespace Pretzel.Logic.Templating.Context
             }
         }
 
-        private IEnumerable<Page> BuildPages(Dictionary<string, object> config, SiteContext context)
+        private IEnumerable<Page> BuildPages(IConfiguration config, SiteContext context)
         {
             var files = from file in fileSystem.Directory.GetFiles(context.SourceFolder, "*.*", SearchOption.AllDirectories)
                         let relativePath = MapToOutputPath(context, file)
@@ -102,7 +93,7 @@ namespace Pretzel.Logic.Templating.Context
             }
         }
 
-        private IEnumerable<Page> BuildPosts(Dictionary<string, object> config, SiteContext context)
+        private IEnumerable<Page> BuildPosts(IConfiguration config, SiteContext context)
         {
             var posts = new List<Page>();
 
@@ -217,7 +208,7 @@ namespace Pretzel.Logic.Templating.Context
                     || relativePath.EndsWith(".TMP", StringComparison.OrdinalIgnoreCase);
         }
 
-        private Page CreatePage(SiteContext context, IDictionary<string, object> config, string file, bool isPost)
+        private Page CreatePage(SiteContext context, IConfiguration config, string file, bool isPost)
         {
             try
             {
@@ -323,7 +314,7 @@ namespace Pretzel.Logic.Templating.Context
             return Path.Combine(context.OutputFolder, MapToOutputPath(context, file));
         }
 
-        private IEnumerable<Page> GetDirectoryPages(SiteContext context, IDictionary<string, object> config, string forDirectory, bool isPost)
+        private IEnumerable<Page> GetDirectoryPages(SiteContext context, IConfiguration config, string forDirectory, bool isPost)
         {
             return fileSystem
                 .Directory

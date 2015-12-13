@@ -1,4 +1,5 @@
-﻿using Pretzel.Logic.Commands;
+﻿using Pretzel.Logic;
+using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
@@ -34,6 +35,9 @@ namespace Pretzel.Commands
 
         [Import]
         private IFileSystem FileSystem;
+
+        [Import]
+        private IConfiguration Configuration;
 
 #pragma warning restore 649
 
@@ -128,6 +132,8 @@ namespace Pretzel.Commands
             }
 
             Tracing.Info(string.Format("File change: {0}", file));
+
+            ((Configuration)Configuration).ReadFromFile();
 
             var context = Generator.BuildContext(parameters.Path, parameters.DestinationPath, parameters.IncludeDrafts);
             if (parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))

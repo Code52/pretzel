@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using DotLiquid;
 using Pretzel.Logic.Templating.Context;
@@ -10,7 +9,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
     public class SiteContextDrop : Drop
     {
         private readonly SiteContext context;
-        
+
         public DateTime Time
         {
             get
@@ -18,7 +17,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
                 return context.Time;
             }
         }
-        
+
         public string Title
         {
             get { return context.Title; }
@@ -31,9 +30,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
 
         public Hash ToHash()
         {
-            if (!context.Config.ContainsKey("date"))
-                context.Config.Add("date", "2012-01-01");
-            var x = Hash.FromDictionary(context.Config);
+            var x = Hash.FromDictionary(context.Config.ToDictionary());
             x["posts"] = context.Posts.Select(p => p.ToHash()).ToList();
             x["pages"] = context.Pages.Select(p => p.ToHash()).ToList();
             x["title"] = context.Title;

@@ -1,5 +1,6 @@
 ﻿using NDesk.Options;
 using Pretzel.Commands;
+using Pretzel.Logic;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using System;
@@ -94,6 +95,11 @@ namespace Pretzel
                 var batch = new CompositionBatch();
                 batch.AddPart(this);
                 batch.AddPart(parameters);
+
+                var config = new Configuration(parameters.FileSystem, parameters.Path);
+                config.ReadFromFile();
+                batch.AddExportedValue((IConfiguration)config);
+
                 container.Compose(batch);
             }
             catch (ReflectionTypeLoadException ex)
