@@ -1,4 +1,5 @@
-﻿using Pretzel.Logic.Extensibility;
+﻿using Pretzel.Logic;
+using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensibility.Extensions;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Razor;
@@ -287,7 +288,7 @@ namespace Pretzel.Tests.Templating.Razor
                 FileSystem.AddFile(String.Format(@"C:\website\_posts\2012-02-0{0}-p{0}.md", i), new MockFileData(String.Format(PostContents, i)));
             }
 
-            var generator = new SiteContextGenerator(FileSystem, new LinkHelper());
+            var generator = new SiteContextGenerator(FileSystem, new LinkHelper(), new Configuration());
             var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
             Subject.FileSystem = FileSystem;
             Subject.Process(context);
@@ -323,9 +324,8 @@ namespace Pretzel.Tests.Templating.Razor
 
         public override void When()
         {
-            FileSystem.AddFile(@"C:\website\_config.yml", new MockFileData(ConfigContents));
             FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContent));
-            var generator = new SiteContextGenerator(FileSystem, new LinkHelper());
+            var generator = new SiteContextGenerator(FileSystem, new LinkHelper(), new ConfigurationMock(ConfigContents));
             var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
             Subject.FileSystem = FileSystem;
 

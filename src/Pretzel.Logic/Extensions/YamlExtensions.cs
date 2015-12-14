@@ -11,29 +11,30 @@ namespace Pretzel.Logic.Extensions
     {
         private static readonly Regex r = new Regex(@"(?s:^---(.*?)---)");
 
-        public static IDictionary<string, object> YamlHeader(this string text, bool skipHeader = false)
+        public static IDictionary<string, object> YamlHeader(this string text)
         {
-            StringReader input;
+            var m = r.Matches(text);
+            if (m.Count == 0)
+            {
+                return new Dictionary<string, object>();
+            }
+
+            return m[0].Groups[1].Value.ParseYaml();
+        }
+
+        public static IDictionary<string, object> ParseYaml(this string text)
+        {
             var results = new Dictionary<string, object>();
 
-            if (!skipHeader)
-            {
-                var m = r.Matches(text);
-                if (m.Count == 0)
-                    return results;
-
-                input = new StringReader(m[0].Groups[1].Value);
-            }
-            else
-            {
-                input = new StringReader(text);
-            }
+            var input = new StringReader(text);
 
             var yaml = new YamlStream();
             yaml.Load(input);
 
             if (yaml.Documents.Count == 0)
+            {
                 return results;
+            }
 
             var root = yaml.Documents[0].RootNode;
 

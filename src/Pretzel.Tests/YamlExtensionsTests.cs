@@ -2,6 +2,7 @@
 using System.IO;
 using Pretzel.Logic.Extensions;
 using Xunit;
+using System;
 
 namespace Pretzel.Tests
 {
@@ -17,14 +18,14 @@ namespace Pretzel.Tests
                         title: This is a test jekyll document
                         description: TEST ALL THE THINGS
                         date: 2012-01-30
-                        tags : 
+                        tags :
                         - test
                         - alsotest
                         - lasttest
                         ---
-            
+
                         ##Test
-            
+
                         This is a test of YAML parsing";
 
                 var result = header.YamlHeader();
@@ -33,7 +34,7 @@ namespace Pretzel.Tests
                 Assert.Equal("This is a test jekyll document", result["title"].ToString());
                 Assert.Equal("2012-01-30", result["date"].ToString());
                 Assert.Equal("TEST ALL THE THINGS", result["description"].ToString());
-                
+
                 var tags = result["tags"] as IList<string>;
                 Assert.Equal(3, tags.Count);
                 Assert.Equal("test", tags[0]);
@@ -55,7 +56,10 @@ namespace Pretzel.Tests
             [Fact]
             public void YamlHeader_WhenNoMetadataSet_ReturnsEmptyDictionary()
             {
-                Assert.NotNull("".YamlHeader());
+                var actual = "".YamlHeader();
+                Assert.NotNull(actual);
+                Assert.IsType<Dictionary<string, object>>(actual);
+                Assert.Equal(0, actual.Count);
             }
 
             [Fact]
@@ -66,7 +70,7 @@ layout: post
 title: This is a test jekyll document
 description: TEST ALL THE THINGS
 date: 2012-01-30
-tags : 
+tags :
 - test
 - alsotest
 - lasttest
@@ -81,7 +85,7 @@ This is a test of YAML parsing
     title: inline-title
     description: inline description
     date: 2010-04-09
-    tags : 
+    tags :
     - foo
     - bar
     - baz
@@ -109,9 +113,9 @@ This is a test of YAML parsing
                         comments: false
                         other: 'true'
                         ---
-            
+
                         ##Test
-            
+
                         This is a test of YAML parsing";
 
                 var result = header.YamlHeader();
@@ -122,7 +126,8 @@ This is a test of YAML parsing
             }
 
             [Fact]
-            public void YamlHeader_WithListOfList_CanBeAccessed() {
+            public void YamlHeader_WithListOfList_CanBeAccessed()
+            {
                 const string header = @"---
 text: is a simple string
 nestedlist:
@@ -147,7 +152,8 @@ This is a test of YAML parsing";
 
 
             [Fact]
-            public void YamlHeader_WithDictionary_CanBeAccessed() {
+            public void YamlHeader_WithDictionary_CanBeAccessed()
+            {
                 const string header = @"---
 text: is a simple string
 adictionary:
@@ -170,11 +176,11 @@ This is a test of YAML parsing";
 
                 Assert.Equal("is a simple string", (string)result["text"]);
 
-                var adictionary = (Dictionary<string,object>)result["adictionary"];
+                var adictionary = (Dictionary<string, object>)result["adictionary"];
 
                 Assert.Equal(true, (bool)adictionary["a_field"]);
                 Assert.Equal("3", adictionary["otherfield"]);
-                Assert.Equal(new []{"it","should", "work"}, (List<string>)adictionary["facts"]);
+                Assert.Equal(new[] { "it", "should", "work" }, (List<string>)adictionary["facts"]);
 
                 var inception = (Dictionary<string, object>)adictionary["inception"];
                 Assert.Equal("it is", (string)inception["furternested"]);
@@ -183,7 +189,8 @@ This is a test of YAML parsing";
             }
 
             [Fact]
-            public void YamlHeader_WithListOfDictionary_CanBeAccessed() {
+            public void YamlHeader_WithListOfDictionary_CanBeAccessed()
+            {
                 const string header = @"---
 text: is a simple string
 adictlist:
@@ -207,19 +214,79 @@ This is a test of YAML parsing";
 
                 var adictlist = (List<object>)result["adictlist"];
 
-                var items = new [] {
+                var items = new[] {
                     new { nr = "1", name = "John Doe", skip = false },
                     new { nr = "2", name = "John Smith", skip = true },
                     new { nr = "3", name = "Lady Lorem", skip = false }
                 };
-                
+
                 Assert.Equal(items.Length, adictlist.Count);
-                for(int i=0; i< items.Length; i++){
-                    var item = (Dictionary<string,object>)adictlist[i];
+                for (int i = 0; i < items.Length; i++)
+                {
+                    var item = (Dictionary<string, object>)adictlist[i];
                     Assert.Equal(items[i].nr, (string)item["nr"]);
                     Assert.Equal(items[i].name, (string)item["name"]);
                     Assert.Equal(items[i].skip, (bool)item["skip"]);
                 }
+            }
+        }
+
+        public class ParseYamlTests
+        {
+            [Fact]
+            public void ParseYaml_HandleYaml()
+            {
+                const string header = @"layout: post
+title: This is a test jekyll document
+description: TEST ALL THE THINGS
+date: 2012-01-30
+tags :
+- test
+- alsotest
+- lasttest";
+
+                var result = header.ParseYaml();
+
+                Assert.Equal("post", result["layout"].ToString());
+                Assert.Equal("This is a test jekyll document", result["title"].ToString());
+                Assert.Equal("2012-01-30", result["date"].ToString());
+                Assert.Equal("TEST ALL THE THINGS", result["description"].ToString());
+
+                var tags = result["tags"] as IList<string>;
+                Assert.Equal(3, tags.Count);
+                Assert.Equal("test", tags[0]);
+                Assert.Equal("alsotest", tags[1]);
+                Assert.Equal("lasttest", tags[2]);
+            }
+
+            [Fact]
+            public void ParseYaml_DoesntHandleHeader()
+            {
+                const string header = @"---
+                        layout: post
+                        title: This is a test jekyll document
+                        description: TEST ALL THE THINGS
+                        date: 2012-01-30
+                        tags :
+                        - test
+                        - alsotest
+                        - lasttest
+                        ---
+
+                        ##Test
+
+                        This is a test of YAML parsing";
+
+                Assert.ThrowsAny<Exception>(() => header.ParseYaml());
+            }
+
+            [Fact]
+            public void ParseYaml_WhenNoData_ReturnsEmptyDictionary()
+            {
+                var actual = "".ParseYaml();
+                Assert.NotNull(actual);
+                Assert.IsType<Dictionary<string, object>>(actual);
+                Assert.Equal(0, actual.Count);
             }
         }
     }

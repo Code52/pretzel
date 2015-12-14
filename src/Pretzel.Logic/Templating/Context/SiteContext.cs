@@ -11,7 +11,7 @@ namespace Pretzel.Logic.Templating.Context
         private string title;
         private string excerptSeparator = ExcerptSeparatorDefault;
 
-        public IDictionary<string, object> Config { get; set; }
+        public IConfiguration Config { get; set; }
         public string SourceFolder { get; set; }
         public string OutputFolder { get; set; }
         public IEnumerable<Tag> Tags { get; set; }
@@ -26,7 +26,7 @@ namespace Pretzel.Logic.Templating.Context
         {
             get
             {
-                if(Config.Keys.Contains("title"))
+                if(Config.ContainsKey("title"))
                 {
                     title = Config["title"].ToString();
                 }
@@ -39,7 +39,7 @@ namespace Pretzel.Logic.Templating.Context
         {
             get
             {
-                if (Config.Keys.Contains("excerpt_separator"))
+                if (Config.ContainsKey("excerpt_separator"))
                 {
                     excerptSeparator = Config["excerpt_separator"].ToString();
                 }
@@ -76,7 +76,7 @@ namespace Pretzel.Logic.Templating.Context
             Categories = new List<Category>();
             Posts = new List<Page>();
             Pages = new List<Page>();
-            Config = new Dictionary<string, object>();
+            Config = new Configuration();
         }
 
     }
