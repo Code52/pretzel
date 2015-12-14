@@ -90,6 +90,7 @@
     <Compile Include="Commands\CommandParameterTests.cs" />
     <Compile Include="Commands\BaseParameterTests.cs" />
     <Compile Include="Commands\CommandExtensions.cs" />
+    <Compile Include="ConfigurationMock.cs" />
     <Compile Include="Extensibility\Extensions\AzureHostSupportTest.cs" />
     <Compile Include="Extensibility\Extensions\VirtualDirectorySupportTests.cs" />
     <Compile Include="Extensibility\Extensions\WebSequenceDiagramsTests.cs" />

@@ -1,8 +1,7 @@
 ﻿using NSubstitute;
-using Pretzel.Logic.Extensibility;
+using Pretzel.Logic;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
-using Pretzel.Tests.Templating.Jekyll;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,7 +12,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using Xunit;
-using Xunit.Extensions;
 
 namespace Pretzel.Tests.Templating.Context
 {
@@ -25,7 +23,7 @@ namespace Pretzel.Tests.Templating.Context
         public SiteContextGeneratorTests()
         {
             fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-            generator = new SiteContextGenerator(fileSystem, new LinkHelper());
+            generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new Configuration());
         }
 
         [Fact]
@@ -92,7 +90,8 @@ namespace Pretzel.Tests.Templating.Context
             var lastmod = new DateTime(2015, 03, 14);
             post.LastWriteTime = lastmod;
             fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", post);
-            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData("permalink: /blog/:year/:month/:day/:title.html"));
+
+            var generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock("permalink: /blog/:year/:month/:day/:title.html"));
 
             var outputPath = string.Format("/blog/{0}/{1}",lastmod.ToString("yyyy'/'MM'/'dd"), "SomeFile.html");
 
@@ -341,12 +340,10 @@ title: Title
         public void CanBeIncluded_Scenarios_Include()
         {
             // arrange
-            Func<string, bool> function = generator.CanBeIncluded;
-            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
+            var generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(@"---
 include: [_folder, .something-else, some-file.tmp, test\somefile.txt, subfolder\childfolder, anotherfolder\tempfile.tmp]
 ---"));
-            // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+            Func<string, bool> function = generator.CanBeIncluded;
 
             // assert
             Assert.True(function("folder"));
@@ -372,12 +369,10 @@ include: [_folder, .something-else, some-file.tmp, test\somefile.txt, subfolder\
         public void CanBeIncluded_Scenarios_Exclude()
         {
             // arrange
-            Func<string, bool> function = generator.CanBeIncluded;
-            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
+            var generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(@"---
 exclude: [folder, .htaccess, some-file.tmp, test\somefile.txt, subfolder\childfolder, anotherfolder\tempfile.tmp]
 ---"));
-            // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+            Func <string, bool> function = generator.CanBeIncluded;
 
             // assert
             Assert.False(function("folder"));
@@ -402,13 +397,9 @@ exclude: [folder, .htaccess, some-file.tmp, test\somefile.txt, subfolder\childfo
         public void CanBeIncluded_Scenarios_IncludeExclude()
         {
             // arrange
-            Func<string, bool> function = generator.CanBeIncluded;
-            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
-include: [_folder, .something-else]
-exclude: [folder, test\somefile.txt]
----"));
-            // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+            var generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(@"include: [_folder, .something-else]
+exclude: [folder, test\somefile.txt]"));
+            Func <string, bool> function = generator.CanBeIncluded;
 
             // underscores are ignored
             Assert.False(function("folder"));
@@ -439,15 +430,9 @@ exclude: [folder, test\somefile.txt]
         public void SiteContextGenerator_IsIncludedPath() {
             // arrange
             var fs = new MockFileSystem(new Dictionary<string, MockFileData>());
-            var gen = new SiteContextGenerator(fs, new LinkHelper());
+            var gen = new SiteContextGenerator(fs, new LinkHelper(), new ConfigurationMock(@"include: [_folder, .something-else]
+exclude: [folder, test\somefile.txt, .git]"));
             Func<string, bool> function = gen.IsIncludedPath;
-            fs.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
-include: [_folder, .something-else]
-exclude: [folder, test\somefile.txt, .git]
----"));
-
-            // act
-            var siteContext = gen.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // include entires and subentries are included
             Assert.True(function("_folder"));
@@ -469,15 +454,10 @@ exclude: [folder, test\somefile.txt, .git]
         public void SiteContextGenerator_IsExcludedPath() {
             // arrange
             var fs = new MockFileSystem(new Dictionary<string, MockFileData>());
-            var gen = new SiteContextGenerator(fs, new LinkHelper());
-            Func<string, bool> function = gen.IsExcludedPath;
-            fs.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"---
-include: [_folder, .something-else]
+            var gen = new SiteContextGenerator(fs, new LinkHelper(), new ConfigurationMock(@"include: [_folder, .something-else]
 exclude: [folder, test\somefile.txt, .git]
----"));
-
-            // act
-            var siteContext = gen.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+"));
+            Func<string, bool> function = gen.IsExcludedPath;
 
             // include entires and subentries are not excluded
             Assert.False(function("_folder"));
@@ -970,7 +950,7 @@ date: 20150127
             fileSystemSubstitute.Directory.Returns(directorySubstitute);
             fileSystemSubstitute.FileInfo.Returns(fileInfoFactorySubstitute);
 
-            var generator = new SiteContextGenerator(fileSystemSubstitute, new LinkHelper());
+            var generator = new SiteContextGenerator(fileSystemSubstitute, new LinkHelper(), new Configuration());
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
@@ -1018,7 +998,7 @@ date: 20150127
             Tracing.Logger.AddCategory(Tracing.Category.Error);
             Tracing.Logger.AddCategory(Tracing.Category.Debug);
 
-            var generator = new SiteContextGenerator(fileSystemSubstitute, new LinkHelper());
+            var generator = new SiteContextGenerator(fileSystemSubstitute, new LinkHelper(), new Configuration());
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
@@ -1051,6 +1031,7 @@ date: 20150127
 categories: [cat1, cat2]
 ---# Title"));
             var outputPath = "/foo/bar/cat1/cat2/2015/03/09/SomeFile.html";
+
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
             var firstPost = siteContext.Posts.First();
@@ -1060,11 +1041,12 @@ categories: [cat1, cat2]
         [Fact]
         public void permalink_with_folder_categories_frontmatter_only()
         {
-            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"only_frontmatter_categories: true"));
+            var generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(@"only_frontmatter_categories: true"));
             fileSystem.AddFile(@"C:\TestSite\foo\bar\_posts\2015-03-09-SomeFile.md", new MockFileData(@"---
 categories: [cat1, cat2]
 ---# Title"));
             var outputPath = "/cat1/cat2/2015/03/09/SomeFile.html";
+
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
             var firstPost = siteContext.Posts.First();
@@ -1087,7 +1069,7 @@ categories: [cat1, cat2]
         [Theory]
         public void permalink_is_well_formatted(string permalink, string expectedUrl, string categories)
         {
-            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(string.Format("permalink: {0}", permalink)));
+            var generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(string.Format("permalink: {0}", permalink)));
             fileSystem.AddFile(@"C:\TestSite\_posts\2015-03-09-foobar-baz.md", new MockFileData(string.Format(@"---
 categories: [{0}]
 ---# Title", categories)));

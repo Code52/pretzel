@@ -27,7 +27,7 @@ namespace Pretzel.Tests.Templating.Razor
                                  {
                                      {"layout", "default"}
                                  };
-            context.Posts.Add(new Page { File = "index.cshtml", Content = PageContents, OutputFile = @"C:\website\_site\index.html", Bag = dictionary });
+            context.Posts.Add(new Page { File = "index.cshtml", Content = PageContents, OutputFile = @"C:\website\_site\index.html", Bag = dictionary, Url = "index.html" });
             Subject.FileSystem = FileSystem;
             Subject.Process(context);
         }
