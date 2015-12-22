@@ -1,4 +1,5 @@
-﻿using Pretzel.Logic.Extensions;
+﻿using System;
+using Pretzel.Logic.Extensions;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 
@@ -15,7 +16,7 @@ namespace Pretzel.Logic
         IDictionary<string, object> ToDictionary();
     }
 
-    internal sealed class Configuration : IConfiguration
+    public sealed class Configuration : IConfiguration
     {
         private const string ConfigFileName = "_config.yml";
 
@@ -31,13 +32,13 @@ namespace Pretzel.Logic
             }
         }
 
-        internal Configuration()
+        public Configuration()
         {
-            _config = new Dictionary<string, object>();
+            _config = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             CheckDefaultConfig();
         }
 
-        internal Configuration(IFileSystem fileSystem, string sitePath)
+        public Configuration(IFileSystem fileSystem, string sitePath)
             : this()
         {
             _fileSystem = fileSystem;
