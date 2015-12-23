@@ -1,5 +1,4 @@
-﻿using System;
-using Pretzel.Logic.Extensions;
+﻿using Pretzel.Logic.Extensions;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 
@@ -34,7 +33,7 @@ namespace Pretzel.Logic
 
         public Configuration()
         {
-            _config = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            _config = new Dictionary<string, object>();
             CheckDefaultConfig();
         }
 
