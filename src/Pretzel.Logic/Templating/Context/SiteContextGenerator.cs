@@ -64,9 +64,9 @@ namespace Pretzel.Logic.Templating.Context
 
                 if (BeforeProcessingTransforms != null)
                 {
-                    foreach (var pageTransform in BeforeProcessingTransforms)
+                    foreach (var transform in BeforeProcessingTransforms)
                     {
-                        pageTransform.Transform(context);
+                        transform.Transform(context);
                     }
                 }
 
