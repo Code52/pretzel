@@ -15,7 +15,7 @@ namespace Pretzel.Logic
         IDictionary<string, object> ToDictionary();
     }
 
-    public sealed class Configuration : IConfiguration
+    internal sealed class Configuration : IConfiguration
     {
         private const string ConfigFileName = "_config.yml";
 
@@ -31,13 +31,13 @@ namespace Pretzel.Logic
             }
         }
 
-        public Configuration()
+        internal Configuration()
         {
             _config = new Dictionary<string, object>();
             CheckDefaultConfig();
         }
 
-        public Configuration(IFileSystem fileSystem, string sitePath)
+        internal Configuration(IFileSystem fileSystem, string sitePath)
             : this()
         {
             _fileSystem = fileSystem;
