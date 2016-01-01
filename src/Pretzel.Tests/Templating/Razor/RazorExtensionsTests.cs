@@ -6,7 +6,7 @@ namespace Pretzel.Tests.Templating.Razor
     public class RazorExtensionsTests
     {
         [Fact]
-        public void IsMarkdownFile_ForExpectedExtensions_ReturnsTrue()
+        public void IsRazorFile_ForExpectedExtensions_ReturnsTrue()
         {
             Assert.True(".cshtml".IsRazorFile());
         }
