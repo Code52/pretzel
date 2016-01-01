@@ -42,6 +42,7 @@ namespace Pretzel.Tests.Templating.Context
         [InlineData(@"C:\TestSite\_site\about.mdown", "/about.html")]
         [InlineData(@"C:\TestSite\_site\about.markdown", "/about.html")]
         [InlineData(@"C:\TestSite\_site\about.textile", "/about.html")]
+        [InlineData(@"C:\TestSite\_site\about.cshtml", "/about.html")]
         [InlineData(@"C:\TestSite\_site\rss.xml", "/rss.xml")]
         [InlineData(@"C:\TestSite\_site\relativepath\about.md", "/relativepath/about.html")]
         [Theory]
