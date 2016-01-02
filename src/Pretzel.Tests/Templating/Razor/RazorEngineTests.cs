@@ -265,6 +265,37 @@ namespace Pretzel.Tests.Templating.Razor
         }
     }
 
+    public class Given_Cshtml_Based_Page : BakingEnvironment<RazorSiteEngine>
+    {
+        private const string TemplateContents = "@model Pretzel.Logic.Templating.Context.PageContext \r\n<html><body>@Raw(Model.Content)</body></html>";
+        private const string IndexContents = "---\r\n layout: default \r\n paginate: 2 \r\n paginate_link: /blog/page:page/index.html \r\n---\r\n @model Pretzel.Logic.Templating.Context.PageContext \r\n@string.Format(\"{0}\",true)";
+        private const string ExpectedFileContents = "<html><body>True</body></html>";
+
+        public override RazorSiteEngine Given()
+        {
+            return new RazorSiteEngine();
+        }
+
+        public override void When()
+        {
+            FileSystem.AddFile(@"C:\website\_layouts\default.cshtml", new MockFileData(TemplateContents));
+            FileSystem.AddFile(@"C:\website\index.cshtml", new MockFileData(IndexContents));
+
+            var generator = new SiteContextGenerator(FileSystem, new LinkHelper(), new Configuration());
+            var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
+            Subject.FileSystem = FileSystem;
+            Subject.Process(context);
+        }
+
+        [Fact]
+        public void The_Output_Should_Have_Been_Transformed()
+        {
+            Assert.True(FileSystem.File.Exists(@"C:\website\_site\index.html"));
+
+            Assert.Equal(ExpectedFileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+        }
+    }
+
     public class When_Paginate_Razor : BakingEnvironment<RazorSiteEngine>
     {
         private const string TemplateContents = "@model Pretzel.Logic.Templating.Context.PageContext \r\n<html><body>@Raw(Model.Content)</body></html>";

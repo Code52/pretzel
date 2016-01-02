@@ -19,7 +19,7 @@ namespace Pretzel.Logic.Templating.Context
         private static readonly Regex CategoryRegex = new Regex(@":category(\d*)", RegexOptions.Compiled);
         private static readonly Regex SlashesRegex = new Regex(@"/{1,}", RegexOptions.Compiled);
 
-        private static readonly string[] HtmlExtensions = new[] { ".markdown", ".mdown", ".mkdn", ".mkd", ".md", ".textile" };
+        private static readonly string[] HtmlExtensions = new[] { ".markdown", ".mdown", ".mkdn", ".mkd", ".md", ".textile", ".cshtml" };
 
         private static readonly Dictionary<string, string> BuiltInPermalinks = new Dictionary<string, string>
         {

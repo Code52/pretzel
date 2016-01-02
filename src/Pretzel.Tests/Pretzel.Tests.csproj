@@ -118,6 +118,7 @@
     <Compile Include="Templating\Jekyll\LiquidFilterTests.cs" />
     <Compile Include="Templating\Jekyll\StringTestExtensions.cs" />
     <Compile Include="Templating\Plugins\TagCloudTests.cs" />
+    <Compile Include="Templating\Razor\RazorExtensionsTests.cs" />
     <Compile Include="Templating\Razor\RazorEngineTests.cs" />
     <Compile Include="Templating\Razor\When_Recieving_A_Razor_File.cs" />
     <Compile Include="YamlExtensionsTests.cs" />
