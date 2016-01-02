@@ -11,6 +11,7 @@ using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Pretzel.Logic.Extensibility;
 using Xunit;
 
 namespace Pretzel.Tests.Templating.Context
@@ -1078,6 +1079,31 @@ categories: [{0}]
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
             var firstPost = siteContext.Posts.First();
             Assert.Equal(expectedUrl, firstPost.Url);
+        }
+
+        private class BeforeProcessingTransformMock : IBeforeProcessingTransform
+        {
+            public int PostCount = 0;
+            public void Transform(SiteContext context)
+            {
+                PostCount = context.Posts.Count;
+            }
+        }
+
+        [Fact]
+        public void are_beforeprocessingtransforms_called()
+        {
+            // arrange
+            var pageTransformMock = new BeforeProcessingTransformMock();
+            generator.BeforeProcessingTransforms = new[] { pageTransformMock };
+            fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-SomeFile.md", new MockFileData(ToPageContent("# Some File")));
+            fileSystem.AddFile(@"C:\TestSite\_posts\2012-01-01-AnotherFile.md", new MockFileData(ToPageContent("# Another File")));
+
+            // act
+            generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+
+            // assert
+            Assert.Equal(2, pageTransformMock.PostCount);
         }
     }
 }

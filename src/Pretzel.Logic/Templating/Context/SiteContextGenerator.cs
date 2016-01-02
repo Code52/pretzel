@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
+using Pretzel.Logic.Extensibility;
 
 namespace Pretzel.Logic.Templating.Context
 {
@@ -20,6 +21,9 @@ namespace Pretzel.Logic.Templating.Context
         private readonly List<string> excludes = new List<string>();
         private readonly LinkHelper linkHelper;
         private readonly IConfiguration _config;
+
+        [ImportMany]
+        public IEnumerable<IBeforeProcessingTransform> BeforeProcessingTransforms;
 
         [ImportingConstructor]
         public SiteContextGenerator(IFileSystem fileSystem, LinkHelper linkHelper, IConfiguration config)
@@ -57,6 +61,14 @@ namespace Pretzel.Logic.Templating.Context
                 BuildTagsAndCategories(context);
 
                 context.Pages = BuildPages(_config, context).ToList();
+
+                if (BeforeProcessingTransforms != null)
+                {
+                    foreach (var transform in BeforeProcessingTransforms)
+                    {
+                        transform.Transform(context);
+                    }
+                }
 
                 return context;
             }
