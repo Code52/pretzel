@@ -12,5 +12,6 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A simple, pluggable site generation tool for .NET developers and Windows users</description>
     <tags>Jekyll Liquid Razor Markdown blog hmtl static site engine</tags>
+    <releaseNotes>https://github.com/Code52/pretzel/releases</releaseNotes>
   </metadata>
 </package>

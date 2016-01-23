@@ -12,5 +12,6 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>An addin for Pretzel allowing to add plugin from a ScriptCs script.</description>
     <tags>Pretzel ScriptCs plugin</tags>
+    <releaseNotes>https://github.com/Code52/pretzel/releases</releaseNotes>
   </metadata>
 </package>
