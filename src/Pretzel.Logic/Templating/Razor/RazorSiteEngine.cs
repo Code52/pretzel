@@ -35,7 +35,7 @@ namespace Pretzel.Logic.Templating.Razor
             {
                 _allTags.AddRange(Tags);
             }
-            
+
             if (TagFactories != null)
             {
                 _allTags.AddRange(TagFactories.Select(factory =>
@@ -66,9 +66,14 @@ namespace Pretzel.Logic.Templating.Razor
 
             content = Regex.Replace(content, "<p>(@model .*?)</p>", "$1");
 
+            var pageContent = pageData.Content;
+            pageData.Content = pageData.FullContent;
+
             try
             {
-                return Engine.Razor.RunCompile(content, pageData.Page.File, typeof(PageContext), pageData);
+                content = Engine.Razor.RunCompile(content, pageData.Page.File, typeof(PageContext), pageData);
+                pageData.Content = pageContent;
+                return content;
             }
             catch (Exception e)
             {
