@@ -27,22 +27,43 @@ namespace Pretzel.Logic.Templating.Razor
         {
         }
 
-        protected override void PreProcess()
+	    private class TagComparer : IEqualityComparer<ITag>
+	    {
+		    public bool Equals(ITag x, ITag y)
+		    {
+			    if (x == null || y == null)
+			    {
+				    return false;
+			    }
+
+			    return x.Name == y.Name;
+		    }
+
+		    public int GetHashCode(ITag obj)
+		    {
+			    return obj.Name.GetHashCode();
+		    }
+	    }
+
+	    protected override void PreProcess()
         {
             includesPath = Path.Combine(Context.SourceFolder, "_includes");
 
             if (Tags != null)
             {
-                _allTags.AddRange(Tags);
+	            var toAdd = Tags.Except(_allTags, new TagComparer()).ToList();
+	            _allTags.AddRange(toAdd);
             }
 
             if (TagFactories != null)
             {
-                _allTags.AddRange(TagFactories.Select(factory =>
-                    {
-                        factory.Initialize(Context);
-                        return factory.CreateTag();
-                    }));
+	            var toAdd = TagFactories.Select(factory =>
+	            {
+		            factory.Initialize(Context);
+		            return factory.CreateTag();
+	            }).Except(_allTags, new TagComparer()).ToList();
+
+                _allTags.AddRange(toAdd);
             }
         }
 
