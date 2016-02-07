@@ -249,6 +249,25 @@ namespace Pretzel.Tests.Templating.Razor
             Assert.Equal(expected, FileSystem.File.ReadAllText(@"C:\website\_site\index.html"));
         }
 
+		[Fact]
+        public void Engine_can_process_template_multiple_times()
+        {
+            // arrange
+            const string templateContents = "<html><body>@Raw(Model.Content) @Tag.PostUrl(\"index.cshtml\")</body></html>";
+            const string pageContents = "<h1>Hello</h1>";
+            const string expected = "<html><body><h1>Hello</h1> /index.html</body></html>";
+
+            Subject.TagFactories = new List<TagFactoryBase> { new PostUrlTagFactory() };
+
+            // act
+			// Process contents multiple times (e.g., when a file has changed in taste)
+            ProcessContents(templateContents, pageContents, new Dictionary<string, object>());
+			ProcessContents(templateContents, pageContents, new Dictionary<string, object>());
+
+            // assert
+            Assert.Equal(expected, FileSystem.File.ReadAllText(@"C:\website\_site\index.html"));
+        }
+
         public class CustomTag : DotLiquid.Tag, ITag
         {
             public new string Name { get { return "Custom"; } }
