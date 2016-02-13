@@ -8,7 +8,7 @@
 
 A simple, pluggable site generation tool for .NET developers and Windows users (with Mono support planned I think)
 
-Pretzel follows the same conventions as  [Jekyll](https://github.com/mojombo/jekyll) and should be compatible with basic Jekyll websites. If you are not familiar with Jekyll, have a read at [http://jekyllrb.com/docs/usage/](http://jekyllrb.com/docs/usage/)
+Pretzel follows the same conventions as  [Jekyll](https://github.com/jekyll/jekyll) and should be compatible with basic Jekyll websites. If you are not familiar with Jekyll, have a read at [http://jekyllrb.com/docs/usage/](http://jekyllrb.com/docs/usage/)
 
 ### Usage
 
@@ -57,4 +57,4 @@ All contributions are welcome, please read our [contributing guide](CONTRIBUTING
 
 
 ### Attribution
- “[Pretzel](http://thenounproject.com/noun/pretzel/#icon-No555)” symbol by Edward Boatman on [The Noun Project](http://www.thenounproject.com/), from The Noun Project collection.
+ “[Pretzel](https://thenounproject.com/noun/pretzel/#icon-No555)” symbol by Edward Boatman on [The Noun Project](https://thenounproject.com/), from The Noun Project collection.
