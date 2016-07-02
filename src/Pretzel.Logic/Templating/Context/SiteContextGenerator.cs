@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Pretzel.Logic.Extensibility;
 
 namespace Pretzel.Logic.Templating.Context
@@ -15,6 +16,7 @@ namespace Pretzel.Logic.Templating.Context
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class SiteContextGenerator
     {
+        private static readonly Regex paragraphRegex = new Regex(@"(<(?:p|h\d{1})>.*?</(?:p|h\d{1})>)", RegexOptions.Compiled | RegexOptions.Singleline);
         private readonly Dictionary<string, Page> pageCache = new Dictionary<string, Page>();
         private readonly IFileSystem fileSystem;
         private readonly List<string> includes = new List<string>();
@@ -234,6 +236,10 @@ namespace Pretzel.Logic.Templating.Context
                     return null;
                 }
 
+                var excerptSeparator = header.ContainsKey("excerpt_separator")
+                    ? header["excerpt_separator"].ToString()
+                    : context.ExcerptSeparator;
+
                 var page = new Page
                                 {
                                     Title = header.ContainsKey("title") ? header["title"].ToString() : "this is a post",
@@ -427,6 +433,29 @@ namespace Pretzel.Logic.Templating.Context
             var tokens = fileName.Split('-');
             var timePath = Path.Combine(tokens);
             return Path.Combine(outputDirectory, timePath);
+        }
+
+        private static string GetContentExcerpt(string content, string excerptSeparator)
+        {
+            var excerptSeparatorIndex = content.IndexOf(excerptSeparator, StringComparison.InvariantCulture);
+            string excerpt = null;
+            if (excerptSeparatorIndex == -1)
+            {
+                var match = paragraphRegex.Match(content);
+                if (match.Success)
+                {
+                    excerpt = match.Groups[1].Value;
+                }
+            }
+            else
+            {
+                excerpt = content.Substring(0, excerptSeparatorIndex);
+                if (excerpt.StartsWith("<p>") && !excerpt.EndsWith("</p>"))
+                {
+                    excerpt += "</p>";
+                }
+            }
+            return excerpt;
         }
     }
 }

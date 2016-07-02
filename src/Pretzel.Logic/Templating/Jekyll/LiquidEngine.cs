@@ -106,6 +106,7 @@ namespace Pretzel.Logic.Templating.Jekyll
             Template.RegisterFilter(typeof(CgiEscapeFilter));
             Template.RegisterFilter(typeof(UriEscapeFilter));
             Template.RegisterFilter(typeof(NumberOfWordsFilter));
+            Template.RegisterFilter(typeof(DefaultFilter));
             Template.RegisterTag<HighlightBlock>("highlight");
         }
     }
