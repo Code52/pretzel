@@ -4,6 +4,7 @@ using Pretzel.Logic;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
@@ -97,7 +98,8 @@ namespace Pretzel
                 batch.AddPart(parameters);
 
                 var config = new Configuration(parameters.FileSystem, parameters.Path);
-                config.ReadFromFile();
+                config.ReadFromFile(new Dictionary<string, string> { { "configuration", parameters.Configuration ?? "debug" } });
+
                 batch.AddExportedValue((IConfiguration)config);
 
                 container.Compose(batch);
