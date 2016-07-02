@@ -17,6 +17,8 @@ Once you're familiar with Git and GitHub, clone the repository and run the ```.\
 
 **The functionalities are based as much as possible on existing functionalities in jekyll**
 
+Each new functionnality must have been discussed first before submitting it in a PR.
+
 ## Coding conventions
 
 We are following as much as possible the [C# coding conventions](https://msdn.microsoft.com/en-us/library/ff926074.aspx).  
@@ -25,7 +27,7 @@ We have an [editorconfig](http://EditorConfig.org) [file](./.editorconfig) if yo
 
 ## Testing
 
-Don't forget to add some tests for your functionality in the tests suit.  
+Tests are mandatory for new functionality, please add some in the tests suit.
 You can see the result either:
 - in Visual Studio or other IDE supporting xUnit2
 - by executing build.cmd
