@@ -127,7 +127,7 @@ namespace Pretzel
 
         private void AddScriptCs(AggregateCatalog mainCatalog, string pluginsPath)
         {
-            var pretzelScriptCsPath = Assembly.GetEntryAssembly().Location.Replace("Pretzel.exe", "Pretzel.ScriptCs.dll");
+            var pretzelScriptCsPath = Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).DirectoryName, "Pretzel.ScriptCs.dll");
             if (File.Exists(pretzelScriptCsPath))
             {
                 var pretzelScriptcsAssembly = Assembly.LoadFile(pretzelScriptCsPath);
@@ -148,6 +148,7 @@ namespace Pretzel
                                         typeof(Logic.Extensibility.ITag),
                                         typeof(Logic.Templating.Context.SiteContext),
                                         typeof(IFileSystem),
+                                        typeof(IConfiguration),
                                     }
                                 });
                             mainCatalog.Catalogs.Add(catalog);
@@ -157,6 +158,7 @@ namespace Pretzel
                             Tracing.Debug("Assembly 'Pretzel.ScriptCs.dll' detected and loaded, type 'Pretzel.ScriptCs.ScriptCsCatalogFactory' found but method 'CreateScriptCsCatalog' not found.");
                         }
                     }
+                    else
                     {
                         Tracing.Debug("Assembly 'Pretzel.ScriptCs.dll' detected and loaded but type 'Pretzel.ScriptCs.ScriptCsCatalogFactory' not found.");
                     }
