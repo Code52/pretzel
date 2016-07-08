@@ -1,3 +1,22 @@
+# 0.4.0 (23 janvier 2016)
+
+
+##  Breaking changes
+ - [#287](https://github.com/Code52/pretzel/pull/287) - Accessible configuration contributed by Jérémie Bertrand ([laedit](https://github.com/laedit))
+
+## Fixes
+ - [#294](https://github.com/Code52/pretzel/pull/294) - Fix failing build on dev machine configured for NuGet V3 contributed by Tim Murphy ([TimMurphy](https://github.com/TimMurphy))
+ - [#293](https://github.com/Code52/pretzel/issues/293) - Broken razor template inheritance
+ - [#292](https://github.com/Code52/pretzel/pull/292) - Fix on Razor based pages not being renamed to .html contributed by Kees Schollaart ([keesschollaart81](https://github.com/keesschollaart81))
+
+
+## Features
+ - [#288](https://github.com/Code52/pretzel/pull/288) - [RFC] new extension point `IBeforeProcessingTransform` contributed by Thomas Freudenberg ([thoemmi](https://github.com/thoemmi))
+ - [#284](https://github.com/Code52/pretzel/pull/284) - New command : create new post contributed by Keuvain ([k94ll13nn3](https://github.com/k94ll13nn3))
+
+Commits: [4d8fcaa1a0...142be2a212](https://github.com/Code52/pretzel/compare/4d8fcaa1a0...142be2a212)
+
+
 # 0.3.0
 
 ## Breaking changes
