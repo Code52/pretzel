@@ -2243,5 +2243,72 @@ categories: [{0}]
                 }
             }
         }
+
+        public class Missing_post_frontmatter_when_paginating : BakingEnvironment<LiquidEngine>
+        {
+            private const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            private const string PostContents = @"---
+ layout: default
+ title: 'Post {0}'
+ customfield: '{0}'
+---
+## Hello World!";
+            private const string IndexContents = @"---
+ layout: default
+ paginate: 1
+ title: 'A different title'
+---
+{% for post in paginator.posts %}
+  {{ post.title }}-{{ post.customfield }}
+{% endfor %}
+";
+            private const string ExpectedFileContents = "<html><head><title>A different title</title></head><body>  Post {0}-{0}</body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.html", new MockFileData(IndexContents));
+
+                for (var i = 1; i <= 5; i++)
+                {
+                    FileSystem.AddFile(String.Format(@"C:\website\_posts\2012-02-0{0}-p{0}.md", i), new MockFileData(String.Format(PostContents, i)));
+                }
+
+                var generator = GetSiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void Four_Pages_Should_Be_Generated()
+            {
+                for (var i = 2; i <= 5; i++)
+                {
+                    var fileName = String.Format(@"C:\website\_site\page\{0}\index.html", i);
+                    var expectedContents = string.Format(ExpectedFileContents, 6 - i);
+                    Assert.Equal(expectedContents, FileSystem.File.ReadAllText(fileName).RemoveWhiteSpace());
+                }
+            }
+
+            [Fact]
+            public void Page1_Is_Not_Generated()
+            {
+                Assert.False(FileSystem.File.Exists(@"C:\website\_site\page\1\index.html"));
+            }
+
+            [Fact]
+            public void But_Index_Is_Generated()
+            {
+                var expectedContents = string.Format(ExpectedFileContents, 5);
+                Assert.Equal(expectedContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
     }
 }
