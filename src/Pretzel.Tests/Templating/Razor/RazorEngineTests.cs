@@ -249,7 +249,7 @@ namespace Pretzel.Tests.Templating.Razor
             Assert.Equal(expected, FileSystem.File.ReadAllText(@"C:\website\_site\index.html"));
         }
 
-		[Fact]
+        [Fact]
         public void Engine_can_process_template_multiple_times()
         {
             // arrange
@@ -260,9 +260,9 @@ namespace Pretzel.Tests.Templating.Razor
             Subject.TagFactories = new List<TagFactoryBase> { new PostUrlTagFactory() };
 
             // act
-			// Process contents multiple times (e.g., when a file has changed in taste)
+            // Process contents multiple times (e.g., when a file has changed in taste)
             ProcessContents(templateContents, pageContents, new Dictionary<string, object>());
-			ProcessContents(templateContents, pageContents, new Dictionary<string, object>());
+            ProcessContents(templateContents, pageContents, new Dictionary<string, object>());
 
             // assert
             Assert.Equal(expected, FileSystem.File.ReadAllText(@"C:\website\_site\index.html"));
@@ -423,6 +423,52 @@ namespace Pretzel.Tests.Templating.Razor
             {
                 return new CustomTag(this.SiteContext);
             }
+        }
+    }
+
+    public class When_Paginate_Razor_Using_Custom_Fild : BakingEnvironment<RazorSiteEngine>
+    {
+        private const string TemplateContents = "@model Pretzel.Logic.Templating.Context.PageContext \r\n<html><body>@Raw(Model.Content)</body></html>";
+        private const string PostContents = "---\r\n layout: default \r\n title: 'Post'\r\n customfield: '{0}'\r\n---\r\n# Post{0}";
+        private const string IndexContents = "---\r\n layout: default \r\n paginate: 2 \r\n paginate_link: /blog/page:page/index.html \r\n---\r\n @model Pretzel.Logic.Templating.Context.PageContext \r\n @foreach(var post in Model.Paginator.Posts) { @post.Bag[\"customfield\"] @Raw(\"-\") }";
+        private const string ExpectedFileContents = "<html><body><p>{0}-{1}-</p></body></html>";
+        private const string ExpectedLastFileContents = "<html><body><p>{0}-</p></body></html>";
+
+        public override RazorSiteEngine Given()
+        {
+            return new RazorSiteEngine();
+        }
+
+        public override void When()
+        {
+            FileSystem.AddFile(@"C:\website\_layouts\default.cshtml", new MockFileData(TemplateContents));
+            FileSystem.AddFile(@"C:\website\index.md", new MockFileData(IndexContents));
+
+            for (var i = 1; i <= 7; i++)
+            {
+                FileSystem.AddFile(String.Format(@"C:\website\_posts\2012-02-0{0}-p{0}.md", i), new MockFileData(String.Format(PostContents, i)));
+            }
+
+            var generator = new SiteContextGenerator(FileSystem, new LinkHelper(), new Configuration());
+            var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
+            Subject.FileSystem = FileSystem;
+            Subject.Process(context);
+        }
+
+        [Fact]
+        public void Posts_Properly_Paginated()
+        {
+            Assert.Equal(String.Format(ExpectedFileContents, 7, 6),
+                         FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+
+            Assert.Equal(String.Format(ExpectedFileContents, 5, 4),
+                         FileSystem.File.ReadAllText(@"C:\website\_site\blog\page2\index.html").RemoveWhiteSpace());
+
+            Assert.Equal(String.Format(ExpectedFileContents, 3, 2),
+                         FileSystem.File.ReadAllText(@"C:\website\_site\blog\page3\index.html").RemoveWhiteSpace());
+
+            Assert.Equal(String.Format(ExpectedLastFileContents, 1),
+                         FileSystem.File.ReadAllText(@"C:\website\_site\blog\page4\index.html").RemoveWhiteSpace());
         }
     }
 }
