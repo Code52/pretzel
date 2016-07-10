@@ -21,6 +21,8 @@ namespace Pretzel.Logic.Commands
         [Export("SourcePath")]
         public string Path { get; private set; }
 
+        public string Configuration { get; private set; }
+
         [Export]
         public IFileSystem FileSystem { get; private set; }
 
@@ -30,11 +32,12 @@ namespace Pretzel.Logic.Commands
         {
             Options = new OptionSet
                 {
-                    {"help", "Display help mode", p => Help = true},
-                    {"debug", "Enable debugging", p => Debug = true},
+                    {"help", "Display help mode", p => Help = true },
+                    {"debug", "Enable debugging", p => Debug = true },
                     { "safe", "Disable custom plugins", v => Safe = true },
                     { "d|directory=", "[Obsolete, use --source instead] The path to site directory", p => Path = p },
-                    { "s|source=", "The path to the source site (default current directory)", p => Path = p}
+                    { "s|source=", "The path to the source site (default current directory)", p => Path = p },
+                    { "с|configuration=", "Configuration", c => Configuration = c }
                 };
 
             FileSystem = fileSystem;

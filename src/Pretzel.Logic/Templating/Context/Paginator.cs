@@ -8,7 +8,8 @@ namespace Pretzel.Logic.Templating.Context
     public class Paginator : Drop
     {
         private readonly SiteContext site;
-        
+        private readonly Func<Page, bool> postsFilter;
+
         public int TotalPages { get; set; }
         public int TotalPosts { get; set; }
         public int PerPage { get; set; }
@@ -17,20 +18,23 @@ namespace Pretzel.Logic.Templating.Context
         public string PreviousPageUrl { get; set; }
         public string NextPageUrl { get; set; }
         public int Page { get; set; }
+        public string ListKey { get; set; }
 
         private IList<Page> posts;
         public IList<Page> Posts
         {
-            get { return posts ?? (posts = site.Posts.Skip((Page-1) * PerPage).Take(PerPage).ToList()); }
+            get { return posts ?? (posts = site.Posts.Where(postsFilter ?? (p => true)).Skip((Page-1) * PerPage).Take(PerPage).ToList()); }
         }
 
-        public Paginator(SiteContext site, int totalPages, int perPage, int page)
+        public Paginator(SiteContext site, int totalPages, int perPage, int page, Func<Page, bool> postsFilter = null, string listKey = null)
         {
             this.site = site;
+            this.postsFilter = postsFilter;
             TotalPosts = site.Posts.Count;
             TotalPages = totalPages;
             PerPage = perPage;
             Page = page;
+            ListKey = listKey;
         }
     }
 }

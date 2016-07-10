@@ -54,15 +54,27 @@ namespace Pretzel.Logic
             {
                 _config.Add("date", "2012-01-01");
             }
+            if (!_config.ContainsKey("configuration"))
+            {
+                _config.Add("configuration", "debug");
+            }
         }
 
-        internal void ReadFromFile()
+        internal void ReadFromFile(IDictionary<string, string> defaults = null)
         {
             _config = new Dictionary<string, object>();
             if (_fileSystem.File.Exists(_configFilePath))
             {
                 _config = _fileSystem.File.ReadAllText(_configFilePath).ParseYaml();
                 CheckDefaultConfig();
+            }
+
+            if (defaults != null)
+            {
+                foreach (var key in defaults)
+                {
+                    _config[key.Key] = key.Value;
+                }
             }
         }
 

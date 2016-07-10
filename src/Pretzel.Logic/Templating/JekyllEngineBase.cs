@@ -6,6 +6,7 @@ using Pretzel.Logic.Templating.Context;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace Pretzel.Logic.Templating
 
         [Import(AllowDefault = true)]
         private ILightweightMarkupEngine _lightweightMarkupEngine;
-        
+
         public abstract void Initialize();
 
         protected abstract void PreProcess();
@@ -74,6 +75,44 @@ namespace Pretzel.Logic.Templating
                 var next = GetNext(siteContext.Pages, index);
                 ProcessFile(siteContext.OutputFolder, p, previous, next, skipFileOnError);
             }
+
+            Tracing.Info("\nRedirects:");
+            foreach (var post in Context.Posts.Concat(Context.Pages).Where(p => !(p is NonProcessedPage)))
+            {
+                object redirectFromParam;
+                if (post.Bag.TryGetValue("redirect_from", out redirectFromParam))
+                {
+                    var sourceUrls = redirectFromParam as IEnumerable<string>;
+                    if ((sourceUrls != null) && (sourceUrls.Any()))
+                    {
+                        foreach (var sourceUrl in sourceUrls)
+                        {
+                            // Read YAML header
+                            var redirectBag = new Dictionary<string, object>(post.Bag)
+                            {
+                                ["layout"] = "redirect",
+                                ["redirect_from_url"] = sourceUrl.Trim('/', '\\'),
+                                ["redirect_to_url"] = post.Url
+                            };
+
+                            ProcessFile(siteContext.OutputFolder, new Page
+                            {
+                                Title = post.Title,
+                                Url = sourceUrl.Trim('/', '\\') + "/",
+                                Date = post.Date,
+                                Id = post.Id,
+                                Categories = post.Categories,
+                                Tags = post.Tags,
+                                Bag = redirectBag,
+                                Content = String.Empty,
+                                File = Path.Combine(Context.SourceFolder, sourceUrl.Trim('/', '\\').Replace('/', '\\'), "index.html")
+                            }, null, null, skipFileOnError);
+
+                            Tracing.Info(String.Format("Redirect: {0} [{1}]", post.Url, String.Join(", ", sourceUrls.ToArray())));
+                        }
+                    }
+                }
+            }
         }
 
         private static Page GetPrevious(IList<Page> pages, int index)
@@ -86,7 +125,8 @@ namespace Pretzel.Logic.Templating
             return index >= 1 ? pages[index - 1] : null;
         }
 
-        private void ProcessFile(string outputDirectory, Page page, Page previous, Page next, bool skipFileOnError, string relativePath = "")
+        private void ProcessFile(string outputDirectory, Page page, Page previous, Page next, bool skipFileOnError,
+            string relativePath = "")
         {
             if (string.IsNullOrWhiteSpace(relativePath))
                 relativePath = MapToOutputPath(page.File);
@@ -113,47 +153,166 @@ namespace Pretzel.Logic.Templating
                 page.OutputFile = page.OutputFile.Replace(extension, ".html");
             }
 
-            var pageContext = PageContext.FromPage(Context, page, outputDirectory, page.OutputFile);
+            var listType = page.Bag.ContainsKey("list") ? page.Bag["list"] as string : null;
+            var pageContexts = new List<PageContext> { };
 
-            pageContext.Previous = previous;
-            pageContext.Next = next;
-
-            var pageContexts = new List<PageContext> { pageContext };
-            object paginateObj;
-            if (page.Bag.TryGetValue("paginate", out paginateObj))
+            if (listType == null)
             {
-                var paginate = Convert.ToInt32(paginateObj);
-                var totalPages = (int)Math.Ceiling(Context.Posts.Count / Convert.ToDouble(paginateObj));
-                var paginator = new Paginator(Context, totalPages, paginate, 1);
-                pageContext.Paginator = paginator;
+                var pageContext = PageContext.FromPage(Context, page, outputDirectory, page.OutputFile);
 
-                var paginateLink = "/page/:page/index.html";
+                pageContext.Previous = previous;
+                pageContext.Next = next;
+
+                pageContexts.Add(pageContext);
+
+                object paginateObj;
+                if (page.Bag.TryGetValue("paginate", out paginateObj))
+                {
+                    var paginate = Convert.ToInt32(paginateObj);
+                    var totalPages = (int)Math.Ceiling(Context.Posts.Count / Convert.ToDouble(paginateObj));
+                    var paginator = new Paginator(Context, totalPages, paginate, 1);
+                    pageContext.Paginator = paginator;
+
+                    var paginateLink = "/page/:page/index.html";
+                    if (page.Bag.ContainsKey("paginate_link"))
+                        paginateLink = Convert.ToString(page.Bag["paginate_link"]);
+
+                    var prevLink = page.Url;
+                    for (var i = 2; i <= totalPages; i++)
+                    {
+                        var newPaginator = new Paginator(Context, totalPages, paginate, i) { PreviousPageUrl = prevLink };
+                        var link = paginateLink.Replace(":page", Convert.ToString(i));
+                        paginator.NextPageUrl = link;
+
+                        paginator = newPaginator;
+                        prevLink = link;
+
+                        var path = Path.Combine(outputDirectory, link.ToRelativeFile());
+                        if (path.EndsWith(FileSystem.Path.DirectorySeparatorChar.ToString()))
+                        {
+                            path = Path.Combine(path, "index.html");
+                        }
+                        var context = new PageContext(pageContext) { Paginator = newPaginator, OutputPath = path };
+                        context.Bag["url"] = link;
+                        pageContexts.Add(context);
+                    }
+                }
+            }
+            else if (listType == "tags")
+            {
+                var paginateLink = "/tags/:name/:page/";
                 if (page.Bag.ContainsKey("paginate_link"))
                     paginateLink = Convert.ToString(page.Bag["paginate_link"]);
 
-                var prevLink = page.Url;
-                for (var i = 2; i <= totalPages; i++)
+                foreach (var tag in Context.Tags)
                 {
-                    var newPaginator = new Paginator(Context, totalPages, paginate, i) { PreviousPageUrl = prevLink };
-                    var link = paginateLink.Replace(":page", Convert.ToString(i));
-                    paginator.NextPageUrl = link;
+                    var pageContext = PageContext.FromPage(Context, page, outputDirectory, page.OutputFile);
 
-                    paginator = newPaginator;
-                    prevLink = link;
-
-                    var path = Path.Combine(outputDirectory, link.ToRelativeFile());
-                    if (path.EndsWith(FileSystem.Path.DirectorySeparatorChar.ToString()))
+                    var paginate = int.MaxValue;
+                    object paginateObj;
+                    if (page.Bag.TryGetValue("paginate", out paginateObj))
                     {
-                        path = Path.Combine(path, "index.html");
+                        paginate = Convert.ToInt32(paginateObj);
                     }
-                    var context = new PageContext(pageContext) { Paginator = newPaginator, OutputPath = path };
-                    context.Bag["url"] = link;
-                    pageContexts.Add(context);
+                    var totalPages =
+                        (int)
+                            Math.Ceiling(Context.Posts.Count(p => p.Tags.Contains(tag.Name)) /
+                                         Convert.ToDouble(paginateObj));
+
+                    string prevLink = null;
+                    for (var i = 1; i <= totalPages; i++)
+                    {
+                        var newPaginator = new Paginator(Context, totalPages, paginate, i,
+                            p => p.Tags.Contains(tag.Name), tag.Name)
+                        { PreviousPageUrl = prevLink };
+                        var link = paginateLink.Replace(":name", tag.Name)
+                            .Replace(":page", i != 1 ? Convert.ToString(i) : string.Empty)
+                            .Replace("//", "/")
+                            .Replace("\\\\", "\\");
+                        if (i < totalPages)
+                        {
+                            newPaginator.NextPageUrl = paginateLink.Replace(":name", tag.Name)
+                                .Replace(":page", Convert.ToString(i + 1));
+                            ;
+                        }
+                        else
+                        {
+                            newPaginator.NextPageUrl = null;
+                        }
+
+                        prevLink = link;
+
+                        var path = Path.Combine(outputDirectory, link.ToRelativeFile());
+                        if (path.EndsWith(FileSystem.Path.DirectorySeparatorChar.ToString()))
+                        {
+                            path = Path.Combine(path, "index.html");
+                        }
+                        var context = new PageContext(pageContext) { Paginator = newPaginator, OutputPath = path };
+                        context.Bag["url"] = link;
+                        pageContexts.Add(context);
+                    }
+                }
+            }
+            else if (listType == "categories")
+            {
+                var paginateLink = "/categories/:name/:page/";
+                if (page.Bag.ContainsKey("paginate_link"))
+                    paginateLink = Convert.ToString(page.Bag["paginate_link"]);
+
+                foreach (var category in Context.Categories)
+                {
+                    var pageContext = PageContext.FromPage(Context, page, outputDirectory, page.OutputFile);
+
+                    var paginate = int.MaxValue;
+                    object paginateObj;
+                    if (page.Bag.TryGetValue("paginate", out paginateObj))
+                    {
+                        paginate = Convert.ToInt32(paginateObj);
+                    }
+                    var totalPages =
+                        (int)
+                            Math.Ceiling(Context.Posts.Count(p => p.Categories.Contains(category.Name)) /
+                                         Convert.ToDouble(paginateObj));
+
+                    string prevLink = null;
+                    for (var i = 1; i <= totalPages; i++)
+                    {
+                        var newPaginator = new Paginator(Context, totalPages, paginate, i,
+                            p => p.Categories.Contains(category.Name), category.Name)
+                        { PreviousPageUrl = prevLink };
+                        var link = paginateLink.Replace(":name", category.Name)
+                            .Replace(":page", i != 1 ? Convert.ToString(i) : string.Empty)
+                            .Replace("//", "/")
+                            .Replace("\\\\", "\\");
+                        if (i < totalPages)
+                        {
+                            newPaginator.NextPageUrl = paginateLink.Replace(":name", category.Name)
+                                .Replace(":page", Convert.ToString(i + 1));
+                            ;
+                        }
+                        else
+                        {
+                            newPaginator.NextPageUrl = null;
+                        }
+
+                        prevLink = link;
+
+                        var path = Path.Combine(outputDirectory, link.ToRelativeFile());
+                        if (path.EndsWith(FileSystem.Path.DirectorySeparatorChar.ToString()))
+                        {
+                            path = Path.Combine(path, "index.html");
+                        }
+                        var context = new PageContext(pageContext) { Paginator = newPaginator, OutputPath = path };
+                        context.Bag["url"] = link;
+                        pageContexts.Add(context);
+                    }
                 }
             }
 
             foreach (var context in pageContexts)
             {
+                var stopwatch = Stopwatch.StartNew();
+
                 var metadata = page.Bag;
                 var failed = false;
 
@@ -162,6 +321,15 @@ namespace Pretzel.Logic.Templating
                     : Context.ExcerptSeparator;
                 try
                 {
+                    if ((context.Paginator != null) && (context.Paginator.Posts != null))
+                    {
+                        foreach (var post in context.Paginator.Posts)
+                        {
+                            var postContent = RenderContent(post.File, RenderTemplate(post.Content, context));
+                            post.Excerpt = GetContentExcerpt(postContent, excerptSeparator);
+                        }
+                    }
+
                     context.Content = RenderContent(page.File, RenderTemplate(context.Content, context));
                     context.FullContent = context.Content;
                     context.Bag["excerpt"] = GetContentExcerpt(context.Content, excerptSeparator);
@@ -170,7 +338,8 @@ namespace Pretzel.Logic.Templating
                 {
                     if (!skipFileOnError)
                     {
-                        var message = string.Format("Failed to process {0}, see inner exception for more details", context.OutputPath);
+                        var message = string.Format("Failed to process {0}, see inner exception for more details",
+                            context.OutputPath);
                         throw new PageProcessingException(message, ex);
                     }
 
@@ -197,11 +366,15 @@ namespace Pretzel.Logic.Templating
                     {
                         if (!skipFileOnError)
                         {
-                            var message = string.Format("Failed to process layout {0} for {1}, see inner exception for more details", layout, context.OutputPath);
+                            var message =
+                                string.Format(
+                                    "Failed to process layout {0} for {1}, see inner exception for more details", layout,
+                                    context.OutputPath);
                             throw new PageProcessingException(message, ex);
                         }
 
-                        Console.WriteLine(@"Failed to process layout {0} for {1} because '{2}'. Skipping file", layout, context.OutputPath, ex.Message);
+                        Console.WriteLine(@"Failed to process layout {0} for {1} because '{2}'. Skipping file", layout,
+                            context.OutputPath, ex.Message);
                         failed = true;
                         break;
                     }
@@ -219,7 +392,8 @@ namespace Pretzel.Logic.Templating
                 {
                     if (!skipFileOnError)
                     {
-                        var message = string.Format("Failed to process {0}, see inner exception for more details", context.OutputPath);
+                        var message = string.Format("Failed to process {0}, see inner exception for more details",
+                            context.OutputPath);
                         throw new PageProcessingException(message, ex);
                     }
 
@@ -229,6 +403,10 @@ namespace Pretzel.Logic.Templating
 
                 CreateOutputDirectory(context.OutputPath);
                 FileSystem.File.WriteAllText(context.OutputPath, context.FullContent);
+
+                stopwatch.Stop();
+
+                Tracing.Info(String.Format("  {0} [{1}]", context.OutputPath.Replace(context.Site.OutputFolder, String.Empty), stopwatch.Elapsed));
             }
         }
 
@@ -242,7 +420,7 @@ namespace Pretzel.Logic.Templating
                 html = Path.GetExtension(file).IsMarkdownFile()
                        ? _lightweightMarkupEngine.Convert(contentsWithoutHeader).Trim()
                        : contentsWithoutHeader;
-                
+
                 if (ContentTransformers != null)
                 {
                     html = ContentTransformers.Aggregate(html, (current, contentTransformer) => contentTransformer.Transform(current));

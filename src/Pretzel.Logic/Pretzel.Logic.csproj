@@ -119,6 +119,7 @@
     <Compile Include="Liquid\DateToRfc822FormatFilter.cs" />
     <Compile Include="Liquid\DateToStringFilter.cs" />
     <Compile Include="Liquid\DateToXmlSchemaFilter.cs" />
+    <Compile Include="Liquid\DefaultFilter.cs" />
     <Compile Include="Liquid\HighlightBlock.cs" />
     <Compile Include="Liquid\NumberOfWordsFilter.cs" />
     <Compile Include="Extensibility\Extensions\PostUrlTag.cs" />

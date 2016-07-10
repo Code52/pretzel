@@ -4,14 +4,20 @@ using Pretzel.Logic;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
+using System.Configuration;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Web.Configuration;
+using Configuration = Pretzel.Logic.Configuration;
 
 namespace Pretzel
 {
@@ -25,6 +31,11 @@ namespace Pretzel
             Tracing.Logger.SetWriter(Console.Out);
             Tracing.Logger.AddCategory(Tracing.Category.Info);
             Tracing.Logger.AddCategory(Tracing.Category.Error);
+
+            if (ConfigurationManager.AppSettings.AllKeys.Contains("culture"))
+                Thread.CurrentThread.CurrentCulture =
+                    Thread.CurrentThread.CurrentUICulture =
+                        new CultureInfo(ConfigurationManager.AppSettings["culture"]);
 
             var parameters = BaseParameters.Parse(args, new FileSystem());
 
@@ -97,7 +108,8 @@ namespace Pretzel
                 batch.AddPart(parameters);
 
                 var config = new Configuration(parameters.FileSystem, parameters.Path);
-                config.ReadFromFile();
+                config.ReadFromFile(new Dictionary<string, string> { { "configuration", parameters.Configuration ?? "debug" } });
+
                 batch.AddExportedValue((IConfiguration)config);
 
                 container.Compose(batch);
