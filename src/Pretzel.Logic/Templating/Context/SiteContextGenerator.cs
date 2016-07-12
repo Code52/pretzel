@@ -227,7 +227,11 @@ namespace Pretzel.Logic.Templating.Context
                 if (pageCache.ContainsKey(file))
                     return pageCache[file];
                 var content = SafeReadContents(file);
-                var header = content.YamlHeader();
+
+                var relativePath = MapToOutputPath(context, file);
+                var scopedDefaults = context.Config.GetDefaults().ForScope(relativePath);
+
+                var header = scopedDefaults.Merge(content.YamlHeader());
 
                 if (header.ContainsKey("published") && header["published"].ToString().ToLower() == "false")
                 {

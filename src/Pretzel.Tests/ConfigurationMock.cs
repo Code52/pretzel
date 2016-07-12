@@ -60,5 +60,19 @@ namespace Pretzel.Tests
         {
             return new Dictionary<string, object>(_config);
         }
+
+        public IDefaultsConfiguration GetDefaults()
+        {
+            return new DefaultsConfigurationMock();
+        }
     }
+
+    internal class DefaultsConfigurationMock : IDefaultsConfiguration
+    {
+        public IDictionary<string, object> ForScope(string path)
+        {
+            return new Dictionary<string, object>();
+        }
+    }
+
 }

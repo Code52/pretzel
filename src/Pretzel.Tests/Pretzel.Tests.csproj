@@ -91,9 +91,11 @@
     <Compile Include="Commands\BaseParameterTests.cs" />
     <Compile Include="Commands\CommandExtensions.cs" />
     <Compile Include="ConfigurationMock.cs" />
+    <Compile Include="ConfigurationTests.cs" />
     <Compile Include="Extensibility\Extensions\AzureHostSupportTest.cs" />
     <Compile Include="Extensibility\Extensions\VirtualDirectorySupportTests.cs" />
     <Compile Include="Extensibility\Extensions\WebSequenceDiagramsTests.cs" />
+    <Compile Include="Extensions\DictionaryExtensionTests.cs" />
     <Compile Include="Extensions\SitemapTest.cs" />
     <Compile Include="Extensions\StringExtensionsTest.cs" />
     <Compile Include="Import\BloggerImportTests.cs" />

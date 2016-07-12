@@ -105,6 +105,7 @@
     <Compile Include="Extensibility\IBeforeProcessingTransform.cs" />
     <Compile Include="Extensibility\ITag.cs" />
     <Compile Include="Extensibility\TagFactoryBase.cs" />
+    <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\IAssembly.cs" />
     <Compile Include="Extensions\Logger.cs" />
     <Compile Include="Extensions\Sitemap.cs" />
