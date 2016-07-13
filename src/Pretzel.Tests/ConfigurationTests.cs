@@ -8,7 +8,8 @@ namespace Pretzel.Tests
 {
     public class ConfigurationTests
     {
-        private Configuration _sut;
+        private readonly Configuration _sut;
+
         private const string SampleConfig = @"
 pretzel:
   engine: liquid
@@ -58,7 +59,7 @@ defaults:
         [Fact]
         public void DefaultsForScope_should_layer_the_most_specific_scope_on_top()
         {
-            var defaults = _sut.GetDefaults().ForScope(@"_posts\2016");
+            var defaults = _sut.Defaults.ForScope(@"_posts\2016");
 
             Assert.Equal("post-layout-for-2016", defaults["layout"]);
         }
@@ -66,7 +67,7 @@ defaults:
         [Fact]
         public void DefaultsForScope_should_take_value_from_less_specific_when_not_found_in_most_specific()
         {
-            var defaults = _sut.GetDefaults().ForScope(@"_posts\2016");
+            var defaults = _sut.Defaults.ForScope(@"_posts\2016");
 
             Assert.Equal("posts-specific-author", defaults["author"]);
         }
@@ -74,7 +75,7 @@ defaults:
         [Fact]
         public void DefaultsForScope_should_fallback_to_value_from_empty_path_when_given_path_not_found()
         {
-            var defaults = _sut.GetDefaults().ForScope("_nonexisting");
+            var defaults = _sut.Defaults.ForScope("_nonexisting");
 
             Assert.Equal("default-author", defaults["author"]);
         }

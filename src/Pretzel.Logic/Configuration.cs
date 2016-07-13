@@ -1,6 +1,5 @@
 ﻿using Pretzel.Logic.Extensions;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Abstractions;
 
 namespace Pretzel.Logic
@@ -15,13 +14,7 @@ namespace Pretzel.Logic
 
         IDictionary<string, object> ToDictionary();
 
-        IDefaultsConfiguration GetDefaults();
-    }
-
-
-    public interface IDefaultsConfiguration
-    {
-        IDictionary<string, object> ForScope(string path);
+        IDefaultsConfiguration Defaults { get; }
     }
 
 
@@ -31,21 +24,18 @@ namespace Pretzel.Logic
         public const string DefaultPermalink = "date";
 
         private IDictionary<string, object> _config;
+        private IDefaultsConfiguration _defaultsConfiguration;
         private readonly IFileSystem _fileSystem;
         private readonly string _configFilePath;
 
-        public object this[string key]
-        {
-            get
-            {
-                return _config[key];
-            }
-        }
+        public object this[string key] => _config[key];
+
+        public IDefaultsConfiguration Defaults => _defaultsConfiguration;
 
         internal Configuration()
         {
             _config = new Dictionary<string, object>();
-            CheckDefaultConfig();
+            EnsureDefaults();
         }
 
         internal Configuration(IFileSystem fileSystem, string sitePath)
@@ -55,12 +45,14 @@ namespace Pretzel.Logic
             _configFilePath = _fileSystem.Path.Combine(sitePath, ConfigFileName);
         }
 
-        private void CheckDefaultConfig()
+        private void EnsureDefaults()
         {
             if (!_config.ContainsKey("permalink"))
             {
                 _config.Add("permalink", DefaultPermalink);
             }
+
+            _defaultsConfiguration = new DefaultsConfiguration(_config);
         }
 
         internal void ReadFromFile()
@@ -69,7 +61,7 @@ namespace Pretzel.Logic
             if (_fileSystem.File.Exists(_configFilePath))
             {
                 _config = _fileSystem.File.ReadAllText(_configFilePath).ParseYaml();
-                CheckDefaultConfig();
+                EnsureDefaults();
             }
         }
 
@@ -87,62 +79,5 @@ namespace Pretzel.Logic
         {
             return new Dictionary<string, object>(_config);
         }
-
-        public IDefaultsConfiguration GetDefaults()
-        {
-            return new DefaultsConfiguration(_config);
-        }
     }
-
-
-    internal sealed class DefaultsConfiguration : IDefaultsConfiguration
-    {
-        private readonly IDictionary<string, IDictionary<string, object>> _scopedValues;
-
-        public DefaultsConfiguration(IDictionary<string, object> configuration)
-        {
-            _scopedValues = new Dictionary<string, IDictionary<string, object>>();
-            FillScopedValues(configuration);
-        }
-
-        private void FillScopedValues(IDictionary<string, object> configuration)
-        {
-            if (!configuration.ContainsKey("defaults")) return;
-
-            var defaults = configuration["defaults"] as List<object>;
-            if (defaults == null) return;
-
-            foreach (var item in defaults.ConvertAll(x => x as IDictionary<string, object>))
-            {
-                if (item != null && item.ContainsKey("scope") && item.ContainsKey("values"))
-                {
-                    var scopeDictionary = item["scope"] as IDictionary<string, object>;
-                    if (scopeDictionary != null && scopeDictionary.ContainsKey("path"))
-                    {
-                        var path = (string)scopeDictionary["path"];
-                        var values = item["values"] as IDictionary<string, object>;
-                        _scopedValues.Add(path, values ?? new Dictionary<string, object>());
-                    }
-                }
-            }
-        }
-
-        public IDictionary<string, object> ForScope(string path)
-        {
-            IDictionary<string, object> result = new Dictionary<string, object>();
-
-            if (path == null) return result;
-
-            if (path.Length > 0)
-            {
-                result = result.Merge(ForScope(Path.GetDirectoryName(path)));
-            }
-            if (_scopedValues.ContainsKey(path))
-            {
-                result = result.Merge(_scopedValues[path]);
-            }
-            return result;
-        }
-    }
-
 }

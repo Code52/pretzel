@@ -61,9 +61,9 @@ namespace Pretzel.Tests
             return new Dictionary<string, object>(_config);
         }
 
-        public IDefaultsConfiguration GetDefaults()
+        public IDefaultsConfiguration Defaults
         {
-            return new DefaultsConfigurationMock();
+            get { return new DefaultsConfigurationMock(); }
         }
     }
 

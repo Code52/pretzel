@@ -229,7 +229,7 @@ namespace Pretzel.Logic.Templating.Context
                 var content = SafeReadContents(file);
 
                 var relativePath = MapToOutputPath(context, file);
-                var scopedDefaults = context.Config.GetDefaults().ForScope(relativePath);
+                var scopedDefaults = context.Config.Defaults.ForScope(relativePath);
 
                 var header = scopedDefaults.Merge(content.YamlHeader());
 

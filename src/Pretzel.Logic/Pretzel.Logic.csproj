@@ -89,6 +89,7 @@
     <Compile Include="Commands\CommandParameters.cs" />
     <Compile Include="Commands\BaseParameters.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="DefaultsConfiguration.cs" />
     <Compile Include="Exceptions\PageProcessingException.cs" />
     <Compile Include="Extensibility\Extensions\AzureHostSupport.cs" />
     <Compile Include="Extensibility\Extensions\CommonMarkEngine.cs" />
