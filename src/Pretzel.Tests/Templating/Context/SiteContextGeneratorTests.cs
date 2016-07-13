@@ -316,6 +316,68 @@ title: Title
         }
 
         [Fact]
+        public void defaults_in_config_should_be_combined_with_page_frontmatter_in_page_bag()
+        {
+            // Arrange
+            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"
+defaults:
+  -
+    scope:
+      path: ''
+    values:
+      author: 'default-author'
+"));
+
+            fileSystem.AddFile(@"C:\TestSite\about.md", new MockFileData(@"---
+title: 'about'
+---
+# About page
+"));
+
+            var config = new Configuration(fileSystem, @"C:\TestSite");
+            config.ReadFromFile();
+            var sut = new SiteContextGenerator(fileSystem, new LinkHelper(), config);
+
+            // Act
+            var siteContext = sut.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+
+            // Assert
+            Assert.Equal("about", siteContext.Pages[0].Bag["title"]); // from page frontmatter
+            Assert.Equal("default-author", siteContext.Pages[0].Bag["author"]); // from config defaults
+        }
+
+
+        [Fact]
+        public void page_frontmatter_should_have_priority_over_defaults_in_config()
+        {
+            // Arrange
+            fileSystem.AddFile(@"C:\TestSite\_config.yml", new MockFileData(@"
+defaults:
+  -
+    scope:
+      path: ''
+    values:
+      author: 'default-author'
+"));
+
+            fileSystem.AddFile(@"C:\TestSite\about.md", new MockFileData(@"---
+author: 'page-specific-author'
+---
+# About page
+"));
+
+            var config = new Configuration(fileSystem, @"C:\TestSite");
+            config.ReadFromFile();
+            var sut = new SiteContextGenerator(fileSystem, new LinkHelper(), config);
+
+            // Act
+            var siteContext = sut.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+
+            // Assert
+            Assert.Equal("page-specific-author", siteContext.Pages[0].Bag["author"]);            
+        }
+
+        [Fact]
         public void CanBeIncluded_Scenarios_AreWorking()
         {
             Func<string, bool> function = generator.CanBeIncluded;

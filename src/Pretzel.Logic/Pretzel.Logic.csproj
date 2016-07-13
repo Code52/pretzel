@@ -89,6 +89,7 @@
     <Compile Include="Commands\CommandParameters.cs" />
     <Compile Include="Commands\BaseParameters.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="DefaultsConfiguration.cs" />
     <Compile Include="Exceptions\PageProcessingException.cs" />
     <Compile Include="Extensibility\Extensions\AzureHostSupport.cs" />
     <Compile Include="Extensibility\Extensions\CommonMarkEngine.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="Extensibility\IBeforeProcessingTransform.cs" />
     <Compile Include="Extensibility\ITag.cs" />
     <Compile Include="Extensibility\TagFactoryBase.cs" />
+    <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\IAssembly.cs" />
     <Compile Include="Extensions\Logger.cs" />
     <Compile Include="Extensions\Sitemap.cs" />

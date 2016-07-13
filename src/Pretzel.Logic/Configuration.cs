@@ -13,28 +13,29 @@ namespace Pretzel.Logic
         bool TryGetValue(string key, out object value);
 
         IDictionary<string, object> ToDictionary();
+
+        IDefaultsConfiguration Defaults { get; }
     }
+
 
     internal sealed class Configuration : IConfiguration
     {
         private const string ConfigFileName = "_config.yml";
+        public const string DefaultPermalink = "date";
 
         private IDictionary<string, object> _config;
-        private IFileSystem _fileSystem;
-        private string _configFilePath;
+        private IDefaultsConfiguration _defaultsConfiguration;
+        private readonly IFileSystem _fileSystem;
+        private readonly string _configFilePath;
 
-        public object this[string key]
-        {
-            get
-            {
-                return _config[key];
-            }
-        }
+        public object this[string key] => _config[key];
+
+        public IDefaultsConfiguration Defaults => _defaultsConfiguration;
 
         internal Configuration()
         {
             _config = new Dictionary<string, object>();
-            CheckDefaultConfig();
+            EnsureDefaults();
         }
 
         internal Configuration(IFileSystem fileSystem, string sitePath)
@@ -44,16 +45,14 @@ namespace Pretzel.Logic
             _configFilePath = _fileSystem.Path.Combine(sitePath, ConfigFileName);
         }
 
-        private void CheckDefaultConfig()
+        private void EnsureDefaults()
         {
             if (!_config.ContainsKey("permalink"))
             {
-                _config.Add("permalink", "date");
+                _config.Add("permalink", DefaultPermalink);
             }
-            if (!_config.ContainsKey("date"))
-            {
-                _config.Add("date", "2012-01-01");
-            }
+
+            _defaultsConfiguration = new DefaultsConfiguration(_config);
         }
 
         internal void ReadFromFile()
@@ -62,7 +61,7 @@ namespace Pretzel.Logic
             if (_fileSystem.File.Exists(_configFilePath))
             {
                 _config = _fileSystem.File.ReadAllText(_configFilePath).ParseYaml();
-                CheckDefaultConfig();
+                EnsureDefaults();
             }
         }
 
