@@ -94,7 +94,7 @@ namespace Pretzel
             return fileContents;
         }
 
-        private static readonly string[] defaultPages = { "index.html", "index.htm", "default.htm" };
+        private static readonly string[] defaultPages = { "index.html", "index.htm", "default.htm", "default.html" };
 
     	/// <summary>
     	/// Get the path for the page to send to the user
