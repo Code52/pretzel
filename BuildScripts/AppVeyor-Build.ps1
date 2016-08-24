@@ -175,10 +175,10 @@ function Build()
     #Local build
     Else
     {
-        Write-Warning "Chocolatey must be installed, along with  Nuget.CommandLine and SevenZip."
+        Write-Warning "Chocolatey must be installed, along with Nuget.CommandLine, SevenZip and MSBuild Tools 2015."
         
-        $dotNetVersion = "4.0"
-        $regKey = "HKLM:\software\Microsoft\MSBuild\ToolsVersions\$dotNetVersion"
+        $msBuildVersion = "14.0"
+        $regKey = "HKLM:\software\Microsoft\MSBuild\ToolsVersions\$msBuildVersion"
         $regProperty = "MSBuildToolsPath"
         
         $msbuildExe = join-path -path (Get-ItemProperty $regKey).$regProperty -childpath "msbuild.exe"
