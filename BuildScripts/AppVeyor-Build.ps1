@@ -116,7 +116,7 @@ function ExecuteTests($cover)
 {
     If($cover -eq $true)
     {
-        cinst opencover -source https://nuget.org/api/v2/
+        cinst opencover.portable -y
         cinst coveralls.io -source https://nuget.org/api/v2/
         & OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -target:"%xunit20%\xunit.console.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"" -noshadow -appveyor" -output:$artifacts\coverage.xml -returntargetcode
         Push-AppveyorArtifact $artifacts\coverage.xml
