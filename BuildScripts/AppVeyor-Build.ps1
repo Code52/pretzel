@@ -66,6 +66,15 @@ function SetVersion
     return New-Object PsObject -Property @{version=$version ; tag=$tag}
 }
 
+function ReplaceChocoInstInfos($chocoInstPath, $version, $path, $zipPathForChecksum)
+{
+    $chochoInst = gc $chocoInstPath
+    $chochoInst = $chochoInst.replace('{{version}}', $version)
+    $chochoInst = $chochoInst.replace('{{tag}}', $tag)
+    $chochoInst = $chochoInst.replace('{{checksum}}', (Get-FileHash $zipPathForChecksum -Algorithm SHA256).Hash)
+    $chochoInst | sc $chocoInstPath
+}
+
 # Packaging
 function CreatePackage($versionInfos)
 {
@@ -73,40 +82,41 @@ function CreatePackage($versionInfos)
     $tag = $versionInfos.tag
     
     CreateCleanDirectory chocoTemp
-    
-    # build Pretzel nupkg
-    mkdir chocoTemp\Pretzel\tools
-    
-    Copy-Item $tools\chocolatey\Pretzel\pretzel.nuspec chocoTemp\Pretzel\pretzel.nuspec
-    Copy-Item $tools\chocolatey\Pretzel\chocolateyInstall.ps1 chocoTemp\Pretzel\tools\chocolateyInstall.ps1
-    Copy-Item $tools\chocolatey\Pretzel\chocolateyUninstall.ps1 chocoTemp\Pretzel\tools\chocolateyUninstall.ps1
-    
-    (gc chocoTemp\Pretzel\tools\chocolateyInstall.ps1).replace('{{version}}', $version).replace('{{tag}}', $tag)|sc chocoTemp\Pretzel\tools\chocolateyInstall.ps1
-    
-    nuget pack chocoTemp\Pretzel\pretzel.nuspec -OutputDirectory $artifacts -Version $version -NoPackageAnalysis
-    
+
     # create Pretzel zip
     RemoveIfExists Pretzel.$version.zip
     7z a $artifacts\Pretzel.$version.zip $src\Pretzel\bin\Release\*.dll
     7z a $artifacts\Pretzel.$version.zip $src\Pretzel\bin\Release\Pretzel.exe
     7z a $artifacts\Pretzel.$version.zip $src\Pretzel\bin\Release\Pretzel.exe.config
     7z a $artifacts\Pretzel.$version.zip ReleaseNotes.md
+
+    # build Pretzel nupkg
+    mkdir chocoTemp\Pretzel\tools
     
-    # build Pretzel.ScriptCs nupkg
-    mkdir chocoTemp\Pretzel.ScriptCs\tools
-    Copy-Item $tools\chocolatey\Pretzel.ScriptCs\pretzel.scriptcs.nuspec chocoTemp\Pretzel.ScriptCs\pretzel.scriptcs.nuspec
-    Copy-Item $tools\chocolatey\Pretzel.ScriptCs\chocolateyInstall.ps1 chocoTemp\Pretzel.ScriptCs\tools\chocolateyInstall.ps1
-    Copy-Item $tools\chocolatey\Pretzel.ScriptCs\chocolateyUninstall.ps1 chocoTemp\Pretzel.ScriptCs\tools\chocolateyUninstall.ps1
-    (gc chocoTemp\Pretzel.ScriptCs\tools\chocolateyInstall.ps1).replace('{{version}}',$version).replace('{{tag}}',$tag)|sc chocoTemp\Pretzel.ScriptCs\tools\chocolateyInstall.ps1
-    nuget pack chocoTemp\Pretzel.ScriptCs\pretzel.scriptcs.nuspec -OutputDirectory $artifacts -Version $version -NoPackageAnalysis
-    
+    Copy-Item $tools\chocolatey\Pretzel\pretzel.nuspec chocoTemp\Pretzel\pretzel.nuspec
+    Copy-Item $tools\chocolatey\Pretzel\chocolateyInstall.ps1 chocoTemp\Pretzel\tools\chocolateyInstall.ps1
+    Copy-Item $tools\chocolatey\Pretzel\chocolateyUninstall.ps1 chocoTemp\Pretzel\tools\chocolateyUninstall.ps1
+
+    ReplaceChocoInstInfos chocoTemp\Pretzel\tools\chocolateyInstall.ps1 $version $tag $artifacts\Pretzel.$version.zip
+
+    nuget pack chocoTemp\Pretzel\pretzel.nuspec -OutputDirectory $artifacts -Version $version -NoPackageAnalysis
+
     # create Pretzel.ScriptCs zip
     get-childitem $src\Pretzel.ScriptCs\bin\Release -filter *.dll | % { $_.Name } | out-file $artifacts\Pretzel.ScriptCs.Files.txt
     
     RemoveIfExists Pretzel.ScriptCs.$version.zip
     7z a $artifacts\Pretzel.ScriptCs.$version.zip $src\Pretzel.ScriptCs\bin\Release\*.dll
     7z a $artifacts\Pretzel.ScriptCs.$version.zip $artifacts\Pretzel.ScriptCs.Files.txt
-    
+
+    # build Pretzel.ScriptCs nupkg
+    mkdir chocoTemp\Pretzel.ScriptCs\tools
+    Copy-Item $tools\chocolatey\Pretzel.ScriptCs\pretzel.scriptcs.nuspec chocoTemp\Pretzel.ScriptCs\pretzel.scriptcs.nuspec
+    Copy-Item $tools\chocolatey\Pretzel.ScriptCs\chocolateyInstall.ps1 chocoTemp\Pretzel.ScriptCs\tools\chocolateyInstall.ps1
+    Copy-Item $tools\chocolatey\Pretzel.ScriptCs\chocolateyUninstall.ps1 chocoTemp\Pretzel.ScriptCs\tools\chocolateyUninstall.ps1
+    ReplaceChocoInstInfos chocoTemp\Pretzel.ScriptCs\tools\chocolateyInstall.ps1 $version $tag $artifacts\Pretzel.ScriptCs.$version.zip
+
+    nuget pack chocoTemp\Pretzel.ScriptCs\pretzel.scriptcs.nuspec -OutputDirectory $artifacts -Version $version -NoPackageAnalysis
+
     # build Pretzel.Logic nupkg
     nuget pack $src\Pretzel.Logic\Pretzel.Logic.csproj -OutputDirectory $artifacts -Version $version -symbols
 }
@@ -116,9 +126,9 @@ function ExecuteTests($cover)
 {
     If($cover -eq $true)
     {
-        cinst opencover -source https://nuget.org/api/v2/
+        cinst opencover.portable -y
         cinst coveralls.io -source https://nuget.org/api/v2/
-        & OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -target:"%xunit20%\xunit.console.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"" -noshadow -appveyor" -output:$artifacts\coverage.xml -returntargetcode
+        & C:\ProgramData\chocolatey\lib\opencover.portable\tools\OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -target:"%xunit20%\xunit.console.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"" -noshadow -appveyor" -output:$artifacts\coverage.xml -returntargetcode
         & coveralls.net --opencover $artifacts\coverage.xml
     }
     Else
@@ -175,10 +185,10 @@ function Build()
     #Local build
     Else
     {
-        Write-Warning "Chocolatey must be installed, along with  Nuget.CommandLine and SevenZip."
+        Write-Warning "Chocolatey must be installed, along with Nuget.CommandLine, SevenZip and MSBuild Tools 2015."
         
-        $dotNetVersion = "4.0"
-        $regKey = "HKLM:\software\Microsoft\MSBuild\ToolsVersions\$dotNetVersion"
+        $msBuildVersion = "14.0"
+        $regKey = "HKLM:\software\Microsoft\MSBuild\ToolsVersions\$msBuildVersion"
         $regProperty = "MSBuildToolsPath"
         
         $msbuildExe = join-path -path (Get-ItemProperty $regKey).$regProperty -childpath "msbuild.exe"

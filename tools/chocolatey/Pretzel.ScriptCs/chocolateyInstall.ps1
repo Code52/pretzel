@@ -4,4 +4,4 @@ $url = 'https://github.com/Code52/Pretzel/releases/download/{{tag}}/Pretzel.Scri
 $binRoot = Get-BinRoot
 $pretzelPath = "$binRoot\Pretzel"
 
-Install-ChocolateyZipPackage "$packageName" "$url" $pretzelPath
+Install-ChocolateyZipPackage "$packageName" "$url" $pretzelPath -checksum {{checksum}} -checksumType sha256
