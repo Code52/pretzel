@@ -15,19 +15,19 @@ Once you're familiar with Git and GitHub, clone the repository and run the ```.\
 * [JabbR Chatroom](http://jabbr.net/#/rooms/code52)
 * [GitHub Issues](https://github.com/Code52/pretzel/issues)
 
-**The functionalities are based as much as possible on existing functionalities in jekyll**
+**The functionality is based as much as possible on existing functionality in Jekyll**
 
-Each new functionnality must have been discussed first before submitting it in a PR.
+Each new feature must have been discussed first before submitting it in a PR.
 
 ## Coding conventions
 
 We are following as much as possible the [C# coding conventions](https://msdn.microsoft.com/en-us/library/ff926074.aspx).  
-We prefer spaces over tab for indentation.  
+We prefer spaces over tabs for indentation.  
 We have an [editorconfig](http://EditorConfig.org) [file](./.editorconfig) if you use an editor or plugin respecting it.
 
 ## Testing
 
-Tests are mandatory for new functionality, please add some in the tests suit.
+Tests are mandatory for new functionality, please add some in the tests suite.
 You can see the result either:
 - in Visual Studio or other IDE supporting xUnit2
 - by executing build.cmd
