@@ -14,7 +14,4 @@
     <releaseNotes>https://github.com/Code52/pretzel/releases</releaseNotes>
     <tags>Pretzel, Jekyll, HTML, Markdown, Liquid, Razor, static</tags>
   </metadata>
-  <files>
-    <file src="..\..\libs\DotLiquid.dll" target="lib\net45"/>
-  </files>
 </package>
