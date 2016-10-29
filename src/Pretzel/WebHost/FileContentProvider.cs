@@ -94,7 +94,7 @@ namespace Pretzel
             return fileContents;
         }
 
-        private static readonly string[] defaultPages = { "index.html", "index.htm", "default.htm", "default.html" };
+        private static readonly string[] defaultPages = { "index.html", "index.htm", "default.htm", "default.html", "index.xml" };
 
     	/// <summary>
     	/// Get the path for the page to send to the user
@@ -110,8 +110,7 @@ namespace Pretzel
             {
                 string defaultPage = defaultPages
                                         .Select(page => Path.Combine(requestString, page))
-                                        .Where(page => File.Exists(page))
-                                        .FirstOrDefault();
+                                        .FirstOrDefault(page => File.Exists(page));
 
                 if (defaultPage != null)
                     return defaultPage;
@@ -125,7 +124,7 @@ namespace Pretzel
         /// </summary>
         /// <param name="request"></param>
         /// <returns>Path to the file</returns>
-        private string GetFullPath(string request) 
+        private string GetFullPath(string request)
         {
             return System.Web.HttpUtility.UrlDecode(Path.Combine(basePath + request));
         }
