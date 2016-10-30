@@ -39,7 +39,7 @@ namespace Pretzel.Logic.Templating
 
         [Import(AllowDefault = true)]
         private ILightweightMarkupEngine _lightweightMarkupEngine;
-        
+
         public abstract void Initialize();
 
         protected abstract void PreProcess();
@@ -211,22 +211,6 @@ namespace Pretzel.Logic.Templating
                     continue;
                 }
 
-                try
-                {
-                    context.FullContent = RenderTemplate(context.FullContent, context);
-                }
-                catch (Exception ex)
-                {
-                    if (!skipFileOnError)
-                    {
-                        var message = string.Format("Failed to process {0}, see inner exception for more details", context.OutputPath);
-                        throw new PageProcessingException(message, ex);
-                    }
-
-                    Console.WriteLine(@"Failed to process {0}: {1}", context.OutputPath, ex);
-                    continue;
-                }
-
                 CreateOutputDirectory(context.OutputPath);
                 FileSystem.File.WriteAllText(context.OutputPath, context.FullContent);
             }
@@ -242,7 +226,7 @@ namespace Pretzel.Logic.Templating
                 html = Path.GetExtension(file).IsMarkdownFile()
                        ? _lightweightMarkupEngine.Convert(contentsWithoutHeader).Trim()
                        : contentsWithoutHeader;
-                
+
                 if (ContentTransformers != null)
                 {
                     html = ContentTransformers.Aggregate(html, (current, contentTransformer) => contentTransformer.Transform(current));

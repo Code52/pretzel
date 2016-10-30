@@ -6,15 +6,15 @@
 
 ## Pretzel
 
-A simple, pluggable site generation tool for .NET developers and Windows users (with Mono support planned I think)
+A simple, pluggable site generation tool for .NET developers and Windows users (with Mono support planned I think).
 
-Pretzel follows the same conventions as  [Jekyll](https://github.com/jekyll/jekyll) and should be compatible with basic Jekyll websites. If you are not familiar with Jekyll, have a read at [http://jekyllrb.com/docs/usage/](http://jekyllrb.com/docs/usage/)
+Pretzel follows the same conventions as [Jekyll](https://github.com/jekyll/jekyll) and should be compatible with basic Jekyll websites. If you are not familiar with Jekyll, have a read at [http://jekyllrb.com/docs/usage/](http://jekyllrb.com/docs/usage/).
 
 ### Usage
 
 The principal commands are the following but more informations are available on the [wiki](https://github.com/Code52/pretzel/wiki)
 
-**Create** is used to create the folder structure for a new site.
+**Create** is used to create the folder structure for a new site:
 
     pretzel create
     
@@ -36,7 +36,6 @@ To explicitly specify the input - we should support inferring the input based on
 
     pretzel bake --engine liquid
     
-
 **Taste** is for testing a site locally - make a change, and pretzel should handle regenerating the page when a file changes.
 
 To test a site locally, run:
@@ -49,12 +48,11 @@ To specify the port to serve the site from (default will be 4000), run:
 
 To stop the site, press q.
 
-*More infos on the [wiki](https://github.com/Code52/pretzel/wiki)*
+*More information on the [wiki](https://github.com/Code52/pretzel/wiki)*.
 
 ### Contributing
 
 All contributions are welcome, please read our [contributing guide](CONTRIBUTING.md).
-
 
 ### Attribution
  “[Pretzel](https://thenounproject.com/noun/pretzel/#icon-No555)” symbol by Edward Boatman on [The Noun Project](https://thenounproject.com/), from The Noun Project collection.
