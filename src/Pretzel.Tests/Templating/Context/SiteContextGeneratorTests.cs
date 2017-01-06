@@ -1129,6 +1129,7 @@ categories: [cat1, cat2]
         [InlineData("/:category1/:title.html", "/cat1/foobar-baz.html", "cat1,cat2")]
         [InlineData("/:category2/:title.html", "/cat2/foobar-baz.html", "cat1,cat2")]
         [InlineData("/:category3/:title.html", "/foobar-baz.html", "cat1,cat2")]
+        [InlineData("/:year-:month-:day/:slug.html", "/2015-03-09/foobar-baz.html", "")]
         [Theory]
         public void permalink_is_well_formatted(string permalink, string expectedUrl, string categories)
         {

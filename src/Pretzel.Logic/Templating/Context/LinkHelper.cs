@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Pretzel.Logic.Extensibility.Extensions;
 
 namespace Pretzel.Logic.Templating.Context
 {
@@ -52,6 +53,7 @@ namespace Pretzel.Logic.Templating.Context
             permalink = permalink.Replace(":short_year", page.Date.ToString("yy"));
             permalink = permalink.Replace(":i_month", page.Date.Month.ToString());
             permalink = permalink.Replace(":i_day", page.Date.Day.ToString());
+            permalink = permalink.Replace(":slug", SlugifyFilter.Slugify(GetTitle(page.File)));
 
             if (permalink.Contains(":category"))
             {
