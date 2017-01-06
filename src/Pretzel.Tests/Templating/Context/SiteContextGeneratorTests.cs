@@ -1144,6 +1144,20 @@ categories: [{0}]
             Assert.Equal(expectedUrl, firstPost.Url);
         }
 
+        [Fact]
+        public void permalink_supports_custom_slug()
+        {
+            var generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(string.Format("permalink: {0}", "/:year-:month-:day/:slug.html")));
+            fileSystem.AddFile(@"C:\TestSite\_posts\2015-03-09-foobar-baz.md", new MockFileData(@"---
+slug: my-slug
+---# Title"));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+            var firstPost = siteContext.Posts.First();
+            Assert.Equal("/2015-03-09/my-slug.html", firstPost.Url);
+        }
+
         private class BeforeProcessingTransformMock : IBeforeProcessingTransform
         {
             public int PostCount = 0;
