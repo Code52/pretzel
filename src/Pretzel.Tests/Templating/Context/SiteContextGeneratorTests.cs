@@ -1129,6 +1129,7 @@ categories: [cat1, cat2]
         [InlineData("/:category1/:title.html", "/cat1/foobar-baz.html", "cat1,cat2")]
         [InlineData("/:category2/:title.html", "/cat2/foobar-baz.html", "cat1,cat2")]
         [InlineData("/:category3/:title.html", "/foobar-baz.html", "cat1,cat2")]
+        [InlineData("/:year-:month-:day/:slug.html", "/2015-03-09/foobar-baz.html", "")]
         [Theory]
         public void permalink_is_well_formatted(string permalink, string expectedUrl, string categories)
         {
@@ -1141,6 +1142,20 @@ categories: [{0}]
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
             var firstPost = siteContext.Posts.First();
             Assert.Equal(expectedUrl, firstPost.Url);
+        }
+
+        [Fact]
+        public void permalink_supports_custom_slug()
+        {
+            var generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(string.Format("permalink: {0}", "/:year-:month-:day/:slug.html")));
+            fileSystem.AddFile(@"C:\TestSite\_posts\2015-03-09-foobar-baz.md", new MockFileData(@"---
+slug: my-slug
+---# Title"));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+            var firstPost = siteContext.Posts.First();
+            Assert.Equal("/2015-03-09/my-slug.html", firstPost.Url);
         }
 
         private class BeforeProcessingTransformMock : IBeforeProcessingTransform

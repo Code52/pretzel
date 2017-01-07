@@ -69,6 +69,7 @@ namespace Pretzel.Tests.Templating.Context
         [InlineData("/:category3/:title.html", "/foobar-baz.html", "cat1,cat2")]
         [InlineData("/:categories/:title/", "/cat1/cat2/foobar-baz/", "cat1,cat2")]
         [InlineData("/:categories/:title", "/cat1/cat2/foobar-baz/", "cat1,cat2")]
+        [InlineData("/:year-:month-:day/:slug.html", "/2015-03-09/foobar-baz.html", "")]
         [Theory]
         public void EvaluatePermalink_url_is_well_formatted(string permalink, string expectedUrl, string categories)
         {
@@ -76,7 +77,8 @@ namespace Pretzel.Tests.Templating.Context
             {
                 Categories = categories == null ? Enumerable.Empty<string>() : categories.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries),
                 Date = new DateTime(2015, 03, 09),
-                File = @"C:\temp\2015-03-09-foobar-baz.md"
+                File = @"C:\temp\2015-03-09-foobar-baz.md",
+                Title = "Foobar baz"
             };
 
             Assert.Equal(expectedUrl, LinkHelper.EvaluatePermalink(permalink, page));
