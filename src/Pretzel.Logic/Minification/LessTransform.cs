@@ -18,9 +18,7 @@ namespace Pretzel.Logic.Minification
     {
         private static string[] ExternalProtocols = new[] { "http", "https", "//" };
 
-        #pragma warning disable 0649
         private readonly IFileSystem fileSystem;
-        #pragma warning restore 0649
 
         [ImportingConstructor]
         public LessTransform(IFileSystem fileSystem)

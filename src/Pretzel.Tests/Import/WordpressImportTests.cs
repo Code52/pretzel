@@ -119,7 +119,7 @@ namespace Pretzel.Tests.Import
         }
 
         [Fact]
-        public void imported_post_has_correct_title()
+        public void Imported_post_has_correct_title()
         {
             wordpressImporter.Import();
 
