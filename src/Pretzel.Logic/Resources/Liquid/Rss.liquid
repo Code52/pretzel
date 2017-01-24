@@ -1,23 +1,23 @@
----
+﻿---
 layout: nil
 ---
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-    <title>Feed Name</title>
-    <link>http://domain/</link>
-    <atom:link href="http://domain/rss.xml" rel="self" type="application/rss+xml" />
-    <description></description>
-    <language>en-au</language>
-    <pubDate>{{ site.time | date: "%a, %d %b %Y %H:%M:%S %Z" }}</pubDate>
-    <lastBuildDate>{{ site.time | date: "%a, %d %b %Y %H:%M:%S %Z" }}</lastBuildDate>
+    <title>{{ site.title }} | {{ site.author }}</title>
+    <link>{{ site.url }}</link>
+    <atom:link href="{{ site.url }}/rss.xml" rel="self" type="application/rss+xml" />
+    <description>Personal blog of {{ site.author }}</description>
+    <language>en-us</language>
+    <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>
+    <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
     {% for post in site.posts %}
     <item>
       <title>{{ post.title | xml_escape }}</title>
-      <link>http://domain{{ post.url }}</link>
-      <pubDate>{{ post.date | date: "%a, %d %b %Y %H:%M:%S %Z" }}</pubDate>
-      <author>Author</author>
-      <guid>http://domain{{ post.url }}</guid>
+      <link>{{ site.url }}{{ post.url }}</link>
+      <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
+      <author>{{ site.contact }} ({{ site.author }})</author>
+      <guid isPermaLink="true">{{ site.url }}{{ post.url }}</guid>
       <description>{{ post.content | xml_escape }}</description>
     </item>
     {% endfor %}

@@ -1,28 +1,28 @@
----
+﻿---
 layout: nil
 ---
 @model Pretzel.Logic.Templating.Context.PageContext
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-    <title>Feed Name</title>
-    <link>http://domain/</link>
-    <atom:link href="http://domain/rss.xml" rel="self" type="application/rss+xml" />
-    <description></description>
-    <language>en-au</language>
+    <title>@Model.Site.Title | @Model.Site.Config["author"]</title>
+    <link>@Model.Site.Config["url"]</link>
+    <atom:link href="@Model.Site.Config["url"]/rss.xml" rel="self" type="application/rss+xml" />
+    <description>Personal blog of @Model.Site.Config["author"]</description>
+    <language>en-us</language>
     <pubDate>@Model.Site.Time.ToString("ddd, dd MMM yyyy H:mm:ss K")</pubDate>
-    <lastBuildDate>@Model.Site.Time.ToString("ddd, dd MMM yyyy H:mm:ss K")</lastBuildDate>
+    <lastBuildDate>@Model.Site.Time.ToString("ddd, dd MMM yyyy H:mm:ss K")</ lastBuildDate >
 
-    @foreach (var post in Model.Site.Posts)
+    @foreach(var post in Model.Site.Posts)
     {
-        <item>
-            <title>@post.Title</title>
-            @Raw("<link>")http://domain@(post.Url)@Raw("</link>") @* Workaround: RazorEngine is a HTML5 template engine, where link is a void element *@	
-            <pubDate>@post.Date.ToString("ddd, dd MMM yyyy H:mm:ss K")</pubDate>
-            <author>Author</author>
-            <guid>http://domain@(post.Url)</guid>
-            <description>@post.Content</description>
-        </item>
+    <item>
+        <title>@post.Title</title>
+        @Raw("<link>")@Model.Site.Config["url"]@(post.Url)@Raw("</link>")@* Workaround: RazorEngine is a HTML5 template engine, where link is a void element *@
+        <pubDate>@post.Date.ToString("ddd, dd MMM yyyy H:mm:ss K")</pubDate>
+        <author>@Model.Site.Config["contact"] (@Model.Site.Config["author"])</author>
+        <guid isPermaLink="true">@Model.Site.Config["url"]@(post.Url)</guid>
+        <description>@post.Content</description>
+    </item>
     }
 
   </channel> 

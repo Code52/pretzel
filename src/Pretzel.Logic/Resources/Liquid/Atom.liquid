@@ -1,27 +1,27 @@
----
+﻿---
 layout: nil
 ---
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Feed Name</title>
-  <link href="http://domain/"/>
-  <link type="application/atom+xml" rel="self" href="http://domain/atom.xml"/>
+  <title>{{ site.title }} | {{ site.author }}</title>
+  <link href="{{ site.url }}/"/>
+  <link type="application/atom+xml" rel="self" href="{{ site.url }}/atom.xml"/>
   <updated>{{ site.time | date_to_xmlschema }}</updated>
-  <id>http://domain/</id>
+  <id>{{ site.url }}/</id>
   <author>
-    <name>Author</name>
-    <email>Email</email>
+    <name>{{ site.author }}</name>
+    <email>{{ site.contact }}</email>
   </author>
 
   {% for post in site.posts %}
   <entry>
-    <id>http://domain/{{ post.url }}</id>
-    <link type="text/html" rel="alternate" href="http://domain/{{ post.url }}"/>
+    <id>{{ site.url }}{{ post.url }}</id>
+    <link type="text/html" rel="alternate" href="{{ site.url }}{{ post.url }}"/>
     <title>{{ post.title | xml_escape }}</title>
     <updated>{{ post.date | date_to_xmlschema }}</updated>
     <author>
-      <name>Author</name>
-      <uri>http://domain/</uri>
+      <name>{{ site.author }}</name>
+      <uri>{{ site.url }}</uri>
     </author>
     <content type="html">{{ post.content | xml_escape }}</content>
   </entry>
