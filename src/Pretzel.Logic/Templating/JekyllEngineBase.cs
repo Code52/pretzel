@@ -236,7 +236,7 @@ namespace Pretzel.Logic.Templating
             {
                 Tracing.Info(String.Format("Error ({0}) converting {1}", e.Message, file));
                 Tracing.Debug(e.ToString());
-                html = String.Format("<p><b>Error converting markdown</b></p><pre>{0}</pre>", contents);
+                html = String.Format("<p><b>Error converting markdown:</b><br />{0}</p><p>Original content:<br /><pre>{1}</pre></p>", e.Message, contents);
             }
             return html;
         }

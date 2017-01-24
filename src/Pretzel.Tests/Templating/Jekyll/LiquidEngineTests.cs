@@ -2099,7 +2099,7 @@ categories: [{0}]
             [Fact]
             public void Render_with_ContentTransformer_exception_should_trace_the_error()
             {
-                Assert.Equal("<p><b>Error converting markdown</b></p><pre>---\r\n---# Title\r\n[foo]</pre>", FileSystem.File.ReadAllText(@"D:\Result\_site\SomeFile.html"));
+                Assert.Equal("<p><b>Error converting markdown:</b><br />foo bar</p><p>Original content:<br /><pre>---\r\n---# Title\r\n[foo]</pre></p>", FileSystem.File.ReadAllText(@"D:\Result\_site\SomeFile.html"));
                 Assert.Contains(@"Error (foo bar) converting C:\TestSite\SomeFile.md", _log.ToString());
                 Assert.Contains(@"System.Exception: foo bar", _log.ToString());
             }
