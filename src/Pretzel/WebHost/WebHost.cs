@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Globalization;
-using System.IO;
 using System.Threading.Tasks;
-using Gate;
 using Pretzel.Logic.Extensions;
 using Owin;
 using Microsoft.Owin.Hosting;
@@ -39,7 +37,7 @@ namespace Pretzel
                 return false;
             }
 
-			var options = new StartOptions
+            var options = new StartOptions
             {
                 ServerFactory = "Nowin",
                 Port = Port
@@ -69,47 +67,37 @@ namespace Pretzel
                     if (!Content.IsAvailable(path))
                     {
                         var path404 = "/404.html";
-                        var use404 = Content.IsAvailable(path404);
+                        context.Response.StatusCode = 404;
 
-                        var response = new Response(env) { ContentType = use404 ? path404.MimeType() : path.MimeType() };
-                        using (var writer = new StreamWriter(response.OutputStream))
+                        if (Content.IsAvailable(path404))
                         {
-                            if (use404)
-                            {
-                                writer.Write(Content.GetContent(path404));
-                            }
-                            else
-                            {
-                                writer.Write("Page not found: " + path);
-                            }
+                            context.Response.ContentType = path404.MimeType();
+                            return context.Response.WriteAsync(Content.GetContent(path404));
                         }
-                        return TaskHelpers.Completed();
+
+                        context.Response.ContentType = path.MimeType();
+                        return context.Response.WriteAsync("Page not found: " + path);
                     }
 
                     if (path.MimeType().IsBinaryMime())
                     {
+                        context.Response.ContentType = path.MimeType();
                         var fileContents = Content.GetBinaryContent(path);
-                        var response = new Response(env) { ContentType = path.MimeType() };
-                        response.Headers["Content-Range"] = new[] { string.Format("bytes 0-{0}", (fileContents.Length - 1)) };
-                        response.Headers["Content-Length"] = new[] { fileContents.Length.ToString(CultureInfo.InvariantCulture) };
-                        response.Write(new ArraySegment<byte>(fileContents));
+                        context.Response.Headers["Content-Range"] = string.Format("bytes 0-{0}", (fileContents.Length - 1));
+                        context.Response.Headers["Content-Length"] = fileContents.Length.ToString(CultureInfo.InvariantCulture);
+                        return context.Response.WriteAsync(fileContents);
                     }
-                    else if (Content.IsDirectory(path) && !path.EndsWith("/")) 
+
+                    if (Content.IsDirectory(path) && !path.EndsWith("/"))
                     {
                         // if path is a directory without trailing slash, redirects to the same url with a trailing slash
-                        var response = new Response(env) { Status = "301 Moved Permanently" };
-                        response.Headers["Location"] = new[] { String.Format("http://localhost:{0}{1}/", context.Request.LocalPort, path) };
+                        context.Response.StatusCode = 301;
+                        context.Response.Headers["location"] = String.Format("http://localhost:{0}{1}/", context.Request.LocalPort, path);
+                        return Task.Delay(0);
                     }
-                    else
-                    {
-                        var response = new Response(env) { ContentType = path.MimeType() };
-                        using (var writer = new StreamWriter(response.OutputStream))
-                        {
-                            writer.Write(Content.GetContent(path));
-                        }
-                    }
-                    
-                    return Task.Delay(0);
+
+                    context.Response.ContentType = path.MimeType();
+                    return context.Response.WriteAsync(Content.GetContent(path));
                 });
             }
         }
