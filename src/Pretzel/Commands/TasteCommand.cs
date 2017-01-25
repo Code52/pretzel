@@ -63,8 +63,8 @@ namespace Pretzel.Commands
 
             if (engine == null)
             {
-                Tracing.Info(string.Format("template engine {0} not found - (engines: {1})", parameters.Template,
-                                           string.Join(", ", templateEngines.Engines.Keys)));
+                Tracing.InfoFormat("template engine {0} not found - (engines: {1})", parameters.Template,
+                                           string.Join(", ", templateEngines.Engines.Keys));
 
                 return;
             }
@@ -86,26 +86,26 @@ namespace Pretzel.Commands
                     }
                     catch (System.Net.Sockets.SocketException)
                     {
-                        Tracing.Info(string.Format("Port {0} is already in use", parameters.Port));
+                        Tracing.InfoFormat("Port {0} is already in use", parameters.Port);
                         return;
                     }
 
                     var url = string.Format("http://localhost:{0}/", parameters.Port);
                     if (parameters.LaunchBrowser)
                     {
-                        Tracing.Info(string.Format("Opening {0} in default browser...", url));
+                        Tracing.InfoFormat("Opening {0} in default browser...", url);
                         try
                         {
                             Process.Start(url);
                         }
                         catch (Exception)
                         {
-                            Tracing.Info(string.Format("Failed to launch {0}.", url));
+                            Tracing.InfoFormat("Failed to launch {0}.", url);
                         }
                     }
                     else
                     {
-                        Tracing.Info(string.Format("Browse to {0} to view the site.", url));
+                        Tracing.InfoFormat("Browse to {0} to view the site.", url);
                     }
 
                     Tracing.Info("Press 'Q' to stop the web host...");
@@ -131,7 +131,7 @@ namespace Pretzel.Commands
                 }
             }
 
-            Tracing.Info(string.Format("File change: {0}", file));
+            Tracing.InfoFormat("File change: {0}", file);
 
             ((Configuration)Configuration).ReadFromFile();
 

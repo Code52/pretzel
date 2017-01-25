@@ -133,7 +133,7 @@ namespace Pretzel.Logic.Import
                         break;
                     default:
                         ProcessNodes(markdown, htmlNode.ChildNodes);
-                        Tracing.Info(String.Format("{0}", htmlNode.OuterHtml));
+                        Tracing.InfoFormat("{0}", htmlNode.OuterHtml);
                         break;
                 }
             }

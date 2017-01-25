@@ -22,20 +22,13 @@ namespace Pretzel
 
         private static void Main(string[] args)
         {
-            Tracing.Logger.SetWriter(Console.Out);
-            Tracing.Logger.AddCategory(Tracing.Category.Info);
-            Tracing.Logger.AddCategory(Tracing.Category.Error);
-
             var parameters = BaseParameters.Parse(args, new FileSystem());
 
-            if (parameters.Debug)
-            {
-                Tracing.Logger.AddCategory(Tracing.Category.Debug);
-            }
+            InitializeTrace(parameters.Debug);
 
             var program = new Program();
             Tracing.Info("starting pretzel...");
-            Tracing.Debug(string.Format("V{0}", Assembly.GetExecutingAssembly().GetName().Version));
+            Tracing.DebugFormat("V{0}", Assembly.GetExecutingAssembly().GetName().Version);
 
             program.Compose(parameters);
 
@@ -46,6 +39,17 @@ namespace Pretzel
             }
 
             program.Run(args, parameters);
+        }
+
+        private static void InitializeTrace(bool isDebugTraceEnabled)
+        {
+            Tracing.Logger.SetWriter(Console.Out);
+            Tracing.Logger.AddCategory(Tracing.Category.Info);
+            Tracing.Logger.AddCategory(Tracing.Category.Error);
+            if (isDebugTraceEnabled)
+            {
+                Tracing.Logger.AddCategory(Tracing.Category.Debug);
+            }
         }
 
         private void ShowHelp(OptionSet defaultSet)

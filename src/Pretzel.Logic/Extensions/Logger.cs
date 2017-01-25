@@ -1,8 +1,10 @@
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace Pretzel.Logic.Extensions
 {
+    [Obsolete("Use Tracing instead")]
     public class Logger
     {
         private readonly List<Tracing.Category> categories;
@@ -35,6 +37,11 @@ namespace Pretzel.Logic.Extensions
                     writer.Flush();
                 }
             }
+        }
+
+        internal void WriteFormat(string message, Tracing.Category category, params object[] messageParameters)
+        {
+            Write(string.Format(message, messageParameters), category);
         }
     }
 }

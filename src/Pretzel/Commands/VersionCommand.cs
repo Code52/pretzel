@@ -11,7 +11,7 @@ namespace Pretzel.Commands
     {
         public void Execute(IEnumerable<string> arguments)
         {
-            Tracing.Info(string.Format("V{0}", Assembly.GetExecutingAssembly().GetName().Version));
+            Tracing.InfoFormat("V{0}", Assembly.GetExecutingAssembly().GetName().Version);
         }
 
         public void WriteHelp(System.IO.TextWriter writer)

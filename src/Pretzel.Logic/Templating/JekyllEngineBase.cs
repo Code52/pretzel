@@ -54,7 +54,7 @@ namespace Pretzel.Logic.Templating
                 _lightweightMarkupEngine = new CommonMarkEngine();
             }
 
-            Tracing.Logger.Write(string.Format("LightweightMarkupEngine: {0}", _lightweightMarkupEngine.GetType().Name), Tracing.Category.Debug);
+            Tracing.DebugFormat("LightweightMarkupEngine: {0}", _lightweightMarkupEngine.GetType().Name);
 
             Context = siteContext;
             PreProcess();
@@ -234,7 +234,7 @@ namespace Pretzel.Logic.Templating
             }
             catch (Exception e)
             {
-                Tracing.Info(String.Format("Error ({0}) converting {1}", e.Message, file));
+                Tracing.InfoFormat("Error ({0}) converting {1}", e.Message, file);
                 Tracing.Debug(e.ToString());
                 html = String.Format("<p><b>Error converting markdown:</b><br />{0}</p><p>Original content:<br /><pre>{1}</pre></p>", e.Message, contents);
             }

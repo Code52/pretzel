@@ -1,4 +1,4 @@
-using NDesk.Options;
+﻿using NDesk.Options;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
@@ -105,8 +105,7 @@ namespace Pretzel.Logic.Commands
             foreach (var engine in engines)
             {
                 if (!engine.Value.CanProcess(context)) continue;
-
-                Tracing.Info(String.Format("Recommended engine for directory: '{0}'", engine.Key));
+                Tracing.InfoFormat("Recommended engine for directory: '{0}'", engine.Key);
                 Template = engine.Key;
                 return;
             }
