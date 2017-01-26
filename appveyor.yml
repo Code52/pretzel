@@ -1,4 +1,4 @@
-configuration: Release
+﻿configuration: Release
 
 install:
   - GitVersion /output buildserver /UpdateAssemblyInfo true
@@ -34,11 +34,11 @@ artifacts:
   - path: artifacts\Pretzel.ScriptCs.*.zip
     name: Pretzel.ScriptCs.zip
 
-  - path: artifacts\Pretzel.Logic.*.nupkg
-    name: Pretzel.Logic.nupkg
-
   - path: artifacts\Pretzel.Logic.*.symbols.nupkg
     name: Pretzel.Logic.symbols.nupkg
+
+  - path: artifacts\Pretzel.Logic.*.nupkg
+    name: Pretzel.Logic.nupkg
 
   - path: artifacts\Pretzel.*.nupkg
     name: Pretzel.nupkg
