@@ -100,7 +100,6 @@
     <Compile Include="Modules\SimpleFileSystemWatcher.cs" />
     <Compile Include="WebHost\FileContentProvider.cs" />
     <Compile Include="WebHost\IWebContent.cs" />
-    <Compile Include="WebHost\MemoryContentProvider.cs" />
     <Compile Include="WebHost\WebHost.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
