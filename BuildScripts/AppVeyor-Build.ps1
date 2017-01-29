@@ -96,6 +96,7 @@ function CreatePackage($versionInfos)
     Copy-Item $tools\chocolatey\Pretzel\pretzel.nuspec chocoTemp\Pretzel\pretzel.nuspec
     Copy-Item $tools\chocolatey\Pretzel\chocolateyInstall.ps1 chocoTemp\Pretzel\tools\chocolateyInstall.ps1
     Copy-Item $tools\chocolatey\Pretzel\chocolateyUninstall.ps1 chocoTemp\Pretzel\tools\chocolateyUninstall.ps1
+    Copy-Item $tools\chocolatey\Pretzel\chocolateyBeforeModify.ps1 chocoTemp\Pretzel\tools\chocolateyBeforeModify.ps1
 
     ReplaceChocoInstInfos chocoTemp\Pretzel\tools\chocolateyInstall.ps1 $version $tag $artifacts\Pretzel.$version.zip
 
