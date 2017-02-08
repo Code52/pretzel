@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 
 namespace Pretzel.Logic.Liquid
 {
-    public class CgiEscapeFilter
+    public static class CgiEscapeFilter
     {
         public static string cgi_escape(string input)
         {

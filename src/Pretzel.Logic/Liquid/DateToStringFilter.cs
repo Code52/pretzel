@@ -2,7 +2,7 @@
 
 namespace Pretzel.Logic.Liquid
 {
-    public class DateToStringFilter
+    public static class DateToStringFilter
     {
         public static string date_to_string(DateTime input)
         {

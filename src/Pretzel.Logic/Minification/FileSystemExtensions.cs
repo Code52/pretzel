@@ -10,10 +10,8 @@ namespace Pretzel.Logic.Minification
     {
         public static string BundleFiles(this IFileSystem fileSystem, IEnumerable<FileInfo> filePaths)
         {
-            var outputCss = new StringBuilder();
-
-            filePaths.Select(file => fileSystem.File.ReadAllText(file.FullName))
-                .Aggregate(outputCss, (builder, val) => builder.Append(val + "\n"));
+            var outputCss = filePaths.Select(file => fileSystem.File.ReadAllText(file.FullName))
+                .Aggregate(new StringBuilder(), (builder, val) => builder.Append(val + "\n"));
 
             return outputCss.ToString();
         }

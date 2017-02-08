@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Pretzel.Logic.Templating;
@@ -21,7 +21,7 @@ namespace Pretzel.Commands
             get
             {
                 ISiteEngine engine;
-                Engines.TryGetValue(name.ToLower(), out engine);
+                Engines.TryGetValue(name.ToLower(System.Globalization.CultureInfo.InvariantCulture), out engine);
                 return engine;
             }
         }

@@ -1,11 +1,11 @@
-using System.IO;
+﻿using System.IO;
 using System.IO.Abstractions;
 
 namespace Pretzel.Logic.Templating.Jekyll
 {
     public class Includes : DotLiquid.FileSystems.IFileSystem
     {
-        private IFileSystem _fileSystem;
+        private readonly IFileSystem _fileSystem;
 
         public string Root { get; set; }
 

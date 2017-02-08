@@ -38,7 +38,7 @@ namespace Pretzel
                 return;
             }
 
-            program.Run(args, parameters);
+            program.Run(parameters);
         }
 
         private static void InitializeTrace(bool isDebugTraceEnabled)
@@ -58,7 +58,7 @@ namespace Pretzel
             WaitForClose();
         }
 
-        private void Run(string[] args, BaseParameters baseParameters)
+        private void Run(BaseParameters baseParameters)
         {
             if (Commands[baseParameters.CommandName] == null)
             {

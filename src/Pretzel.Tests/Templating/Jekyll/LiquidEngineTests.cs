@@ -2211,7 +2211,7 @@ categories: [{0}]
 
             public class CustomTag : DotLiquid.Tag, ITag
             {
-                private SiteContext _siteContext;
+                private readonly SiteContext _siteContext;
 
                 public new string Name { get { return "Custom"; } }
 

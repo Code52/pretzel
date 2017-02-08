@@ -21,7 +21,7 @@ namespace Pretzel.Logic.Templating.Razor
 
         private string includesPath;
 
-        private List<ITag> _allTags = new List<ITag>();
+        private readonly List<ITag> _allTags = new List<ITag>();
 
         public override void Initialize()
         {

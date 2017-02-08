@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 
@@ -532,7 +531,7 @@ namespace Pretzel.Logic.Extensions
         {
             if (!filename.Contains("."))
                 return "text/html";
-            string extension = filename.Substring(filename.LastIndexOf("."));
+            string extension = filename.Substring(filename.LastIndexOf(".", StringComparison.InvariantCulture));
             return Get(extension, types["bin"]);
         }
 

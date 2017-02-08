@@ -14,9 +14,9 @@ namespace Pretzel.Logic.Templating.Jekyll
     public class LiquidEngine : JekyllEngineBase
     {
         private SiteContextDrop contextDrop;
-        private readonly Regex emHtmlRegex = new Regex(@"(?<=\{[\{\%].*?)(</?em>)(?=.*?[\%\}]\})", RegexOptions.Compiled);
+        private static readonly Regex emHtmlRegex = new Regex(@"(?<=\{[\{\%].*?)(</?em>)(?=.*?[\%\}]\})", RegexOptions.Compiled);
 
-        public LiquidEngine()
+        static LiquidEngine()
         {
             DotLiquid.Liquid.UseRubyDateFormat = true;
         }

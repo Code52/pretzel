@@ -7,7 +7,7 @@ namespace Pretzel.Logic.Extensibility
     [InheritedExport]
     public abstract class TagFactoryBase : DotLiquid.ITagFactory
     {
-        private string _tageName;
+        private readonly string _tageName;
         
         protected SiteContext SiteContext { get; private set; }
 

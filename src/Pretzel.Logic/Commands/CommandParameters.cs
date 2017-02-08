@@ -78,7 +78,7 @@ namespace Pretzel.Logic.Commands
 
         private OptionSet Settings { get; set; }
 
-        private IFileSystem fileSystem;
+        private readonly IFileSystem fileSystem;
 
         public void Parse(IEnumerable<string> arguments)
         {

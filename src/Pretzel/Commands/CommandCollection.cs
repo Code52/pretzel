@@ -26,7 +26,7 @@ namespace Pretzel.Commands
             get
             {
                 ICommand command;
-                commandMap.TryGetValue(name.ToLower(), out command);
+                commandMap.TryGetValue(name.ToLower(System.Globalization.CultureInfo.InvariantCulture), out command);
                 return command;
             }
         }

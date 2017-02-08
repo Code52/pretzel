@@ -2,7 +2,7 @@
 
 namespace Pretzel.Logic.Liquid
 {
-    public class DateToRfc822FormatFilter
+    public static class DateToRfc822FormatFilter
     {
         public static string date_to_rfc822(DateTime input)
         {

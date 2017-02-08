@@ -70,11 +70,6 @@ namespace Pretzel.Tests.Import
     </entry>
 </feed>";
 
-        public BloggerImportTests()
-        {
-            //ImportContent = System.IO.File.ReadAllText(@"path-to-test-data.xml");
-        }
-
         [Fact]
         public void Posts_Are_Imported()
         {

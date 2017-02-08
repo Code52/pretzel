@@ -60,7 +60,6 @@ namespace Pretzel
                 app.Run(context =>
                 {
                     var path = context.Request.Path.Value;
-                    var env = context.Request.Environment;
 
                     Tracing.Info(path);
 

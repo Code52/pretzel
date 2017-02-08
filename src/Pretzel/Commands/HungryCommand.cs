@@ -12,7 +12,7 @@ namespace Pretzel.Commands
     {
 
 
-        private string recipe = @"===== Ingredients ======
+        private readonly string recipe = @"===== Ingredients ======
 
 == Dough====
 2 ½ cups Plain Flour

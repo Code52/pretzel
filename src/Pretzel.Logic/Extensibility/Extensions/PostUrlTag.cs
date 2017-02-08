@@ -10,7 +10,7 @@ namespace Pretzel.Logic.Extensibility.Extensions
     public class PostUrlTag : DotLiquid.Tag, ITag
     {
         private string _postFileName;
-        private SiteContext _siteContext;
+        private readonly SiteContext _siteContext;
 
         public new string Name { get { return "PostUrl"; } }
         

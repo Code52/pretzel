@@ -108,9 +108,6 @@ namespace Pretzel.Logic.Import
                         break;
                     case "img":
                     case "blockquote":
-                        // leave html unchanged for now, maybe revisit later
-                        markdown.Append(htmlNode.OuterHtml);
-                        break;
                     case "object":
                     case "table":
                     case "div":

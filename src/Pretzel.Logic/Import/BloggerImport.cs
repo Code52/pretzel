@@ -46,10 +46,9 @@ namespace Pretzel.Logic.Import
             //    <entry>
 
             XNamespace atom = "http://www.w3.org/2005/Atom";
-            var count = root.Descendants(atom + "entry").Count();
 
             var posts = from e in root.Descendants(atom + "entry")
-                        where e.Elements(atom + "category").Where(x => x.Attribute("term").Value == "http://schemas.google.com/blogger/2008/kind#post").Count() > 0
+                        where e.Elements(atom + "category").Any(x => x.Attribute("term").Value == "http://schemas.google.com/blogger/2008/kind#post")
                         select new BloggerPost
                         {
                             Title = e.Element(atom + "title").Value,

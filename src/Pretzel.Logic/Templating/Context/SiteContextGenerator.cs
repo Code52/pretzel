@@ -233,7 +233,7 @@ namespace Pretzel.Logic.Templating.Context
 
                 var header = scopedDefaults.Merge(content.YamlHeader());
 
-                if (header.ContainsKey("published") && header["published"].ToString().ToLower() == "false")
+                if (header.ContainsKey("published") && header["published"].ToString().ToLower(CultureInfo.InvariantCulture) == "false")
                 {
                     return null;
                 }

@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Pretzel.Logic.Extensibility.Extensions
 {
@@ -11,7 +12,7 @@ namespace Pretzel.Logic.Extensibility.Extensions
 
         public static string Slugify(string input)
         {
-            var str = input.ToLower().Trim('.', ' ');
+            var str = input.ToLower(CultureInfo.InvariantCulture).Trim('.', ' ');
 
             str = str.Replace("#", "sharp").Replace('.', '-');
             // invalid chars, make into spaces

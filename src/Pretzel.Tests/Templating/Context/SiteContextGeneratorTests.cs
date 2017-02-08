@@ -18,7 +18,7 @@ namespace Pretzel.Tests.Templating.Context
 {
     public class SiteContextGeneratorTests
     {
-        private readonly SiteContextGenerator generator;
+        private SiteContextGenerator generator;
         private readonly MockFileSystem fileSystem;
 
         public SiteContextGeneratorTests()
@@ -92,7 +92,7 @@ namespace Pretzel.Tests.Templating.Context
             post.LastWriteTime = lastmod;
             fileSystem.AddFile(@"C:\TestSite\_posts\SomeFile.md", post);
 
-            var generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock("permalink: /blog/:year/:month/:day/:title.html"));
+            generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock("permalink: /blog/:year/:month/:day/:title.html"));
 
             var outputPath = string.Format("/blog/{0}/{1}",lastmod.ToString("yyyy'/'MM'/'dd"), "SomeFile.html");
 
@@ -403,7 +403,7 @@ author: 'page-specific-author'
         public void CanBeIncluded_Scenarios_Include()
         {
             // arrange
-            var generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(@"---
+            generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(@"---
 include: [_folder, .something-else, some-file.tmp, test\somefile.txt, subfolder\childfolder, anotherfolder\tempfile.tmp]
 ---"));
             Func<string, bool> function = generator.CanBeIncluded;
@@ -432,7 +432,7 @@ include: [_folder, .something-else, some-file.tmp, test\somefile.txt, subfolder\
         public void CanBeIncluded_Scenarios_Exclude()
         {
             // arrange
-            var generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(@"---
+            generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(@"---
 exclude: [folder, .htaccess, some-file.tmp, test\somefile.txt, subfolder\childfolder, anotherfolder\tempfile.tmp]
 ---"));
             Func <string, bool> function = generator.CanBeIncluded;
@@ -460,7 +460,7 @@ exclude: [folder, .htaccess, some-file.tmp, test\somefile.txt, subfolder\childfo
         public void CanBeIncluded_Scenarios_IncludeExclude()
         {
             // arrange
-            var generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(@"include: [_folder, .something-else]
+            generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(@"include: [_folder, .something-else]
 exclude: [folder, test\somefile.txt]"));
             Func <string, bool> function = generator.CanBeIncluded;
 
@@ -801,10 +801,9 @@ param: value
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             var currentDate = new DateTime(2015, 1, 26).ToShortDateString();
-            var expectedContent = string.Format(@"---
+            var expectedContent = @"---
 param: value
----# Title",
-            currentDate);
+---# Title";
             var filePath = string.Format(@"C:\TestSite\{0}-SomeFile.md", currentDate.Replace("/", "-"));
             fileSystem.AddFile(filePath, new MockFileData(expectedContent));
 
@@ -825,10 +824,9 @@ param: value
         public void page_with_false_date_in_title()
         {
             var currentDate = new DateTime(2015, 1, 26).ToShortDateString();
-            var expectedContent = string.Format(@"---
+            var expectedContent = @"---
 param: value
----# Title",
-            currentDate);
+---# Title";
             var lastmod = new DateTime(2012,03,12);
             var filePath = string.Format(@"C:\TestSite\{0}SomeFile.md", currentDate.Replace("/", "-"));
             var file = new MockFileData(expectedContent);
@@ -905,10 +903,9 @@ param: value
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             var currentDate = new DateTime(2015, 1, 26).ToShortDateString();
-            var expectedContent = string.Format(@"---
+            var expectedContent = @"---
 param: value
----# Title",
-            currentDate);
+---# Title";
             var filePath = string.Format(@"C:\TestSite\_posts\{0}-SomeFile.md", currentDate.Replace("/", "-"));
             fileSystem.AddFile(filePath, new MockFileData(expectedContent));
 
@@ -931,10 +928,9 @@ param: value
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             var lastmod = new DateTime(2011,10,11);
             var currentDate = new DateTime(2015, 1, 26).ToShortDateString();
-            var expectedContent = string.Format(@"---
+            var expectedContent = @"---
 param: value
----# Title",
-            currentDate);
+---# Title";
             var filePath = string.Format(@"C:\TestSite\_posts\{0}SomeFile.md", currentDate.Replace("/", "-"));
             var file = new MockFileData(expectedContent);
             file.LastWriteTime = lastmod;
@@ -1013,7 +1009,7 @@ date: 20150127
             fileSystemSubstitute.Directory.Returns(directorySubstitute);
             fileSystemSubstitute.FileInfo.Returns(fileInfoFactorySubstitute);
 
-            var generator = new SiteContextGenerator(fileSystemSubstitute, new LinkHelper(), new Configuration());
+            generator = new SiteContextGenerator(fileSystemSubstitute, new LinkHelper(), new Configuration());
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
@@ -1104,7 +1100,7 @@ categories: [cat1, cat2]
         [Fact]
         public void permalink_with_folder_categories_frontmatter_only()
         {
-            var generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(@"only_frontmatter_categories: true"));
+            generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(@"only_frontmatter_categories: true"));
             fileSystem.AddFile(@"C:\TestSite\foo\bar\_posts\2015-03-09-SomeFile.md", new MockFileData(@"---
 categories: [cat1, cat2]
 ---# Title"));
@@ -1133,7 +1129,7 @@ categories: [cat1, cat2]
         [Theory]
         public void permalink_is_well_formatted(string permalink, string expectedUrl, string categories)
         {
-            var generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(string.Format("permalink: {0}", permalink)));
+            generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(string.Format("permalink: {0}", permalink)));
             fileSystem.AddFile(@"C:\TestSite\_posts\2015-03-09-foobar-baz.md", new MockFileData(string.Format(@"---
 categories: [{0}]
 ---# Title", categories)));
@@ -1147,7 +1143,7 @@ categories: [{0}]
         [Fact]
         public void permalink_supports_custom_slug()
         {
-            var generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(string.Format("permalink: {0}", "/:year-:month-:day/:slug.html")));
+            generator = new SiteContextGenerator(fileSystem, new LinkHelper(), new ConfigurationMock(string.Format("permalink: {0}", "/:year-:month-:day/:slug.html")));
             fileSystem.AddFile(@"C:\TestSite\_posts\2015-03-09-foobar-baz.md", new MockFileData(@"---
 slug: my-slug
 ---# Title"));

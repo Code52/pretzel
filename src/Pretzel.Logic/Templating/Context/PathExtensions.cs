@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -11,7 +12,7 @@ namespace Pretzel.Logic.Templating.Context
 
         public static bool IsMarkdownFile(this string extension)
         {
-            return MarkdownFiles.Contains(extension.ToLower());
+            return MarkdownFiles.Contains(extension.ToLower(CultureInfo.InvariantCulture));
         }
 
         public static bool IsRazorFile(this string extension)
@@ -26,7 +27,7 @@ namespace Pretzel.Logic.Templating.Context
 
         public static bool IsImageFormat(this string extension)
         {
-            return ImageFiles.Contains(extension.ToLower());
+            return ImageFiles.Contains(extension.ToLower(CultureInfo.InvariantCulture));
         }
     }
 }
