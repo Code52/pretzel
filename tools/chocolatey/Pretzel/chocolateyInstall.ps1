@@ -1,8 +1,5 @@
 $packageName = 'Pretzel'
 $url = 'https://github.com/Code52/Pretzel/releases/download/{{tag}}/Pretzel.{{version}}.zip'
+$installDir = $(Split-Path -parent $MyInvocation.MyCommand.Definition)
 
-$binRoot = Get-BinRoot
-$pretzelPath = "$binRoot\$packageName"
-
-Install-ChocolateyZipPackage "$packageName" "$url" $pretzelPath -checksum {{checksum}} -checksumType sha256
-Install-ChocolateyPath $pretzelPath
+Install-ChocolateyZipPackage $packageName $url $installDir -checksum {{checksum}} -checksumType sha256

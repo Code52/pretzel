@@ -95,26 +95,24 @@ function CreatePackage($versionInfos)
     
     Copy-Item $tools\chocolatey\Pretzel\pretzel.nuspec chocoTemp\Pretzel\pretzel.nuspec
     Copy-Item $tools\chocolatey\Pretzel\chocolateyInstall.ps1 chocoTemp\Pretzel\tools\chocolateyInstall.ps1
-    Copy-Item $tools\chocolatey\Pretzel\chocolateyUninstall.ps1 chocoTemp\Pretzel\tools\chocolateyUninstall.ps1
-    Copy-Item $tools\chocolatey\Pretzel\chocolateyBeforeModify.ps1 chocoTemp\Pretzel\tools\chocolateyBeforeModify.ps1
 
     ReplaceChocoInstInfos chocoTemp\Pretzel\tools\chocolateyInstall.ps1 $version $tag $artifacts\Pretzel.$version.zip
 
     nuget pack chocoTemp\Pretzel\pretzel.nuspec -OutputDirectory $artifacts -Version $version -NoPackageAnalysis
 
     # create Pretzel.ScriptCs zip
-    get-childitem $src\Pretzel.ScriptCs\bin\Release -filter *.dll | % { $_.Name } | out-file $artifacts\Pretzel.ScriptCs.Files.txt
-    
     RemoveIfExists Pretzel.ScriptCs.$version.zip
     7z a $artifacts\Pretzel.ScriptCs.$version.zip $src\Pretzel.ScriptCs\bin\Release\*.dll
-    7z a $artifacts\Pretzel.ScriptCs.$version.zip $artifacts\Pretzel.ScriptCs.Files.txt
 
     # build Pretzel.ScriptCs nupkg
+    
     mkdir chocoTemp\Pretzel.ScriptCs\tools
     Copy-Item $tools\chocolatey\Pretzel.ScriptCs\pretzel.scriptcs.nuspec chocoTemp\Pretzel.ScriptCs\pretzel.scriptcs.nuspec
     Copy-Item $tools\chocolatey\Pretzel.ScriptCs\chocolateyInstall.ps1 chocoTemp\Pretzel.ScriptCs\tools\chocolateyInstall.ps1
     Copy-Item $tools\chocolatey\Pretzel.ScriptCs\chocolateyUninstall.ps1 chocoTemp\Pretzel.ScriptCs\tools\chocolateyUninstall.ps1
+
     ReplaceChocoInstInfos chocoTemp\Pretzel.ScriptCs\tools\chocolateyInstall.ps1 $version $tag $artifacts\Pretzel.ScriptCs.$version.zip
+    ReplaceChocoInstInfos chocoTemp\Pretzel.ScriptCs\tools\chocolateyUninstall.ps1 $version $tag $artifacts\Pretzel.ScriptCs.$version.zip
 
     nuget pack chocoTemp\Pretzel.ScriptCs\pretzel.scriptcs.nuspec -OutputDirectory $artifacts -Version $version -NoPackageAnalysis
 

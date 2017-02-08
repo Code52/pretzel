@@ -1,10 +1,9 @@
 Write-Debug "Uninstall Pretzel.ScriptCs"
 
-$binRoot = Get-BinRoot
-$pretzelPath = "$binRoot\Pretzel"
+$installDir = $(Split-Path -parent $MyInvocation.MyCommand.Definition)
+$pretzelPath = "$(Split-Path -parent $MyInvocation.MyCommand.Definition)\..\..\pretzel\tools"
 
 # Remove folder
 If (Test-Path $pretzelPath){
-    gc $pretzelPath\Pretzel.ScriptCs.Files.txt | foreach ($_) { If (($_) -And (Test-Path $pretzelPath\$_)) { Remove-Item $pretzelPath\$_ } }
-    Remove-Item $pretzelPath\Pretzel.ScriptCs.Files.txt
+    gc $installDir\..\Pretzel.ScriptCs.{{version}}.zip.txt | foreach ($_) { If (($_) -And (Test-Path $_)) { Remove-Item $_ } }
 }

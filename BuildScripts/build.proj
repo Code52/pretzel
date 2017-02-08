@@ -76,8 +76,6 @@
     <FileUpdate Files="$(ChocolateyInstall)"
                 Regex="{{version}}"
                 ReplacementText="$(Version)"/>
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\tools\chocolatey\Pretzel\chocolateyUninstall.ps1"
-      DestinationFiles="$(MSBuildProjectDirectory)\..\build\chocolatey\tools\chocolateyUninstall.ps1" />
 
     <Exec Command='"@(NuGet)" pack "$(MSBuildProjectDirectory)\..\build\chocolatey\pretzel.nuspec" -OutputDirectory "$(MSBuildProjectDirectory)\..\artifacts" -Version $(Version) -NoPackageAnalysis' />
     <Message Text="=========== Package Done ===========" Importance="High" />
