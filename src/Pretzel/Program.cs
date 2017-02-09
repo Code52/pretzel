@@ -7,7 +7,6 @@ using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -28,7 +27,7 @@ namespace Pretzel
 
             var program = new Program();
             Tracing.Info("starting pretzel...");
-            Tracing.DebugFormat("V{0}", Assembly.GetExecutingAssembly().GetName().Version);
+            Tracing.Debug("V{0}", Assembly.GetExecutingAssembly().GetName().Version);
 
             program.Compose(parameters);
 
@@ -43,12 +42,11 @@ namespace Pretzel
 
         private static void InitializeTrace(bool isDebugTraceEnabled)
         {
-            Tracing.Logger.SetWriter(Console.Out);
-            Tracing.Logger.AddCategory(Tracing.Category.Info);
-            Tracing.Logger.AddCategory(Tracing.Category.Error);
+            Tracing.SetTrace(ConsoleTrace.Write);
+
             if (isDebugTraceEnabled)
             {
-                Tracing.Logger.AddCategory(Tracing.Category.Debug);
+                Tracing.SetMinimalLevel(TraceLevel.Debug);
             }
         }
 
@@ -71,7 +69,7 @@ namespace Pretzel
             WaitForClose();
         }
 
-        [Conditional("DEBUG")]
+        [System.Diagnostics.Conditional("DEBUG")]
         public void WaitForClose()
         {
             Console.WriteLine(@"Press any key to continue...");

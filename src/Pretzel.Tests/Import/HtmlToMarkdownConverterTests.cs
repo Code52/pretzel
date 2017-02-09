@@ -149,9 +149,7 @@ namespace Pretzel.Tests.Import
         {
             // arrange
             StringBuilder sb = new StringBuilder();
-            TextWriter writer = new StringWriter(sb);
-            Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory(Tracing.Category.Info);
+            Tracing.SetTrace((message, traceLevel) => { sb.AppendLine(message); });
 
             // act
             string markdown = converter.Convert("<body><b>hello</b><br/><em>world</em></body>");

@@ -32,19 +32,19 @@ namespace Pretzel.Logic.Recipe
 
             if (!fileSystem.Directory.Exists(postPath))
             {
-                Tracing.InfoFormat("{0} folder not found", postPath);
+                Tracing.Info("{0} folder not found", postPath);
                 return;
             }
 
             if (fileSystem.File.Exists(fileSystem.Path.Combine(postPath, postName)))
             {
-                Tracing.InfoFormat("The \"{0}\" file already exists", postName);
+                Tracing.Info("The \"{0}\" file already exists", postName);
                 return;
             }
 
             fileSystem.File.WriteAllText(fileSystem.Path.Combine(postPath, postName), pageContents);
 
-            Tracing.InfoFormat("Created the \"{0}\" post ({1})", title, postName);
+            Tracing.Info("Created the \"{0}\" post ({1})", title, postName);
         }
     }
 }

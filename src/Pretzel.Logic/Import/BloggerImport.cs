@@ -106,7 +106,7 @@ namespace Pretzel.Logic.Import
             }
             catch (Exception e)
             {
-                Tracing.InfoFormat("Failed to write out {0}", fileName);
+                Tracing.Info("Failed to write out {0}", fileName);
                 Tracing.Debug(e.Message);
             }
         }

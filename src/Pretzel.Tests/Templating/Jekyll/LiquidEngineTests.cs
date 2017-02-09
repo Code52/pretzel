@@ -2083,11 +2083,8 @@ categories: [{0}]
             public override void When()
             {
                 _log = new StringBuilder();
-                TextWriter writer = new StringWriter(_log);
-                Tracing.Logger.SetWriter(writer);
-                Tracing.Logger.AddCategory(Tracing.Category.Info);
-                Tracing.Logger.AddCategory(Tracing.Category.Error);
-                Tracing.Logger.AddCategory(Tracing.Category.Debug);
+                Tracing.SetTrace((message, traceLevel) => { _log.AppendLine(message); });
+                Tracing.SetMinimalLevel(TraceLevel.Debug);
 
                 FileSystem.AddFile(@"C:\TestSite\SomeFile.md", new MockFileData("---\r\n---# Title\r\n[foo]"));
                 var generator = GetSiteContextGenerator(FileSystem);

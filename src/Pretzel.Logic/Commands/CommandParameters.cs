@@ -105,7 +105,7 @@ namespace Pretzel.Logic.Commands
             foreach (var engine in engines)
             {
                 if (!engine.Value.CanProcess(context)) continue;
-                Tracing.InfoFormat("Recommended engine for directory: '{0}'", engine.Key);
+                Tracing.Info("Recommended engine for directory: '{0}'", engine.Key);
                 Template = engine.Key;
                 return;
             }

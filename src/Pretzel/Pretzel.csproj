@@ -97,6 +97,7 @@
     <Compile Include="Commands\ICommandInfo.cs" />
     <Compile Include="Commands\TemplateEngineCollection.cs" />
     <Compile Include="Commands\VersionCommand.cs" />
+    <Compile Include="ConsoleTrace.cs" />
     <Compile Include="Modules\IFileSystemWatcher.cs" />
     <Compile Include="Modules\SimpleFileSystemWatcher.cs" />
     <Compile Include="WebHost\FileContentProvider.cs" />

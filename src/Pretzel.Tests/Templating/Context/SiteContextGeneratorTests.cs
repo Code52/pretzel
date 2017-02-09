@@ -957,20 +957,17 @@ param: value
             fileSystem.AddFile(@"C:\TestSite\SomeFile.md", new MockFileData(@"---
 date: 20150127
 ---# Title"));
-            StringBuilder sb = new StringBuilder();
-            TextWriter writer = new StringWriter(sb);
-            Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory(Tracing.Category.Info);
-            Tracing.Logger.AddCategory(Tracing.Category.Error);
-            Tracing.Logger.AddCategory(Tracing.Category.Debug);
+            StringBuilder trace = new StringBuilder();
+            Tracing.SetTrace((message, traceLevel) => { trace.AppendLine(message); });
+            Tracing.SetMinimalLevel(TraceLevel.Debug);
 
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(0, siteContext.Pages.Count);
-            Assert.Contains(@"Failed to build post from File: C:\TestSite\SomeFile.md", sb.ToString());
-            Assert.Contains(@"String was not recognized as a valid DateTime.", sb.ToString());
-            Assert.Contains(@"System.FormatException: String was not recognized as a valid DateTime.", sb.ToString());
+            Assert.Contains(@"Failed to build post from File: C:\TestSite\SomeFile.md", trace.ToString());
+            Assert.Contains(@"String was not recognized as a valid DateTime.", trace.ToString());
+            Assert.Contains(@"System.FormatException: String was not recognized as a valid DateTime.", trace.ToString());
         }
 
         [Fact]
@@ -1050,12 +1047,9 @@ date: 20150127
             fileSystemSubstitute.Directory.Returns(directorySubstitute);
             fileSystemSubstitute.FileInfo.Returns(fileInfoFactorySubstitute);
 
-            StringBuilder sb = new StringBuilder();
-            TextWriter writer = new StringWriter(sb);
-            Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory(Tracing.Category.Info);
-            Tracing.Logger.AddCategory(Tracing.Category.Error);
-            Tracing.Logger.AddCategory(Tracing.Category.Debug);
+            StringBuilder trace = new StringBuilder();
+            Tracing.SetTrace((message, traceLevel) => { trace.AppendLine(message); });
+            Tracing.SetMinimalLevel(TraceLevel.Debug);
 
             var generator = new SiteContextGenerator(fileSystemSubstitute, new LinkHelper(), new Configuration());
 
@@ -1064,9 +1058,9 @@ date: 20150127
 
             // assert
             Assert.Equal(0, siteContext.Pages.Count);
-            Assert.Contains(@"Failed to build post from File: C:\TestSite\SomeFile.md", sb.ToString());
-            Assert.Contains(@"I/O error occurred.", sb.ToString());
-            Assert.Contains(@"System.IO.IOException: I/O error occurred.", sb.ToString());
+            Assert.Contains(@"Failed to build post from File: C:\TestSite\SomeFile.md", trace.ToString());
+            Assert.Contains(@"I/O error occurred.", trace.ToString());
+            Assert.Contains(@"System.IO.IOException: I/O error occurred.", trace.ToString());
             // Check if the temp file have been deleted
             fileSubstitute.Received().Delete(filePath);
         }

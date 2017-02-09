@@ -109,11 +109,8 @@ namespace Pretzel.Tests.Import
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
             // arrange
             StringBuilder sb = new StringBuilder();
-            TextWriter writer = new StringWriter(sb);
-            Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory(Tracing.Category.Info);
-            Tracing.Logger.AddCategory(Tracing.Category.Debug);
-            Tracing.Logger.AddCategory(Tracing.Category.Error);
+            Tracing.SetTrace((message, traceLevel) => { sb.AppendLine(message); });
+            Tracing.SetMinimalLevel(TraceLevel.Debug);
 
             var fileSubstitute = Substitute.For<FileBase>();
             fileSubstitute.ReadAllText(ImportFile).Returns(ImportContent);

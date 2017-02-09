@@ -42,11 +42,11 @@ namespace Pretzel.Commands
 
             if (!TemplateEngines.Any(e => String.Equals(e, engine, StringComparison.InvariantCultureIgnoreCase)))
             {
-                Tracing.InfoFormat("Requested templating engine not found: {0}", engine);
+                Tracing.Info("Requested templating engine not found: {0}", engine);
                 return;
             }
 
-            Tracing.InfoFormat("Using {0} Engine", engine);
+            Tracing.Info("Using {0} Engine", engine);
 
             var recipe = new Recipe(fileSystem, engine, parameters.Path, additionalIngredients, parameters.WithProject, parameters.Wiki, parameters.IncludeDrafts);
             recipe.Create();

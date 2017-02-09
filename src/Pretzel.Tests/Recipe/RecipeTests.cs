@@ -19,16 +19,12 @@ namespace Pretzel.Tests.Recipe
     {
         private const string BaseSite = @"c:\site\";
         private MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-        private readonly StringBuilder sb = new StringBuilder();
-        private readonly TextWriter writer;
+        private readonly StringBuilder trace = new StringBuilder();
 
         public RecipeTests()
         {
-            writer = new StringWriter(sb);
-            Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory(Tracing.Category.Info);
-            Tracing.Logger.AddCategory(Tracing.Category.Error);
-            Tracing.Logger.AddCategory(Tracing.Category.Debug);
+            Tracing.SetTrace((message, traceLevel) => { trace.AppendLine(message); });
+            Tracing.SetMinimalLevel(TraceLevel.Debug);
         }
 
         [Fact]
@@ -58,7 +54,7 @@ namespace Pretzel.Tests.Recipe
             Assert.True(fileSystem.File.Exists(BaseSite + @"img\favicon.ico"));
             Assert.True(fileSystem.File.Exists(BaseSite + @"_includes\head.html"));
 
-            Assert.True(writer.ToString().Contains("Pretzel site template has been created"));
+            Assert.True(trace.ToString().Contains("Pretzel site template has been created"));
         }
 
         [Theory]
@@ -103,7 +99,7 @@ namespace Pretzel.Tests.Recipe
             Assert.Equal(!wiki, fileSystem.File.Exists(BaseSite + "atom.xml"));
             Assert.Equal(!wiki, fileSystem.File.Exists(BaseSite + "sitemap.xml"));
 
-            Assert.True(writer.ToString().Contains("Pretzel site template has been created"));
+            Assert.True(trace.ToString().Contains("Pretzel site template has been created"));
         }
 
         [Fact]
@@ -114,7 +110,7 @@ namespace Pretzel.Tests.Recipe
 
             recipe.Create();
 
-            Assert.True(writer.ToString().Contains("Templating Engine not found"));
+            Assert.True(trace.ToString().Contains("Templating Engine not found"));
         }
 
         [Fact]
@@ -158,7 +154,7 @@ namespace Pretzel.Tests.Recipe
             var recipe = new Logic.Recipe.Recipe(fileSystem, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, true);
             recipe.Create();
 
-            Assert.True(writer.ToString().Contains("Wiki switch not valid with liquid templating engine"));
+            Assert.True(trace.ToString().Contains("Wiki switch not valid with liquid templating engine"));
         }
 
         [Fact]
@@ -201,9 +197,9 @@ namespace Pretzel.Tests.Recipe
             var recipe = new Logic.Recipe.Recipe(fileSystemSubstitute, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, false);
             recipe.Create();
 
-            Assert.Contains(@"Error trying to create template: System.Exception: Error!!!", writer.ToString());
-            Assert.Contains(@"at Pretzel.Tests.Recipe.RecipeTests", writer.ToString());
-            Assert.Contains(@"<error_is_traced>", writer.ToString());
+            Assert.Contains(@"Error trying to create template: System.Exception: Error!!!", trace.ToString());
+            Assert.Contains(@"at Pretzel.Tests.Recipe.RecipeTests", trace.ToString());
+            Assert.Contains(@"<error_is_traced>", trace.ToString());
         }
 
         [Fact]

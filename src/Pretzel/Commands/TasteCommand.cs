@@ -63,7 +63,7 @@ namespace Pretzel.Commands
 
             if (engine == null)
             {
-                Tracing.InfoFormat("template engine {0} not found - (engines: {1})", parameters.Template,
+                Tracing.Info("template engine {0} not found - (engines: {1})", parameters.Template,
                                            string.Join(", ", templateEngines.Engines.Keys));
 
                 return;
@@ -86,26 +86,26 @@ namespace Pretzel.Commands
                     }
                     catch (System.Net.Sockets.SocketException)
                     {
-                        Tracing.InfoFormat("Port {0} is already in use", parameters.Port);
+                        Tracing.Info("Port {0} is already in use", parameters.Port);
                         return;
                     }
 
                     var url = string.Format("http://localhost:{0}/", parameters.Port);
                     if (parameters.LaunchBrowser)
                     {
-                        Tracing.InfoFormat("Opening {0} in default browser...", url);
+                        Tracing.Info("Opening {0} in default browser...", url);
                         try
                         {
                             Process.Start(url);
                         }
                         catch (Exception)
                         {
-                            Tracing.InfoFormat("Failed to launch {0}.", url);
+                            Tracing.Info("Failed to launch {0}.", url);
                         }
                     }
                     else
                     {
-                        Tracing.InfoFormat("Browse to {0} to view the site.", url);
+                        Tracing.Info("Browse to {0} to view the site.", url);
                     }
 
                     Tracing.Info("Press 'Q' to stop the web host...");
@@ -131,7 +131,7 @@ namespace Pretzel.Commands
                 }
             }
 
-            Tracing.InfoFormat("File change: {0}", file);
+            Tracing.Info("File change: {0}", file);
 
             ((Configuration)Configuration).ReadFromFile();
 

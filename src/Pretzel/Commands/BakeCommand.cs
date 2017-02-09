@@ -65,11 +65,11 @@ namespace Pretzel.Commands
                 engine.CompressSitemap(siteContext, FileSystem);
 
                 watch.Stop();
-                Tracing.InfoFormat("done - took {0}ms", watch.ElapsedMilliseconds);
+                Tracing.Info("done - took {0}ms", watch.ElapsedMilliseconds);
             }
             else
             {
-                Tracing.InfoFormat("Cannot find engine for input: '{0}'", parameters.Template);
+                Tracing.Info("Cannot find engine for input: '{0}'", parameters.Template);
             }
         }
 

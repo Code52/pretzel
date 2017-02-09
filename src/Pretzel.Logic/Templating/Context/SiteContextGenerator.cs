@@ -285,7 +285,7 @@ namespace Pretzel.Logic.Templating.Context
             }
             catch (Exception e)
             {
-                Tracing.InfoFormat("Failed to build post from File: {0}", file);
+                Tracing.Info("Failed to build post from File: {0}", file);
                 Tracing.Info(e.Message);
                 Tracing.Debug(e.ToString());
             }
@@ -353,7 +353,7 @@ namespace Pretzel.Logic.Templating.Context
             {
                 if (SanityCheck.IsLockedByAnotherProcess(file))
                 {
-                    Tracing.InfoFormat("File {0} is locked by another process. Skipping", file);
+                    Tracing.Info("File {0} is locked by another process. Skipping", file);
                     return string.Empty;
                 }
 

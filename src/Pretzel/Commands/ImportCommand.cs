@@ -29,7 +29,7 @@ namespace Pretzel.Commands
 
             if (!Importers.Any(e => String.Equals(e, parameters.ImportType, StringComparison.InvariantCultureIgnoreCase)))
             {
-                Tracing.InfoFormat("Requested import type not found: {0}", parameters.ImportType);
+                Tracing.Info("Requested import type not found: {0}", parameters.ImportType);
                 return;
             }
 

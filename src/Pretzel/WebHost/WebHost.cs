@@ -61,7 +61,7 @@ namespace Pretzel
                 {
                     var path = context.Request.Path.Value;
 
-                    Tracing.Info(path);
+                    Tracing.Debug(path);
 
                     if (!Content.IsAvailable(path))
                     {

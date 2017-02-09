@@ -23,16 +23,12 @@ namespace Pretzel.Tests.Recipe
         private const string PostsFolder = @"_posts";
         private const string DraftsFolder = @"_drafts";
 
-        private readonly StringBuilder sb = new StringBuilder();
-        private readonly TextWriter writer;
+        private readonly StringBuilder trace = new StringBuilder();
 
         public IngredientTests()
         {
-            writer = new StringWriter(sb);
-            Tracing.Logger.SetWriter(writer);
-            Tracing.Logger.AddCategory(Tracing.Category.Info);
-            Tracing.Logger.AddCategory(Tracing.Category.Error);
-            Tracing.Logger.AddCategory(Tracing.Category.Debug);
+            Tracing.SetTrace((message, traceLevel) => { trace.AppendLine(message); });
+            Tracing.SetMinimalLevel(TraceLevel.Debug);
         }
 
         [Fact]
@@ -73,7 +69,7 @@ namespace Pretzel.Tests.Recipe
             ingredient.Create();
             ingredient.Create();
 
-            Assert.Contains(string.Format("The \"{0}\" file already exists", postName), writer.ToString());
+            Assert.Contains(string.Format("The \"{0}\" file already exists", postName), trace.ToString());
         }
 
         [Fact]
@@ -82,7 +78,7 @@ namespace Pretzel.Tests.Recipe
             var ingredient = new Logic.Recipe.Ingredient(fileSystem, string.Empty, BaseSite, false);
             ingredient.Create();
 
-            Assert.Contains(string.Format(@"{0} folder not found", BaseSite + PostsFolder), writer.ToString());
+            Assert.Contains(string.Format(@"{0} folder not found", BaseSite + PostsFolder), trace.ToString());
         }
 
         [Fact]
@@ -91,7 +87,7 @@ namespace Pretzel.Tests.Recipe
             var ingredient = new Logic.Recipe.Ingredient(fileSystem, string.Empty, BaseSite, true);
             ingredient.Create();
 
-            Assert.Contains(string.Format(@"{0} folder not found", BaseSite + DraftsFolder), writer.ToString());
+            Assert.Contains(string.Format(@"{0} folder not found", BaseSite + DraftsFolder), trace.ToString());
         }
     }
 }

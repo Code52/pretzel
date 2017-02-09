@@ -106,7 +106,7 @@ namespace Pretzel.Logic.Recipe
             }
             catch (Exception ex)
             {
-                Tracing.ErrorFormat("Error trying to create template: {0}", ex);
+                Tracing.Error("Error trying to create template: {0}", ex);
             }
         }
 
