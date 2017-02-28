@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Pretzel.Logic.Templating.Context
 {
@@ -21,6 +22,14 @@ namespace Pretzel.Logic.Templating.Context
         public Boolean UseDrafts { get; set; }
 
         public List<Page> Pages { get; set; }
+
+        public List<Page> Html_Pages
+        {
+            get
+            {
+                return Pages.Where(p => p.Url != null && p.Url.EndsWith(".html")).ToList();
+            }
+        }
 
         public string Title
         {

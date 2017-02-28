@@ -133,6 +133,33 @@ namespace Pretzel.Tests.Templating.Context
         }
 
         [Fact]
+        public void pages_with_html_extensions_are_included_in_html_pages()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\SubFolder\SomeFile.html", new MockFileData(ToPageContent("# Title")));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+
+            // assert
+            Assert.Equal(1, siteContext.Html_Pages.Count);
+            Assert.IsType<Page>(siteContext.Html_Pages[0]);
+        }
+
+        [Fact]
+        public void pages_without_html_extensions_are_not_included_in_html_pages()
+        {
+            // arrange
+            fileSystem.AddFile(@"C:\TestSite\SubFolder\SomeFile.xml", new MockFileData(ToPageContent("# Title")));
+
+            // act
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+
+            // assert
+            Assert.Equal(0, siteContext.Html_Pages.Count);
+        }
+
+        [Fact]
         public void site_context_includes_pages_in_same_folder()
         {
             // arrange

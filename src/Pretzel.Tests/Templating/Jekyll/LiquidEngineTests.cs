@@ -2241,5 +2241,33 @@ categories: [{0}]
                 }
             }
         }
+
+        public class Given_Page_Uses_Html_Pages : BakingEnvironment<LiquidEngine>
+        {
+            private const string TemplateContents = "<html><body>{{ content }}</body></html>";
+            private const string PageContents = "---\r\n layout: default \r\n---\r\n\r\n{{ site.html_pages | size }}";
+            private const string ExpectedfileContents = "<html><body>1</body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\index.html", new MockFileData(PageContents));
+                var generator = GetSiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_The_Html_Pages_Size_Value()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
     }
 }
