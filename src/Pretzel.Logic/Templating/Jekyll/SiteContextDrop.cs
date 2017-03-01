@@ -33,6 +33,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
             var x = Hash.FromDictionary(context.Config.ToDictionary());
             x["posts"] = context.Posts.Select(p => p.ToHash()).ToList();
             x["pages"] = context.Pages.Select(p => p.ToHash()).ToList();
+            x["html_pages"] = context.Html_Pages.Select(p => p.ToHash()).ToList();
             x["title"] = context.Title;
             x["tags"] = context.Tags;
             x["categories"] = context.Categories;
