@@ -1,3 +1,4 @@
+# 0.7.0 (2017-03-18)
 
  - [#319](https://github.com/Code52/pretzel/pull/319) - Site with support of html_pages contributed by Roland Bär ([rolandbaer](https://github.com/rolandbaer))
  - [#318](https://github.com/Code52/pretzel/issues/318) - Chocolatey install - Get-BinRoot deprecated
