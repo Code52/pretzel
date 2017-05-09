@@ -1,3 +1,10 @@
+# 0.7.1 (2017/05/09)
+
+ - [#321](https://github.com/Code52/pretzel/issues/321) - Pretzel 0.7.0 uses white text for output irregardless of console background +fix
+
+Commits: 5db0c6ec24...5db0c6ec24
+
+
 # 0.7.0 (2017-03-18)
 
  - [#319](https://github.com/Code52/pretzel/pull/319) - Site with support of html_pages contributed by Roland Bär ([rolandbaer](https://github.com/rolandbaer))
