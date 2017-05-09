@@ -14,6 +14,22 @@ namespace Pretzel
                  { TraceLevel.Debug, ConsoleColor.Gray }
              };
 
+        private static readonly HashSet<ConsoleColor> BrightConsoleColors = new HashSet<ConsoleColor>
+        {
+            ConsoleColor.Blue, ConsoleColor.Cyan, ConsoleColor.Gray, ConsoleColor.Green,
+            ConsoleColor.Magenta, ConsoleColor.Red, ConsoleColor.White, ConsoleColor.Yellow
+        };
+
+        static ConsoleTrace()
+        {
+            // If console uses bright background, adjust text colors.
+            if (BrightConsoleColors.Contains(Console.BackgroundColor))
+            {
+                Colors[TraceLevel.Info] = ConsoleColor.Black;
+                Colors[TraceLevel.Debug] = ConsoleColor.DarkGray;
+            }
+        }
+
         internal static void Write(string message, TraceLevel traceLevel)
         {
             ConsoleColor consoleColor;
