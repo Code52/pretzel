@@ -1,4 +1,4 @@
-﻿using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Extensions;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 
