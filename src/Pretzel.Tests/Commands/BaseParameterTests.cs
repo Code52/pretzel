@@ -1,4 +1,4 @@
-﻿using Pretzel.Logic.Commands;
+using Pretzel.Logic.Commands;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
@@ -102,8 +102,6 @@ namespace Pretzel.Tests
         [Fact]
         public void Parse_WhenSpecifyingNoParameters_DefaultVeluesResultIsCorrect()
         {
-            var args = new List<string>();
-
             var subject = GetBaseParameter(new[] { "bake" });
 
             Assert.Equal(FileSystem.Directory.GetCurrentDirectory(), subject.Path);

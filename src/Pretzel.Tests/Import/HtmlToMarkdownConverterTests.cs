@@ -1,4 +1,4 @@
-﻿using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Import;
 using System;
 using System.IO;
@@ -9,7 +9,7 @@ namespace Pretzel.Tests.Import
 {
     public class HtmlToMarkdownConverterTests
     {
-        private HtmlToMarkdownConverter converter = new HtmlToMarkdownConverter();
+        private readonly HtmlToMarkdownConverter converter = new HtmlToMarkdownConverter();
 
         [Fact]
         public void Plain_text_is_copied_straight_through()

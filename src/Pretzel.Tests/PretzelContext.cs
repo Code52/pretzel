@@ -1,4 +1,4 @@
-﻿namespace Pretzel.Tests
+namespace Pretzel.Tests
 {
     public abstract class SpecificationFor<T>
     {
@@ -9,8 +9,10 @@
 
         protected SpecificationFor()
         {
+#pragma warning disable S1699 // Constructors should only call non-overridable methods
             Subject = Given();
             When();
+#pragma warning restore S1699 // Constructors should only call non-overridable methods
         }
     }
 }

@@ -1,5 +1,6 @@
-﻿using Pretzel.Logic.Liquid;
+using Pretzel.Logic.Liquid;
 using System;
+using System.Globalization;
 using System.Xml;
 using Xunit;
 
@@ -38,7 +39,7 @@ namespace Pretzel.Tests.Templating.Jekyll
         public void DateToString_WithStringDate_ReturnsCorrectString()
         {
             var date = new DateTime(2008, 11, 07);
-            Assert.Equal(date.ToString("dd MMM yyyy"), DateToStringFilter.date_to_string(date.ToString()));
+            Assert.Equal(date.ToString("dd MMM yyyy"), DateToStringFilter.date_to_string(date.ToString(CultureInfo.CurrentUICulture)));
         }
 
         [Fact]
@@ -50,7 +51,7 @@ namespace Pretzel.Tests.Templating.Jekyll
         [Fact]
         public void DateToLongString_ForExpectedStringDate_ReturnsCorrectString()
         {
-            Assert.Equal("07 November 2008", DateToLongStringFilter.date_to_long_string(new DateTime(2008, 11, 07).ToString()));
+            Assert.Equal("07 November 2008", DateToLongStringFilter.date_to_long_string(new DateTime(2008, 11, 07).ToString(CultureInfo.CurrentUICulture)));
         }
 
         [Fact]

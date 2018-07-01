@@ -1,4 +1,4 @@
-﻿using Pretzel.Logic;
+using Pretzel.Logic;
 using Pretzel.Logic.Extensions;
 using System.Collections.Generic;
 
@@ -6,7 +6,7 @@ namespace Pretzel.Tests
 {
     public sealed class ConfigurationMock : IConfiguration
     {
-        private IDictionary<string, object> _config;
+        private readonly IDictionary<string, object> _config;
 
         public object this[string key]
         {

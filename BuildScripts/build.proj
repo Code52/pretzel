@@ -33,7 +33,7 @@
     </ItemGroup>
     <Message Text="=========== Restore Nuget packages ===========" Importance="High" />
 
-    <Exec Command='"@(NuGet)" restore ..\src' />
+    <MSBuild Projects="$(SourceDir)\Pretzel.sln" Properties="Configuration=$(Configuration)" Targets="Restore" />
 
     <Message Text="=========== Compile ===========" Importance="High" />
 

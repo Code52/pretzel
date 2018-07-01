@@ -4,7 +4,8 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <ApplicationIcon>pretzel.ico</ApplicationIcon>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <OutputPath>bin\$(Configuration)\$(Platform)</OutputPath>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\src\</SolutionDir>
+    <OutputPath>bin\$(Configuration)</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <ErrorLog>$(OutputPath)\static-analysis.sarif.json</ErrorLog>
     <LangVersion>latest</LangVersion>

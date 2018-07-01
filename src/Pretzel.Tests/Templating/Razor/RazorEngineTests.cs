@@ -1,4 +1,4 @@
-﻿using Pretzel.Logic;
+using Pretzel.Logic;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensibility.Extensions;
 using Pretzel.Logic.Templating.Context;
@@ -392,7 +392,7 @@ namespace Pretzel.Tests.Templating.Razor
 
         public class CustomTag : DotLiquid.Tag, ITag
         {
-            private SiteContext _siteContext;
+            private readonly SiteContext _siteContext;
 
             public new string Name { get { return "Custom"; } }
 

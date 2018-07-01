@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Xunit;
@@ -114,7 +114,9 @@ namespace Pretzel.Tests.Import
 
             var fileSubstitute = Substitute.For<FileBase>();
             fileSubstitute.ReadAllText(ImportFile).Returns(ImportContent);
+#pragma warning disable S112 // General exceptions should never be thrown
             fileSubstitute.When(f => f.WriteAllText(Arg.Any<string>(), Arg.Any<string>())).Do(x => { throw new Exception(); });
+#pragma warning restore S112 // General exceptions should never be thrown
 
             var fileSystemSubstitute = Substitute.For<IFileSystem>();
             fileSystemSubstitute.File.Returns(fileSubstitute);

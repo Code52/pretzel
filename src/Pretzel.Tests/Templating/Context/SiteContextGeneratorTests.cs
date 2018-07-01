@@ -1,4 +1,4 @@
-﻿using NSubstitute;
+using NSubstitute;
 using Pretzel.Logic;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
@@ -1078,10 +1078,10 @@ date: 20150127
             Tracing.SetTrace((message, traceLevel) => { trace.AppendLine(message); });
             Tracing.SetMinimalLevel(TraceLevel.Debug);
 
-            var generator = new SiteContextGenerator(fileSystemSubstitute, new LinkHelper(), new Configuration());
+            var theGenerator = new SiteContextGenerator(fileSystemSubstitute, new LinkHelper(), new Configuration());
 
             // act
-            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+            var siteContext = theGenerator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
             Assert.Equal(0, siteContext.Pages.Count);

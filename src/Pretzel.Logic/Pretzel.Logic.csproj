@@ -2,11 +2,10 @@
   <PropertyGroup>
     <TargetFramework>net451</TargetFramework>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\src\</SolutionDir>
-    <OutputPath>bin\$(Configuration)\$(Platform)</OutputPath>
+    <OutputPath>bin\$(Configuration)</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <ErrorLog>$(OutputPath)\static-analysis.sarif.json</ErrorLog>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>

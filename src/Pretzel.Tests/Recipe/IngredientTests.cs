@@ -1,4 +1,4 @@
-﻿using NSubstitute;
+using NSubstitute;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensibility.Extensions;
 using Pretzel.Logic.Extensions;
@@ -18,7 +18,7 @@ namespace Pretzel.Tests.Recipe
 {
     public class IngredientTests
     {
-        private MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
+        private readonly MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
         private const string BaseSite = @"c:\site\";
         private const string PostsFolder = @"_posts";
         private const string DraftsFolder = @"_drafts";

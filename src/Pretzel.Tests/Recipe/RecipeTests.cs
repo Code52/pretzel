@@ -1,4 +1,4 @@
-﻿using NSubstitute;
+using NSubstitute;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using System;
@@ -189,7 +189,9 @@ namespace Pretzel.Tests.Recipe
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
             var fileSubstitute = Substitute.For<FileBase>();
+#pragma warning disable S112 // General exceptions should never be thrown
             fileSubstitute.When(f => f.WriteAllText(Arg.Any<string>(), Arg.Any<string>())).Do(x => { throw new Exception("Error!!!"); });
+#pragma warning restore S112 // General exceptions should never be thrown
 
             var fileSystemSubstitute = Substitute.For<IFileSystem>();
             fileSystemSubstitute.File.Returns(fileSubstitute);

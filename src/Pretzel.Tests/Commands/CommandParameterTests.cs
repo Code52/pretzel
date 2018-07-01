@@ -1,4 +1,4 @@
-﻿using NDesk.Options;
+using NDesk.Options;
 using NSubstitute;
 using Pretzel.Logic;
 using Pretzel.Logic.Commands;
@@ -320,10 +320,10 @@ namespace Pretzel.Tests
                     options.Add<string>("newOption=", "description", v => NewOption = v);
                 });
 
-            var subject = new CommandParameters(new List<IHaveCommandLineArgs> { extension }, new MockFileSystem()) { Path = ExpectedPath };
+            var theSubject = new CommandParameters(new List<IHaveCommandLineArgs> { extension }, new MockFileSystem()) { Path = ExpectedPath };
             var args = new List<string> { "-newOption=test" };
 
-            subject.Parse(args);
+            theSubject.Parse(args);
 
             Assert.Equal("test", NewOption);
         }

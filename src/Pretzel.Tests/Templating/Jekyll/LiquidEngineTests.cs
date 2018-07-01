@@ -1,4 +1,4 @@
-﻿using DotLiquid;
+using DotLiquid;
 using NSubstitute;
 using Pretzel.Logic;
 using Pretzel.Logic.Exceptions;
@@ -413,7 +413,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
         }
 
-        public class When_Aeoth_Tests_The_Edge_Cases_Of_Handling_YAML_Front_Matter : BakingEnvironment<LiquidEngine>
+        public class When_Aeoth_Tests_The_Edge_Cases_Of_Handling_Yaml_Front_Matter : BakingEnvironment<LiquidEngine>
         {
             private const string PageContents = "---\n---";
 
@@ -1773,7 +1773,7 @@ namespace Pretzel.Tests.Templating.Jekyll
             }
         }
 
-        public class Given_Page_Has_HTML_Code_Block : BakingEnvironment<LiquidEngine>
+        public class Given_Page_Has_Html_Code_Block : BakingEnvironment<LiquidEngine>
         {
             private const string PageContents = "---\r\n layout: nil \r\n---\r\n\r\n```html\r\n<span>word</span>\r\n```\r\n";
             private const string ExpectedfileContents = "<pre><code class=\"language-html\">&lt;span&gt;word&lt;/span&gt;</code></pre>";
@@ -2074,7 +2074,9 @@ categories: [{0}]
                 engine.Initialize();
 
                 var contentTransformer = Substitute.For<IContentTransform>();
+#pragma warning disable S112 // General exceptions should never be thrown
                 contentTransformer.Transform(Arg.Any<string>()).Returns(s => { throw new Exception("foo bar"); });
+#pragma warning restore S112 // General exceptions should never be thrown
                 engine.ContentTransformers = new[] { contentTransformer };
 
                 return engine;
