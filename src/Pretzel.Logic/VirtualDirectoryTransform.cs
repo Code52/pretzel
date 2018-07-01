@@ -1,4 +1,4 @@
-﻿using Pretzel.Logic.Minification;
+using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Logic
