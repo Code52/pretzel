@@ -13,7 +13,7 @@ namespace Pretzel.Tests.Templating.Context
             var context = new SiteContext();
             var dict = new Dictionary<string, object>();
             context.Config = new ConfigurationMock(dict);
-            dict.Add("permalink", "/blog/:year/:month/:day/:title.html");
+            dict["permalink"] = "/blog/:year/:month/:day/:title.html";
 
             var page = new Page()
             {
@@ -54,7 +54,9 @@ namespace Pretzel.Tests.Templating.Context
         public void no_permalink_sets_default_output_path_and_page_bag_permalink()
         {
             var context = new SiteContext();
-            context.Config = new Configuration();
+            var dict = new Dictionary<string, object>();
+            context.Config = new ConfigurationMock(dict);
+            dict.Clear();
 
             var file = "title-of-my-post.html";
             var page = new Page()

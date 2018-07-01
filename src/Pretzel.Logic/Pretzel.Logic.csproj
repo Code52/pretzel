@@ -103,7 +103,7 @@
       <Version>1.22.0.1631</Version>
     </PackageReference>
     <PackageReference Include="System.IO.Abstractions">
-      <Version>2.1.0.178</Version>
+      <Version>2.0.0.116</Version>
     </PackageReference>
     <PackageReference Include="YamlDotNet">
       <Version>4.1.0</Version>
