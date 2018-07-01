@@ -29,12 +29,6 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Pretzel.Logic\Pretzel.Logic.csproj">
-      <Project>{F2E6664D-75AC-4830-8A55-E572027DF710}</Project>
-      <Name>Pretzel.Logic</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="pretzel.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -71,5 +65,8 @@
     <PackageReference Include="YamlDotNet">
       <Version>4.1.0</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Pretzel.Logic\Pretzel.Logic.csproj" />
   </ItemGroup>
 </Project>
