@@ -142,6 +142,7 @@ function ExecuteTests($cover)
 function Build()
 {
     CreateCleanDirectory $artifacts
+    $dotnet = Join-Path ${env:ProgramFiles} -ChildPath "dotnet" | Join-Path -ChildPath "dotnet.exe"
     
     # AppVeyor
     If ($env:APPVEYOR -eq $true)
@@ -161,7 +162,7 @@ function Build()
                           "/p:Configuration=Release"
                           );
             
-            & cov-build --config cov-config.xml --dir $artifacts\cov-int msbuild $src\Pretzel.sln /p:Configuration=Release
+            & cov-build --config cov-config.xml --dir $artifacts\cov-int $dotnet msbuild $src\Pretzel.sln /p:Configuration=Release
             Push-AppveyorArtifact $artifacts\cov-int\build-log.txt
             & PublishCoverity compress -o $artifacts\coverity.zip -i $artifacts\cov-int;
 
@@ -170,7 +171,7 @@ function Build()
         }
         Else
         {
-            & msbuild "$src\Pretzel.sln" /p:Configuration="Release" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+            &$dotnet "msbuild" "$src\Pretzel.sln" /p:Configuration="Release" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
             if ($LastExitCode -ne 0) { throw "Building solution failed" }
 
@@ -184,15 +185,9 @@ function Build()
     #Local build
     Else
     {
-        Write-Warning "Chocolatey must be installed, along with Nuget.CommandLine, SevenZip and MSBuild Tools 2015."
+        Write-Warning "Chocolatey must be installed, along with Nuget.CommandLine, SevenZip and MSBuild Tools 2017 and dotnet."
         
-        $msBuildVersion = "14.0"
-        $regKey = "HKLM:\software\Microsoft\MSBuild\ToolsVersions\$msBuildVersion"
-        $regProperty = "MSBuildToolsPath"
-        
-        $msbuildExe = join-path -path (Get-ItemProperty $regKey).$regProperty -childpath "msbuild.exe"
-        
-        &$msbuildExe "$src\Pretzel.sln" /p:Configuration="Release" /verbosity:minimal
+        &$dotnet "msbuild" "$src\Pretzel.sln" /p:Configuration="Release" /verbosity:minimal
 
         if ($LastExitCode -ne 0) { throw "Building solution failed" }
         
