@@ -171,7 +171,7 @@ function Build()
         }
         Else
         {
-            &$dotnet "msbuild" "$src\Pretzel.sln" /p:Configuration="Release" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+            &msbuild "$src\Pretzel.sln" /p:Configuration="Release" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
             if ($LastExitCode -ne 0) { throw "Building solution failed" }
 
