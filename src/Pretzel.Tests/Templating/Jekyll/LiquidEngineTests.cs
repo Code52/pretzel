@@ -1,4 +1,4 @@
-﻿using DotLiquid;
+using DotLiquid;
 using NSubstitute;
 using Pretzel.Logic;
 using Pretzel.Logic.Exceptions;
@@ -2267,6 +2267,40 @@ categories: [{0}]
             public void The_Output_Should_Have_The_Html_Pages_Size_Value()
             {
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Page_Sorts_Elements_With_Different_Properties : BakingEnvironment<LiquidEngine>
+        {
+            private const string TemplateContents = "<html><body>{{site.pages | size}}: {% assign sorted_pages = site.pages | sort: 'sorting' %}{% for p in sorted_pages %}{{ p.mytext }}{% endfor %}</body></html>";
+            private const string Page1Contents = "---\r\n layout: default \r\n mytext: A \r\n sorting: 1 \r\n--- \r\n\r\n";
+            private const string Page2Contents = "---\r\n layout: default \r\n mytext: B \r\n---\r\n\r\n";
+            private const string Page3Contents = "---\r\n layout: default \r\n mytext: C \r\n sorting: 3 \r\n--- \r\n\r\n";
+            private const string ExpectedfileContents = "<html><body>3: BAC</body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\page1.html", new MockFileData(Page1Contents));
+                FileSystem.AddFile(@"C:\website\page2.html", new MockFileData(Page2Contents));
+                FileSystem.AddFile(@"C:\website\page3.html", new MockFileData(Page3Contents));
+                var generator = GetSiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_The_Properties_Ordered()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\page1.html").RemoveWhiteSpace());
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\page2.html").RemoveWhiteSpace());
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\page3.html").RemoveWhiteSpace());
             }
         }
     }
