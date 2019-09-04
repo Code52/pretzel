@@ -21,7 +21,7 @@
     <PackageReference Include="Microsoft.Web.Xdt" Version="2.1.1" />
     <PackageReference Include="Mono.Cecil" Version="0.9.6.1" />
     <PackageReference Include="Mono.CSharp" Version="4.0.0.143" />
-    <PackageReference Include="Newtonsoft.Json" Version="7.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NuGet.Core" Version="2.8.6" />
     <PackageReference Include="Roslyn.Compilers.Common" Version="1.2.20906.2" />
     <PackageReference Include="Roslyn.Compilers.CSharp" Version="1.2.20906.2" />
