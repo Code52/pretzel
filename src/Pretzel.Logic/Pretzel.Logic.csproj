@@ -25,14 +25,14 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AjaxMin" Version="5.14.5506.26202" />
-    <PackageReference Include="CommonMark.NET" Version="0.15.0" />
+    <PackageReference Include="CommonMark.NET" Version="0.15.1" />
     <PackageReference Include="DotlessClientOnly" Version="1.5.2" />
     <PackageReference Include="DotLiquid" Version="2.0.314" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.4.9.5" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.12" />
     <PackageReference Include="Microsoft.AspNet.Razor" Version="3.2.7" />
     <PackageReference Include="NDesk.Options" Version="0.2.1" />
-    <PackageReference Include="RazorEngine" Version="3.9.3" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="1.22.0.1631">
+    <PackageReference Include="RazorEngine" Version="3.10.0" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="7.16.0.8981">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="System.IO.Abstractions" Version="2.0.0.116" />
