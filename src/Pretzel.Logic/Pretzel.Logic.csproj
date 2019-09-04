@@ -27,7 +27,7 @@
     <PackageReference Include="AjaxMin" Version="5.14.5506.26202" />
     <PackageReference Include="CommonMark.NET" Version="0.15.0" />
     <PackageReference Include="DotlessClientOnly" Version="1.5.2" />
-    <PackageReference Include="DotLiquid" Version="2.0.271" />
+    <PackageReference Include="DotLiquid" Version="2.0.314" />
     <PackageReference Include="HtmlAgilityPack" Version="1.4.9.5" />
     <PackageReference Include="Microsoft.AspNet.Razor" Version="3.2.3" />
     <PackageReference Include="NDesk.Options" Version="0.2.1" />
@@ -36,7 +36,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="System.IO.Abstractions" Version="2.0.0.116" />
-    <PackageReference Include="YamlDotNet" Version="4.1.0" />
+    <PackageReference Include="YamlDotNet" Version="6.1.2" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.ComponentModel.Composition" />
