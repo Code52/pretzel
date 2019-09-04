@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
-    <TargetFramework>net451</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\src\</SolutionDir>
     <AssemblyTitle>Pretzel.Tests</AssemblyTitle>
     <Product>Pretzel.Tests</Product>
@@ -21,8 +21,11 @@
     <PackageReference Include="NSubstitute" Version="1.10.0.0" />
     <PackageReference Include="System.IO.Abstractions" Version="2.0.0.116" />
     <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="2.0.0.116" />
-    <PackageReference Include="xunit" Version="2.0.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.1.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Web" />
