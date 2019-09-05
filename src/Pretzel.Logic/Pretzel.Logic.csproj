@@ -1,148 +1,65 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F2E6664D-75AC-4830-8A55-E572027DF710}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Pretzel.Logic</RootNamespace>
-    <AssemblyName>Pretzel.Logic</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net451</TargetFramework>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\src\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <TargetFrameworkProfile />
+    <AssemblyTitle>Pretzel.Logic</AssemblyTitle>
+    <Product>Pretzel.Logic</Product>
+    <Description>Logic library for Pretzel (https://github.com/code52/pretzel), useful to make plugins.</Description>
+    <Version>1.0.0.0</Version>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <ErrorLog>$(OutputPath)\static-analysis.sarif.json</ErrorLog>
+    <Authors>Code52</Authors>
+    <PackageIconUrl>https://cdn.rawgit.com/Code52/pretzel/master/pretzel.png</PackageIconUrl>
+    <PackageId>Pretzel.Logic</PackageId>
+    <PackageLicenseUrl>https://github.com/Code52/pretzel/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/code52/pretzel</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/Code52/pretzel/releases</PackageReleaseNotes>
+    <PackageTags>Pretzel, Jekyll, HTML, Markdown, Liquid, Razor, static</PackageTags>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <ErrorLog>$(OutputPath)\static-analysis.sarif.json</ErrorLog>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <ErrorLog>$(OutputPath)\static-analysis.sarif.json</ErrorLog>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AjaxMin, Version=5.14.5506.26196, Culture=neutral, PublicKeyToken=21ef50ce11b5d80f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\AjaxMin.5.14.5506.26202\lib\net40\AjaxMin.dll</HintPath>
-    </Reference>
-    <Reference Include="CommonMark, Version=0.1.0.0, Culture=neutral, PublicKeyToken=001ef8810438905d, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommonMark.NET.0.15.0\lib\net45\CommonMark.dll</HintPath>
-    </Reference>
-    <Reference Include="dotless.ClientOnly, Version=1.5.2.0, Culture=neutral, PublicKeyToken=96b446c9e63eae34, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotlessClientOnly.1.5.2\lib\dotless.ClientOnly.dll</HintPath>
-    </Reference>
-    <Reference Include="DotLiquid, Version=2.0.271.0, Culture=neutral, PublicKeyToken=82e46016ecf9f07c, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotLiquid.2.0.271\lib\net45\DotLiquid.dll</HintPath>
-    </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.4.9.5, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlAgilityPack.1.4.9.5\lib\Net45\HtmlAgilityPack.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NDesk.Options">
-      <HintPath>..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
-    </Reference>
-    <Reference Include="RazorEngine, Version=3.9.3.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
-      <HintPath>..\packages\RazorEngine.3.9.3\lib\net45\RazorEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Abstractions, Version=2.0.0.116, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.Abstractions.2.0.0.116\lib\net40\System.IO.Abstractions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="YamlDotNet, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\YamlDotNet.4.1.0\lib\net35\YamlDotNet.dll</HintPath>
-    </Reference>
+    <PackageReference Include="AjaxMin" Version="5.14.5506.26202" />
+    <PackageReference Include="CommonMark.NET" Version="0.15.1" />
+    <PackageReference Include="DotlessClientOnly" Version="1.5.2" />
+    <PackageReference Include="DotLiquid" Version="2.0.314" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.12" />
+    <PackageReference Include="Microsoft.AspNet.Razor" Version="3.2.7" />
+    <PackageReference Include="NDesk.Options" Version="0.2.1" />
+    <PackageReference Include="RazorEngine" Version="3.10.0" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="7.16.0.8981">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.IO.Abstractions" Version="2.0.0.116" />
+    <PackageReference Include="YamlDotNet" Version="6.1.2" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\CommandParameters.cs" />
-    <Compile Include="Commands\BaseParameters.cs" />
-    <Compile Include="Configuration.cs" />
-    <Compile Include="DefaultsConfiguration.cs" />
-    <Compile Include="Exceptions\PageProcessingException.cs" />
-    <Compile Include="Extensibility\Extensions\AzureHostSupport.cs" />
-    <Compile Include="Extensibility\Extensions\CommonMarkEngine.cs" />
-    <Compile Include="Extensibility\Extensions\PrettifyUrlFilter.cs" />
-    <Compile Include="Extensibility\Extensions\VirtualDirectorySupport.cs" />
-    <Compile Include="Extensibility\Extensions\SlugifyFilter.cs" />
-    <Compile Include="Extensibility\IAdditionalIngredient.cs" />
-    <Compile Include="Extensibility\IContentTransform.cs" />
-    <Compile Include="Extensibility\Extensions\WebSequenceDiagrams.cs" />
-    <Compile Include="Extensibility\IHaveCommandLineArgs.cs" />
-    <Compile Include="Extensibility\IFilter.cs" />
-    <Compile Include="Extensibility\ILightweightMarkupEngine.cs" />
-    <Compile Include="Extensibility\IName.cs" />
-    <Compile Include="Extensibility\IBeforeProcessingTransform.cs" />
-    <Compile Include="Extensibility\ITag.cs" />
-    <Compile Include="Extensibility\TagFactoryBase.cs" />
-    <Compile Include="Extensions\DictionaryExtensions.cs" />
-    <Compile Include="Extensions\IAssembly.cs" />
-    <Compile Include="Extensions\Sitemap.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Extensions\Tracing.cs" />
-    <Compile Include="Extensions\YamlExtensions.cs" />
-    <Compile Include="Import\BloggerImport.cs" />
-    <Compile Include="Import\HtmlToMarkdownConverter.cs" />
-    <Compile Include="Import\WordpressImport.cs" />
-    <Compile Include="Liquid\CgiEscapeFilter.cs" />
-    <Compile Include="Liquid\DateToLongStringFilter.cs" />
-    <Compile Include="Liquid\DateToRfc822FormatFilter.cs" />
-    <Compile Include="Liquid\DateToStringFilter.cs" />
-    <Compile Include="Liquid\DateToXmlSchemaFilter.cs" />
-    <Compile Include="Liquid\HighlightBlock.cs" />
-    <Compile Include="Liquid\NumberOfWordsFilter.cs" />
-    <Compile Include="Extensibility\Extensions\PostUrlTag.cs" />
-    <Compile Include="Liquid\UriEscapeFilter.cs" />
-    <Compile Include="Liquid\XmlEscapeFilter.cs" />
-    <Compile Include="Minification\FileSystemExtensions.cs" />
-    <Compile Include="Minification\LessTransform.cs" />
-    <Compile Include="Extensibility\ITransform.cs" />
-    <Compile Include="Minification\JsMinifier.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Liquid.Designer.cs">
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Liquid.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Liquid.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Razor.Designer.cs">
+    <Compile Update="Properties\Razor.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Razor.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\RazorAzure.Designer.cs">
+    <Compile Update="Properties\RazorAzure.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>RazorAzure.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\RazorCsProject.Designer.cs">
+    <Compile Update="Properties\RazorCsProject.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>RazorCsProject.resx</DependentUpon>
@@ -158,71 +75,34 @@
     <None Include="Resources\RazorCsProject\SiteContext_cs" />
     <None Include="Resources\RazorCsProject\Tag_cs" />
     <None Include="Resources\RazorCsProject\AssemblyInfo_cs" />
-    <Compile Include="Properties\RazorWiki.Designer.cs">
+    <Compile Update="Properties\RazorWiki.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>RazorWiki.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
+    <Compile Update="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Recipe\Ingredient.cs" />
-    <Compile Include="SanityCheck.cs" />
-    <Compile Include="Templating\Context\Category.cs" />
-    <Compile Include="Templating\Context\LinkHelper.cs" />
-    <Compile Include="Templating\Context\NonProcessedPage.cs" />
-    <Compile Include="Templating\Context\Page.cs" />
-    <Compile Include="Templating\Context\Paginator.cs" />
-    <Compile Include="Templating\Context\SiteContextGenerator.cs" />
-    <Compile Include="Templating\Context\Tag.cs" />
-    <Compile Include="Templating\Jekyll\Extensions\PageExtensions.cs" />
-    <Compile Include="Templating\Jekyll\Includes.cs" />
-    <Compile Include="Templating\Jekyll\SiteContextDrop.cs" />
-    <Compile Include="Templating\Razor\ExtensibleTemplate.cs" />
-    <Compile Include="Templating\Razor\IncludesResolver.cs" />
-    <Compile Include="Templating\Razor\RazorSiteEngine.cs" />
-    <Compile Include="Templating\JekyllEngineBase.cs" />
-    <Compile Include="Templating\SiteEngineInfoAttribute.cs" />
-    <Compile Include="Templating\ISiteEngineInfo.cs" />
-    <Compile Include="Templating\ISiteEngine.cs" />
-    <Compile Include="Templating\Jekyll\LiquidEngine.cs" />
-    <Compile Include="Templating\Context\PathExtensions.cs" />
-    <Compile Include="Templating\Context\PageContext.cs" />
-    <Compile Include="Templating\Context\SiteContext.cs" />
-    <Compile Include="Recipe\Recipe.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Razor.resx">
+    <EmbeddedResource Update="Properties\Razor.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Razor.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Liquid.resx">
+    <EmbeddedResource Update="Properties\Liquid.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Liquid.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\RazorAzure.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>RazorAzure.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\RazorCsProject.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>RazorCsProject.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\RazorWiki.resx">
+    <EmbeddedResource Update="Properties\RazorWiki.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>RazorWiki.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
@@ -288,22 +168,11 @@
     <None Include="Resources\Style.css" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Templating\Plugins\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Liquid\Config.liquid" />
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\SonarAnalyzer.CSharp.1.22.0.1631\analyzers\Google.Protobuf.dll" />
-    <Analyzer Include="..\packages\SonarAnalyzer.CSharp.1.22.0.1631\analyzers\SonarAnalyzer.CSharp.dll" />
-    <Analyzer Include="..\packages\SonarAnalyzer.CSharp.1.22.0.1631\analyzers\SonarAnalyzer.dll" />
+    <Compile Remove="Resources\RazorAzure\Shim.cs" />
+    <Compile Remove="VirtualDirectoryTransform.cs" />
+    <Compile Remove="Minification\AssetMinifier.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
