@@ -1,4 +1,4 @@
-﻿using dotless.Core;
+using dotless.Core;
 using dotless.Core.Importers;
 using dotless.Core.Input;
 using dotless.Core.Parser;
@@ -7,7 +7,7 @@ using HtmlAgilityPack;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Templating.Context;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;

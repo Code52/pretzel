@@ -1,11 +1,11 @@
-﻿using Pretzel.Logic.Exceptions;
+using Pretzel.Logic.Exceptions;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensibility.Extensions;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -35,10 +35,10 @@ namespace Pretzel.Logic.Templating
         public IEnumerable<TagFactoryBase> TagFactories { get; set; }
 
         [ImportMany]
-        public IEnumerable<IContentTransform> ContentTransformers;
+        public IEnumerable<IContentTransform> ContentTransformers { get; set; }
 
         [Import(AllowDefault = true)]
-        private ILightweightMarkupEngine _lightweightMarkupEngine;
+        private ILightweightMarkupEngine _lightweightMarkupEngine { get; set; }
 
         public abstract void Initialize();
 

@@ -1,9 +1,7 @@
 using Pretzel.Logic.Templating.Context;
-using System.ComponentModel.Composition;
 
 namespace Pretzel.Logic.Templating
 {
-    [InheritedExport]
     public interface ISiteEngine
     {
         void Initialize();

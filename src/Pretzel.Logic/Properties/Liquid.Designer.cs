@@ -19,7 +19,7 @@ namespace Pretzel.Logic.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Liquid {
@@ -83,22 +83,21 @@ namespace Pretzel.Logic.Properties {
         ///   Looks up a localized string similar to ---
         ///layout: nil
         ///---
-        ///&lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
         ///&lt;feed xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;
-        ///  &lt;title&gt;Feed Name&lt;/title&gt;
-        ///  &lt;link href=&quot;http://domain/&quot;/&gt;
-        ///  &lt;link type=&quot;application/atom+xml&quot; rel=&quot;self&quot; href=&quot;http://domain/atom.xml&quot;/&gt;
+        ///  &lt;title&gt;{{ site.title }} | {{ site.author }}&lt;/title&gt;
+        ///  &lt;link href=&quot;{{ site.url }}/&quot;/&gt;
+        ///  &lt;link type=&quot;application/atom+xml&quot; rel=&quot;self&quot; href=&quot;{{ site.url }}/atom.xml&quot;/&gt;
         ///  &lt;updated&gt;{{ site.time | date_to_xmlschema }}&lt;/updated&gt;
-        ///  &lt;id&gt;http://domain/&lt;/id&gt;
+        ///  &lt;id&gt;{{ site.url }}/&lt;/id&gt;
         ///  &lt;author&gt;
-        ///    &lt;name&gt;Author&lt;/name&gt;
-        ///    &lt;email&gt;Email&lt;/email&gt;
+        ///    &lt;name&gt;{{ site.author }}&lt;/name&gt;
+        ///    &lt;email&gt;{{ site.contact }}&lt;/email&gt;
         ///  &lt;/author&gt;
         ///
         ///  {% for post in site.posts %}
         ///  &lt;entry&gt;
-        ///    &lt;id&gt;http://domain/{{ post.url }}&lt;/id&gt;
-        ///    &lt;link type=&quot;text/html&quot; rel=&quot; [rest of string was truncated]&quot;;.
+        ///     [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Atom {
             get {
@@ -108,7 +107,13 @@ namespace Pretzel.Logic.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to pretzel: 
-        ///    engine: liquid.
+        ///    engine: liquid
+        ///
+        ///# Site settings
+        ///author: # name of the author
+        ///title: # site title
+        ///url: # site url
+        ///contact: # mail of the author.
         /// </summary>
         internal static string Config {
             get {
@@ -195,11 +200,11 @@ namespace Pretzel.Logic.Properties {
         ///		&lt;div id=&quot;container&quot;&gt;
         ///			&lt;div id=&quot;side&quot;&gt;
         ///				&lt;a href=&quot;/&quot; id=&quot;home&quot; title=&quot;home&quot; alt=&quot;home&quot;&gt;&lt;img src=&quot;/img/logo.png&quot; alt=&quot;Site Name&quot; /&gt;&lt;/a&gt;
-        ///				&lt;div id=&quot;hometext&quot;&gt;&lt;a href=&quot;/&quot; &gt;Site Name&lt;/a&gt;&lt;/div&gt;
+        ///				&lt;div id=&quot;hometext&quot;&gt;&lt;a href=&quot;/&quot; &gt;{{ site.title }}&lt;/a&gt;&lt;/div&gt;
         ///				&lt;div class=&quot;section&quot;&gt;
         ///					&lt;ul&gt;
         ///						&lt;li&gt;&lt;a href=&quot;/about.html&quot;&gt;about&lt;/a&gt;&lt;/li&gt;
-        ///						&lt;li&gt;&lt;a href=&quot;/rss [rest of string was truncated]&quot;;.
+        ///						&lt;li&gt;&lt;a hre [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Layout {
             get {
@@ -236,17 +241,16 @@ namespace Pretzel.Logic.Properties {
         ///   Looks up a localized string similar to ---
         ///layout: nil
         ///---
-        ///&lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
         ///&lt;rss version=&quot;2.0&quot; xmlns:atom=&quot;http://www.w3.org/2005/Atom&quot;&gt;
         ///&lt;channel&gt;
-        ///    &lt;title&gt;Feed Name&lt;/title&gt;
-        ///    &lt;link&gt;http://domain/&lt;/link&gt;
-        ///    &lt;atom:link href=&quot;http://domain/rss.xml&quot; rel=&quot;self&quot; type=&quot;application/rss+xml&quot; /&gt;
-        ///    &lt;description&gt;&lt;/description&gt;
-        ///    &lt;language&gt;en-au&lt;/language&gt;
-        ///    &lt;pubDate&gt;{{ site.time | date: &quot;%a, %d %b %Y %H:%M:%S %z&quot; }}&lt;/pubDate&gt;
-        ///    &lt;lastBuildDate&gt;{{ site.time | date: &quot;%a, %d %b %Y %H:%M:%S %z&quot; }}&lt;/lastBuildDate&gt;
-        ///    {% for post i [rest of string was truncated]&quot;;.
+        ///    &lt;title&gt;{{ site.title }} | {{ site.author }}&lt;/title&gt;
+        ///    &lt;link&gt;{{ site.url }}&lt;/link&gt;
+        ///    &lt;atom:link href=&quot;{{ site.url }}/rss.xml&quot; rel=&quot;self&quot; type=&quot;application/rss+xml&quot; /&gt;
+        ///    &lt;description&gt;Personal blog of {{ site.author }}&lt;/description&gt;
+        ///    &lt;language&gt;en-us&lt;/language&gt;
+        ///    &lt;pubDate&gt;{{ site.time | date_to_rfc822 }}&lt;/pubDate&gt;
+        ///    &lt;lastBuildDate&gt;{{ site.time | date_to_r [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Rss {
             get {

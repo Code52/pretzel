@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.Composition;
+using System.Composition;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text.RegularExpressions;

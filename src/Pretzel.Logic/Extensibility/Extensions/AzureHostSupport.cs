@@ -1,6 +1,6 @@
-﻿using NDesk.Options;
+using NDesk.Options;
 using Pretzel.Logic.Extensions;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;

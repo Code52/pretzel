@@ -1,19 +1,19 @@
-﻿using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
 using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
 using System;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Pretzel.Logic.Extensibility;
 using System.Collections.Generic;
+using System.Composition;
 
 namespace Pretzel.Logic.Templating.Razor
 {
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Shared]
     [SiteEngineInfo(Engine = "razor")]
     public class RazorSiteEngine : JekyllEngineBase
     {
