@@ -14,43 +14,33 @@ using System.Reflection;
 
 namespace Pretzel
 {
-    [Export]
-    [Shared]
-    public class ProgramExportHelper
-    {
-        [Export]
-        public BaseParameters Parameters { get; set; }
-
-        [Export]
-        public IFileSystem FileSystem { get; set; } = new FileSystem();
-
-    }
-
-    [Export]
     internal class Program
     {
         [Import]
         public CommandCollection Commands { get; set; }
 
         [Export]
-        public ProgramExportHelper Helper { get; set; } = new ProgramExportHelper();
+        public IFileSystem FileSystem { get; set; } = new FileSystem();
+
+        [Export]
+        public BaseParameters Parameters { get; set; }
 
         private static void Main(string[] args)
         {
 
             var program = new Program();
-            var parameters = BaseParameters.Parse(args, program.Helper.FileSystem);
+            program.Parameters = BaseParameters.Parse(args, program.FileSystem);
 
-            InitializeTrace(parameters.Debug);
+            InitializeTrace(program.Parameters.Debug);
             Tracing.Info("starting pretzel...");
             Tracing.Debug("V{0}", Assembly.GetExecutingAssembly().GetName().Version);
 
-            using (program.Compose(parameters))
+            using (program.Compose())
             {
 
-                if (program.Helper.Parameters.Help || !args.Any())
+                if (program.Parameters.Help || !args.Any())
                 {
-                    program.ShowHelp(program.Helper.Parameters.Options);
+                    program.ShowHelp(program.Parameters.Options);
                     return;
                 }
 
@@ -76,14 +66,14 @@ namespace Pretzel
 
         private void Run()
         {
-            if (Commands[Helper.Parameters.CommandName] == null)
+            if (Commands[Parameters.CommandName] == null)
             {
-                Console.WriteLine(@"Can't find command ""{0}""", Helper.Parameters.CommandName);
-                Commands.WriteHelp(Helper.Parameters.Options);
+                Console.WriteLine(@"Can't find command ""{0}""", Parameters.CommandName);
+                Commands.WriteHelp(Parameters.Options);
                 return;
             }
 
-            Commands[Helper.Parameters.CommandName].Execute(Helper.Parameters.CommandArgs);
+            Commands[Parameters.CommandName].Execute(Parameters.CommandArgs);
             WaitForClose();
         }
 
@@ -101,12 +91,10 @@ namespace Pretzel
             }
         }
 
-        public IDisposable Compose(BaseParameters parameters)
+        public IDisposable Compose()
         {
             try
             {
-                Helper.Parameters = parameters;
-
                 var configuration = new ContainerConfiguration();
 
                 configuration
@@ -114,7 +102,7 @@ namespace Pretzel
                     .WithAssembly(typeof(Logic.SanityCheck).Assembly)
                     ;
 
-                LoadPlugins(configuration, parameters);
+                LoadPlugins(configuration, Parameters);
 
                 var container = configuration.CreateContainer();
 

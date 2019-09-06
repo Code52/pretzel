@@ -20,13 +20,13 @@ namespace Pretzel.Commands
 #pragma warning disable 649
 
         [Import]
-        public IFileSystem fileSystem { get; set; }
+        public IFileSystem FileSystem { get; set; }
 
         [Import]
-        public CommandParameters parameters { get; set; }
+        public CommandParameters Parameters { get; set; }
 
         [ImportMany]
-        public IEnumerable<IAdditionalIngredient> additionalIngredients { get; set; }
+        public IEnumerable<IAdditionalIngredient> AdditionalIngredients { get; set; }
 
 #pragma warning restore 649
 
@@ -34,11 +34,11 @@ namespace Pretzel.Commands
         {
             Tracing.Info("create - configure a new site");
 
-            parameters.Parse(arguments);
+            Parameters.Parse(arguments);
 
-            var engine = String.IsNullOrWhiteSpace(parameters.Template)
+            var engine = String.IsNullOrWhiteSpace(Parameters.Template)
                              ? TemplateEngines.First()
-                             : parameters.Template;
+                             : Parameters.Template;
 
             if (!TemplateEngines.Any(e => String.Equals(e, engine, StringComparison.InvariantCultureIgnoreCase)))
             {
@@ -48,13 +48,13 @@ namespace Pretzel.Commands
 
             Tracing.Info("Using {0} Engine", engine);
 
-            var recipe = new Recipe(fileSystem, engine, parameters.PathProvider.Path, additionalIngredients, parameters.WithProject, parameters.Wiki, parameters.IncludeDrafts);
+            var recipe = new Recipe(FileSystem, engine, Parameters.PathProvider.Path, AdditionalIngredients, Parameters.WithProject, Parameters.Wiki, Parameters.IncludeDrafts);
             recipe.Create();
         }
 
         public void WriteHelp(TextWriter writer)
         {
-            parameters.WriteOptions(writer, "-t", "-d", "withproject", "wiki", "-s");
+            Parameters.WriteOptions(writer, "-t", "-d", "withproject", "wiki", "-s");
         }
     }
 }

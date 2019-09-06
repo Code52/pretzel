@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Pretzel": {
-      "commandName": "Project",
-      "workingDirectory": "C:\\tmp\\foo"
+      "commandName": "Project"
     }
   }
 }

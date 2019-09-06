@@ -15,10 +15,10 @@ namespace Pretzel.Commands
 #pragma warning disable 649
 
         [Import]
-        public IFileSystem fileSystem { get; set; }
+        public IFileSystem FileSystem { get; set; }
 
         [Import]
-        public CommandParameters parameters { get; set; }
+        public CommandParameters Parameters { get; set; }
 
 #pragma warning restore 649
 
@@ -26,16 +26,16 @@ namespace Pretzel.Commands
         {
             Tracing.Info("ingredient - create a new post");
 
-            parameters.Parse(arguments);
+            Parameters.Parse(arguments);
 
-            var ingredient = new Ingredient(fileSystem, parameters.NewPostTitle, parameters.PathProvider.Path, parameters.IncludeDrafts);
+            var ingredient = new Ingredient(FileSystem, Parameters.NewPostTitle, Parameters.PathProvider.Path, Parameters.IncludeDrafts);
             ingredient.Create();
         }
 
         public void WriteHelp(TextWriter writer)
         {
             writer.Write("   Create a new post\r\n");
-            parameters.WriteOptions(writer, "newposttitle", "drafts", "-s");
+            Parameters.WriteOptions(writer, "newposttitle", "drafts", "-s");
         }
     }
 }

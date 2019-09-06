@@ -22,16 +22,16 @@ namespace Pretzel.Commands
 #pragma warning disable 649
 
         [Import]
-        public TemplateEngineCollection templateEngines { get; set; }
+        public TemplateEngineCollection TemplateEngines { get; set; }
 
         [Import]
         public SiteContextGenerator Generator { get; set; }
 
         [Import]
-        public CommandParameters parameters { get; set; }
+        public CommandParameters Parameters { get; set; }
 
         [ImportMany]
-        public IEnumerable<ITransform> transforms { get; set; }
+        public IEnumerable<ITransform> Transforms { get; set; }
 
         [Import]
         public IFileSystem FileSystem { get; set; }
@@ -45,40 +45,40 @@ namespace Pretzel.Commands
         {
             Tracing.Info("taste - testing a site locally");
 
-            parameters.Parse(arguments);
+            Parameters.Parse(arguments);
 
-            var context = Generator.BuildContext(parameters.PathProvider.Path, parameters.DestinationPath, parameters.IncludeDrafts);
+            var context = Generator.BuildContext(Parameters.PathProvider.Path, Parameters.DestinationPath, Parameters.IncludeDrafts);
 
-            if (parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
+            if (Parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
                 FileSystem.Directory.Delete(context.OutputFolder, true);
             }
 
-            if (string.IsNullOrWhiteSpace(parameters.Template))
+            if (string.IsNullOrWhiteSpace(Parameters.Template))
             {
-                parameters.DetectFromDirectory(templateEngines.Engines, context);
+                Parameters.DetectFromDirectory(TemplateEngines.Engines, context);
             }
 
-            engine = templateEngines[parameters.Template];
+            engine = TemplateEngines[Parameters.Template];
 
             if (engine == null)
             {
-                Tracing.Info("template engine {0} not found - (engines: {1})", parameters.Template,
-                                           string.Join(", ", templateEngines.Engines.Keys));
+                Tracing.Info("template engine {0} not found - (engines: {1})", Parameters.Template,
+                                           string.Join(", ", TemplateEngines.Engines.Keys));
 
                 return;
             }
 
             engine.Initialize();
             engine.Process(context, skipFileOnError: true);
-            foreach (var t in transforms)
+            foreach (var t in Transforms)
                 t.Transform(context);
 
-            using (var watcher = new SimpleFileSystemWatcher(parameters.DestinationPath))
+            using (var watcher = new SimpleFileSystemWatcher(Parameters.DestinationPath))
             {
-                watcher.OnChange(parameters.PathProvider.Path, WatcherOnChanged);
+                watcher.OnChange(Parameters.PathProvider.Path, WatcherOnChanged);
 
-                using (var w = new WebHost(parameters.DestinationPath, new FileContentProvider(), Convert.ToInt32(parameters.Port)))
+                using (var w = new WebHost(Parameters.DestinationPath, new FileContentProvider(), Convert.ToInt32(Parameters.Port)))
                 {
                     try
                     {
@@ -86,12 +86,12 @@ namespace Pretzel.Commands
                     }
                     catch (System.Net.Sockets.SocketException)
                     {
-                        Tracing.Info("Port {0} is already in use", parameters.Port);
+                        Tracing.Info("Port {0} is already in use", Parameters.Port);
                         return;
                     }
 
-                    var url = string.Format("http://localhost:{0}/", parameters.Port);
-                    if (parameters.LaunchBrowser)
+                    var url = string.Format("http://localhost:{0}/", Parameters.Port);
+                    if (Parameters.LaunchBrowser)
                     {
                         Tracing.Info("Opening {0} in default browser...", url);
                         try
@@ -122,9 +122,9 @@ namespace Pretzel.Commands
 
         private void WatcherOnChanged(string file)
         {
-            if(file.StartsWith(parameters.PathProvider.Path))
+            if(file.StartsWith(Parameters.PathProvider.Path))
             {
-                var relativeFile = file.Substring(parameters.PathProvider.Path.Length).ToRelativeFile();
+                var relativeFile = file.Substring(Parameters.PathProvider.Path.Length).ToRelativeFile();
                 if (Generator.IsExcludedPath(relativeFile))
                 {
                     return;
@@ -135,19 +135,19 @@ namespace Pretzel.Commands
 
             ((Configuration)Configuration).ReadFromFile();
 
-            var context = Generator.BuildContext(parameters.PathProvider.Path, parameters.DestinationPath, parameters.IncludeDrafts);
-            if (parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
+            var context = Generator.BuildContext(Parameters.PathProvider.Path, Parameters.DestinationPath, Parameters.IncludeDrafts);
+            if (Parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
                 FileSystem.Directory.Delete(context.OutputFolder, true);
             }
             engine.Process(context, true);
-            foreach (var t in transforms)
+            foreach (var t in Transforms)
                 t.Transform(context);
         }
 
         public void WriteHelp(TextWriter writer)
         {
-            parameters.WriteOptions(writer, "-t", "-d", "-p", "--nobrowser", "-cleantarget", "-s", "-destination");
+            Parameters.WriteOptions(writer, "-t", "-d", "-p", "--nobrowser", "-cleantarget", "-s", "-destination");
         }
     }
 }

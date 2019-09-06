@@ -17,30 +17,30 @@ namespace Pretzel.Commands
         readonly static List<string> Importers = new List<string>(new[] { "wordpress", "blogger" });
 
 #pragma warning disable 649
-        [Import] public IFileSystem fileSystem { get; set; }
-        [Import] public CommandParameters parameters { get; set; }
+        [Import] public IFileSystem FileSystem { get; set; }
+        [Import] public CommandParameters Parameters { get; set; }
 #pragma warning restore 649
 
         public void Execute(IEnumerable<string> arguments)
         {
             Tracing.Info("import - import posts from external source");
 
-            parameters.Parse(arguments);
+            Parameters.Parse(arguments);
 
-            if (!Importers.Any(e => String.Equals(e, parameters.ImportType, StringComparison.InvariantCultureIgnoreCase)))
+            if (!Importers.Any(e => String.Equals(e, Parameters.ImportType, StringComparison.InvariantCultureIgnoreCase)))
             {
-                Tracing.Info("Requested import type not found: {0}", parameters.ImportType);
+                Tracing.Info("Requested import type not found: {0}", Parameters.ImportType);
                 return;
             }
 
-            if (string.Equals("wordpress", parameters.ImportType, StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals("wordpress", Parameters.ImportType, StringComparison.InvariantCultureIgnoreCase))
             {
-                var wordpressImporter = new WordpressImport(fileSystem, parameters.PathProvider.Path, parameters.ImportPath);
+                var wordpressImporter = new WordpressImport(FileSystem, Parameters.PathProvider.Path, Parameters.ImportPath);
                 wordpressImporter.Import();
             }
-            else if (string.Equals("blogger", parameters.ImportType, StringComparison.InvariantCultureIgnoreCase))
+            else if (string.Equals("blogger", Parameters.ImportType, StringComparison.InvariantCultureIgnoreCase))
             {
-                var bloggerImporter = new BloggerImport(fileSystem, parameters.PathProvider.Path, parameters.ImportPath);
+                var bloggerImporter = new BloggerImport(FileSystem, Parameters.PathProvider.Path, Parameters.ImportPath);
                 bloggerImporter.Import();
             }
 
@@ -49,7 +49,7 @@ namespace Pretzel.Commands
 
         public void WriteHelp(TextWriter writer)
         {
-            parameters.WriteOptions(writer, "-i", "-f");
+            Parameters.WriteOptions(writer, "-i", "-f");
         }
     }
 }
