@@ -48,7 +48,7 @@ namespace Pretzel.Commands
 
             Tracing.Info("Using {0} Engine", engine);
 
-            var recipe = new Recipe(fileSystem, engine, parameters.Path, additionalIngredients, parameters.WithProject, parameters.Wiki, parameters.IncludeDrafts);
+            var recipe = new Recipe(fileSystem, engine, parameters.PathProvider.Path, additionalIngredients, parameters.WithProject, parameters.Wiki, parameters.IncludeDrafts);
             recipe.Create();
         }
 

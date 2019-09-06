@@ -35,12 +35,12 @@ namespace Pretzel.Commands
 
             if (string.Equals("wordpress", parameters.ImportType, StringComparison.InvariantCultureIgnoreCase))
             {
-                var wordpressImporter = new WordpressImport(fileSystem, parameters.Path, parameters.ImportPath);
+                var wordpressImporter = new WordpressImport(fileSystem, parameters.PathProvider.Path, parameters.ImportPath);
                 wordpressImporter.Import();
             }
             else if (string.Equals("blogger", parameters.ImportType, StringComparison.InvariantCultureIgnoreCase))
             {
-                var bloggerImporter = new BloggerImport(fileSystem, parameters.Path, parameters.ImportPath);
+                var bloggerImporter = new BloggerImport(fileSystem, parameters.PathProvider.Path, parameters.ImportPath);
                 bloggerImporter.Import();
             }
 

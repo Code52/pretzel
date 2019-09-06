@@ -28,7 +28,7 @@ namespace Pretzel.Commands
 
             parameters.Parse(arguments);
 
-            var ingredient = new Ingredient(fileSystem, parameters.NewPostTitle, parameters.Path, parameters.IncludeDrafts);
+            var ingredient = new Ingredient(fileSystem, parameters.NewPostTitle, parameters.PathProvider.Path, parameters.IncludeDrafts);
             ingredient.Create();
         }
 

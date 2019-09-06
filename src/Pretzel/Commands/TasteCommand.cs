@@ -47,7 +47,7 @@ namespace Pretzel.Commands
 
             parameters.Parse(arguments);
 
-            var context = Generator.BuildContext(parameters.Path, parameters.DestinationPath, parameters.IncludeDrafts);
+            var context = Generator.BuildContext(parameters.PathProvider.Path, parameters.DestinationPath, parameters.IncludeDrafts);
 
             if (parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
@@ -76,7 +76,7 @@ namespace Pretzel.Commands
 
             using (var watcher = new SimpleFileSystemWatcher(parameters.DestinationPath))
             {
-                watcher.OnChange(parameters.Path, WatcherOnChanged);
+                watcher.OnChange(parameters.PathProvider.Path, WatcherOnChanged);
 
                 using (var w = new WebHost(parameters.DestinationPath, new FileContentProvider(), Convert.ToInt32(parameters.Port)))
                 {
@@ -122,9 +122,9 @@ namespace Pretzel.Commands
 
         private void WatcherOnChanged(string file)
         {
-            if(file.StartsWith(parameters.Path))
+            if(file.StartsWith(parameters.PathProvider.Path))
             {
-                var relativeFile = file.Substring(parameters.Path.Length).ToRelativeFile();
+                var relativeFile = file.Substring(parameters.PathProvider.Path.Length).ToRelativeFile();
                 if (Generator.IsExcludedPath(relativeFile))
                 {
                     return;
@@ -135,7 +135,7 @@ namespace Pretzel.Commands
 
             ((Configuration)Configuration).ReadFromFile();
 
-            var context = Generator.BuildContext(parameters.Path, parameters.DestinationPath, parameters.IncludeDrafts);
+            var context = Generator.BuildContext(parameters.PathProvider.Path, parameters.DestinationPath, parameters.IncludeDrafts);
             if (parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
                 FileSystem.Directory.Delete(context.OutputFolder, true);

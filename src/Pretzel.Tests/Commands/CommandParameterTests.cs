@@ -1,4 +1,4 @@
-﻿using NDesk.Options;
+using NDesk.Options;
 using NSubstitute;
 using Pretzel.Logic;
 using Pretzel.Logic.Commands;
@@ -29,7 +29,7 @@ namespace Pretzel.Tests
 
         public CommandParameterTests()
         {
-            subject = new CommandParameters(Enumerable.Empty<IHaveCommandLineArgs>(), FileSystem) { Path = ExpectedPath };
+            subject = new CommandParameters(Enumerable.Empty<IHaveCommandLineArgs>(), FileSystem) { PathProvider = new SourcePathProvider(ExpectedPath) };
         }
 
         [Fact]
@@ -286,7 +286,7 @@ namespace Pretzel.Tests
             Assert.True(subject.WithProject);
             Assert.True(subject.Wiki);
             Assert.True(subject.CleanTarget);
-            Assert.Equal(FileSystem.Path.Combine(subject.Path, "_site"), subject.DestinationPath);
+            Assert.Equal(FileSystem.Path.Combine(subject.PathProvider.Path, "_site"), subject.DestinationPath);
         }
 
         [Fact]
@@ -305,7 +305,7 @@ namespace Pretzel.Tests
             Assert.False(subject.WithProject);
             Assert.False(subject.Wiki);
             Assert.False(subject.CleanTarget);
-            Assert.Equal(FileSystem.Path.Combine(subject.Path, "_site"), subject.DestinationPath);
+            Assert.Equal(FileSystem.Path.Combine(subject.PathProvider.Path, "_site"), subject.DestinationPath);
         }
 
         [Fact]
@@ -320,7 +320,7 @@ namespace Pretzel.Tests
                     options.Add<string>("newOption=", "description", v => NewOption = v);
                 });
 
-            var subject = new CommandParameters(new List<IHaveCommandLineArgs> { extension }, new MockFileSystem()) { Path = ExpectedPath };
+            var subject = new CommandParameters(new List<IHaveCommandLineArgs> { extension }, new MockFileSystem()) { PathProvider = new SourcePathProvider(ExpectedPath) };
             var args = new List<string> { "-newOption=test" };
 
             subject.Parse(args);
@@ -442,7 +442,7 @@ namespace Pretzel.Tests
         {
             var args = new List<string>();
             subject.Parse(args);
-            Assert.Equal(FileSystem.Path.Combine(subject.Path, "_site"), subject.DestinationPath);
+            Assert.Equal(FileSystem.Path.Combine(subject.PathProvider.Path, "_site"), subject.DestinationPath);
         }
 
         [Fact]

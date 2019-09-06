@@ -1,4 +1,4 @@
-﻿using Pretzel.Logic.Commands;
+using Pretzel.Logic.Commands;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
@@ -48,42 +48,42 @@ namespace Pretzel.Tests
         public void Parse_WhenNoParametersSet_MapsPathToCurrentDirectory()
         {
             var subject = GetBaseParameter(new[] { "bake" });
-            Assert.Equal(FileSystem.Directory.GetCurrentDirectory(), subject.Path);
+            Assert.Equal(FileSystem.Directory.GetCurrentDirectory(), subject.PathProvider.Path);
         }
 
         [Fact]
         public void Parse_WhenOneParameterSet_MapsToPath()
         {
             var subject = GetBaseParameter(new[] { "bake", ExpectedPath });
-            Assert.Equal(ExpectedPath, subject.Path);
+            Assert.Equal(ExpectedPath, subject.PathProvider.Path);
         }
 
         [Fact]
         public void Parse_WhenSpecifyingPathUsingShortParameter_MapsToPath()
         {
             var subject = GetBaseParameter(new[] { "bake", "--d", ExpectedPath });
-            Assert.Equal(ExpectedPath, subject.Path);
+            Assert.Equal(ExpectedPath, subject.PathProvider.Path);
         }
 
         [Fact]
         public void Parse_WhenSpecifyingPathUsingFullParameter_MapsToPath()
         {
             var subject = GetBaseParameter(new[] { "bake", "--directory", ExpectedPath });
-            Assert.Equal(ExpectedPath, subject.Path);
+            Assert.Equal(ExpectedPath, subject.PathProvider.Path);
         }
 
         [Fact]
         public void Parse_WhenSpecifyingPathUsingShortParameterSingleDash_MapsToPath()
         {
             var subject = GetBaseParameter(new[] { "bake", "-d", ExpectedPath });
-            Assert.Equal(ExpectedPath, subject.Path);
+            Assert.Equal(ExpectedPath, subject.PathProvider.Path);
         }
 
         [Fact]
         public void Parse_WhenSpecifyingPathUsingFullParameterSingleDash_MapsToPath()
         {
             var subject = GetBaseParameter(new[] { "bake", "-directory", ExpectedPath });
-            Assert.Equal(ExpectedPath, subject.Path);
+            Assert.Equal(ExpectedPath, subject.PathProvider.Path);
         }
 
         [Fact]
@@ -91,7 +91,7 @@ namespace Pretzel.Tests
         {
             var subject = GetBaseParameter(new[] { "bake", @"-directory=c:\mysite", "-safe", "-help", "-debug" });
 
-            Assert.Equal(@"c:\mysite", subject.Path);
+            Assert.Equal(@"c:\mysite", subject.PathProvider.Path);
             Assert.True(subject.Safe);
             Assert.True(subject.Help);
             Assert.True(subject.Debug);
@@ -106,7 +106,7 @@ namespace Pretzel.Tests
 
             var subject = GetBaseParameter(new[] { "bake" });
 
-            Assert.Equal(FileSystem.Directory.GetCurrentDirectory(), subject.Path);
+            Assert.Equal(FileSystem.Directory.GetCurrentDirectory(), subject.PathProvider.Path);
             Assert.False(subject.Safe);
             Assert.False(subject.Help);
             Assert.False(subject.Debug); Assert.Equal("bake", subject.CommandName);
@@ -118,35 +118,35 @@ namespace Pretzel.Tests
         {
             var subject = GetBaseParameter(new[] { "bake", "mySite" });
 
-            Assert.Equal(FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), "mySite"), subject.Path);
+            Assert.Equal(FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), "mySite"), subject.PathProvider.Path);
         }
 
         [Fact]
         public void Parse_WhenSpecifyingSourcePathUsingShortParameter_MapsToPath()
         {
             var subject = GetBaseParameter(new[] { "bake", "--s", ExpectedPath });
-            Assert.Equal(ExpectedPath, subject.Path);
+            Assert.Equal(ExpectedPath, subject.PathProvider.Path);
         }
 
         [Fact]
         public void Parse_WhenSpecifyingSourcePathUsingFullParameter_MapsToPath()
         {
             var subject = GetBaseParameter(new[] { "bake", "--source", ExpectedPath });
-            Assert.Equal(ExpectedPath, subject.Path);
+            Assert.Equal(ExpectedPath, subject.PathProvider.Path);
         }
 
         [Fact]
         public void Parse_WhenSpecifyingSourcePathUsingShortParameterSingleDash_MapsToPath()
         {
             var subject = GetBaseParameter(new[] { "bake", "-s", ExpectedPath });
-            Assert.Equal(ExpectedPath, subject.Path);
+            Assert.Equal(ExpectedPath, subject.PathProvider.Path);
         }
 
         [Fact]
         public void Parse_WhenSpecifyingSourcePathUsingFullParameterSingleDash_MapsToPath()
         {
             var subject = GetBaseParameter(new[] { "bake", "-source", ExpectedPath });
-            Assert.Equal(ExpectedPath, subject.Path);
+            Assert.Equal(ExpectedPath, subject.PathProvider.Path);
         }
 
         [Fact]

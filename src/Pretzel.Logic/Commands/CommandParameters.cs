@@ -46,8 +46,8 @@ namespace Pretzel.Logic.Commands
             }
         }
 
-        [Import("SourcePath")]
-        public string Path { get; internal set; }
+        [Import]
+        public SourcePathProvider PathProvider { get; set; }
 
         public string Template { get; private set; }
 
@@ -92,7 +92,7 @@ namespace Pretzel.Logic.Commands
             }
             if (!fileSystem.Path.IsPathRooted(DestinationPath))
             {
-                DestinationPath = fileSystem.Path.Combine(Path, DestinationPath);
+                DestinationPath = fileSystem.Path.Combine(PathProvider.Path, DestinationPath);
             }
             if (string.IsNullOrEmpty(NewPostTitle))
             {

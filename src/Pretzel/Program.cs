@@ -20,7 +20,7 @@ namespace Pretzel
     {
         [Export]
         public BaseParameters Parameters { get; set; }
-        
+
         [Export]
         public IFileSystem FileSystem { get; set; } = new FileSystem();
 
@@ -45,15 +45,17 @@ namespace Pretzel
             Tracing.Info("starting pretzel...");
             Tracing.Debug("V{0}", Assembly.GetExecutingAssembly().GetName().Version);
 
-            program.Compose(parameters);
-
-            if (program.Helper.Parameters.Help || !args.Any())
+            using (program.Compose(parameters))
             {
-                program.ShowHelp(program.Helper.Parameters.Options);
-                return;
-            }
 
-            program.Run();
+                if (program.Helper.Parameters.Help || !args.Any())
+                {
+                    program.ShowHelp(program.Helper.Parameters.Options);
+                    return;
+                }
+
+                program.Run();
+            }
         }
 
         private static void InitializeTrace(bool isDebugTraceEnabled)
@@ -99,7 +101,7 @@ namespace Pretzel
             }
         }
 
-        public void Compose(BaseParameters parameters)
+        public IDisposable Compose(BaseParameters parameters)
         {
             try
             {
@@ -114,12 +116,11 @@ namespace Pretzel
 
                 LoadPlugins(configuration, parameters);
 
-                using (var container = configuration.CreateContainer())
-                {
-                    var c = container.GetExport<IConfiguration>();
+                var container = configuration.CreateContainer();
 
-                    container.SatisfyImports(this);
-                }
+                container.SatisfyImports(this);
+
+                return container;
             }
             catch (ReflectionTypeLoadException ex)
             {
@@ -134,7 +135,7 @@ namespace Pretzel
         {
             if (!parameters.Safe)
             {
-                var pluginsPath = Path.Combine(parameters.Path, "_plugins");
+                var pluginsPath = Path.Combine(parameters.PathProvider.Path, "_plugins");
 
                 if (Directory.Exists(pluginsPath))
                 {

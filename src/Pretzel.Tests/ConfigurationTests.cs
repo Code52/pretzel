@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.IO.Abstractions.TestingHelpers;
 using Pretzel.Logic;
+using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using Xunit;
 
@@ -40,7 +41,7 @@ defaults:
             var fileSystem = new MockFileSystem();
             fileSystem.AddFile(@"C:\WebSite\_config.yml", new MockFileData(SampleConfig));
 
-            _sut = new Configuration(fileSystem, @"C:\WebSite");
+            _sut = new Configuration(fileSystem, new SourcePathProvider(@"C:\WebSite"));
             _sut.ReadFromFile();
         }
 

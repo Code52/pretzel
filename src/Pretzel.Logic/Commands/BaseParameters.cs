@@ -7,6 +7,16 @@ using System.Linq;
 
 namespace Pretzel.Logic.Commands
 {
+    public class SourcePathProvider
+    {
+        public string Path { get; }
+
+        public SourcePathProvider(string path)
+        {
+            Path = path;
+        }
+    }
+
     [Export]
     public sealed class BaseParameters
     {
@@ -20,8 +30,8 @@ namespace Pretzel.Logic.Commands
 
         public bool Safe { get; private set; }
 
-        [Export("SourcePath")]
-        public string Path { get; private set; }
+        [Export]
+        public SourcePathProvider PathProvider { get; private set; }
 
         public IFileSystem FileSystem { get; private set; }
 
@@ -39,11 +49,11 @@ namespace Pretzel.Logic.Commands
         {
             Options = new OptionSet
                 {
-                    {"help", "Display help mode", p => Help = true},
-                    {"debug", "Enable debugging", p => Debug = true},
+                    { "help", "Display help mode", p => Help = true },
+                    { "debug", "Enable debugging", p => Debug = true },
                     { "safe", "Disable custom plugins", v => Safe = true },
-                    { "d|directory=", "[Obsolete, use --source instead] The path to site directory", p => Path = p },
-                    { "s|source=", "The path to the source site (default current directory)", p => Path = p}
+                    { "d|directory=", "[Obsolete, use --source instead] The path to site directory", p => PathProvider = new SourcePathProvider(p) },
+                    { "s|source=", "The path to the source site (default current directory)", p => PathProvider = new SourcePathProvider(p) }
                 };
 
             FileSystem = fileSystem;
@@ -65,11 +75,13 @@ namespace Pretzel.Logic.Commands
             // take the first argument after the command
             if (firstArgument != null && !firstArgument.StartsWith("-") && !firstArgument.StartsWith("/"))
             {
-                Path = FileSystem.Path.IsPathRooted(firstArgument)
+                PathProvider = new SourcePathProvider(FileSystem.Path.IsPathRooted(firstArgument)
                     ? firstArgument
-                    : FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), firstArgument);
+                    : FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), firstArgument));
             }
-            Path = string.IsNullOrWhiteSpace(Path) ? FileSystem.Directory.GetCurrentDirectory() : FileSystem.Path.GetFullPath(Path);
+            PathProvider = new SourcePathProvider((PathProvider == null || string.IsNullOrWhiteSpace(PathProvider.Path))
+                ? FileSystem.Directory.GetCurrentDirectory()
+                : FileSystem.Path.GetFullPath(PathProvider.Path));
         }
     }
 }
