@@ -1,12 +1,12 @@
-﻿using NDesk.Options;
+using NDesk.Options;
 using Pretzel.Commands;
 using Pretzel.Logic;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using System;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Primitives;
+using System.Composition;
+using System.Composition.Convention;
+using System.Composition.Hosting;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -14,30 +14,46 @@ using System.Reflection;
 
 namespace Pretzel
 {
+    [Export]
+    [Shared]
+    public class ProgramExportHelper
+    {
+        [Export]
+        public BaseParameters Parameters { get; set; }
+        
+        [Export]
+        public IFileSystem FileSystem { get; set; } = new FileSystem();
+
+    }
+
+    [Export]
     internal class Program
     {
         [Import]
-        private CommandCollection Commands { get; set; }
+        public CommandCollection Commands { get; set; }
+
+        [Export]
+        public ProgramExportHelper Helper { get; set; } = new ProgramExportHelper();
 
         private static void Main(string[] args)
         {
-            var parameters = BaseParameters.Parse(args, new FileSystem());
-
-            InitializeTrace(parameters.Debug);
 
             var program = new Program();
+            var parameters = BaseParameters.Parse(args, program.Helper.FileSystem);
+
+            InitializeTrace(parameters.Debug);
             Tracing.Info("starting pretzel...");
             Tracing.Debug("V{0}", Assembly.GetExecutingAssembly().GetName().Version);
 
             program.Compose(parameters);
 
-            if (parameters.Help || !args.Any())
+            if (program.Helper.Parameters.Help || !args.Any())
             {
-                program.ShowHelp(parameters.Options);
+                program.ShowHelp(program.Helper.Parameters.Options);
                 return;
             }
 
-            program.Run(parameters);
+            program.Run();
         }
 
         private static void InitializeTrace(bool isDebugTraceEnabled)
@@ -56,16 +72,16 @@ namespace Pretzel
             WaitForClose();
         }
 
-        private void Run(BaseParameters baseParameters)
+        private void Run()
         {
-            if (Commands[baseParameters.CommandName] == null)
+            if (Commands[Helper.Parameters.CommandName] == null)
             {
-                Console.WriteLine(@"Can't find command ""{0}""", baseParameters.CommandName);
-                Commands.WriteHelp(baseParameters.Options);
+                Console.WriteLine(@"Can't find command ""{0}""", Helper.Parameters.CommandName);
+                Commands.WriteHelp(Helper.Parameters.Options);
                 return;
             }
 
-            Commands[baseParameters.CommandName].Execute(baseParameters.CommandArgs);
+            Commands[Helper.Parameters.CommandName].Execute(Helper.Parameters.CommandArgs);
             WaitForClose();
         }
 
@@ -87,22 +103,23 @@ namespace Pretzel
         {
             try
             {
-                var catalog = new AggregateCatalog(new AssemblyCatalog(Assembly.GetExecutingAssembly()),
-                                                   new AssemblyCatalog(typeof(Logic.SanityCheck).Assembly));
+                Helper.Parameters = parameters;
 
-                LoadPlugins(catalog, parameters);
+                var configuration = new ContainerConfiguration();
 
-                var container = new CompositionContainer(catalog);
+                configuration
+                    .WithAssembly(Assembly.GetExecutingAssembly())
+                    .WithAssembly(typeof(Logic.SanityCheck).Assembly)
+                    ;
 
-                var batch = new CompositionBatch();
-                batch.AddPart(this);
-                batch.AddPart(parameters);
+                LoadPlugins(configuration, parameters);
 
-                var config = new Configuration(parameters.FileSystem, parameters.Path);
-                config.ReadFromFile();
-                batch.AddExportedValue((IConfiguration)config);
+                using (var container = configuration.CreateContainer())
+                {
+                    var c = container.GetExport<IConfiguration>();
 
-                container.Compose(batch);
+                    container.SatisfyImports(this);
+                }
             }
             catch (ReflectionTypeLoadException ex)
             {
@@ -113,7 +130,7 @@ namespace Pretzel
             }
         }
 
-        private void LoadPlugins(AggregateCatalog catalog, BaseParameters parameters)
+        private void LoadPlugins(ContainerConfiguration configuration, BaseParameters parameters)
         {
             if (!parameters.Safe)
             {
@@ -121,55 +138,73 @@ namespace Pretzel
 
                 if (Directory.Exists(pluginsPath))
                 {
-                    catalog.Catalogs.Add(new DirectoryCatalog(pluginsPath));
-                    AddScriptCs(catalog, pluginsPath);
+                    var files = Directory.EnumerateFiles(pluginsPath, "*.dll", SearchOption.AllDirectories);
+                    foreach (var file in files)
+                    {
+                        try
+                        {
+                            var asm = Assembly.LoadFrom(file);
+                            configuration.WithAssembly(asm);
+                        }
+                        catch (ReflectionTypeLoadException)
+                        {
+                        }
+                        catch (BadImageFormatException)
+                        {
+                        }
+                    }
+
+                    AddScriptCs(configuration, pluginsPath);
                 }
             }
         }
 
-        private void AddScriptCs(AggregateCatalog mainCatalog, string pluginsPath)
+        private void AddScriptCs(ContainerConfiguration configuration, string pluginsPath)
         {
-            var pretzelScriptCsPath = Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).DirectoryName, "Pretzel.ScriptCs.dll");
-            if (File.Exists(pretzelScriptCsPath))
-            {
-                var pretzelScriptcsAssembly = Assembly.LoadFile(pretzelScriptCsPath);
-                if (pretzelScriptcsAssembly != null)
-                {
-                    var factoryType = pretzelScriptcsAssembly.GetType("Pretzel.ScriptCs.ScriptCsCatalogFactory");
-                    if (factoryType != null)
-                    {
-                        var scriptCsCatalogMethod = factoryType.GetMethod("CreateScriptCsCatalog");
-                        if (scriptCsCatalogMethod != null)
-                        {
-                            var catalog = (ComposablePartCatalog)scriptCsCatalogMethod.Invoke(null, new object[]
-                                {
-                                    pluginsPath,
-                                    new[]
-                                    {
-                                        typeof(DotLiquid.Tag),
-                                        typeof(Logic.Extensibility.ITag),
-                                        typeof(Logic.Templating.Context.SiteContext),
-                                        typeof(IFileSystem),
-                                        typeof(IConfiguration),
-                                    }
-                                });
-                            mainCatalog.Catalogs.Add(catalog);
-                        }
-                        else
-                        {
-                            Tracing.Debug("Assembly 'Pretzel.ScriptCs.dll' detected and loaded, type 'Pretzel.ScriptCs.ScriptCsCatalogFactory' found but method 'CreateScriptCsCatalog' not found.");
-                        }
-                    }
-                    else
-                    {
-                        Tracing.Debug("Assembly 'Pretzel.ScriptCs.dll' detected and loaded but type 'Pretzel.ScriptCs.ScriptCsCatalogFactory' not found.");
-                    }
-                }
-                else
-                {
-                    Tracing.Debug("Assembly 'Pretzel.ScriptCs.dll' detected but not loaded.");
-                }
-            }
+            //TODO: Make ScriptCS Working
+            return;
+
+            //var pretzelScriptCsPath = Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).DirectoryName, "Pretzel.ScriptCs.dll");
+            //if (File.Exists(pretzelScriptCsPath))
+            //{
+            //    var pretzelScriptcsAssembly = Assembly.LoadFile(pretzelScriptCsPath);
+            //    if (pretzelScriptcsAssembly != null)
+            //    {
+            //        var factoryType = pretzelScriptcsAssembly.GetType("Pretzel.ScriptCs.ScriptCsCatalogFactory");
+            //        if (factoryType != null)
+            //        {
+            //            var scriptCsCatalogMethod = factoryType.GetMethod("CreateScriptCsCatalog");
+            //            if (scriptCsCatalogMethod != null)
+            //            {
+            //                var catalog = (ComposablePartCatalog)scriptCsCatalogMethod.Invoke(null, new object[]
+            //                    {
+            //                        pluginsPath,
+            //                        new[]
+            //                        {
+            //                            typeof(DotLiquid.Tag),
+            //                            typeof(Logic.Extensibility.ITag),
+            //                            typeof(Logic.Templating.Context.SiteContext),
+            //                            typeof(IFileSystem),
+            //                            typeof(IConfiguration),
+            //                        }
+            //                    });
+            //                mainCatalog.Catalogs.Add(catalog);
+            //            }
+            //            else
+            //            {
+            //                Tracing.Debug("Assembly 'Pretzel.ScriptCs.dll' detected and loaded, type 'Pretzel.ScriptCs.ScriptCsCatalogFactory' found but method 'CreateScriptCsCatalog' not found.");
+            //            }
+            //        }
+            //        else
+            //        {
+            //            Tracing.Debug("Assembly 'Pretzel.ScriptCs.dll' detected and loaded but type 'Pretzel.ScriptCs.ScriptCsCatalogFactory' not found.");
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Tracing.Debug("Assembly 'Pretzel.ScriptCs.dll' detected but not loaded.");
+            //    }
+            //}
         }
     }
 }

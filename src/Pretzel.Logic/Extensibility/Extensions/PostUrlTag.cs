@@ -1,9 +1,10 @@
-﻿using DotLiquid;
+using DotLiquid;
 using System.Collections.Generic;
 using System.IO;
 using Pretzel.Logic.Templating.Context;
 using System.Linq;
 using Pretzel.Logic.Exceptions;
+using System.Composition;
 
 namespace Pretzel.Logic.Extensibility.Extensions
 {
@@ -54,7 +55,8 @@ namespace Pretzel.Logic.Extensibility.Extensions
             result.Write(PostUrl(_postFileName));
         }
     }
-    
+
+    [Export(typeof(PostUrlTagFactory))]
     public class PostUrlTagFactory : TagFactoryBase
     {
         public PostUrlTagFactory()

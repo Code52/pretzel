@@ -1,5 +1,6 @@
-﻿using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Extensions;
 using System.Collections.Generic;
+using System.Composition;
 using System.IO.Abstractions;
 
 namespace Pretzel.Logic
@@ -17,8 +18,9 @@ namespace Pretzel.Logic
         IDefaultsConfiguration Defaults { get; }
     }
 
-
-    internal sealed class Configuration : IConfiguration
+    [Shared]
+    [Export(typeof(IConfiguration))]
+    public sealed class Configuration : IConfiguration
     {
         private const string ConfigFileName = "_config.yml";
         public const string DefaultPermalink = "date";
@@ -38,7 +40,8 @@ namespace Pretzel.Logic
             EnsureDefaults();
         }
 
-        internal Configuration(IFileSystem fileSystem, string sitePath)
+        [ImportingConstructor]
+        public Configuration(IFileSystem fileSystem, [Import("SourcePath")]string sitePath)
             : this()
         {
             _fileSystem = fileSystem;
@@ -55,7 +58,8 @@ namespace Pretzel.Logic
             _defaultsConfiguration = new DefaultsConfiguration(_config);
         }
 
-        internal void ReadFromFile()
+        [OnImportsSatisfied]
+        public void ReadFromFile()
         {
             _config = new Dictionary<string, object>();
             if (_fileSystem.File.Exists(_configFilePath))

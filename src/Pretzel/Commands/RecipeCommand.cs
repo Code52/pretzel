@@ -1,17 +1,17 @@
-﻿using Pretzel.Logic.Commands;
+using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Recipe;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 
 namespace Pretzel.Commands
 {
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Shared]
     [CommandInfo(CommandName = "create")]
     public sealed class RecipeCommand : ICommand
     {
@@ -20,13 +20,13 @@ namespace Pretzel.Commands
 #pragma warning disable 649
 
         [Import]
-        private IFileSystem fileSystem;
+        public IFileSystem fileSystem { get; set; }
 
         [Import]
-        private CommandParameters parameters;
+        public CommandParameters parameters { get; set; }
 
         [ImportMany]
-        private IEnumerable<IAdditionalIngredient> additionalIngredients;
+        public IEnumerable<IAdditionalIngredient> additionalIngredients { get; set; }
 
 #pragma warning restore 649
 

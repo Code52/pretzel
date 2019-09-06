@@ -1,6 +1,7 @@
-﻿using Pretzel.Logic.Templating;
+using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
 using System;
+using System.Composition;
 using Xunit;
 
 namespace Pretzel.Tests.Templating
@@ -15,6 +16,8 @@ namespace Pretzel.Tests.Templating
             Assert.False(engine.CanProcess(context));
         }
 
+
+        [SiteEngineInfo(Engine = "dummy")]
         private class DummyEngine : JekyllEngineBase
         {
             public override void Initialize()

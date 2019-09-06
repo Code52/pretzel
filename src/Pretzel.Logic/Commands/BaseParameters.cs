@@ -1,4 +1,5 @@
 using NDesk.Options;
+using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.IO.Abstractions;
@@ -6,6 +7,7 @@ using System.Linq;
 
 namespace Pretzel.Logic.Commands
 {
+    [Export]
     public sealed class BaseParameters
     {
         public OptionSet Options { get; private set; }
@@ -21,12 +23,19 @@ namespace Pretzel.Logic.Commands
         [Export("SourcePath")]
         public string Path { get; private set; }
 
-        [Export]
         public IFileSystem FileSystem { get; private set; }
 
         public List<string> CommandArgs { get; private set; }
 
         private BaseParameters(string[] arguments, IFileSystem fileSystem)
+        {
+            SetDefaults(arguments, fileSystem);
+        }
+
+        [ImportingConstructor]
+        public BaseParameters(IFileSystem fileSystem) : this(Environment.GetCommandLineArgs().Skip(1).ToArray(), fileSystem) { }
+
+        private void SetDefaults(string[] arguments, IFileSystem fileSystem)
         {
             Options = new OptionSet
                 {

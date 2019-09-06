@@ -8,6 +8,8 @@ using System.Reflection;
 
 namespace Pretzel.Logic.Extensibility.Extensions
 {
+    [Export(typeof(IAdditionalIngredient))]
+    [Export(typeof(IHaveCommandLineArgs))]
     public class AzureHostSupport : IAdditionalIngredient, IHaveCommandLineArgs
     {
         private readonly IFileSystem fileSystem;

@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Linq;
 using NDesk.Options;
 using Pretzel.Logic.Commands;
@@ -9,15 +9,15 @@ using Pretzel.Logic.Extensibility;
 namespace Pretzel.Commands
 {
     [Export]
-    [PartCreationPolicy(CreationPolicy.Shared)]
-    public sealed class CommandCollection : IPartImportsSatisfiedNotification
+    [Shared]
+    public sealed class CommandCollection
     {
         [ImportMany]
-        private Lazy<ICommand, ICommandInfo>[] Commands { get; set; }
+        public ExportFactory<ICommand, CommandInfoAttribute>[] Commands { get; set; }
         [ImportMany]
-        IEnumerable<Lazy<IHaveCommandLineArgs>> CommandLineExtensions { get; set; }
+        public IEnumerable<Lazy<IHaveCommandLineArgs>> CommandLineExtensions { get; set; }
         [Import]
-        Lazy<CommandParameters> Parameters { get; set; }
+        public Lazy<CommandParameters> Parameters { get; set; }
 
         private Dictionary<string, ICommand> commandMap;
 
@@ -31,6 +31,7 @@ namespace Pretzel.Commands
             }
         }
 
+        [OnImportsSatisfied]
         public void OnImportsSatisfied()
         {
             commandMap = new Dictionary<string, ICommand>(Commands.Length);
@@ -38,7 +39,10 @@ namespace Pretzel.Commands
             foreach (var command in Commands)
             {
                 if (!commandMap.ContainsKey(command.Metadata.CommandName))
-                    commandMap.Add(command.Metadata.CommandName, command.Value);
+                {
+                    var export = command.CreateExport();
+                    commandMap.Add(command.Metadata.CommandName, export.Value);
+                }
             }
         }
 

@@ -1,24 +1,24 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Import;
+using System.Composition;
 
 namespace Pretzel.Commands
 {
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Shared]
     [CommandInfo(CommandName = "import")]
     class ImportCommand : ICommand
     {
         readonly static List<string> Importers = new List<string>(new[] { "wordpress", "blogger" });
 
 #pragma warning disable 649
-        [Import] IFileSystem fileSystem;
-        [Import] CommandParameters parameters;
+        [Import] public IFileSystem fileSystem { get; set; }
+        [Import] public CommandParameters parameters { get; set; }
 #pragma warning restore 649
 
         public void Execute(IEnumerable<string> arguments)

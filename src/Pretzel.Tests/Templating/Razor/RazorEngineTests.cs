@@ -1,4 +1,4 @@
-﻿using Pretzel.Logic;
+using Pretzel.Logic;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensibility.Extensions;
 using Pretzel.Logic.Templating.Context;
@@ -6,6 +6,7 @@ using Pretzel.Logic.Templating.Razor;
 using Pretzel.Tests.Templating.Jekyll;
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
@@ -412,6 +413,7 @@ namespace Pretzel.Tests.Templating.Razor
             }
         }
 
+        [Export(typeof(PostUrlTagFactory))]
         public class CustomTagFactory : TagFactoryBase
         {
             public CustomTagFactory() : base("Custom")

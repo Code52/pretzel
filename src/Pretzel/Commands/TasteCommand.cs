@@ -1,4 +1,4 @@
-﻿using Pretzel.Logic;
+using Pretzel.Logic;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
@@ -7,14 +7,14 @@ using Pretzel.Logic.Templating.Context;
 using Pretzel.Modules;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 
 namespace Pretzel.Commands
 {
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Shared]
     [CommandInfo(CommandName = "taste")]
     public sealed class TasteCommand : ICommand
     {
@@ -22,22 +22,22 @@ namespace Pretzel.Commands
 #pragma warning disable 649
 
         [Import]
-        private TemplateEngineCollection templateEngines;
+        public TemplateEngineCollection templateEngines { get; set; }
 
         [Import]
-        private SiteContextGenerator Generator { get; set; }
+        public SiteContextGenerator Generator { get; set; }
 
         [Import]
-        private CommandParameters parameters;
+        public CommandParameters parameters { get; set; }
 
         [ImportMany]
-        private IEnumerable<ITransform> transforms;
+        public IEnumerable<ITransform> transforms { get; set; }
 
         [Import]
-        private IFileSystem FileSystem;
+        public IFileSystem FileSystem { get; set; }
 
         [Import]
-        private IConfiguration Configuration;
+        public IConfiguration Configuration { get; set; }
 
 #pragma warning restore 649
 

@@ -1,24 +1,24 @@
-﻿using Pretzel.Logic.Commands;
+using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Recipe;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
 
 namespace Pretzel.Commands
 {
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Shared]
     [CommandInfo(CommandName = "ingredient")]
     public sealed class IngredientCommand : ICommand
     {
 #pragma warning disable 649
 
         [Import]
-        private IFileSystem fileSystem;
+        public IFileSystem fileSystem { get; set; }
 
         [Import]
-        private CommandParameters parameters;
+        public CommandParameters parameters { get; set; }
 
 #pragma warning restore 649
 

@@ -1,4 +1,4 @@
-﻿using NSubstitute;
+using NSubstitute;
 using Pretzel.Logic;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using Pretzel.Logic.Extensibility;
 using Xunit;
+using System.ComponentModel.Composition;
 
 namespace Pretzel.Tests.Templating.Context
 {
@@ -1175,6 +1176,7 @@ slug: my-slug
             Assert.Equal("/2015-03-09/my-slug.html", firstPost.Url);
         }
 
+        [Export(typeof(IBeforeProcessingTransform))]
         private class BeforeProcessingTransformMock : IBeforeProcessingTransform
         {
             public int PostCount = 0;
