@@ -174,7 +174,7 @@ function Build()
 
             if ($LastExitCode -ne 0) { throw "Building solution failed" }
 
-            ExecuteTests $true
+            ExecuteTests $false
 
             $versionInfos = SetVersion
 
