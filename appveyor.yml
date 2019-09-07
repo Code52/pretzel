@@ -20,6 +20,7 @@ environment:
     secure: bVPyDjOtyByKm9rSo/rjN79B6Z6/pI1hhbhYZHiAJ/E=
 
 before_build:
+  - pushd tools && nuget install -ExcludeVersion && popd
   - nuget restore src
 
 build_script:
