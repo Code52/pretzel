@@ -2,7 +2,8 @@
 configuration: Release
 
 install:
-  - GitVersion /output buildserver /UpdateAssemblyInfo true
+  - choco install gitversion.portable
+  - GitVersion /output buildserver /UpdateAssemblyInfo false
 
 #cache:
 #  - src\packages -> src/**/packages.config
