@@ -123,10 +123,6 @@ function CreatePackage($versionInfos)
 # Test
 function ExecuteTests($cover)
 {
-    pushd $tools 
-    nuget install -ExcludeVersion
-    popd
-
     If($cover -eq $true)
     {
         cinst opencover.portable -y
@@ -136,7 +132,7 @@ function ExecuteTests($cover)
     }
     Else
     {
-        &$tools\xunit.runner.console\tools\net472\xunit.console.exe "$src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"
+        &$tools\xunit\xunit.console.exe "$src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"
     }
     
     if ($LastExitCode -ne 0) { throw "Tests failed" }
