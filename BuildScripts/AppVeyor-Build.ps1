@@ -123,6 +123,10 @@ function CreatePackage($versionInfos)
 # Test
 function ExecuteTests($cover)
 {
+    pushd $tools 
+    nuget install -ExcludeVersion
+    popd
+
     If($cover -eq $true)
     {
         cinst opencover.portable -y
