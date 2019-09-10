@@ -1,4 +1,4 @@
-# $ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop"
 
 $executingScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 $rootDirectory = Resolve-Path "$executingScriptDirectory\.."
