@@ -40,7 +40,7 @@
     <MSBuild Projects="$(SourceDir)\Pretzel.sln" Properties="Configuration=$(Configuration)" Targets="Rebuild" />
     <MakeDir Directories="$(ArtifactsDir)" />
     <RemoveDir Directories="$(TestsDir)" />
-    <Copy SourceFiles="$(SourceDir)\Pretzel\bin\$(Configuration)\Pretzel.exe"
+    <Copy SourceFiles="$(SourceDir)\Pretzel\bin\$(Configuration)\net451\Pretzel.exe"
           DestinationFolder="$(ArtifactsDir)" />
     <Copy SourceFiles="@(TestsDll)"
           DestinationFolder="$(TestsDir)" />
@@ -53,7 +53,7 @@
   <Target Name="Test">
     <Message Text="=========== Run Tests ===========" Importance="High" />
     <ItemGroup>
-      <TestFiles Include="$(MSBuildProjectDirectory)\..\**\bin\$(Configuration)\*Tests.dll" />
+      <TestFiles Include="$(MSBuildProjectDirectory)\..\**\bin\$(Configuration)\**\Tests.dll" />
     </ItemGroup>
     <xunit Assemblies="@(TestFiles)" />
     <Message Text="=========== Tests Passed ===========" Importance="High" />
