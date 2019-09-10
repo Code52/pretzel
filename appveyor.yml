@@ -5,11 +5,9 @@ install:
   - choco install gitversion.portable --version 4.0.0
   - GitVersion /output buildserver
 
-#cache:
-#  - src\packages -> src/**/packages.config
-#  - C:\ProgramData\chocolatey\bin\OpenCover.Console.exe -> appveyor.yml
-#  - C:\ProgramData\chocolatey\bin\coveralls.net.exe -> appveyor.yml
-#  - C:\ProgramData\chocolatey\lib -> appveyor.yml
+cache:
+  - C:\ProgramData\chocolatey\bin -> appveyor.yml
+  - C:\ProgramData\chocolatey\lib -> appveyor.yml
 
 environment:
   COVERALLS_REPO_TOKEN:
