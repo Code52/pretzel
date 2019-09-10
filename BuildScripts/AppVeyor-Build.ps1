@@ -127,7 +127,7 @@ function ExecuteTests($cover)
     {
         cinst opencover.portable -y
         cinst coveralls.io -source https://nuget.org/api/v2/
-        & C:\ProgramData\chocolatey\lib\opencover.portable\tools\OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -target:"%xunit20%\xunit.console.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\net462\Pretzel.Tests.dll"" -noshadow -appveyor" -output:$artifacts\coverage.xml -returntargetcode
+        & C:\ProgramData\chocolatey\lib\opencover.portable\tools\OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -target:"%xunit20%\xunit.console.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\net462\Pretzel.Tests.dll"" -noshadow -appveyor" -output:$artifacts\coverage.xml -returntargetcode -log:All
         & coveralls.net --opencover $artifacts\coverage.xml
     }
     Else
