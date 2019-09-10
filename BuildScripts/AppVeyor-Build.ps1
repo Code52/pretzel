@@ -85,9 +85,9 @@ function CreatePackage($versionInfos)
 
     # create Pretzel zip
     RemoveIfExists Pretzel.$version.zip
-    7z a $artifacts\Pretzel.$version.zip $src\Pretzel\bin\Release\*.dll
-    7z a $artifacts\Pretzel.$version.zip $src\Pretzel\bin\Release\Pretzel.exe
-    7z a $artifacts\Pretzel.$version.zip $src\Pretzel\bin\Release\Pretzel.exe.config
+    7z a $artifacts\Pretzel.$version.zip $src\Pretzel\bin\Release\net451\*.dll
+    7z a $artifacts\Pretzel.$version.zip $src\Pretzel\bin\Release\net451\Pretzel.exe
+    7z a $artifacts\Pretzel.$version.zip $src\Pretzel\bin\Release\net451\Pretzel.exe.config
     7z a $artifacts\Pretzel.$version.zip ReleaseNotes.md
 
     # build Pretzel nupkg
@@ -102,7 +102,7 @@ function CreatePackage($versionInfos)
 
     # create Pretzel.ScriptCs zip
     RemoveIfExists Pretzel.ScriptCs.$version.zip
-    7z a $artifacts\Pretzel.ScriptCs.$version.zip $src\Pretzel.ScriptCs\bin\Release\*.dll
+    7z a $artifacts\Pretzel.ScriptCs.$version.zip $src\Pretzel.ScriptCs\bin\Release\net451\*.dll
 
     # build Pretzel.ScriptCs nupkg
     
@@ -127,12 +127,12 @@ function ExecuteTests($cover)
     {
         cinst opencover.portable -y
         cinst coveralls.io -source https://nuget.org/api/v2/
-        & C:\ProgramData\chocolatey\lib\opencover.portable\tools\OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -target:"%xunit20%\xunit.console.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"" -noshadow -appveyor" -output:$artifacts\coverage.xml -returntargetcode
+        & C:\ProgramData\chocolatey\lib\opencover.portable\tools\OpenCover.Console.exe -register:administrator -filter:"+[Pretzel.Logic]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -target:"%xunit20%\xunit.console.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\net462\Pretzel.Tests.dll"" -noshadow -appveyor" -output:$artifacts\coverage.xml -returntargetcode -log:All
         & coveralls.net --opencover $artifacts\coverage.xml
     }
     Else
     {
-        &$tools\xunit\xunit.console.exe "$src\Pretzel.Tests\bin\Release\Pretzel.Tests.dll"
+        &$tools\xunit\xunit.console.exe "$src\Pretzel.Tests\bin\Release\net462\Pretzel.Tests.dll"
     }
     
     if ($LastExitCode -ne 0) { throw "Tests failed" }
@@ -170,7 +170,7 @@ function Build()
         }
         Else
         {
-            & msbuild "$src\Pretzel.sln" /p:Configuration="Release" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+            & msbuild "$src\Pretzel.sln" /p:Configuration="Release" /p:AssemblyFileVersion=$env:GitVersion_AssemblySemFileVer /p:AssemblyVersion=$env:GitVersion_AssemblySemVer /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
             if ($LastExitCode -ne 0) { throw "Building solution failed" }
 
@@ -184,13 +184,9 @@ function Build()
     #Local build
     Else
     {
-        Write-Warning "Chocolatey must be installed, along with Nuget.CommandLine, SevenZip and MSBuild Tools 2015."
+        Write-Warning "Chocolatey must be installed, along with Nuget.CommandLine, SevenZip, Visual Studio 2017 or later and VSWhere."
         
-        $msBuildVersion = "14.0"
-        $regKey = "HKLM:\software\Microsoft\MSBuild\ToolsVersions\$msBuildVersion"
-        $regProperty = "MSBuildToolsPath"
-        
-        $msbuildExe = join-path -path (Get-ItemProperty $regKey).$regProperty -childpath "msbuild.exe"
+        $msbuildExe = &vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
         
         &$msbuildExe "$src\Pretzel.sln" /p:Configuration="Release" /verbosity:minimal
 
