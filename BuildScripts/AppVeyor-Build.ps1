@@ -126,7 +126,7 @@ function ExecuteTests($cover)
     If($cover -eq $true)
     {
         cinst opencover.portable -y
-        cinst coveralls.io -source https://nuget.org/api/v2/
+        cinst coveralls.io -source https://api.nuget.org/v3/index.json
         & C:\ProgramData\chocolatey\lib\opencover.portable\tools\OpenCover.Console.exe -register:user -filter:"+[Pretzel.Logic]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -target:"%xunit20%\xunit.console.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\net462\Pretzel.Tests.dll"" -noshadow -appveyor" -output:$artifacts\coverage.xml -returntargetcode
         & coveralls.net --opencover $artifacts\coverage.xml
     }
@@ -150,7 +150,7 @@ function Build()
         If ($env:APPVEYOR_SCHEDULED_BUILD -eq $true)
         {
             # Coverity
-            cinst PublishCoverity -source https://nuget.org/api/v2/
+            cinst PublishCoverity -source https://api.nuget.org/v3/index.json
             
             cov-configure --config cov-config.xml --cs
             
