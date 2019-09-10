@@ -170,7 +170,7 @@ function Build()
         }
         Else
         {
-            & msbuild "$src\Pretzel.sln" /p:Configuration="Release";AssemblyFileVersion=$env:GitVersion_AssemblySemFileVer;AssemblyVersion=$env:GitVersion_AssemblySemVer /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+            & msbuild "$src\Pretzel.sln" /p:Configuration="Release" /p:AssemblyFileVersion=$env:GitVersion_AssemblySemFileVer /p:AssemblyVersion=$env:GitVersion_AssemblySemVer /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
             if ($LastExitCode -ne 0) { throw "Building solution failed" }
 
