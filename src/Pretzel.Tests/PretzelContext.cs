@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace Pretzel.Tests
 {
     public abstract class SpecificationFor<T>
