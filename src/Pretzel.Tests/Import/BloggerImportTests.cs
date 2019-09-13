@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Xunit;
@@ -88,7 +88,7 @@ namespace Pretzel.Tests.Import
             var header = postContent.YamlHeader();
 
             Assert.Equal("Hello World 1", header["title"].ToString());
-            Assert.Equal(0, ((List<string>)header["tags"]).Count);
+            Assert.Empty(((List<string>)header["tags"]));
 
             string expectedPost2 = @"_posts\2000-09-07-Hello-World-2.md";
             Assert.True(fileSystem.File.Exists(BaseSite + expectedPost2));
@@ -98,7 +98,7 @@ namespace Pretzel.Tests.Import
 
             Assert.Equal("Hello World 2", header2["title"].ToString());
             var tags = (List<string>)header2["tags"];
-            Assert.Equal(1, tags.Count);
+            Assert.Single(tags);
             Assert.Equal("aTag", tags[0]);
         }
 
