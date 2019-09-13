@@ -1,4 +1,4 @@
-﻿using NSubstitute;
+using NSubstitute;
 using Pretzel.Logic;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
@@ -114,7 +114,7 @@ namespace Pretzel.Tests.Templating.Context
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
-            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Single(siteContext.Pages);
             Assert.IsType<NonProcessedPage>(siteContext.Pages[0]);
         }
 
@@ -128,7 +128,7 @@ namespace Pretzel.Tests.Templating.Context
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
-            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Single(siteContext.Pages);
             Assert.IsType<Page>(siteContext.Pages[0]);
         }
 
@@ -142,7 +142,7 @@ namespace Pretzel.Tests.Templating.Context
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
-            Assert.Equal(1, siteContext.Html_Pages.Count);
+            Assert.Single(siteContext.Html_Pages);
             Assert.IsType<Page>(siteContext.Html_Pages[0]);
         }
 
@@ -156,7 +156,7 @@ namespace Pretzel.Tests.Templating.Context
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
-            Assert.Equal(0, siteContext.Html_Pages.Count);
+            Assert.Empty(siteContext.Html_Pages);
         }
 
         [Fact]
@@ -222,12 +222,12 @@ title: Title
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(4, siteContext.Tags.Count());
-            Assert.Equal(1, siteContext.Categories.Count());
+            Assert.Single(siteContext.Categories);
 
             var tag1 = siteContext.Tags.First(x => x.Name == "tag1");
-            Assert.Equal(1, tag1.Posts.Count());
+            Assert.Single(tag1.Posts);
             Assert.Equal(2, tag1.Posts.First().Tags.Count());
-            Assert.True(tag1.Posts.First().File.Contains("File1"));
+            Assert.Contains("File1", tag1.Posts.First().File);
 
             var tag2 = siteContext.Tags.First(x => x.Name == "tag2");
             Assert.Equal(2, tag2.Posts.Count());
@@ -235,13 +235,13 @@ title: Title
             Assert.NotNull(tag2.Posts.FirstOrDefault(x => x.File.Contains("File2")));
 
             var tag3 = siteContext.Tags.First(x => x.Name == "tag3");
-            Assert.Equal(1, tag3.Posts.Count());
-            Assert.True(tag3.Posts.First().File.Contains("File2"));
+            Assert.Single(tag3.Posts);
+            Assert.Contains("File2", tag3.Posts.First().File);
 
             var tag4 = siteContext.Tags.First(x => x.Name == "tag4");
-            Assert.Equal(1, tag4.Posts.Count());
-            Assert.Equal(1, tag4.Posts.First().Tags.Count());
-            Assert.True(tag4.Posts.First().File.Contains("File3"));
+            Assert.Single(tag4.Posts);
+            Assert.Single(tag4.Posts.First().Tags);
+            Assert.Contains("File3", tag4.Posts.First().File);
         }
 
         [Fact]
@@ -255,12 +255,12 @@ title: Title
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Equal(4, siteContext.Categories.Count());
-            Assert.Equal(1, siteContext.Tags.Count());
+            Assert.Single(siteContext.Tags);
 
             var cat1 = siteContext.Categories.First(x => x.Name == "cat1");
-            Assert.Equal(1, cat1.Posts.Count());
+            Assert.Single(cat1.Posts);
             Assert.Equal(2, cat1.Posts.First().Categories.Count());
-            Assert.True(cat1.Posts.First().File.Contains("File1"));
+            Assert.Contains("File1", cat1.Posts.First().File);
 
             var cat2 = siteContext.Categories.First(x => x.Name == "cat2");
             Assert.Equal(2, cat2.Posts.Count());
@@ -268,13 +268,13 @@ title: Title
             Assert.NotNull(cat2.Posts.FirstOrDefault(x => x.File.Contains("File2")));
 
             var cat3 = siteContext.Categories.First(x => x.Name == "cat3");
-            Assert.Equal(1, cat3.Posts.Count());
-            Assert.True(cat3.Posts.First().File.Contains("File2"));
+            Assert.Single(cat3.Posts);
+            Assert.Contains("File2", cat3.Posts.First().File);
 
             var cat4 = siteContext.Categories.First(x => x.Name == "cat4");
-            Assert.Equal(1, cat4.Posts.Count());
-            Assert.Equal(1, cat4.Posts.First().Categories.Count());
-            Assert.True(cat4.Posts.First().File.Contains("File3"));
+            Assert.Single(cat4.Posts);
+            Assert.Single(cat4.Posts.First().Categories);
+            Assert.Contains("File3", cat4.Posts.First().File);
         }
 
         [Fact]
@@ -752,7 +752,7 @@ categories: [cat1, cat2]
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
-            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Single(siteContext.Pages);
             Assert.Equal(0, siteContext.Pages[0].Bag.Count);
         }
 
@@ -766,7 +766,7 @@ published: false
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
-            Assert.Equal(0, siteContext.Pages.Count);
+            Assert.Empty(siteContext.Pages);
         }
 
         [Fact]
@@ -784,7 +784,7 @@ param: value
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
-            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Single(siteContext.Pages);
             Assert.Equal("this is a post", siteContext.Pages[0].Title);
             Assert.Equal(lastmod, siteContext.Pages[0].Date.Date);
             Assert.Equal(expectedContent, siteContext.Pages[0].Content);
@@ -811,7 +811,7 @@ param: value
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
-            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Single(siteContext.Pages);
             Assert.Equal("my title", siteContext.Pages[0].Title);
             Assert.Equal(currentDate, siteContext.Pages[0].Date);
             Assert.Equal(expectedContent, siteContext.Pages[0].Content);
@@ -837,7 +837,7 @@ param: value
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
-            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Single(siteContext.Pages);
             Assert.Equal("this is a post", siteContext.Pages[0].Title);
             Assert.Equal(new DateTime(2015, 1, 26), siteContext.Pages[0].Date);
             Assert.Equal(expectedContent, siteContext.Pages[0].Content);
@@ -863,7 +863,7 @@ param: value
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
-            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Single(siteContext.Pages);
             Assert.Equal("this is a post", siteContext.Pages[0].Title);
             Assert.Equal(lastmod, siteContext.Pages[0].Date.Date);
             Assert.Equal(expectedContent, siteContext.Pages[0].Content);
@@ -991,7 +991,7 @@ date: 20150127
             // act
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
-            Assert.Equal(0, siteContext.Pages.Count);
+            Assert.Empty(siteContext.Pages);
             Assert.Contains(@"Failed to build post from File: C:\TestSite\SomeFile.md", trace.ToString());
             Assert.Contains(@"String was not recognized as a valid DateTime.", trace.ToString());
             Assert.Contains(@"System.FormatException: String was not recognized as a valid DateTime.", trace.ToString());
@@ -1039,7 +1039,7 @@ date: 20150127
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
-            Assert.Equal(1, siteContext.Pages.Count);
+            Assert.Single(siteContext.Pages);
             Assert.Equal("---\r\n---# Title", siteContext.Pages[0].Content);
             // Check if the temp file have been deleted
             fileSubstitute.Received().Delete(filePath);
@@ -1084,7 +1084,7 @@ date: 20150127
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             // assert
-            Assert.Equal(0, siteContext.Pages.Count);
+            Assert.Empty(siteContext.Pages);
             Assert.Contains(@"Failed to build post from File: C:\TestSite\SomeFile.md", trace.ToString());
             Assert.Contains(@"I/O error occurred.", trace.ToString());
             Assert.Contains(@"System.IO.IOException: I/O error occurred.", trace.ToString());
@@ -1101,7 +1101,7 @@ date: 20150127
         [Fact]
         public void RemoveDiacritics_should_return_null_if_input_null()
         {
-            Assert.Equal(null, SiteContextGenerator.RemoveDiacritics(null));
+            Assert.Null(SiteContextGenerator.RemoveDiacritics(null));
         }
 
         [Fact]
