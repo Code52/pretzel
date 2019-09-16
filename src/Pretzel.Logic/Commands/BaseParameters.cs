@@ -21,8 +21,8 @@ namespace Pretzel.Logic.Commands
 
         public bool Safe { get; private set; }
 
-        [Export]
-        public SourcePathProvider PathProvider { get; private set; }
+        [Export("SourcePath")]
+        public string Path { get; private set; }
 
         public IFileSystem FileSystem { get; private set; }
 
@@ -43,8 +43,8 @@ namespace Pretzel.Logic.Commands
                     { "help", "Display help mode", p => Help = true },
                     { "debug", "Enable debugging", p => Debug = true },
                     { "safe", "Disable custom plugins", v => Safe = true },
-                    { "d|directory=", "[Obsolete, use --source instead] The path to site directory", p => PathProvider = new SourcePathProvider(p) },
-                    { "s|source=", "The path to the source site (default current directory)", p => PathProvider = new SourcePathProvider(p) }
+                    { "d|directory=", "[Obsolete, use --source instead] The path to site directory", p => Path = p },
+                    { "s|source=", "The path to the source site (default current directory)", p => Path = Path = p }
                 };
 
             FileSystem = fileSystem;
@@ -66,13 +66,13 @@ namespace Pretzel.Logic.Commands
             // take the first argument after the command
             if (firstArgument != null && !firstArgument.StartsWith("-") && !firstArgument.StartsWith("/"))
             {
-                PathProvider = new SourcePathProvider(FileSystem.Path.IsPathRooted(firstArgument)
+                Path = FileSystem.Path.IsPathRooted(firstArgument)
                     ? firstArgument
-                    : FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), firstArgument));
+                    : FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), firstArgument);
             }
-            PathProvider = new SourcePathProvider((PathProvider == null || string.IsNullOrWhiteSpace(PathProvider.Path))
+            Path = string.IsNullOrWhiteSpace(Path)
                 ? FileSystem.Directory.GetCurrentDirectory()
-                : FileSystem.Path.GetFullPath(PathProvider.Path));
+                : FileSystem.Path.GetFullPath(Path);
         }
     }
 }

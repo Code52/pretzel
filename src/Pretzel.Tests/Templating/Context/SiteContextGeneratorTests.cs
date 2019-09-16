@@ -362,7 +362,7 @@ title: 'about'
 # About page
 "));
 
-            var config = new Configuration(fileSystem, new Logic.Commands.SourcePathProvider(@"C:\TestSite"));
+            var config = new Configuration(fileSystem, @"C:\TestSite");
             config.ReadFromFile();
             var sut = new SiteContextGenerator(fileSystem, new LinkHelper(), config);
 
@@ -394,7 +394,7 @@ author: 'page-specific-author'
 # About page
 "));
 
-            var config = new Configuration(fileSystem, new Logic.Commands.SourcePathProvider(@"C:\TestSite"));
+            var config = new Configuration(fileSystem, @"C:\TestSite");
             config.ReadFromFile();
             var sut = new SiteContextGenerator(fileSystem, new LinkHelper(), config);
 

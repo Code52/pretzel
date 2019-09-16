@@ -123,7 +123,7 @@ namespace Pretzel
         {
             if (!parameters.Safe)
             {
-                var pluginsPath = Path.Combine(parameters.PathProvider.Path, "_plugins");
+                var pluginsPath = Path.Combine(parameters.Path, "_plugins");
 
                 if (Directory.Exists(pluginsPath))
                 {

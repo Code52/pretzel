@@ -40,7 +40,7 @@ namespace Pretzel.Commands
 
             parameters.Parse(arguments);
 
-            var siteContext = Generator.BuildContext(parameters.PathProvider.Path, parameters.DestinationPath, parameters.IncludeDrafts);
+            var siteContext = Generator.BuildContext(parameters.Path, parameters.DestinationPath, parameters.IncludeDrafts);
 
             if (parameters.CleanTarget && FileSystem.Directory.Exists(siteContext.OutputFolder))
             {

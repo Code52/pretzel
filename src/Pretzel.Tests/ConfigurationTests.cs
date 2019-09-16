@@ -41,7 +41,7 @@ defaults:
             var fileSystem = new MockFileSystem();
             fileSystem.AddFile(@"C:\WebSite\_config.yml", new MockFileData(SampleConfig));
 
-            _sut = new Configuration(fileSystem, new SourcePathProvider(@"C:\WebSite"));
+            _sut = new Configuration(fileSystem, @"C:\WebSite");
             _sut.ReadFromFile();
         }
 

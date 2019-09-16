@@ -42,11 +42,11 @@ namespace Pretzel.Logic
         }
 
         [ImportingConstructor]
-        public Configuration(IFileSystem fileSystem, [Import]SourcePathProvider sitePathProvider)
+        public Configuration(IFileSystem fileSystem, [Import("SourcePath")] string sitePath)
             : this()
         {
             _fileSystem = fileSystem;
-            _configFilePath = _fileSystem.Path.Combine(sitePathProvider.Path, ConfigFileName);
+            _configFilePath = _fileSystem.Path.Combine(sitePath, ConfigFileName);
         }
 
         private void EnsureDefaults()
