@@ -681,9 +681,9 @@ namespace Pretzel.Tests.Templating.Jekyll
             public void Layout_With_Bad_Header_Should_Throw_Exception()
             {
                 var exception = Record.Exception(() => Subject.Process(Context));
-                Assert.IsType(typeof(PageProcessingException), exception);
+                Assert.IsType<PageProcessingException>(exception);
                 Assert.Equal(@"Failed to process layout default for C:\website\_site\index.html, see inner exception for more details", exception.Message);
-                Assert.False(FileSystem.AllFiles.Contains(@"C:\website\_site\index.html"));
+                Assert.DoesNotContain(@"C:\website\_site\index.html", FileSystem.AllFiles);
             }
         }
 
@@ -718,7 +718,7 @@ namespace Pretzel.Tests.Templating.Jekyll
 
                     Assert.Equal(@"Failed to process layout default for C:\website\_site\index.html because 'Variable '{{}' was not properly terminated with regexp: (?-mix:\}\})'. Skipping file" + Environment.NewLine, sw.ToString());
                 }
-                Assert.False(FileSystem.AllFiles.Contains(@"C:\website\_site\index.html"));
+                Assert.DoesNotContain(@"C:\website\_site\index.html", FileSystem.AllFiles);
             }
         }
 
@@ -744,9 +744,9 @@ namespace Pretzel.Tests.Templating.Jekyll
             public void Layout_With_Bad_Header_Should_Throw_Exception()
             {
                 var exception = Record.Exception(() => Subject.Process(Context));
-                Assert.IsType(typeof(PageProcessingException), exception);
+                Assert.IsType<PageProcessingException>(exception);
                 Assert.Equal(@"Failed to process C:\website\_site\BadFormat.html, see inner exception for more details", exception.Message);
-                Assert.False(FileSystem.AllFiles.Contains(@"C:\website\_site\BadFormat.html"));
+                Assert.DoesNotContain(@"C:\website\_site\BadFormat.html", FileSystem.AllFiles);
             }
         }
 
@@ -781,7 +781,7 @@ namespace Pretzel.Tests.Templating.Jekyll
 
                     Assert.StartsWith(ExpectedStartFile, sw.ToString());
                 }
-                Assert.False(FileSystem.AllFiles.Contains(@"C:\website\_site\BadFormat.html"));
+                Assert.DoesNotContain(@"C:\website\_site\BadFormat.html", FileSystem.AllFiles);
             }
         }
 
@@ -1603,9 +1603,9 @@ namespace Pretzel.Tests.Templating.Jekyll
             [Fact]
             public void Layout_With_Bad_Header_Should_Not_Throw_Exception()
             {
-                Assert.Equal(Context.Posts.Count, 1);
-                Assert.Equal(Context.Posts[0].Categories.Count(), 1);
-                Assert.Equal(Context.Posts[0].Categories.First(), "mycategory");
+                Assert.Equal(1, Context.Posts.Count);
+                Assert.Single(Context.Posts[0].Categories);
+                Assert.Equal("mycategory", Context.Posts[0].Categories.First());
             }
 
             [Fact]
@@ -1638,12 +1638,12 @@ namespace Pretzel.Tests.Templating.Jekyll
             [Fact]
             public void Layout_With_Bad_Header_Should_Not_Throw_Exception()
             {
-                Assert.Equal(Context.Posts.Count, 1);
+                Assert.Equal(1, Context.Posts.Count);
                 var categories = Context.Posts[0].Categories.ToList();
-                Assert.Equal(categories.Count, 3);
-                Assert.Equal(categories[0], "oh");
-                Assert.Equal(categories[1], "my");
-                Assert.Equal(categories[2], "mycategory");
+                Assert.Equal(3, categories.Count);
+                Assert.Equal("oh", categories[0]);
+                Assert.Equal("my", categories[1]);
+                Assert.Equal("mycategory", categories[2]);
             }
 
             [Fact]
@@ -1682,10 +1682,10 @@ namespace Pretzel.Tests.Templating.Jekyll
             [Fact]
             public void Layout_With_Bad_Header_Should_Not_Throw_Exception()
             {
-                Assert.Equal(Context.Posts.Count, 1);
+                Assert.Equal(1, Context.Posts.Count);
                 var categories = Context.Posts[0].Categories.ToList();
-                Assert.Equal(categories.Count, 1);
-                Assert.Equal(categories[0], "mycategory");
+                Assert.Single(categories);
+                Assert.Equal("mycategory", categories[0]);
             }
 
             [Fact]

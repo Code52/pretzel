@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using Pretzel.Logic.Extensions;
 using Xunit;
@@ -178,13 +178,13 @@ This is a test of YAML parsing";
 
                 var adictionary = (Dictionary<string, object>)result["adictionary"];
 
-                Assert.Equal(true, (bool)adictionary["a_field"]);
+                Assert.True((bool)adictionary["a_field"]);
                 Assert.Equal("3", adictionary["otherfield"]);
                 Assert.Equal(new[] { "it", "should", "work" }, (List<string>)adictionary["facts"]);
 
                 var inception = (Dictionary<string, object>)adictionary["inception"];
                 Assert.Equal("it is", (string)inception["furternested"]);
-                Assert.Equal(false, (bool)inception["but_it_works"]);
+                Assert.False((bool)inception["but_it_works"]);
                 Assert.Equal("1.0", inception["coeff"]);
             }
 

@@ -29,11 +29,11 @@ namespace Pretzel.Tests
 
             var output = writer.ToString();
 
-            Assert.True(output.Contains("--directory="));
-            Assert.True(output.Contains("--source="));
-            Assert.True(output.Contains("--debug"));
-            Assert.True(output.Contains("--help"));
-            Assert.True(output.Contains("--safe"));
+            Assert.Contains("--directory=", output);
+            Assert.Contains("--source=", output);
+            Assert.Contains("--debug", output);
+            Assert.Contains("--help", output);
+            Assert.Contains("--safe", output);
         }
 
         [Fact]

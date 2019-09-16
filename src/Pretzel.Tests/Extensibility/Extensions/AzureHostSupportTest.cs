@@ -1,4 +1,4 @@
-﻿using NDesk.Options;
+using NDesk.Options;
 using Pretzel.Logic.Extensibility.Extensions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
@@ -28,7 +28,7 @@ namespace Pretzel.Tests.Extensibility.Extensions
             var args = azureHostSupport.GetArguments(command);
 
             // assert
-            Assert.Equal(1, args.Length);
+            Assert.Single(args);
             Assert.Equal("-azure", args[0]);
         }
 
@@ -43,7 +43,7 @@ namespace Pretzel.Tests.Extensibility.Extensions
             var args = azureHostSupport.GetArguments(command);
 
             // assert
-            Assert.Equal(0, args.Length);
+            Assert.Empty(args);
         }
 
         [Fact]
@@ -55,7 +55,7 @@ namespace Pretzel.Tests.Extensibility.Extensions
             azureHostSupport.UpdateOptions(optionSet);
 
             // assert
-            Assert.Equal(1, optionSet.Count);
+            Assert.Single(optionSet);
             Assert.Equal("azure", optionSet[0].Prototype);
             Assert.NotNull(optionSet[0].Description);
         }
@@ -94,13 +94,13 @@ namespace Pretzel.Tests.Extensibility.Extensions
             azureHostSupport.MixIn(@"c:\website");
 
             // assert
-            Assert.True(fileSystem.AllDirectories.Contains(@"c:\website\_source\"));
-            Assert.True(fileSystem.AllFiles.Contains(@"c:\website\_source\index.md"));
-            Assert.True(fileSystem.AllDirectories.Contains(@"c:\website\_source\_posts\"));
-            Assert.True(fileSystem.AllFiles.Contains(@"c:\website\Shim.cs"));
-            Assert.True(fileSystem.AllFiles.Contains(@"c:\website\Shim.csproj"));
-            Assert.True(fileSystem.AllFiles.Contains(@"c:\website\Shim.sln"));
-            Assert.True(fileSystem.AllFiles.Contains(@"c:\website\Pretzel.exe"));
+            Assert.Contains(@"c:\website\_source\", fileSystem.AllDirectories);
+            Assert.Contains(@"c:\website\_source\index.md", fileSystem.AllFiles);
+            Assert.Contains(@"c:\website\_source\_posts\", fileSystem.AllDirectories);
+            Assert.Contains(@"c:\website\Shim.cs", fileSystem.AllFiles);
+            Assert.Contains(@"c:\website\Shim.csproj", fileSystem.AllFiles);
+            Assert.Contains(@"c:\website\Shim.sln", fileSystem.AllFiles);
+            Assert.Contains(@"c:\website\Pretzel.exe", fileSystem.AllFiles);
         }
 
     }
