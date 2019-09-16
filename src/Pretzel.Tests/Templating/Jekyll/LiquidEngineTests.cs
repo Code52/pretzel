@@ -10,7 +10,6 @@ using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Jekyll;
 using System;
 using System.Collections.Generic;
-using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
@@ -2229,7 +2228,6 @@ categories: [{0}]
                 }
             }
 
-            [Export(typeof(PostUrlTagFactory))]
             public class CustomTagFactory : TagFactoryBase
             {
                 public CustomTagFactory() : base("Custom")
