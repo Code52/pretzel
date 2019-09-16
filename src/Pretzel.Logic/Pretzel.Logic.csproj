@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
     <TargetFrameworks>net451;netstandard2.0</TargetFrameworks>
@@ -41,7 +41,7 @@
     </PackageReference>
     <PackageReference Include="System.IO.Abstractions" Version="2.0.0.116" />
     <PackageReference Include="YamlDotNet" Version="6.1.2" />
-    <PackageReference Include="Microsoft.Composition" Version="1.0.31" />
+    <PackageReference Include="System.Composition" Version="1.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Data.DataSetExtensions" />
