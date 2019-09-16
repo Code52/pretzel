@@ -60,7 +60,7 @@ namespace Pretzel.Logic
         }
 
         [OnImportsSatisfied]
-        public void ReadFromFile()
+        internal void ReadFromFile()
         {
             _config = new Dictionary<string, object>();
             if (_fileSystem.File.Exists(_configFilePath))
