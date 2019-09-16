@@ -7,8 +7,6 @@ using System.Linq;
 
 namespace Pretzel.Logic.Commands
 {
-
-    [Export]
     public sealed class BaseParameters
     {
         public OptionSet Options { get; private set; }
