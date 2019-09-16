@@ -30,9 +30,6 @@ namespace Pretzel.Logic.Commands
             SetDefaults(arguments, fileSystem);
         }
 
-        [ImportingConstructor]
-        public BaseParameters(IFileSystem fileSystem) : this(Environment.GetCommandLineArgs().Skip(1).ToArray(), fileSystem) { }
-
         private void SetDefaults(string[] arguments, IFileSystem fileSystem)
         {
             Options = new OptionSet
