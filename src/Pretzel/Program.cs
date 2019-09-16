@@ -1,11 +1,8 @@
-using NDesk.Options;
 using Pretzel.Commands;
-using Pretzel.Logic;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using System;
 using System.Composition;
-using System.Composition.Convention;
 using System.Composition.Hosting;
 using System.IO;
 using System.IO.Abstractions;
