@@ -44,7 +44,7 @@ namespace Pretzel.Logic.Commands
                     { "debug", "Enable debugging", p => Debug = true },
                     { "safe", "Disable custom plugins", v => Safe = true },
                     { "d|directory=", "[Obsolete, use --source instead] The path to site directory", p => Path = p },
-                    { "s|source=", "The path to the source site (default current directory)", p => Path = Path = p }
+                    { "s|source=", "The path to the source site (default current directory)", p => Path = p }
                 };
 
             FileSystem = fileSystem;
