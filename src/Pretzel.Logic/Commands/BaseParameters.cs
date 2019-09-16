@@ -9,9 +9,9 @@ namespace Pretzel.Logic.Commands
 {
     public sealed class BaseParameters
     {
-        public OptionSet Options { get; private set; }
+        public OptionSet Options { get; }
 
-        public string CommandName { get; private set; }
+        public string CommandName { get; }
 
         public bool Help { get; private set; }
 
@@ -27,19 +27,14 @@ namespace Pretzel.Logic.Commands
 
         private BaseParameters(string[] arguments, IFileSystem fileSystem)
         {
-            SetDefaults(arguments, fileSystem);
-        }
-
-        private void SetDefaults(string[] arguments, IFileSystem fileSystem)
-        {
             Options = new OptionSet
-                {
-                    { "help", "Display help mode", p => Help = true },
-                    { "debug", "Enable debugging", p => Debug = true },
-                    { "safe", "Disable custom plugins", v => Safe = true },
-                    { "d|directory=", "[Obsolete, use --source instead] The path to site directory", p => Path = p },
-                    { "s|source=", "The path to the source site (default current directory)", p => Path = p }
-                };
+            {
+                { "help", "Display help mode", p => Help = true },
+                { "debug", "Enable debugging", p => Debug = true },
+                { "safe", "Disable custom plugins", v => Safe = true },
+                { "d|directory=", "[Obsolete, use --source instead] The path to site directory", p => Path = p },
+                { "s|source=", "The path to the source site (default current directory)", p => Path = p }
+            };
 
             FileSystem = fileSystem;
 
