@@ -117,7 +117,7 @@ function CreatePackage($versionInfos)
     nuget pack chocoTemp\Pretzel.ScriptCs\pretzel.scriptcs.nuspec -OutputDirectory $artifacts -Version $version -NoPackageAnalysis
 
     # build Pretzel.Logic nupkg
-    nuget pack $src\Pretzel.Logic\Pretzel.Logic.csproj -OutputDirectory $artifacts -Version $version -symbols
+    dotnet pack $src\Pretzel.Logic\Pretzel.Logic.csproj -o $artifacts /p:Version=$version --include-symbols
 }
 
 # Test
