@@ -19,7 +19,6 @@ namespace Pretzel.Logic.Commands
 
         public bool Safe { get; private set; }
 
-        [Export("SourcePath")]
         public string Path { get; private set; }
 
         public IFileSystem FileSystem { get; private set; }

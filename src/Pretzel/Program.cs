@@ -22,25 +22,33 @@ namespace Pretzel
         [Export]
         public IFileSystem FileSystem { get; set; } = new FileSystem();
 
-        [Export]
-        public BaseParameters Parameters { get; set; }
+        [Export("SourcePath")]
+        public string SourcePath { get; }
 
+        private BaseParameters parameters { get; }
+
+        public Program()
+        {
+            parameters = BaseParameters.Parse(Args, FileSystem);
+            SourcePath = parameters.Path;
+        }
+
+        private static string[] Args;
         private static void Main(string[] args)
         {
-
+            Args = args;
             var program = new Program();
-            program.Parameters = BaseParameters.Parse(args, program.FileSystem);
 
-            InitializeTrace(program.Parameters.Debug);
+            program.InitializeTrace();
             Tracing.Info("starting pretzel...");
             Tracing.Debug("V{0}", Assembly.GetExecutingAssembly().GetName().Version);
 
             using (program.Compose())
             {
 
-                if (program.Parameters.Help || !args.Any())
+                if (program.parameters.Help || !args.Any())
                 {
-                    program.ShowHelp(program.Parameters.Options);
+                    program.ShowHelp();
                     return;
                 }
 
@@ -48,32 +56,32 @@ namespace Pretzel
             }
         }
 
-        private static void InitializeTrace(bool isDebugTraceEnabled)
+        private void InitializeTrace()
         {
             Tracing.SetTrace(ConsoleTrace.Write);
 
-            if (isDebugTraceEnabled)
+            if (parameters.Debug)
             {
                 Tracing.SetMinimalLevel(TraceLevel.Debug);
             }
         }
 
-        private void ShowHelp(OptionSet defaultSet)
+        private void ShowHelp()
         {
-            Commands.WriteHelp(defaultSet);
+            Commands.WriteHelp(parameters.Options);
             WaitForClose();
         }
 
         private void Run()
         {
-            if (Commands[Parameters.CommandName] == null)
+            if (Commands[parameters.CommandName] == null)
             {
-                Console.WriteLine(@"Can't find command ""{0}""", Parameters.CommandName);
-                Commands.WriteHelp(Parameters.Options);
+                Console.WriteLine(@"Can't find command ""{0}""", parameters.CommandName);
+                Commands.WriteHelp(parameters.Options);
                 return;
             }
 
-            Commands[Parameters.CommandName].Execute(Parameters.CommandArgs);
+            Commands[parameters.CommandName].Execute(parameters.CommandArgs);
             WaitForClose();
         }
 
@@ -102,7 +110,7 @@ namespace Pretzel
                     .WithAssembly(typeof(Logic.SanityCheck).Assembly)
                     ;
 
-                LoadPlugins(configuration, Parameters);
+                LoadPlugins(configuration);
 
                 var container = configuration.CreateContainer();
 
@@ -119,7 +127,7 @@ namespace Pretzel
             }
         }
 
-        private void LoadPlugins(ContainerConfiguration configuration, BaseParameters parameters)
+        private void LoadPlugins(ContainerConfiguration configuration)
         {
             if (!parameters.Safe)
             {
