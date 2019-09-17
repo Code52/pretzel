@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.Composition;
+using System.Composition;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -7,6 +7,8 @@ using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Logic.Extensibility.Extensions
 {
+    [Export(typeof(IHaveCommandLineArgs))]
+    [Export(typeof(ITransform))]
     public class VirtualDirectorySupport : ITransform, IHaveCommandLineArgs
     {
         readonly IFileSystem fileSystem;

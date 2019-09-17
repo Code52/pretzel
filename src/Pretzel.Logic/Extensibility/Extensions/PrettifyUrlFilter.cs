@@ -1,7 +1,9 @@
-﻿using System;
+using System;
+using System.Composition;
 
 namespace Pretzel.Logic.Extensibility.Extensions
 {
+    [Export(typeof(IFilter))]
     public class PrettifyUrlFilter : IFilter
     {
         public string Name

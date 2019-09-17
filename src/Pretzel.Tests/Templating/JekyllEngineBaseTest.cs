@@ -1,4 +1,4 @@
-﻿using Pretzel.Logic.Templating;
+using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
 using System;
 using Xunit;
@@ -14,6 +14,7 @@ namespace Pretzel.Tests.Templating
             var context = new SiteContext();
             Assert.False(engine.CanProcess(context));
         }
+
 
         private class DummyEngine : JekyllEngineBase
         {

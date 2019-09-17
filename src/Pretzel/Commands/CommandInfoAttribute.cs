@@ -1,5 +1,5 @@
-﻿using System;
-using System.ComponentModel.Composition;
+using System;
+using System.Composition;
 
 namespace Pretzel.Commands
 {
