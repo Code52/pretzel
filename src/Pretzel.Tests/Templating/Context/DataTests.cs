@@ -24,61 +24,41 @@ namespace Pretzel.Tests.Templating.Context
             data = new Data(fileSystem, dataDirectory);
         }
 
-        public class UnitTests : DataTests
+
+
+        [Fact]
+        public void renders_empty_string_if_data_directory_does_not_exist()
         {
-            public class BeforeMethod : UnitTests
-            {
-                [Fact]
-                public void returns_null_if_data_directory_does_not_exist()
-                {
-                    Assert.Null(data.BeforeMethod(""));
-                }
+            var template = Template.Parse(@"{{ data.people }}");
 
-                [Fact]
-                public void returns_yaml_drop_if_yaml_drop_exists_in_root()
-                {
-                    fileSystem.AddFile(Path.Combine(dataDirectory, "people.yml"), new MockFileData(""));
+            var hash = Hash.FromAnonymousObject(new { Data = data });
 
-                    //Assert.IsType<YamlDrop>(data.BeforeMethod("people"));
-                }
-            }
+            var result = template.Render(hash);
+
+            Assert.Equal("", result.Trim());
         }
 
-        public class IntegrationTests : DataTests
+        [Fact]
+        public void renders_yaml_nested_object()
         {
-            [Fact]
-            public void renders_empty_string_if_data_directory_does_not_exist()
+            fileSystem.AddFile(Path.Combine(dataDirectory, "person.yml"), new MockFileData(@"name: Eric Mill"));
+
+            var template = Template.Parse(@"{{ data.person.name }}");
+
+            var hash = Hash.FromAnonymousObject(new
             {
-                var template = Template.Parse(@"{{ data.people }}");
+                Data = data
+            });
 
-                var hash = Hash.FromAnonymousObject(new { Data = data });
+            var result = template.Render(hash);
 
-                var result = template.Render(hash);
+            Assert.Equal("Eric Mill", result.Trim());
+        }
 
-                Assert.Equal("", result.Trim());
-            }
-
-            [Fact]
-            public void renders_yaml_nested_object()
-            {
-                fileSystem.AddFile(Path.Combine(dataDirectory, "person.yml"), new MockFileData(@"name: Eric Mill"));
-                                
-                var template = Template.Parse(@"{{ data.person.name }}");
-
-                var hash = Hash.FromAnonymousObject(new
-                {
-                    Data = data
-                });
-
-                var result = template.Render(hash);
-
-                Assert.Equal("Eric Mill", result.Trim());
-            }
-
-            [Fact]
-            public void renders_yaml_nested_list()
-            {
-                fileSystem.AddFile(Path.Combine(dataDirectory, "members.yml"), new MockFileData(@"- name: Eric Mill
+        [Fact]
+        public void renders_yaml_nested_lists()
+        {
+            fileSystem.AddFile(Path.Combine(dataDirectory, "members.yml"), new MockFileData(@"- name: Eric Mill
   github: konklone
 
 - name: Parker Moore
@@ -87,45 +67,16 @@ namespace Pretzel.Tests.Templating.Context
 - name: Liu Fengyun
   github: liufengyun"));
 
-                var template = Template.Parse(@"{{ data.members | size }}");
+            var template = Template.Parse(@"{{ data.members | size }}");
 
-                var hash = Hash.FromAnonymousObject(new
-                {
-                    Data = data
-                });
+            var hash = Hash.FromAnonymousObject(new
+            {
+                Data = data
+            });
 
-                var result = template.Render(hash);
+            var result = template.Render(hash);
 
-                Assert.Equal("3", result.Trim());
-            }
+            Assert.Equal("3", result.Trim());
         }
     }
-
-//    public class YamlDropTests
-//    {
-//        [Fact]
-//        public void Foo()
-//        {
-//            var yamlDrop = new YamlDrop(@"- name: Eric Mill
-//  github: konklone
-
-//- name: Parker Moore
-//  github: parkr
-
-//- name: Liu Fengyun
-//  github: liufengyun");
-
-//            var template = Template.Parse(@"{{ data.members | count }}");
-
-//            var hash = Hash.FromAnonymousObject(new { Data = new
-//            {
-//                Members = yamlDrop
-//            }
-//            });
-
-//            var result = template.Render(hash);
-
-//            Assert.Equal("3", result.Trim());
-//        }
-//    }
 }
