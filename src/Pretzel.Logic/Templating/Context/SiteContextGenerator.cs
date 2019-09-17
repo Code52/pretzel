@@ -1,4 +1,4 @@
-﻿using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -54,7 +54,8 @@ namespace Pretzel.Logic.Templating.Context
                     Pages = new List<Page>(),
                     Config = _config,
                     Time = DateTime.Now,
-                    UseDrafts = includeDrafts
+                    UseDrafts = includeDrafts,
+                    Data = new Data(fileSystem, Path.Combine(path, "_data"))
                 };
 
                 context.Posts = BuildPosts(_config, context).OrderByDescending(p => p.Date).ToList();
