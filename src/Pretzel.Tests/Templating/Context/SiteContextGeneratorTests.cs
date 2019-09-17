@@ -1199,5 +1199,28 @@ slug: my-slug
             // assert
             Assert.Equal(2, pageTransformMock.PostCount);
         }
+
+        [Fact]
+        public void datafiles_adds_yaml_in_root_datafolder()
+        {
+            // Arrange
+            fileSystem.AddFile(@"C:\TestSite\_data\members.yml", new MockFileData(@"- name: Eric Mill
+  github: konklone
+
+- name: Parker Moore
+  github: parkr
+
+- name: Liu Fengyun
+  github: liufengyun"));
+
+            fileSystem.AddFile(@"C:\TestSite\about.md", new MockFileData(@"# About page"));
+
+            // Act
+            var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+
+            // Assert
+            Assert.Equal("Eric Mill", siteContext.Data["members"][0]["name"]); // from page frontmatter
+            Assert.Equal(3, siteContext.Data["members"].Count); // from config defaults
+        }
     }
 }
