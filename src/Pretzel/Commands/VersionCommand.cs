@@ -1,11 +1,11 @@
-﻿using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Extensions;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Reflection;
 
 namespace Pretzel.Commands
 {
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Shared]
     [CommandInfo(CommandName = "version")]
     public sealed class VersionCommand : ICommand
     {

@@ -1,4 +1,4 @@
-﻿using Pretzel.Logic;
+using Pretzel.Logic;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensibility.Extensions;
 using Pretzel.Logic.Templating.Context;

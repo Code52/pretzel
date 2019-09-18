@@ -1,17 +1,17 @@
-﻿using Pretzel.Logic.Commands;
+using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Recipe;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 
 namespace Pretzel.Commands
 {
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Shared]
     [CommandInfo(CommandName = "create")]
     public sealed class RecipeCommand : ICommand
     {
@@ -20,13 +20,13 @@ namespace Pretzel.Commands
 #pragma warning disable 649
 
         [Import]
-        private IFileSystem fileSystem;
+        public IFileSystem FileSystem { get; set; }
 
         [Import]
-        private CommandParameters parameters;
+        public CommandParameters Parameters { get; set; }
 
         [ImportMany]
-        private IEnumerable<IAdditionalIngredient> additionalIngredients;
+        public IEnumerable<IAdditionalIngredient> AdditionalIngredients { get; set; }
 
 #pragma warning restore 649
 
@@ -34,11 +34,11 @@ namespace Pretzel.Commands
         {
             Tracing.Info("create - configure a new site");
 
-            parameters.Parse(arguments);
+            Parameters.Parse(arguments);
 
-            var engine = String.IsNullOrWhiteSpace(parameters.Template)
+            var engine = String.IsNullOrWhiteSpace(Parameters.Template)
                              ? TemplateEngines.First()
-                             : parameters.Template;
+                             : Parameters.Template;
 
             if (!TemplateEngines.Any(e => String.Equals(e, engine, StringComparison.InvariantCultureIgnoreCase)))
             {
@@ -48,13 +48,13 @@ namespace Pretzel.Commands
 
             Tracing.Info("Using {0} Engine", engine);
 
-            var recipe = new Recipe(fileSystem, engine, parameters.Path, additionalIngredients, parameters.WithProject, parameters.Wiki, parameters.IncludeDrafts);
+            var recipe = new Recipe(FileSystem, engine, Parameters.Path, AdditionalIngredients, Parameters.WithProject, Parameters.Wiki, Parameters.IncludeDrafts);
             recipe.Create();
         }
 
         public void WriteHelp(TextWriter writer)
         {
-            parameters.WriteOptions(writer, "-t", "-d", "withproject", "wiki", "-s");
+            Parameters.WriteOptions(writer, "-t", "-d", "withproject", "wiki", "-s");
         }
     }
 }

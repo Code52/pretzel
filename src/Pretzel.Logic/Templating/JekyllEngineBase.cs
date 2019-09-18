@@ -1,11 +1,11 @@
-﻿using Pretzel.Logic.Exceptions;
+using Pretzel.Logic.Exceptions;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensibility.Extensions;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -35,10 +35,10 @@ namespace Pretzel.Logic.Templating
         public IEnumerable<TagFactoryBase> TagFactories { get; set; }
 
         [ImportMany]
-        public IEnumerable<IContentTransform> ContentTransformers;
+        public IEnumerable<IContentTransform> ContentTransformers { get; set; }
 
         [Import(AllowDefault = true)]
-        private ILightweightMarkupEngine _lightweightMarkupEngine;
+        public ILightweightMarkupEngine LightweightMarkupEngine { get; set; }
 
         public abstract void Initialize();
 
@@ -49,12 +49,12 @@ namespace Pretzel.Logic.Templating
         public void Process(SiteContext siteContext, bool skipFileOnError = false)
         {
             // Default rendering engine
-            if (_lightweightMarkupEngine == null)
+            if (LightweightMarkupEngine == null)
             {
-                _lightweightMarkupEngine = new CommonMarkEngine();
+                LightweightMarkupEngine = new CommonMarkEngine();
             }
 
-            Tracing.Debug("LightweightMarkupEngine: {0}", _lightweightMarkupEngine.GetType().Name);
+            Tracing.Debug("LightweightMarkupEngine: {0}", LightweightMarkupEngine.GetType().Name);
 
             Context = siteContext;
             PreProcess();
@@ -224,7 +224,7 @@ namespace Pretzel.Logic.Templating
                 var contentsWithoutHeader = contents.ExcludeHeader();
 
                 html = Path.GetExtension(file).IsMarkdownFile()
-                       ? _lightweightMarkupEngine.Convert(contentsWithoutHeader).Trim()
+                       ? LightweightMarkupEngine.Convert(contentsWithoutHeader).Trim()
                        : contentsWithoutHeader;
 
                 if (ContentTransformers != null)

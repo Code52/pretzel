@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.IO;
 using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Commands
 {
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Shared]
     [CommandInfo(CommandName = "hungry")]
     public sealed class HungryCommand : ICommand
     {

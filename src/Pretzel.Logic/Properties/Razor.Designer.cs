@@ -19,7 +19,7 @@ namespace Pretzel.Logic.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Razor {
@@ -87,20 +87,14 @@ namespace Pretzel.Logic.Properties {
         ///
         ///&lt;?xml version=&quot;1.0&quot;?&gt;
         ///&lt;feed xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;
-        ///  &lt;title&gt;Feed Name&lt;/title&gt;
-        ///  &lt;link href=&quot;http://domain/&quot;/&gt;
-        ///  &lt;link type=&quot;application/atom+xml&quot; rel=&quot;self&quot; href=&quot;http://domain/atom.xml&quot;/&gt;
+        ///  &lt;title&gt;@Model.Site.Title | @Model.Site.Config[&quot;author&quot;]&lt;/title&gt;
+        ///  &lt;link href=&quot;@Model.Site.Config[&quot;url&quot;]&quot;/&gt;
+        ///  &lt;link type=&quot;application/atom+xml&quot; rel=&quot;self&quot; href=&quot;@Model.Site.Config[&quot;url&quot;]/atom.xml&quot;/&gt;
         ///  &lt;updated&gt;@Model.Site.Time.ToString(&quot;s&quot;)&lt;/updated&gt;
-        ///  &lt;id&gt;http://domain/&lt;/id&gt;
+        ///  &lt;id&gt;@Model.Site.Config[&quot;url&quot;]/&lt;/id&gt;
         ///  &lt;author&gt;
-        ///    &lt;name&gt;Author&lt;/name&gt;
-        ///    &lt;email&gt;Email&lt;/email&gt;
-        ///  &lt;/author&gt;
-        ///
-        ///  @foreach (var post in Model.Site.Posts)
-        ///  {
-        ///      &lt;entry&gt;
-        ///      [rest of string was truncated]&quot;;.
+        ///    &lt;name&gt;@Model.Site.Config[&quot;author&quot;]&lt;/name&gt;
+        ///    &lt;email&gt;@M [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Atom {
             get {
@@ -110,7 +104,13 @@ namespace Pretzel.Logic.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to pretzel: 
-        ///    engine: razor.
+        ///    engine: razor
+        ///
+        ///# Site settings
+        ///author: # name of the author
+        ///title: # site title
+        ///url: # site url
+        ///contact: # mail of the author.
         /// </summary>
         internal static string Config {
             get {
@@ -197,7 +197,7 @@ namespace Pretzel.Logic.Properties {
         ///    &lt;div id=&quot;container&quot;&gt;
         ///        &lt;div id=&quot;side&quot;&gt;
         ///            &lt;a href=&quot;/&quot; id=&quot;home&quot; title=&quot;home&quot; alt=&quot;home&quot;&gt;&lt;img src=&quot;/img/logo.png&quot; alt=&quot;Site Name&quot; /&gt;&lt;/a&gt;
-        ///            &lt;div id=&quot;hometext&quot;&gt;&lt;a href=&quot;/&quot;&gt;Site Name&lt;/a&gt;&lt;/ [rest of string was truncated]&quot;;.
+        ///            &lt;div id=&quot;hometext&quot;&gt;&lt;a href=&quot;/&quot;&gt;@Model.Site.Tit [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Layout {
             get {
@@ -238,16 +238,15 @@ namespace Pretzel.Logic.Properties {
         ///layout: nil
         ///---
         ///@model Pretzel.Logic.Templating.Context.PageContext
-        ///&lt;?xml version=&quot;1.0&quot; ?&gt;
+        ///&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
         ///&lt;rss version=&quot;2.0&quot; xmlns:atom=&quot;http://www.w3.org/2005/Atom&quot;&gt;
         ///&lt;channel&gt;
-        ///    &lt;title&gt;Feed Name&lt;/title&gt;
-        ///    &lt;link&gt;http://domain/&lt;/link&gt;
-        ///    &lt;atom:link href=&quot;http://domain/rss.xml&quot; rel=&quot;self&quot; type=&quot;application/rss+xml&quot; /&gt;
-        ///    &lt;description&gt;&lt;/description&gt;
-        ///    &lt;language&gt;en-au&lt;/language&gt;
-        ///    &lt;pubDate&gt;@Model.Site.Time.ToString(&quot;ddd, dd MMM yyyy H:mm:ss K&quot;)&lt;/pubDate&gt;
-        ///    &lt;lastBuildDate&gt;@Model.Site.Time.ToString( [rest of string was truncated]&quot;;.
+        ///    &lt;title&gt;@Model.Site.Title | @Model.Site.Config[&quot;author&quot;]&lt;/title&gt;
+        ///    &lt;link&gt;@Model.Site.Config[&quot;url&quot;]&lt;/link&gt;
+        ///    &lt;atom:link href=&quot;@Model.Site.Config[&quot;url&quot;]/rss.xml&quot; rel=&quot;self&quot; type=&quot;application/rss+xml&quot; /&gt;
+        ///    &lt;description&gt;Personal blog of @Model.Site.Config[&quot;author&quot;]&lt;/description&gt;
+        ///    &lt;language&gt;en-us&lt;/language&gt;
+        ///   [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Rss {
             get {

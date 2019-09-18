@@ -1,4 +1,3 @@
-﻿using System.ComponentModel.Composition;
 
 namespace Pretzel.Logic.Extensibility
 {

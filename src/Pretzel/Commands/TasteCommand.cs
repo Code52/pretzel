@@ -1,4 +1,4 @@
-﻿using Pretzel.Logic;
+using Pretzel.Logic;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
@@ -7,14 +7,14 @@ using Pretzel.Logic.Templating.Context;
 using Pretzel.Modules;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 
 namespace Pretzel.Commands
 {
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Shared]
     [CommandInfo(CommandName = "taste")]
     public sealed class TasteCommand : ICommand
     {
@@ -22,22 +22,22 @@ namespace Pretzel.Commands
 #pragma warning disable 649
 
         [Import]
-        private TemplateEngineCollection templateEngines;
+        public TemplateEngineCollection TemplateEngines { get; set; }
 
         [Import]
-        private SiteContextGenerator Generator { get; set; }
+        public SiteContextGenerator Generator { get; set; }
 
         [Import]
-        private CommandParameters parameters;
+        public CommandParameters Parameters { get; set; }
 
         [ImportMany]
-        private IEnumerable<ITransform> transforms;
+        public IEnumerable<ITransform> Transforms { get; set; }
 
         [Import]
-        private IFileSystem FileSystem;
+        public IFileSystem FileSystem { get; set; }
 
         [Import]
-        private IConfiguration Configuration;
+        public IConfiguration Configuration { get; set; }
 
 #pragma warning restore 649
 
@@ -45,40 +45,40 @@ namespace Pretzel.Commands
         {
             Tracing.Info("taste - testing a site locally");
 
-            parameters.Parse(arguments);
+            Parameters.Parse(arguments);
 
-            var context = Generator.BuildContext(parameters.Path, parameters.DestinationPath, parameters.IncludeDrafts);
+            var context = Generator.BuildContext(Parameters.Path, Parameters.DestinationPath, Parameters.IncludeDrafts);
 
-            if (parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
+            if (Parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
                 FileSystem.Directory.Delete(context.OutputFolder, true);
             }
 
-            if (string.IsNullOrWhiteSpace(parameters.Template))
+            if (string.IsNullOrWhiteSpace(Parameters.Template))
             {
-                parameters.DetectFromDirectory(templateEngines.Engines, context);
+                Parameters.DetectFromDirectory(TemplateEngines.Engines, context);
             }
 
-            engine = templateEngines[parameters.Template];
+            engine = TemplateEngines[Parameters.Template];
 
             if (engine == null)
             {
-                Tracing.Info("template engine {0} not found - (engines: {1})", parameters.Template,
-                                           string.Join(", ", templateEngines.Engines.Keys));
+                Tracing.Info("template engine {0} not found - (engines: {1})", Parameters.Template,
+                                           string.Join(", ", TemplateEngines.Engines.Keys));
 
                 return;
             }
 
             engine.Initialize();
             engine.Process(context, skipFileOnError: true);
-            foreach (var t in transforms)
+            foreach (var t in Transforms)
                 t.Transform(context);
 
-            using (var watcher = new SimpleFileSystemWatcher(parameters.DestinationPath))
+            using (var watcher = new SimpleFileSystemWatcher(Parameters.DestinationPath))
             {
-                watcher.OnChange(parameters.Path, WatcherOnChanged);
+                watcher.OnChange(Parameters.Path, WatcherOnChanged);
 
-                using (var w = new WebHost(parameters.DestinationPath, new FileContentProvider(), Convert.ToInt32(parameters.Port)))
+                using (var w = new WebHost(Parameters.DestinationPath, new FileContentProvider(), Convert.ToInt32(Parameters.Port)))
                 {
                     try
                     {
@@ -86,12 +86,12 @@ namespace Pretzel.Commands
                     }
                     catch (System.Net.Sockets.SocketException)
                     {
-                        Tracing.Info("Port {0} is already in use", parameters.Port);
+                        Tracing.Info("Port {0} is already in use", Parameters.Port);
                         return;
                     }
 
-                    var url = string.Format("http://localhost:{0}/", parameters.Port);
-                    if (parameters.LaunchBrowser)
+                    var url = string.Format("http://localhost:{0}/", Parameters.Port);
+                    if (Parameters.LaunchBrowser)
                     {
                         Tracing.Info("Opening {0} in default browser...", url);
                         try
@@ -122,9 +122,9 @@ namespace Pretzel.Commands
 
         private void WatcherOnChanged(string file)
         {
-            if(file.StartsWith(parameters.Path))
+            if(file.StartsWith(Parameters.Path))
             {
-                var relativeFile = file.Substring(parameters.Path.Length).ToRelativeFile();
+                var relativeFile = file.Substring(Parameters.Path.Length).ToRelativeFile();
                 if (Generator.IsExcludedPath(relativeFile))
                 {
                     return;
@@ -135,19 +135,19 @@ namespace Pretzel.Commands
 
             ((Configuration)Configuration).ReadFromFile();
 
-            var context = Generator.BuildContext(parameters.Path, parameters.DestinationPath, parameters.IncludeDrafts);
-            if (parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
+            var context = Generator.BuildContext(Parameters.Path, Parameters.DestinationPath, Parameters.IncludeDrafts);
+            if (Parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
                 FileSystem.Directory.Delete(context.OutputFolder, true);
             }
             engine.Process(context, true);
-            foreach (var t in transforms)
+            foreach (var t in Transforms)
                 t.Transform(context);
         }
 
         public void WriteHelp(TextWriter writer)
         {
-            parameters.WriteOptions(writer, "-t", "-d", "-p", "--nobrowser", "-cleantarget", "-s", "-destination");
+            Parameters.WriteOptions(writer, "-t", "-d", "-p", "--nobrowser", "-cleantarget", "-s", "-destination");
         }
     }
 }

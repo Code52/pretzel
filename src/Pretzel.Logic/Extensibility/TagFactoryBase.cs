@@ -1,10 +1,8 @@
-﻿using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
-using System.ComponentModel.Composition;
 
 namespace Pretzel.Logic.Extensibility
 {
-    [InheritedExport]
     public abstract class TagFactoryBase : DotLiquid.ITagFactory
     {
         private readonly string _tageName;

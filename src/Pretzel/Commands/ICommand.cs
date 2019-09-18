@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Pretzel.Commands
 {
-    [InheritedExport]
     public interface ICommand
     {
         void Execute(IEnumerable<string> arguments);
