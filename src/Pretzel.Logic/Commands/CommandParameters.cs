@@ -5,6 +5,7 @@ using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
@@ -21,23 +22,53 @@ namespace Pretzel.Logic.Commands
         {
             this.fileSystem = fileSystem;
 
-            port = 8080;
-            LaunchBrowser = true;
-
-            Settings = new OptionSet
+            Settings = new[]
+            {
+                new Option(new []{ "template", "t" },"The templating engine to use")
                 {
-                    { "t|template=", "The templating engine to use", v => Template = v },
-                    { "p|port=", "The port to test the site locally", p => decimal.TryParse(p, out port) },
-                    { "i|import=", "The import type", v => ImportType = v },
-                    { "f|file=", "Path to import file", v => ImportPath = v },
-                    { "destination=", "The path to the destination site (default _site)", d => DestinationPath = d},
-                    { "drafts", "Add the posts in the drafts folder", v => IncludeDrafts = true },
-                    { "nobrowser", "Do not launch a browser", v => LaunchBrowser = false },
-                    { "withproject", "Includes a layout VS Solution, to give intellisense when editing razor layout files", v => WithProject = (v!=null) },
-                    { "wiki", "Creates a wiki instead of a blog (razor template only)", v => Wiki = (v!=null) },
-                    { "cleantarget", "Delete the target directory (_site by default)", v => CleanTarget = true },
-                    { "n|newposttitle=", "The title of the new post (\"New post\" by default)", v => NewPostTitle = v }
-                };
+                    Argument = new Argument<string>()
+                },
+                new Option(new [] {"port", "p"}, "The port to test the site locally")
+                {
+                    Argument = new Argument<int>(() => 8080)
+                },
+                new Option(new [] {"import", "i"}, "The import type")
+                {
+                    Argument = new Argument<string>()
+                },
+                new Option(new [] {"file", "f"}, "Path to import file")
+                {
+                    Argument = new Argument<string>()
+                },
+                new Option("destination", "The path to the destination site (default _site)")
+                {
+                    Argument = new Argument<string>(() => "_site")
+                },
+                new Option("drafts", "Add the posts in the drafts folder")
+                {
+                    Argument = new Argument<bool>()
+                },
+                new Option("nobrowser", "Do not launch a browser (false by default)")
+                {
+                    Argument = new Argument<bool>(() => false)
+                },
+                new Option("withproject", "Includes a layout VS Solution, to give intellisense when editing razor layout files")
+                {
+                    Argument = new Argument<bool>()
+                },
+                new Option("wiki", "Creates a wiki instead of a blog (razor template only)")
+                {
+                    Argument = new Argument<bool>()
+                },
+                new Option("cleantarget", "Delete the target directory (_site by default)")
+                {
+                    Argument = new Argument<bool>()
+                },
+                new Option(new [] { "newposttitle", "n" }, "The title of the new post (\"New post\" by default")
+                {
+                    Argument = new Argument<string>(() => "New post")
+                }
+            };
 
             // Allow extensions to register command line args
             foreach (var commandLineExtension in commandLineExtensions)
@@ -76,7 +107,8 @@ namespace Pretzel.Logic.Commands
             get { return port; }
         }
 
-        private OptionSet Settings { get; set; }
+        [Export]
+        private IEnumerable<Option> Settings { get; set; }
 
         private readonly IFileSystem fileSystem;
 
