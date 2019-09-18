@@ -6,6 +6,10 @@ using System.IO.Abstractions;
 using System.Collections;
 using System;
 using YamlDotNet.RepresentationModel;
+using CsvHelper;
+using System.Linq;
+using System.Globalization;
+using System.Text;
 
 namespace Pretzel.Logic.Templating.Context
 {
@@ -26,7 +30,7 @@ namespace Pretzel.Logic.Templating.Context
             get
             {
                 var res = base[method];
-                if(res != null)
+                if (res != null)
                 {
                     return res;
                 }
@@ -52,6 +56,16 @@ namespace Pretzel.Logic.Templating.Context
                             return result;
                         }
 
+                        if (TryParseCsv(dataDirectory, method.ToString(), out result))
+                        {
+                            return result;
+                        }
+
+                        if (TryParseCsv(dataDirectory, method.ToString(), out result, "tsv", "\t"))
+                        {
+                            return result;
+                        }
+
                         var subFolder = Path.Combine(dataDirectory, method.ToString());
                         if (fileSystem.Directory.Exists(subFolder))
                         {
@@ -60,7 +74,7 @@ namespace Pretzel.Logic.Templating.Context
 
                         return null;
                     });
-                    
+
                 }
 
                 return cachedResult.Value;
@@ -96,6 +110,93 @@ namespace Pretzel.Logic.Templating.Context
                 return yamlResult != null;
             }
             yamlResult = null;
+            return false;
+        }
+
+        bool TryParseCsv(string folder, string methodName, out object csvResult, string ext = "csv", string delimiter = ",")
+        {
+            var csvFileName = Path.Combine(folder, $"{methodName}.{ext}");
+            if (fileSystem.File.Exists(csvFileName))
+            {
+                var text = fileSystem.File.ReadAllText(csvFileName);
+
+                var input = new StringReader(text);
+
+                var csvList = new List<Dictionary<string, object>>();
+
+                using (var csv = new CsvReader(input, new CsvHelper.Configuration.Configuration
+                {
+                    AllowComments = false,
+                    CountBytes = false,
+                    CultureInfo = CultureInfo.CurrentCulture,
+                    Delimiter = delimiter,
+                    DetectColumnCountChanges = false,
+                    Encoding = Encoding.UTF8,
+                    HasHeaderRecord = true,
+                    IgnoreBlankLines = true,
+                    IgnoreQuotes = false,
+                    HeaderValidated = null,
+                    MissingFieldFound = null,
+                    TrimOptions = CsvHelper.Configuration.TrimOptions.None,
+                    BadDataFound = null,
+                }))
+                {
+                    var isHeader = true;
+                    while (csv.Read())
+                    {
+                        if (isHeader)
+                        {
+                            csv.ReadHeader();
+                            isHeader = false;
+                            continue;
+                        }
+
+                        if (string.IsNullOrEmpty(csv.GetField(0)))
+                        {
+                            isHeader = true;
+                            continue;
+                        }
+
+                        var csvRow = new Dictionary<string, object>();
+
+                        for (int i = 0; i < csv.Context.HeaderRecord.Length; i++)
+                        {
+                            if(csv.Context.HeaderRecord[i].Contains("."))
+                            {
+                                var currentDictionary = new Dictionary<string, object>();
+                                var tree = csv.Context.HeaderRecord[i].Split('.');
+                                var firstKey = tree.First();
+                                foreach (var subObject in tree.Skip(1))
+                                {
+
+                                    var newDict = new Dictionary<string, object>();
+                                    currentDictionary[subObject] = newDict;
+                                    currentDictionary = newDict;
+                                }
+                                currentDictionary[tree.Last()] = csv.GetField(i);
+                                csvRow[firstKey] = currentDictionary;
+                            }
+                            else
+                            {
+                                var field = csv.GetField(i);
+                                csvRow[csv.Context.HeaderRecord[i]] = field;
+                            }
+                        }
+
+                        csvList.Add(csvRow);
+                    }
+
+                    if (csvList.Count == 1)
+                    {
+                        csvResult = csvList.First();
+                        return true;
+                    }
+
+                    csvResult = csvList;
+                    return true;
+                }
+            }
+            csvResult = null;
             return false;
         }
     }

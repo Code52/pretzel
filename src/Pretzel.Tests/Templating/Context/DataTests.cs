@@ -42,6 +42,12 @@ namespace Pretzel.Tests.Templating.Context
             [Theory]
             [InlineData("yml", @"name: Eric Mill")]
             [InlineData("json", @"{ name: 'Eric Mill' }")]
+            [InlineData("csv", @"name
+""Eric Mill""
+")]
+            [InlineData("tsv", @"name
+""Eric Mill""
+")]
             public void renders_nested_object(string ext, string fileContent)
             {
                 fileSystem.AddFile(Path.Combine(dataDirectory, $"person.{ext}"), new MockFileData(fileContent));
@@ -66,10 +72,14 @@ address:
             [InlineData("json", @"{
   name: 'Eric Mill',
   address: {
-  street: 'Some Street'
+  street: 'Some Street',
   postalcode: 1234
   }
 }")]
+            [InlineData("csv", @"name,address.street,address.postalcode
+""Eric Mill"",""Some Street"",1234")]
+            [InlineData("tsv", @"name	address.street	address.postalcode
+""Eric Mill""	""Some Street""	1234")]
             public void renders_deep_nested_object(string ext, string fileContent)
             {
                 fileSystem.AddFile(Path.Combine(dataDirectory, $"person.{ext}"), new MockFileData(fileContent));
@@ -105,6 +115,14 @@ address:
     name: 'Liu Fengyun',
     github: 'liufengyun'
 }]")]
+            [InlineData("csv", @"name,github
+""Eric Mill"",""konklone""
+""Parker Moore"",""parkr""
+""Liu Fengyun"",""liufengyun""")]
+            [InlineData("tsv", @"name	github
+""Eric Mill""	""konklone""
+""Parker Moore""	""parkr""
+""Liu Fengyun""	""liufengyun""")]
             public void renders_nested_lists(string ext, string fileContent)
             {
                 fileSystem.AddFile(Path.Combine(dataDirectory, $"members.{ext}"), new MockFileData(fileContent));
@@ -131,6 +149,11 @@ address:
         twitter: 'DavidSilvaSmith'
     }
 }")]
+//TODO: This is currently not supported
+//            [InlineData("csv", @"dave.name,dave.twitter
+//""David Smith"",""DavidSilvaSmith""")]
+//            [InlineData("tsv", @"dave.name	dave.twitter
+//""David Smith""	""DavidSilvaSmith""")]
             public void renders_dictionary_accessors(string ext, string fileContent)
             {
                 fileSystem.AddFile(Path.Combine(dataDirectory, $"people.{ext}"), new MockFileData(fileContent));
@@ -152,6 +175,10 @@ address:
             [InlineData("json", @"{
     name: 'Eric Mill'
 }")]
+            [InlineData("csv", @"name
+""Eric Mill""")]
+            [InlineData("tsv", @"name
+""Eric Mill""")]
             public void renders_nested_folder_object(string ext, string fileContent)
             {
                 fileSystem.AddFile(Path.Combine(dataDirectory, $@"users\person.{ext}"), new MockFileData(fileContent));
@@ -175,6 +202,10 @@ email: eric@example.com")]
     name: 'Eric Mill',
     email: 'eric@example.com'
 }")]
+            [InlineData("csv", @"name,email
+""Eric Mill"",""eric@example.com""")]
+            [InlineData("tsv", @"name	email
+""Eric Mill""	""eric@example.com""")]
             public void caches_result(string ext, string fileContent)
             {
                 var fileSystem = Substitute.For<IFileSystem>();
