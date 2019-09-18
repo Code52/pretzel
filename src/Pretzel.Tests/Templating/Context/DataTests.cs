@@ -98,5 +98,24 @@ address:
 
             Assert.Equal("3", result.Trim());
         }
+
+        [Fact]
+        public void renders_yaml_dictionary_accessors()
+        {
+            fileSystem.AddFile(Path.Combine(dataDirectory, "people.yml"), new MockFileData(@"dave:
+    name: David Smith
+    twitter: DavidSilvaSmith"));
+
+            var template = Template.Parse(@"{{ data.people['dave'].name }}");
+
+            var hash = Hash.FromAnonymousObject(new
+            {
+                Data = data
+            });
+
+            var result = template.Render(hash);
+
+            Assert.Equal("David Smith", result.Trim());
+        }
     }
 }
