@@ -13,6 +13,7 @@ namespace Pretzel.Logic.Templating.Context
     {
         private readonly IFileSystem fileSystem;
         private readonly string dataDirectory;
+        private System.Lazy<object> cachedResult;
 
         public Data(IFileSystem fileSystem, string dataDirectory)
         {
@@ -36,20 +37,29 @@ namespace Pretzel.Logic.Templating.Context
                     return null;
                 }
 
-                object result;
-
-                if (TryParseYaml(dataDirectory, method.ToString(), out result))
+                if (cachedResult == null)
                 {
-                    return result;
+                    cachedResult = new Lazy<object>(() =>
+                    {
+                        object result;
+
+                        if (TryParseYaml(dataDirectory, method.ToString(), out result))
+                        {
+                            return result;
+                        }
+
+                        var subFolder = Path.Combine(dataDirectory, method.ToString());
+                        if (fileSystem.Directory.Exists(subFolder))
+                        {
+                            return new Data(fileSystem, subFolder);
+                        }
+
+                        return null;
+                    });
+                    
                 }
 
-                var subFolder = Path.Combine(dataDirectory, method.ToString());
-                if(fileSystem.Directory.Exists(subFolder))
-                {
-                    return new Data(fileSystem, subFolder);
-                }
-
-                return null;
+                return cachedResult.Value;
             }
         }
 

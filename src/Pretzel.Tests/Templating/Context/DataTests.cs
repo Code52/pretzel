@@ -1,4 +1,5 @@
 using DotLiquid;
+using NSubstitute;
 using Pretzel.Logic.Templating.Context;
 using System;
 using System.Collections.Generic;
@@ -24,61 +25,61 @@ namespace Pretzel.Tests.Templating.Context
             data = new Data(fileSystem, dataDirectory);
         }
 
-
-
-        [Fact]
-        public void renders_empty_string_if_data_directory_does_not_exist()
+        public class YamlTests : DataTests
         {
-            var template = Template.Parse(@"{{ data.people }}");
-
-            var hash = Hash.FromAnonymousObject(new { Data = data });
-
-            var result = template.Render(hash);
-
-            Assert.Equal("", result.Trim());
-        }
-
-        [Fact]
-        public void renders_yaml_nested_object()
-        {
-            fileSystem.AddFile(Path.Combine(dataDirectory, "person.yml"), new MockFileData(@"name: Eric Mill"));
-
-            var template = Template.Parse(@"{{ data.person.name }}");
-
-            var hash = Hash.FromAnonymousObject(new
+            [Fact]
+            public void renders_empty_string_if_data_directory_does_not_exist()
             {
-                Data = data
-            });
+                var template = Template.Parse(@"{{ data.people }}");
 
-            var result = template.Render(hash);
+                var hash = Hash.FromAnonymousObject(new { Data = data });
 
-            Assert.Equal("Eric Mill", result.Trim());
-        }
+                var result = template.Render(hash);
 
-        [Fact]
-        public void renders_yaml_deep_nested_object()
-        {
-            fileSystem.AddFile(Path.Combine(dataDirectory, "person.yml"), new MockFileData(@"name: Eric Mill
+                Assert.Equal("", result.Trim());
+            }
+
+            [Fact]
+            public void renders_nested_object()
+            {
+                fileSystem.AddFile(Path.Combine(dataDirectory, "person.yml"), new MockFileData(@"name: Eric Mill"));
+
+                var template = Template.Parse(@"{{ data.person.name }}");
+
+                var hash = Hash.FromAnonymousObject(new
+                {
+                    Data = data
+                });
+
+                var result = template.Render(hash);
+
+                Assert.Equal("Eric Mill", result.Trim());
+            }
+
+            [Fact]
+            public void renders_deep_nested_object()
+            {
+                fileSystem.AddFile(Path.Combine(dataDirectory, "person.yml"), new MockFileData(@"name: Eric Mill
 address:
   street: Some Street
   postalcode: 1234"));
 
-            var template = Template.Parse(@"{{ data.person.address.postalcode }}");
+                var template = Template.Parse(@"{{ data.person.address.postalcode }}");
 
-            var hash = Hash.FromAnonymousObject(new
+                var hash = Hash.FromAnonymousObject(new
+                {
+                    Data = data
+                });
+
+                var result = template.Render(hash);
+
+                Assert.Equal("1234", result.Trim());
+            }
+
+            [Fact]
+            public void renders_nested_lists()
             {
-                Data = data
-            });
-
-            var result = template.Render(hash);
-
-            Assert.Equal("1234", result.Trim());
-        }
-
-        [Fact]
-        public void renders_yaml_nested_lists()
-        {
-            fileSystem.AddFile(Path.Combine(dataDirectory, "members.yml"), new MockFileData(@"- name: Eric Mill
+                fileSystem.AddFile(Path.Combine(dataDirectory, "members.yml"), new MockFileData(@"- name: Eric Mill
   github: konklone
 
 - name: Parker Moore
@@ -87,52 +88,85 @@ address:
 - name: Liu Fengyun
   github: liufengyun"));
 
-            var template = Template.Parse(@"{{ data.members | size }}");
+                var template = Template.Parse(@"{{ data.members | size }}");
 
-            var hash = Hash.FromAnonymousObject(new
+                var hash = Hash.FromAnonymousObject(new
+                {
+                    Data = data
+                });
+
+                var result = template.Render(hash);
+
+                Assert.Equal("3", result.Trim());
+            }
+
+            [Fact]
+            public void renders_dictionary_accessors()
             {
-                Data = data
-            });
-
-            var result = template.Render(hash);
-
-            Assert.Equal("3", result.Trim());
-        }
-
-        [Fact]
-        public void renders_yaml_dictionary_accessors()
-        {
-            fileSystem.AddFile(Path.Combine(dataDirectory, "people.yml"), new MockFileData(@"dave:
+                fileSystem.AddFile(Path.Combine(dataDirectory, "people.yml"), new MockFileData(@"dave:
     name: David Smith
     twitter: DavidSilvaSmith"));
 
-            var template = Template.Parse(@"{{ data.people['dave'].name }}");
+                var template = Template.Parse(@"{{ data.people['dave'].name }}");
 
-            var hash = Hash.FromAnonymousObject(new
+                var hash = Hash.FromAnonymousObject(new
+                {
+                    Data = data
+                });
+
+                var result = template.Render(hash);
+
+                Assert.Equal("David Smith", result.Trim());
+            }
+
+            [Fact]
+            public void renders_nested_folder_object()
             {
-                Data = data
-            });
+                fileSystem.AddFile(Path.Combine(dataDirectory, @"users\person.yml"), new MockFileData(@"name: Eric Mill"));
 
-            var result = template.Render(hash);
+                var template = Template.Parse(@"{{ data.users.person.name }}");
 
-            Assert.Equal("David Smith", result.Trim());
-        }
+                var hash = Hash.FromAnonymousObject(new
+                {
+                    Data = data
+                });
 
-        [Fact]
-        public void renders_yaml_nested_folder_object()
-        {
-            fileSystem.AddFile(Path.Combine(dataDirectory, @"users\person.yml"), new MockFileData(@"name: Eric Mill"));
+                var result = template.Render(hash);
 
-            var template = Template.Parse(@"{{ data.users.person.name }}");
+                Assert.Equal("Eric Mill", result.Trim());
+            }
 
-            var hash = Hash.FromAnonymousObject(new
+            [Fact]
+            public void caches_result()
             {
-                Data = data
-            });
+                var fileSystem = Substitute.For<IFileSystem>();
+                var data = new Data(fileSystem, dataDirectory);
 
-            var result = template.Render(hash);
+                var directory = Substitute.For<DirectoryBase>();
+                fileSystem.Directory.Returns(directory);
+                directory.Exists(dataDirectory).Returns(true);
 
-            Assert.Equal("Eric Mill", result.Trim());
+                var file = Substitute.For<FileBase>();
+                fileSystem.File.Returns(file);
+
+                var fileName = Path.Combine(dataDirectory, "person.yml");
+                file.Exists(fileName).Returns(true);
+                file.ReadAllText(fileName).Returns(@"name: Eric Mill
+email: eric@example.com");
+
+                var template = Template.Parse(@"{{ data.person.name }} {{ data.person.email }}");
+
+                var hash = Hash.FromAnonymousObject(new
+                {
+                    Data = data
+                });
+
+                var result = template.Render(hash);
+
+                Assert.Equal("Eric Mill eric@example.com", result.Trim());
+
+                file.Received(1).ReadAllText(fileName);
+            }
         }
     }
 }
