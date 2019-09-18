@@ -1,5 +1,6 @@
 using NDesk.Options;
 using Pretzel.Logic.Extensibility.Extensions;
+using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Xunit;
@@ -94,9 +95,9 @@ namespace Pretzel.Tests.Extensibility.Extensions
             azureHostSupport.MixIn(@"c:\website");
 
             // assert
-            Assert.Contains(@"c:\website\_source\", fileSystem.AllDirectories);
+            Assert.Contains(@"c:\website\_source", fileSystem.AllDirectories);
             Assert.Contains(@"c:\website\_source\index.md", fileSystem.AllFiles);
-            Assert.Contains(@"c:\website\_source\_posts\", fileSystem.AllDirectories);
+            Assert.Contains(@"c:\website\_source\_posts", fileSystem.AllDirectories);
             Assert.Contains(@"c:\website\Shim.cs", fileSystem.AllFiles);
             Assert.Contains(@"c:\website\Shim.csproj", fileSystem.AllFiles);
             Assert.Contains(@"c:\website\Shim.sln", fileSystem.AllFiles);

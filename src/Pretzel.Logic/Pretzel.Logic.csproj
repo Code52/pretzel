@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
     <TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
@@ -39,7 +39,7 @@
     <PackageReference Include="SonarAnalyzer.CSharp" Version="7.16.0.8981">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="System.IO.Abstractions" Version="2.0.0.116" />
+    <PackageReference Include="System.IO.Abstractions" Version="6.0.32" />
     <PackageReference Include="YamlDotNet" Version="6.1.2" />
     <PackageReference Include="System.Composition" Version="1.2.0" />
   </ItemGroup>

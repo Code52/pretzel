@@ -159,7 +159,7 @@ namespace Pretzel.Tests.Minification
             var expectedOutput = @"a{color:#4D926F;width:24px;height:24px;foo:bold}";
 
             var minifier = new LessTransform(fileSystem);
-            var context = new SiteContext { SourceFolder = @"C:\", OutputFolder = @"C:\_site" };
+            var context = new SiteContext { SourceFolder = @"c:\", OutputFolder = @"c:\_site" };
             context.Pages.Add(new NonProcessedPage { OutputFile = HtmlFilePath, Content = PageContent });
             context.Pages.Add(new NonProcessedPage { OutputFile = filepath1, Content = fileContent1, Filepath = filepath1 });
             context.Pages.Add(new NonProcessedPage { OutputFile = filepath2, Content = fileContent2, Filepath = filepath2 });
@@ -178,7 +178,6 @@ namespace Pretzel.Tests.Minification
             Assert.False(fileSystem.File.Exists(@"c:\css\style.less"));
             Assert.True(fileSystem.Directory.Exists(@"c:\css\subfolder"));
             Assert.True(fileSystem.File.Exists(@"c:\css\subfolder\anothersubfolder\anything.less"));
-            Assert.True(fileSystem.Directory.Exists(@"c:\_site"));
         }
 
         [Fact]
