@@ -149,11 +149,11 @@ address:
         twitter: 'DavidSilvaSmith'
     }
 }")]
-//TODO: This is currently not supported
-//            [InlineData("csv", @"dave.name,dave.twitter
-//""David Smith"",""DavidSilvaSmith""")]
-//            [InlineData("tsv", @"dave.name	dave.twitter
-//""David Smith""	""DavidSilvaSmith""")]
+            //TODO: This is currently not supported. See https://jekyllrb.com/docs/datafiles/#example-accessing-a-specific-author
+            //            [InlineData("csv", @"dave.name,dave.twitter
+            //""David Smith"",""DavidSilvaSmith""")]
+            //            [InlineData("tsv", @"dave.name	dave.twitter
+            //""David Smith""	""DavidSilvaSmith""")]
             public void renders_dictionary_accessors(string ext, string fileContent)
             {
                 fileSystem.AddFile(Path.Combine(dataDirectory, $"people.{ext}"), new MockFileData(fileContent));
