@@ -56,6 +56,26 @@ namespace Pretzel.Tests.Templating.Context
         }
 
         [Fact]
+        public void renders_yaml_deep_nested_object()
+        {
+            fileSystem.AddFile(Path.Combine(dataDirectory, "person.yml"), new MockFileData(@"name: Eric Mill
+address:
+  street: Some Street
+  postalcode: 1234"));
+
+            var template = Template.Parse(@"{{ data.person.address.postalcode }}");
+
+            var hash = Hash.FromAnonymousObject(new
+            {
+                Data = data
+            });
+
+            var result = template.Render(hash);
+
+            Assert.Equal("1234", result.Trim());
+        }
+
+        [Fact]
         public void renders_yaml_nested_lists()
         {
             fileSystem.AddFile(Path.Combine(dataDirectory, "members.yml"), new MockFileData(@"- name: Eric Mill

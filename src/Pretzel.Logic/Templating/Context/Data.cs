@@ -40,6 +40,7 @@ namespace Pretzel.Logic.Templating.Context
                 if (fileSystem.File.Exists(yamlFileName))
                 {
                     var text = fileSystem.File.ReadAllText(yamlFileName);
+
                     var input = new StringReader(text);
 
                     var yaml = new YamlStream();
