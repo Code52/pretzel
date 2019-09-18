@@ -102,10 +102,12 @@ namespace Pretzel.Logic.Import
 
             try
             {
-                var path = Path.Combine(pathToSite, Path.Combine("_posts", fileName));
-                if(!fileSystem.Directory.Exists(Path.GetDirectoryName(path)))
+                var postsPath = Path.Combine(pathToSite, "_posts");
+                var path = Path.Combine(postsPath, fileName);
+
+                if (!fileSystem.Directory.Exists(postsPath))
                 {
-                    fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(path));
+                    fileSystem.Directory.CreateDirectory(postsPath);
                 }
                 fileSystem.File.WriteAllText(path, postContent);
             }

@@ -66,10 +66,12 @@ namespace Pretzel.Logic.Import
             var postsFolder = "_posts";
             var fileName = string.Format("{0}-{1}.md", p.Published.ToString("yyyy-MM-dd"), p.PostName.Replace(' ', '-')); //not sure about post name
 
-            var path = Path.Combine(pathToSite, postsFolder, fileName);
-            if (!fileSystem.Directory.Exists(Path.GetDirectoryName(path)))
+            var postsPath = Path.Combine(pathToSite, postsFolder);
+            var path = Path.Combine(postsPath, fileName);
+
+            if (!fileSystem.Directory.Exists(postsPath))
             {
-                fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(path));
+                fileSystem.Directory.CreateDirectory(postsPath);
             }
             fileSystem.File.WriteAllText(path, postContent);
         }
