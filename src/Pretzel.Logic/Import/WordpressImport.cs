@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO.Abstractions;
@@ -10,9 +10,9 @@ namespace Pretzel.Logic.Import
 {
     public class WordpressImport
     {
-		private readonly IFileSystem fileSystem;
-		private readonly string pathToSite;
-		private readonly string pathToImportFile;
+        private readonly IFileSystem fileSystem;
+        private readonly string pathToSite;
+        private readonly string pathToImportFile;
 
         public WordpressImport(IFileSystem fileSystem, string pathToSite, string pathToImportFile)
         {
@@ -66,7 +66,12 @@ namespace Pretzel.Logic.Import
             var postsFolder = "_posts";
             var fileName = string.Format("{0}-{1}.md", p.Published.ToString("yyyy-MM-dd"), p.PostName.Replace(' ', '-')); //not sure about post name
 
-            fileSystem.File.WriteAllText(Path.Combine(pathToSite, postsFolder, fileName), postContent);
+            var path = Path.Combine(pathToSite, postsFolder, fileName);
+            if (!fileSystem.Directory.Exists(Path.GetDirectoryName(path)))
+            {
+                fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(path));
+            }
+            fileSystem.File.WriteAllText(path, postContent);
         }
 
 
