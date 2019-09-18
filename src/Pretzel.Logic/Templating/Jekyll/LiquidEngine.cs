@@ -1,15 +1,15 @@
-﻿using DotLiquid;
+using DotLiquid;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Liquid;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Jekyll.Liquid;
 using System;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Text.RegularExpressions;
 
 namespace Pretzel.Logic.Templating.Jekyll
 {
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Shared]
     [SiteEngineInfo(Engine = "liquid")]
     public class LiquidEngine : JekyllEngineBase
     {

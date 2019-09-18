@@ -1,24 +1,24 @@
-﻿using Pretzel.Logic.Commands;
+using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Recipe;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
 
 namespace Pretzel.Commands
 {
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Shared]
     [CommandInfo(CommandName = "ingredient")]
     public sealed class IngredientCommand : ICommand
     {
 #pragma warning disable 649
 
         [Import]
-        private IFileSystem fileSystem;
+        public IFileSystem FileSystem { get; set; }
 
         [Import]
-        private CommandParameters parameters;
+        public CommandParameters Parameters { get; set; }
 
 #pragma warning restore 649
 
@@ -26,16 +26,16 @@ namespace Pretzel.Commands
         {
             Tracing.Info("ingredient - create a new post");
 
-            parameters.Parse(arguments);
+            Parameters.Parse(arguments);
 
-            var ingredient = new Ingredient(fileSystem, parameters.NewPostTitle, parameters.Path, parameters.IncludeDrafts);
+            var ingredient = new Ingredient(FileSystem, Parameters.NewPostTitle, Parameters.Path, Parameters.IncludeDrafts);
             ingredient.Create();
         }
 
         public void WriteHelp(TextWriter writer)
         {
             writer.Write("   Create a new post\r\n");
-            parameters.WriteOptions(writer, "newposttitle", "drafts", "-s");
+            Parameters.WriteOptions(writer, "newposttitle", "drafts", "-s");
         }
     }
 }

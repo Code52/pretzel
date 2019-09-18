@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
-    <TargetFramework>net451</TargetFramework>
+    <TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\src\</SolutionDir>
     <AssemblyTitle>Pretzel.Logic</AssemblyTitle>
     <Product>Pretzel.Logic</Product>
@@ -23,14 +23,19 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+    <DefineConstants>NETSTANDARD</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AjaxMin" Version="5.14.5506.26202" />
     <PackageReference Include="CommonMark.NET" Version="0.15.1" />
     <PackageReference Include="CsvHelper" Version="12.1.2" />
     <PackageReference Include="DotlessClientOnly" Version="1.5.2" />
+    <PackageReference Include="dotless.Core" Version="1.6.7" />
     <PackageReference Include="DotLiquid" Version="2.0.314" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.12" />
     <PackageReference Include="Microsoft.AspNet.Razor" Version="3.2.7" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="2.1.1" />
     <PackageReference Include="NDesk.Options" Version="0.2.1" />
     <PackageReference Include="RazorEngine" Version="3.10.0" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="7.16.0.8981">
@@ -38,9 +43,9 @@
     </PackageReference>
     <PackageReference Include="System.IO.Abstractions" Version="2.0.0.116" />
     <PackageReference Include="YamlDotNet" Version="6.1.2" />
+    <PackageReference Include="System.Composition" Version="1.2.0" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>

@@ -1,6 +1,6 @@
-﻿using NDesk.Options;
+using NDesk.Options;
 using Pretzel.Logic.Extensions;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -8,6 +8,8 @@ using System.Reflection;
 
 namespace Pretzel.Logic.Extensibility.Extensions
 {
+    [Export(typeof(IAdditionalIngredient))]
+    [Export(typeof(IHaveCommandLineArgs))]
     public class AzureHostSupport : IAdditionalIngredient, IHaveCommandLineArgs
     {
         private readonly IFileSystem fileSystem;

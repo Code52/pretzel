@@ -48,7 +48,7 @@ namespace Pretzel.Tests.Minification
                                         color: @brand_color;
                                     }";
 
-            var lessOutput = @"#header{color:#4d926f}h2{color:#4d926f}";
+            var lessOutput = @"#header{color:#4D926F}h2{color:#4D926F}";
 
             var filepath = @"c:\css\style.less";
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
@@ -81,7 +81,7 @@ namespace Pretzel.Tests.Minification
                                         color: @brand_color;
                                     }";
 
-            var lessOutput = @"#header{color:#4d926f}h2{color:#4d926f}";
+            var lessOutput = @"#header{color:#4D926F}h2{color:#4D926F}";
 
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
@@ -115,7 +115,7 @@ namespace Pretzel.Tests.Minification
                 { filepath2, new MockFileData(fileContent2) }
             });
 
-            var expectedOutput = @"a{color:#4d926f}";
+            var expectedOutput = @"a{color:#4D926F}";
 
             var minifier = new LessTransform(fileSystem);
             var context = new SiteContext { SourceFolder = @"C:\", OutputFolder = @"C:\_site" };
@@ -156,7 +156,7 @@ namespace Pretzel.Tests.Minification
             });
             fileSystem.AddDirectory(@"c:\css\emptysubfolder");
 
-            var expectedOutput = @"a{color:#4d926f;width:24px;height:24px;foo:bold}";
+            var expectedOutput = @"a{color:#4D926F;width:24px;height:24px;foo:bold}";
 
             var minifier = new LessTransform(fileSystem);
             var context = new SiteContext { SourceFolder = @"C:\", OutputFolder = @"C:\_site" };

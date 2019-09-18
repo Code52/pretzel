@@ -1,6 +1,7 @@
-﻿using NDesk.Options;
+using NDesk.Options;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.IO.Abstractions;
 using System.Linq;
 
@@ -8,9 +9,9 @@ namespace Pretzel.Logic.Commands
 {
     public sealed class BaseParameters
     {
-        public OptionSet Options { get; private set; }
+        public OptionSet Options { get; }
 
-        public string CommandName { get; private set; }
+        public string CommandName { get; }
 
         public bool Help { get; private set; }
 
@@ -18,10 +19,8 @@ namespace Pretzel.Logic.Commands
 
         public bool Safe { get; private set; }
 
-        [Export("SourcePath")]
         public string Path { get; private set; }
 
-        [Export]
         public IFileSystem FileSystem { get; private set; }
 
         public List<string> CommandArgs { get; private set; }
@@ -29,13 +28,13 @@ namespace Pretzel.Logic.Commands
         private BaseParameters(string[] arguments, IFileSystem fileSystem)
         {
             Options = new OptionSet
-                {
-                    {"help", "Display help mode", p => Help = true},
-                    {"debug", "Enable debugging", p => Debug = true},
-                    { "safe", "Disable custom plugins", v => Safe = true },
-                    { "d|directory=", "[Obsolete, use --source instead] The path to site directory", p => Path = p },
-                    { "s|source=", "The path to the source site (default current directory)", p => Path = p}
-                };
+            {
+                { "help", "Display help mode", p => Help = true },
+                { "debug", "Enable debugging", p => Debug = true },
+                { "safe", "Disable custom plugins", v => Safe = true },
+                { "d|directory=", "[Obsolete, use --source instead] The path to site directory", p => Path = p },
+                { "s|source=", "The path to the source site (default current directory)", p => Path = p }
+            };
 
             FileSystem = fileSystem;
 
@@ -60,7 +59,9 @@ namespace Pretzel.Logic.Commands
                     ? firstArgument
                     : FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), firstArgument);
             }
-            Path = string.IsNullOrWhiteSpace(Path) ? FileSystem.Directory.GetCurrentDirectory() : FileSystem.Path.GetFullPath(Path);
+            Path = string.IsNullOrWhiteSpace(Path)
+                ? FileSystem.Directory.GetCurrentDirectory()
+                : FileSystem.Path.GetFullPath(Path);
         }
     }
 }

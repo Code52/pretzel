@@ -1,18 +1,18 @@
 using Pretzel.Logic.Extensions;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Globalization;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using Pretzel.Logic.Extensibility;
+using System.Composition;
 
 namespace Pretzel.Logic.Templating.Context
 {
     [Export]
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Shared]
     public class SiteContextGenerator
     {
         private readonly Dictionary<string, Page> pageCache = new Dictionary<string, Page>();
@@ -23,7 +23,7 @@ namespace Pretzel.Logic.Templating.Context
         private readonly IConfiguration _config;
 
         [ImportMany]
-        public IEnumerable<IBeforeProcessingTransform> BeforeProcessingTransforms;
+        public IEnumerable<IBeforeProcessingTransform> BeforeProcessingTransforms { get; set; }
 
         [ImportingConstructor]
         public SiteContextGenerator(IFileSystem fileSystem, LinkHelper linkHelper, IConfiguration config)
