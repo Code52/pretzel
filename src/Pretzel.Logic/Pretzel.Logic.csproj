@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
     <TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
@@ -34,12 +34,12 @@
     <PackageReference Include="Microsoft.AspNet.Razor" Version="3.2.7" />
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="2.1.1" />
     <PackageReference Include="NDesk.Options" Version="0.2.1" />
+    <PackageReference Include="NUglify" Version="1.5.13" />
     <PackageReference Include="RazorEngine" Version="3.10.0" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="7.16.0.8981">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="System.IO.Abstractions" Version="2.0.0.116" />
-    <PackageReference Include="WebMarkupMin.NUglify" Version="2.6.0" />
     <PackageReference Include="YamlDotNet" Version="6.1.2" />
     <PackageReference Include="System.Composition" Version="1.2.0" />
   </ItemGroup>
