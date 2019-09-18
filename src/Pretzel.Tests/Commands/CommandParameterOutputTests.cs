@@ -1,4 +1,4 @@
-﻿using Pretzel.Logic.Commands;
+using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
@@ -25,15 +25,15 @@ namespace Pretzel.Tests
 
             var output = writer.ToString();
 
-            Assert.True(output.Contains("-t"));
-            Assert.True(output.Contains("--template="));
-            Assert.True(output.Contains("--port="));
-            Assert.True(output.Contains("-i"));
-            Assert.True(output.Contains("--import="));
-            Assert.True(output.Contains("-f"));
-            Assert.True(output.Contains("--file="));
-            Assert.True(output.Contains("--cleantarget"));
-            Assert.True(output.Contains("--destination"));
+            Assert.Contains("-t", output);
+            Assert.Contains("--template=", output);
+            Assert.Contains("--port=", output);
+            Assert.Contains("-i", output);
+            Assert.Contains("--import=", output);
+            Assert.Contains("-f", output);
+            Assert.Contains("--file=", output);
+            Assert.Contains("--cleantarget", output);
+            Assert.Contains("--destination", output);
         }
 
         [Fact]
@@ -43,8 +43,8 @@ namespace Pretzel.Tests
 
             var output = writer.ToString();
 
-            Assert.True(output.Contains("-t"));
-            Assert.True(output.Contains("--template="));
+            Assert.Contains("-t", output);
+            Assert.Contains("--template=", output);
         }
 
         [Fact]
@@ -54,12 +54,12 @@ namespace Pretzel.Tests
 
             var output = writer.ToString();
 
-            Assert.False(output.Contains("-p"));
-            Assert.False(output.Contains("--port="));
-            Assert.False(output.Contains("-i"));
-            Assert.False(output.Contains("--import="));
-            Assert.False(output.Contains("-f"));
-            Assert.False(output.Contains("--file="));
+            Assert.DoesNotContain("-p", output);
+            Assert.DoesNotContain("--port=", output);
+            Assert.DoesNotContain("-i", output);
+            Assert.DoesNotContain("--import=", output);
+            Assert.DoesNotContain("-f", output);
+            Assert.DoesNotContain("--file=", output);
         }
 
         [Fact]
@@ -69,10 +69,10 @@ namespace Pretzel.Tests
 
             var output = writer.ToString();
 
-            Assert.True(output.Contains("-t"));
-            Assert.True(output.Contains("--template="));
-            Assert.True(output.Contains("-p"));
-            Assert.True(output.Contains("--port="));
+            Assert.Contains("-t", output);
+            Assert.Contains("--template=", output);
+            Assert.Contains("-p", output);
+            Assert.Contains("--port=", output);
         }
 
         [Fact]
@@ -82,10 +82,10 @@ namespace Pretzel.Tests
 
             var output = writer.ToString();
 
-            Assert.False(output.Contains("-i"));
-            Assert.False(output.Contains("--import="));
-            Assert.False(output.Contains("-f"));
-            Assert.False(output.Contains("--file="));
+            Assert.DoesNotContain("-i", output);
+            Assert.DoesNotContain("--import=", output);
+            Assert.DoesNotContain("-f", output);
+            Assert.DoesNotContain("--file=", output);
         }
     }
 }

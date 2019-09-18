@@ -158,7 +158,7 @@ namespace Pretzel.Tests.Extensibility.Extensions
             var args = vdirSupport.GetArguments(command);
 
             // assert
-            Assert.Equal(1, args.Length);
+            Assert.Single(args);
             Assert.Equal("-vDir", args[0]);
         }
 
@@ -172,7 +172,7 @@ namespace Pretzel.Tests.Extensibility.Extensions
             var args = vdirSupport.GetArguments(command);
 
             // assert
-            Assert.Equal(0, args.Length);
+            Assert.Empty(args);
         }
     }
 }
