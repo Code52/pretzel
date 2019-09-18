@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net451</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <AssemblyTitle>Pretzel.ScriptCs</AssemblyTitle>
     <Product>Pretzel.ScriptCs</Product>
     <Copyright>Copyright ©  2015</Copyright>
