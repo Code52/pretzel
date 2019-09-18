@@ -25,7 +25,7 @@ namespace Pretzel.Tests.Templating.Context
             data = new Data(fileSystem, dataDirectory);
         }
 
-        public class YamlTests : DataTests
+        public class YamlAndJsonTests : DataTests
         {
             [Fact]
             public void renders_empty_string_if_data_directory_does_not_exist()
@@ -39,10 +39,12 @@ namespace Pretzel.Tests.Templating.Context
                 Assert.Equal("", result.Trim());
             }
 
-            [Fact]
-            public void renders_nested_object()
+            [Theory]
+            [InlineData("yml", @"name: Eric Mill")]
+            [InlineData("json", @"{ name: 'Eric Mill' }")]
+            public void renders_nested_object(string ext, string fileContent)
             {
-                fileSystem.AddFile(Path.Combine(dataDirectory, "person.yml"), new MockFileData(@"name: Eric Mill"));
+                fileSystem.AddFile(Path.Combine(dataDirectory, $"person.{ext}"), new MockFileData(fileContent));
 
                 var template = Template.Parse(@"{{ data.person.name }}");
 
@@ -56,13 +58,21 @@ namespace Pretzel.Tests.Templating.Context
                 Assert.Equal("Eric Mill", result.Trim());
             }
 
-            [Fact]
-            public void renders_deep_nested_object()
-            {
-                fileSystem.AddFile(Path.Combine(dataDirectory, "person.yml"), new MockFileData(@"name: Eric Mill
+            [Theory]
+            [InlineData("yml", @"name: Eric Mill
 address:
   street: Some Street
-  postalcode: 1234"));
+  postalcode: 1234")]
+            [InlineData("json", @"{
+  name: 'Eric Mill',
+  address: {
+  street: 'Some Street'
+  postalcode: 1234
+  }
+}")]
+            public void renders_deep_nested_object(string ext, string fileContent)
+            {
+                fileSystem.AddFile(Path.Combine(dataDirectory, $"person.{ext}"), new MockFileData(fileContent));
 
                 var template = Template.Parse(@"{{ data.person.address.postalcode }}");
 
@@ -76,17 +86,28 @@ address:
                 Assert.Equal("1234", result.Trim());
             }
 
-            [Fact]
-            public void renders_nested_lists()
-            {
-                fileSystem.AddFile(Path.Combine(dataDirectory, "members.yml"), new MockFileData(@"- name: Eric Mill
+            [Theory]
+            [InlineData("yml", @"- name: Eric Mill
   github: konklone
 
 - name: Parker Moore
   github: parkr
 
 - name: Liu Fengyun
-  github: liufengyun"));
+  github: liufengyun")]
+            [InlineData("json", @"[{
+    name: 'Eric Mill',
+    github: 'konklone',
+},{
+    name: 'Parker Moore',
+    github: 'parkr'
+},{
+    name: 'Liu Fengyun',
+    github: 'liufengyun'
+}]")]
+            public void renders_nested_lists(string ext, string fileContent)
+            {
+                fileSystem.AddFile(Path.Combine(dataDirectory, $"members.{ext}"), new MockFileData(fileContent));
 
                 var template = Template.Parse(@"{{ data.members | size }}");
 
@@ -100,12 +121,19 @@ address:
                 Assert.Equal("3", result.Trim());
             }
 
-            [Fact]
-            public void renders_dictionary_accessors()
-            {
-                fileSystem.AddFile(Path.Combine(dataDirectory, "people.yml"), new MockFileData(@"dave:
+            [Theory]
+            [InlineData("yml", @"dave:
     name: David Smith
-    twitter: DavidSilvaSmith"));
+    twitter: DavidSilvaSmith")]
+            [InlineData("json", @"{
+    dave: {
+        name: 'David Smith',
+        twitter: 'DavidSilvaSmith'
+    }
+}")]
+            public void renders_dictionary_accessors(string ext, string fileContent)
+            {
+                fileSystem.AddFile(Path.Combine(dataDirectory, $"people.{ext}"), new MockFileData(fileContent));
 
                 var template = Template.Parse(@"{{ data.people['dave'].name }}");
 
@@ -119,10 +147,14 @@ address:
                 Assert.Equal("David Smith", result.Trim());
             }
 
-            [Fact]
-            public void renders_nested_folder_object()
+            [Theory]
+            [InlineData("yml", @"name: Eric Mill")]
+            [InlineData("json", @"{
+    name: 'Eric Mill'
+}")]
+            public void renders_nested_folder_object(string ext, string fileContent)
             {
-                fileSystem.AddFile(Path.Combine(dataDirectory, @"users\person.yml"), new MockFileData(@"name: Eric Mill"));
+                fileSystem.AddFile(Path.Combine(dataDirectory, $@"users\person.{ext}"), new MockFileData(fileContent));
 
                 var template = Template.Parse(@"{{ data.users.person.name }}");
 
@@ -136,8 +168,14 @@ address:
                 Assert.Equal("Eric Mill", result.Trim());
             }
 
-            [Fact]
-            public void caches_result()
+            [Theory]
+            [InlineData("yml", @"name: Eric Mill
+email: eric@example.com")]
+            [InlineData("json", @"{
+    name: 'Eric Mill',
+    email: 'eric@example.com'
+}")]
+            public void caches_result(string ext, string fileContent)
             {
                 var fileSystem = Substitute.For<IFileSystem>();
                 var data = new Data(fileSystem, dataDirectory);
@@ -149,10 +187,9 @@ address:
                 var file = Substitute.For<FileBase>();
                 fileSystem.File.Returns(file);
 
-                var fileName = Path.Combine(dataDirectory, "person.yml");
+                var fileName = Path.Combine(dataDirectory, $"person.{ext}");
                 file.Exists(fileName).Returns(true);
-                file.ReadAllText(fileName).Returns(@"name: Eric Mill
-email: eric@example.com");
+                file.ReadAllText(fileName).Returns(fileContent);
 
                 var template = Template.Parse(@"{{ data.person.name }} {{ data.person.email }}");
 

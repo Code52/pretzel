@@ -25,25 +25,29 @@ namespace Pretzel.Logic.Templating.Context
         {
             get
             {
-
                 var res = base[method];
                 if(res != null)
                 {
                     return res;
                 }
 
-                if (!fileSystem.Directory.Exists(dataDirectory))
-                {
-                    return null;
-                }
-
                 if (cachedResult == null)
                 {
                     cachedResult = new Lazy<object>(() =>
                     {
+                        if (!fileSystem.Directory.Exists(dataDirectory))
+                        {
+                            return null;
+                        }
+
                         object result;
 
                         if (TryParseYaml(dataDirectory, method.ToString(), out result))
+                        {
+                            return result;
+                        }
+
+                        if (TryParseYaml(dataDirectory, method.ToString(), out result, "json"))
                         {
                             return result;
                         }
@@ -63,9 +67,9 @@ namespace Pretzel.Logic.Templating.Context
             }
         }
 
-        bool TryParseYaml(string folder, string methodName, out object yamlResult)
+        bool TryParseYaml(string folder, string methodName, out object yamlResult, string ext = "yml")
         {
-            var yamlFileName = Path.Combine(folder, $"{methodName}.yml");
+            var yamlFileName = Path.Combine(folder, $"{methodName}.{ext}");
             if (fileSystem.File.Exists(yamlFileName))
             {
                 var text = fileSystem.File.ReadAllText(yamlFileName);
