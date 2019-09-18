@@ -85,9 +85,9 @@ function CreatePackage($versionInfos)
 
     # create Pretzel zip
     RemoveIfExists Pretzel.$version.zip
-    7z a $artifacts\Pretzel.$version.zip $src\Pretzel\bin\Release\net451\*.dll
-    7z a $artifacts\Pretzel.$version.zip $src\Pretzel\bin\Release\net451\Pretzel.exe
-    7z a $artifacts\Pretzel.$version.zip $src\Pretzel\bin\Release\net451\Pretzel.exe.config
+    7z a $artifacts\Pretzel.$version.zip $src\Pretzel\bin\Release\net462\*.dll
+    7z a $artifacts\Pretzel.$version.zip $src\Pretzel\bin\Release\net462\Pretzel.exe
+    7z a $artifacts\Pretzel.$version.zip $src\Pretzel\bin\Release\net462\Pretzel.exe.config
     7z a $artifacts\Pretzel.$version.zip ReleaseNotes.md
 
     # build Pretzel nupkg
@@ -102,7 +102,7 @@ function CreatePackage($versionInfos)
 
     # create Pretzel.ScriptCs zip
     RemoveIfExists Pretzel.ScriptCs.$version.zip
-    7z a $artifacts\Pretzel.ScriptCs.$version.zip $src\Pretzel.ScriptCs\bin\Release\net451\*.dll
+    7z a $artifacts\Pretzel.ScriptCs.$version.zip $src\Pretzel.ScriptCs\bin\Release\net462\*.dll
 
     # build Pretzel.ScriptCs nupkg
     
@@ -117,7 +117,7 @@ function CreatePackage($versionInfos)
     nuget pack chocoTemp\Pretzel.ScriptCs\pretzel.scriptcs.nuspec -OutputDirectory $artifacts -Version $version -NoPackageAnalysis
 
     # build Pretzel.Logic nupkg
-    nuget pack $src\Pretzel.Logic\Pretzel.Logic.csproj -OutputDirectory $artifacts -Version $version -symbols
+    dotnet pack $src\Pretzel.Logic\Pretzel.Logic.csproj -o $artifacts /p:Version=$version --include-symbols
 }
 
 # Test

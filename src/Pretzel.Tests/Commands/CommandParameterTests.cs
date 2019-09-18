@@ -1,4 +1,4 @@
-﻿using NDesk.Options;
+using NDesk.Options;
 using NSubstitute;
 using Pretzel.Logic;
 using Pretzel.Logic.Commands;

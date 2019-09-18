@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.IO.Abstractions.TestingHelpers;
 using Pretzel.Logic;
+using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using Xunit;
 

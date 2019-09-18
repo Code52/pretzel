@@ -1,17 +1,17 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using Pretzel.Logic.Templating;
 
 namespace Pretzel.Commands
 {
     [Export]
-    [PartCreationPolicy(CreationPolicy.Shared)]
-    public sealed class TemplateEngineCollection : IPartImportsSatisfiedNotification
+    [Shared]
+    public sealed class TemplateEngineCollection
     {
         [ImportMany] 
 #pragma warning disable 649
-        private Lazy<ISiteEngine, ISiteEngineInfo>[] templateEngineMap;
+        public ExportFactory<ISiteEngine, SiteEngineInfoAttribute>[] templateEngineMap { get; set; }
 #pragma warning restore 649
 
         public Dictionary<string, ISiteEngine> Engines { get; private set; }
@@ -26,6 +26,7 @@ namespace Pretzel.Commands
             }
         }
 
+        [OnImportsSatisfied]
         public void OnImportsSatisfied()
         {
             Engines = new Dictionary<string, ISiteEngine>(templateEngineMap.Length);
@@ -33,7 +34,7 @@ namespace Pretzel.Commands
             foreach (var command in templateEngineMap)
             {
                 if (!Engines.ContainsKey(command.Metadata.Engine))
-                    Engines.Add(command.Metadata.Engine, command.Value);
+                    Engines.Add(command.Metadata.Engine, command.CreateExport().Value);
             }
         }
     }

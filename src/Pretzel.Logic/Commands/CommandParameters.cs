@@ -1,11 +1,11 @@
-﻿using NDesk.Options;
+using NDesk.Options;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -13,7 +13,7 @@ using System.Linq;
 namespace Pretzel.Logic.Commands
 {
     [Export]
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Shared]
     public class CommandParameters
     {
         [ImportingConstructor]
@@ -47,7 +47,7 @@ namespace Pretzel.Logic.Commands
         }
 
         [Import("SourcePath")]
-        public string Path { get; internal set; }
+        public string Path { get; set; }
 
         public string Template { get; private set; }
 
