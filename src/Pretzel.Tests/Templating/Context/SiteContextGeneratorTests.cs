@@ -1199,5 +1199,24 @@ slug: my-slug
             // assert
             Assert.Equal(2, pageTransformMock.PostCount);
         }
+
+        [Fact]
+        public void supports_datafiles()
+        {
+            fileSystem.AddFile(@"C:\TestSite\_data\people.yml", new MockFileData(@"dave:
+    name: David Smith
+    twitter: DavidSilvaSmith"));
+
+            // act
+            var context = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+
+            // assert
+            Assert.NotNull(context.Data);
+            Assert.IsType<Data>(context.Data);
+            Assert.NotNull(context.Data["people"]);
+            dynamic data = context.Data;
+            Assert.Equal("David Smith", data["people"]["dave"]["name"]);
+            Assert.Equal("DavidSilvaSmith", data["people"]["dave"]["twitter"]);
+        }
     }
 }
