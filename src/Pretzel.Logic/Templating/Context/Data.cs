@@ -36,30 +36,53 @@ namespace Pretzel.Logic.Templating.Context
                     return null;
                 }
 
-                var yamlFileName = Path.Combine(dataDirectory, $"{method}.yml");
-                if (fileSystem.File.Exists(yamlFileName))
+                object result;
+
+                if (TryParseYaml(dataDirectory, method.ToString(), out result))
                 {
-                    var text = fileSystem.File.ReadAllText(yamlFileName);
+                    return result;
+                }
 
-                    var input = new StringReader(text);
-
-                    var yaml = new YamlStream();
-                    yaml.Load(input);
-
-                    if (yaml.Documents.Count == 0)
-                    {
-                        return null;
-                    }
-
-                    var root = yaml.Documents[0].RootNode;
-                    if (root is YamlSequenceNode seq)
-                        return seq;
-
-                    return text.ParseYaml();
+                var subFolder = Path.Combine(dataDirectory, method.ToString());
+                if(fileSystem.Directory.Exists(subFolder))
+                {
+                    return new Data(fileSystem, subFolder);
                 }
 
                 return null;
             }
+        }
+
+        bool TryParseYaml(string folder, string methodName, out object yamlResult)
+        {
+            var yamlFileName = Path.Combine(folder, $"{methodName}.yml");
+            if (fileSystem.File.Exists(yamlFileName))
+            {
+                var text = fileSystem.File.ReadAllText(yamlFileName);
+
+                var input = new StringReader(text);
+
+                var yaml = new YamlStream();
+                yaml.Load(input);
+
+                if (yaml.Documents.Count == 0)
+                {
+                    yamlResult = null;
+                    return false;
+                }
+
+                var root = yaml.Documents[0].RootNode;
+                if (root is YamlSequenceNode seq)
+                {
+                    yamlResult = seq;
+                    return true;
+                }
+
+                yamlResult = text.ParseYaml();
+                return yamlResult != null;
+            }
+            yamlResult = null;
+            return false;
         }
     }
 }

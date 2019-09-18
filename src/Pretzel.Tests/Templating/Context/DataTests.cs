@@ -117,5 +117,22 @@ address:
 
             Assert.Equal("David Smith", result.Trim());
         }
+
+        [Fact]
+        public void renders_yaml_nested_folder_object()
+        {
+            fileSystem.AddFile(Path.Combine(dataDirectory, @"users\person.yml"), new MockFileData(@"name: Eric Mill"));
+
+            var template = Template.Parse(@"{{ data.users.person.name }}");
+
+            var hash = Hash.FromAnonymousObject(new
+            {
+                Data = data
+            });
+
+            var result = template.Render(hash);
+
+            Assert.Equal("Eric Mill", result.Trim());
+        }
     }
 }
