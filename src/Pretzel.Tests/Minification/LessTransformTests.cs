@@ -178,8 +178,6 @@ namespace Pretzel.Tests.Minification
             Assert.False(fileSystem.File.Exists(@"c:\css\style.less"));
             Assert.True(fileSystem.Directory.Exists(@"c:\css\subfolder"));
             Assert.True(fileSystem.File.Exists(@"c:\css\subfolder\anothersubfolder\anything.less"));
-            Assert.Contains(@"c:\_site", fileSystem.AllDirectories);
-            Assert.True(fileSystem.Directory.Exists(@"c:\_site"));
         }
 
         [Fact]
