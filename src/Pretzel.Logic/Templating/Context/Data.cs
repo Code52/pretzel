@@ -127,7 +127,7 @@ namespace Pretzel.Logic.Templating.Context
 
                 using (var csv = new CsvReader(input, new CsvHelper.Configuration.Configuration
                 {
-                    AllowComments = false,
+                    AllowComments = true,
                     CountBytes = false,
                     CultureInfo = CultureInfo.CurrentCulture,
                     Delimiter = delimiter,
