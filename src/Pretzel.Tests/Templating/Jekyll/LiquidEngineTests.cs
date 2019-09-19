@@ -2331,7 +2331,6 @@ categories: [{0}]
             [Fact]
             public void The_Output_Should_Have_Data_In_It()
             {
-                var txt = FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace();
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
             }
         }
