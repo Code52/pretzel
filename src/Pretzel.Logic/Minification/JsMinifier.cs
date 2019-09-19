@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.IO;
 using NUglify;
-using System;
+using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Logic.Minification
 {
@@ -27,7 +27,7 @@ namespace Pretzel.Logic.Minification
             {
                 foreach(var error in minified.Errors)
                 {
-                    Console.WriteLine(error.ToString());
+                    Tracing.Error(error.ToString());
                 }
             }
             fileSystem.File.WriteAllText(outputPath, minified.Code);
