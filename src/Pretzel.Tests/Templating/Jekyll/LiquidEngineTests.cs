@@ -2307,7 +2307,7 @@ categories: [{0}]
         public class Given_Markdown_Page_Has_Data : BakingEnvironment<LiquidEngine>
         {
             private const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
-            private const string PageContents = "---\r\nlayout: default\r\ntitle: sample post\r\nauthor: dave\r\n---\r\n\r\n<a rel=\"author\" href=\"https://twitter.com/{{ site.data.people[page.author].twitter }}\" title=\"{{ site.data.people[page.author].name }}\" >{{ site.data.people[page.author].name }}</a>";
+            private const string PageContents = "---\r\nlayout: default\r\ntitle: sample post\r\nauthor: dave\r\n---\r\n\r\n<a rel=\"author\" href=\"https://twitter.com/{{ site.data.people[page.author].twitter }}\" title=\"{{ site.data.people[page.author].name }}\">{{ site.data.people[page.author].name }}</a>";
             private const string DataContents = "dave:\r\n    name: David Smith\r\n    twitter: DavidSilvaSmith";
             private const string ExpectedfileContents = "<html><head><title>sample post</title></head><body><p><a rel=\"author\" href=\"https://twitter.com/DavidSilvaSmith\" title=\"David Smith\">David Smith</a></p></body></html>";
 
