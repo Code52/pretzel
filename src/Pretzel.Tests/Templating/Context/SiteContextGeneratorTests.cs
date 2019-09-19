@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using Pretzel.Logic.Extensibility;
 using Xunit;
+using DotLiquid;
 
 namespace Pretzel.Tests.Templating.Context
 {
