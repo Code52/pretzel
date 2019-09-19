@@ -17,7 +17,7 @@ namespace Pretzel.Logic.Templating.Context
     {
         private readonly IFileSystem fileSystem;
         private readonly string dataDirectory;
-        private System.Lazy<object> cachedResult;
+        private readonly Dictionary<string, System.Lazy<object>> cachedResults = new Dictionary<string, Lazy<object>>();
 
         public Data(IFileSystem fileSystem, string dataDirectory)
         {
@@ -35,9 +35,9 @@ namespace Pretzel.Logic.Templating.Context
                     return res;
                 }
 
-                if (cachedResult == null)
+                if (!cachedResults.ContainsKey(method.ToString()))
                 {
-                    cachedResult = new Lazy<object>(() =>
+                    var cachedResult = new Lazy<object>(() =>
                     {
                         if (!fileSystem.Directory.Exists(dataDirectory))
                         {
@@ -74,10 +74,11 @@ namespace Pretzel.Logic.Templating.Context
 
                         return null;
                     });
-
+                    cachedResults[method.ToString()] = cachedResult;
+                    return cachedResult.Value;
                 }
 
-                return cachedResult.Value;
+                return cachedResults[method.ToString()].Value;
             }
         }
 
