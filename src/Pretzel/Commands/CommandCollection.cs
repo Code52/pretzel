@@ -18,8 +18,6 @@ namespace Pretzel.Commands
         [ImportMany]
         public ExportFactory<ICommandParameters, CommandArgumentsAttribute>[] CommandArguments { get; set; }
 
-        //[ImportMany]
-        //public IEnumerable<Lazy<IHaveCommandLineArgs>> CommandLineExtensions { get; set; }
         [Import]
         public Lazy<CommandParameters> Parameters { get; set; }
 
@@ -51,7 +49,7 @@ namespace Pretzel.Commands
                 {
                     var subCommand = new Command(command.Metadata.CommandName, command.Metadata.CommandDescription);
 
-                    foreach (var commandArguments in CommandArguments.Where(a => a.Metadata.CommandType == command.Metadata.CommandType))
+                    foreach (var commandArguments in CommandArguments.Where(a => a.Metadata.CommandName == command.Metadata.CommandName))
                     {
                         foreach(var option in commandArguments.CreateExport().Value.Options)
                         {

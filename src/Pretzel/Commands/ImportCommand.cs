@@ -11,7 +11,7 @@ using System.Composition;
 namespace Pretzel.Commands
 {
     [Shared]
-    [CommandInfo(CommandName = "import", CommandDescription = "import posts from external source")]
+    [CommandInfo(CommandName = BuiltInCommands.Import, CommandDescription = "import posts from external source")]
     class ImportCommand : ICommand
     {
         readonly static List<string> Importers = new List<string>(new[] { "wordpress", "blogger" });

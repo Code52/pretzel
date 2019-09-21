@@ -9,7 +9,7 @@ using System.IO.Abstractions;
 namespace Pretzel.Commands
 {
     [Shared]
-    [CommandInfo(CommandName = "ingredient", CommandDescription = "create a new post")]
+    [CommandInfo(CommandName = BuiltInCommands.Ingredient, CommandDescription = "create a new post")]
     public sealed class IngredientCommand : ICommand
     {
 #pragma warning disable 649

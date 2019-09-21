@@ -1,3 +1,4 @@
+using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -9,9 +10,21 @@ using System.Reflection;
 
 namespace Pretzel.Logic.Extensibility.Extensions
 {
+    [CommandArguments(CommandName = "create")]
+    public class AzureHostSupportArguments : IHaveCommandLineArgs
+    {
+        public void UpdateOptions(IList<Option> options)
+        {
+            options.Add(new Option("azure", "Enables deploy to azure support")
+            {
+                Argument = new Argument<bool>()
+            });
+        }
+    }
+
     [Export(typeof(IAdditionalIngredient))]
     [Export(typeof(IHaveCommandLineArgs))]
-    public class AzureHostSupport : IAdditionalIngredient, IHaveCommandLineArgs
+    public class AzureHostSupport : IAdditionalIngredient
     {
         private readonly IFileSystem fileSystem;
         private readonly IAssembly assembly;
@@ -24,13 +37,6 @@ namespace Pretzel.Logic.Extensibility.Extensions
             this.assembly = assembly;
         }
 
-        public void UpdateOptions(IList<Option> options)
-        {
-            options.Add(new Option("azure", "Enables deploy to azure support")
-            {
-                Argument = new Argument<bool>()
-            });
-        }
 
         public string[] GetArguments(string command)
         {
@@ -58,7 +64,7 @@ namespace Pretzel.Logic.Extensibility.Extensions
                 var trimStart = directoryToMove.Replace(directory, string.Empty).TrimStart(Path.DirectorySeparatorChar);
                 fileSystem.Directory.Move(directoryToMove, Path.Combine(sourceFolder, trimStart));
             }
-            
+
             fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.cs"), Properties.RazorAzure.Shim);
             fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.csproj"), Properties.RazorAzure.ShimProject);
             fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.sln"), Properties.RazorAzure.ShimSolution);
@@ -66,7 +72,7 @@ namespace Pretzel.Logic.Extensibility.Extensions
             var currentPath = assembly.GetEntryAssemblyLocation();
             var destination = Path.Combine(directory, "Pretzel.exe");
             if (!fileSystem.File.Exists(destination))
-            { 
+            {
                 fileSystem.File.Copy(currentPath, destination);
             }
 

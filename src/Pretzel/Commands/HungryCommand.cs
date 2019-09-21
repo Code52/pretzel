@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.IO;
+using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Commands
 {
     [Shared]
-    [CommandInfo(CommandName = "hungry", CommandDescription = "use only when hungry")]
+    [CommandInfo(CommandName = BuiltInCommands.Hungry, CommandDescription = "use only when hungry")]
     public sealed class HungryCommand : ICommand
     {
 

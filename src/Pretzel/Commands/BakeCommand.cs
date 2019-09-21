@@ -13,24 +13,9 @@ using System.Linq;
 
 namespace Pretzel.Commands
 {
-    [MetadataAttribute]
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public sealed class CommandArgumentsAttribute : ExportAttribute
-    {
-        public Type CommandType { get; set; }
-
-        public CommandArgumentsAttribute() : base(typeof(ICommandParameters))
-        {
-        }
-    }
-
-    public interface ICommandParameters
-    {
-        IList<Option> Options { get; }
-    }
 
     [Shared]
-    [CommandArguments(CommandType = typeof(BakeCommand))]
+    [CommandArguments(CommandName = BuiltInCommands.Bake)]
     public sealed class BakeCommandParameters : ICommandParameters
     {
         //[ImportMany]
@@ -62,10 +47,8 @@ namespace Pretzel.Commands
         }
     }
 
-
-
     [Shared]
-    [CommandInfo(CommandName = "bake", CommandDescription = "transforming content into a website", CommandType = typeof(BakeCommand))]
+    [CommandInfo(CommandName = BuiltInCommands.Bake, CommandDescription = "transforming content into a website")]
     public sealed class BakeCommand : ICommand
     {
 #pragma warning disable 649

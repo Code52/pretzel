@@ -12,7 +12,7 @@ using System.Linq;
 namespace Pretzel.Commands
 {
     [Shared]
-    [CommandInfo(CommandName = "create", CommandDescription = "configure a new site")]
+    [CommandInfo(CommandName = BuiltInCommands.Create, CommandDescription = "configure a new site")]
     public sealed class RecipeCommand : ICommand
     {
         private static readonly List<string> TemplateEngines = new List<string>(new[] { "Liquid", "Razor" });

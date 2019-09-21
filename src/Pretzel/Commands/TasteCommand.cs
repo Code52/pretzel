@@ -15,7 +15,7 @@ using System.IO.Abstractions;
 namespace Pretzel.Commands
 {
     [Shared]
-    [CommandInfo(CommandName = "taste", CommandDescription = "testing a site locally")]
+    [CommandInfo(CommandName = BuiltInCommands.Taste, CommandDescription = "testing a site locally")]
     public sealed class TasteCommand : ICommand
     {
         private ISiteEngine engine;

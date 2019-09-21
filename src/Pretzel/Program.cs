@@ -74,8 +74,9 @@ namespace Pretzel
                     using (var host = Compose(debug, safe, source))
                     {
                         var program = host.GetExport<Program>();
-
-                        return await program.Run(globalOptions, args);
+                        var result = await program.Run(globalOptions, args);
+                        WaitForClose();
+                        return result;
                     }
                 }
                 catch (Exception ex)

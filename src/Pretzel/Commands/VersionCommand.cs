@@ -1,3 +1,4 @@
+using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using System.Collections.Generic;
 using System.Composition;
@@ -6,7 +7,7 @@ using System.Reflection;
 namespace Pretzel.Commands
 {
     [Shared]
-    [CommandInfo(CommandName = "version", CommandDescription = "display current Pretzel version")]
+    [CommandInfo(CommandName = BuiltInCommands.Version, CommandDescription = "display current Pretzel version")]
     public sealed class VersionCommand : ICommand
     {
         public void Execute(IEnumerable<string> arguments)
