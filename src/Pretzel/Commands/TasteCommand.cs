@@ -29,11 +29,11 @@ namespace Pretzel.Commands
             base.WithOptions(options);
             options.AddRange(new[]
             {
-                new Option(new[] { "port", "p" }, "The port to test the site locally")
+                new Option(new[] { "--port", "-p" }, "The port to test the site locally")
                 {
                     Argument = new Argument<int>(() => 8080)
                 },
-                new Option("nobrowser", "Do not launch a browser (false by default)")
+                new Option("--nobrowser", "Do not launch a browser (false by default)")
                 {
                     Argument = new Argument<bool>(() => false)
                 },

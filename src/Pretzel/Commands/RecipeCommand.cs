@@ -23,11 +23,11 @@ namespace Pretzel.Commands
         {
             options.AddRange(new[]
             {
-                new Option("withproject", "Includes a layout VS Solution, to give intellisense when editing razor layout files")
+                new Option(new [] { "-p", "--withproject" }, "Includes a layout VS Solution, to give intellisense when editing razor layout files")
                 {
                     Argument = new Argument<bool>()
                 },
-                new Option("wiki", "Creates a wiki instead of a blog (razor template only)")
+                new Option(new [] { "-w", "--wiki"}, "Creates a wiki instead of a blog (razor template only)")
                 {
                     Argument = new Argument<bool>()
                 },

@@ -62,10 +62,7 @@ namespace Pretzel.Commands
 
         [ImportMany]
         public ExportFactory<ICommandParameters, CommandArgumentsAttribute>[] CommandArguments { get; set; }
-
-        [Import]
-        public Lazy<CommandParameters> Parameters { get; set; }
-
+        
         [Export]
         public RootCommand RootCommand { get; set; }
 

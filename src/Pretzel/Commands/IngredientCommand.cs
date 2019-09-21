@@ -22,7 +22,7 @@ namespace Pretzel.Commands
         {
             options.AddRange(new[]
             {
-                new Option(new [] { "newposttitle", "n" }, "The title of the new post (\"New post\" by default")
+                new Option(new [] { "--newposttitle", "-n" }, "The title of the new post (\"New post\" by default")
                 {
                     Argument = new Argument<string>(() => "New post")
                 }
