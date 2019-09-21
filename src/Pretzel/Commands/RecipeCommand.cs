@@ -1,16 +1,43 @@
+using System;
+using System.Collections.Generic;
+using System.CommandLine;
+using System.Composition;
+using System.IO.Abstractions;
+using System.Linq;
+using System.Threading.Tasks;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Recipe;
-using System;
-using System.Collections.Generic;
-using System.Composition;
-using System.IO;
-using System.IO.Abstractions;
-using System.Linq;
 
 namespace Pretzel.Commands
 {
+    [Export]
+    [Shared]
+    [CommandArguments(CommandName = BuiltInCommands.Create)]
+    public class RecipeCommandParameters : PretzelBaseCommandParameters
+    {
+        public RecipeCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
+
+        protected override void WithOptions(List<Option> options)
+        {
+            options.AddRange(new[]
+            {
+                new Option("withproject", "Includes a layout VS Solution, to give intellisense when editing razor layout files")
+                {
+                    Argument = new Argument<bool>()
+                },
+                new Option("wiki", "Creates a wiki instead of a blog (razor template only)")
+                {
+                    Argument = new Argument<bool>()
+                },
+            });
+        }
+
+        public bool WithProject { get; set; }
+        public bool Wiki { get; set; }
+    }
+
     [Shared]
     [CommandInfo(CommandName = BuiltInCommands.Create, CommandDescription = "configure a new site")]
     public sealed class RecipeCommand : ICommand
@@ -23,18 +50,16 @@ namespace Pretzel.Commands
         public IFileSystem FileSystem { get; set; }
 
         [Import]
-        public CommandParameters Parameters { get; set; }
+        public RecipeCommandParameters Parameters { get; set; }
 
         [ImportMany]
         public IEnumerable<IAdditionalIngredient> AdditionalIngredients { get; set; }
 
 #pragma warning restore 649
 
-        public void Execute(IEnumerable<string> arguments)
+        public async Task Execute()
         {
             Tracing.Info("create - configure a new site");
-
-            Parameters.Parse(arguments);
 
             var engine = String.IsNullOrWhiteSpace(Parameters.Template)
                              ? TemplateEngines.First()
@@ -48,13 +73,8 @@ namespace Pretzel.Commands
 
             Tracing.Info("Using {0} Engine", engine);
 
-            var recipe = new Recipe(FileSystem, engine, Parameters.Path, AdditionalIngredients, Parameters.WithProject, Parameters.Wiki, Parameters.IncludeDrafts);
+            var recipe = new Recipe(FileSystem, engine, Parameters.Path, AdditionalIngredients, Parameters.WithProject, Parameters.Wiki, Parameters.Drafts);
             recipe.Create();
-        }
-
-        public void WriteHelp(TextWriter writer)
-        {
-            Parameters.WriteOptions(writer, "-t", "-d", "withproject", "wiki", "-s");
         }
     }
 }

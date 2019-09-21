@@ -2,7 +2,7 @@
   "profiles": {
     "Pretzel": {
       "commandName": "Project",
-      "commandLineArgs": "--safe --debug",
+      "commandLineArgs": "bake c:\\f\\git --virtualdirectory=Foo",
       "workingDirectory": "c:\\f\\git\\Scissors.Blog"
     }
   }

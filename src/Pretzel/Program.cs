@@ -25,15 +25,18 @@ namespace Pretzel
         [Export]
         public IFileSystem FileSystem { get; set; } = new FileSystem();
 
-        [Export("SourcePath")]
-        public string SourcePath { get; }
+        //[Export("SourcePath")]
+        //public string SourcePath { get; }
 
-        public Program()
-        {
-            SourcePath = sourcePath;
-        }
+        //public Program()
+        //{
+        //    SourcePath = sourcePath;
+        //}
 
-        private static string sourcePath;
+        //private static string sourcePath;
+
+
+
         private static async Task<int> Main(string[] args)
         {
             var rootCommand = new RootCommand
@@ -53,9 +56,35 @@ namespace Pretzel
                 },
                 new Option(new[] { "-s", "--source" }, "The path to the source site (default current directory)")
                 {
-                    Argument = new Argument<string>(() => Environment.CurrentDirectory)
+                    Argument = new Argument<string>()
                 }
             };
+
+            if (args.Length > 1 && !args.Contains("-s") && !args.Contains("--source"))
+            {
+                var fileSystem = new FileSystem();
+                var firstArgument = args[1];
+
+                // take the first argument after the command
+                if (firstArgument != null && !firstArgument.StartsWith("-") && !firstArgument.StartsWith("/"))
+                {
+                    var arguments = args.ToList();
+                    var path = fileSystem.Path.IsPathRooted(firstArgument)
+                        ? firstArgument
+                        : fileSystem.Path.Combine(fileSystem.Directory.GetCurrentDirectory(), firstArgument);
+
+                    arguments[1] = "-s";
+                    arguments.Insert(2, path);
+                    args = arguments.ToArray();
+                }
+
+                Path = string.IsNullOrWhiteSpace(Path)
+                    ? fileSystem.Directory.GetCurrentDirectory()
+                    : fileSystem.Path.GetFullPath(Path);
+
+                Console.WriteLine(Path);
+            }
+            
 
             foreach (var option in globalOptions)
             {
@@ -64,7 +93,6 @@ namespace Pretzel
 
             rootCommand.Handler = CommandHandler.Create(async (bool debug, bool safe, string source) =>
             {
-                sourcePath = source;
                 try
                 {
                     InitializeTrace(debug);
@@ -130,14 +158,6 @@ namespace Pretzel
                 WaitForClose();
                 return -1;
             }
-            //if (Commands[parameters.CommandName] == null)
-            //{
-            //    Console.WriteLine(@"Can't find command ""{0}""", parameters.CommandName);
-            //    //Commands.WriteHelp(parameters.Options);
-            //    return -1;
-            //}
-
-            //Commands[parameters.CommandName].Execute(parameters.CommandArgs);
         }
 
         [System.Diagnostics.Conditional("DEBUG")]

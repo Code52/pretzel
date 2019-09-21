@@ -7,5 +7,7 @@ namespace Pretzel.Logic.Commands
     public interface ICommandParameters
     {
         IList<Option> Options { get; }
+
+        void BindingCompleted();
     }
 }

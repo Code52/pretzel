@@ -10,7 +10,9 @@ using System.Reflection;
 
 namespace Pretzel.Logic.Extensibility.Extensions
 {
-    [CommandArguments(CommandName = "create")]
+    [Export]
+    [Shared]
+    [CommandArgumentsExtention(CommandNames = new[] { BuiltInCommands.Create })]
     public class AzureHostSupportArguments : IHaveCommandLineArgs
     {
         public void UpdateOptions(IList<Option> options)
@@ -20,10 +22,13 @@ namespace Pretzel.Logic.Extensibility.Extensions
                 Argument = new Argument<bool>()
             });
         }
+
+        public void BindingCompleted()
+        {
+        }
     }
 
     [Export(typeof(IAdditionalIngredient))]
-    [Export(typeof(IHaveCommandLineArgs))]
     public class AzureHostSupport : IAdditionalIngredient
     {
         private readonly IFileSystem fileSystem;

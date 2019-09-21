@@ -23,50 +23,7 @@ namespace Pretzel.Logic.Commands
 
             Settings = new List<Option>
             {
-                new Option(new []{ "template", "t" },"The templating engine to use")
-                {
-                    Argument = new Argument<string>()
-                },
-                new Option(new [] {"port", "p"}, "The port to test the site locally")
-                {
-                    Argument = new Argument<int>(() => 8080)
-                },
-                new Option(new [] {"import", "i"}, "The import type")
-                {
-                    Argument = new Argument<string>()
-                },
-                new Option(new [] {"file", "f"}, "Path to import file")
-                {
-                    Argument = new Argument<string>()
-                },
-                new Option("destination", "The path to the destination site (default _site)")
-                {
-                    Argument = new Argument<string>(() => "_site")
-                },
-                new Option("drafts", "Add the posts in the drafts folder")
-                {
-                    Argument = new Argument<bool>()
-                },
-                new Option("nobrowser", "Do not launch a browser (false by default)")
-                {
-                    Argument = new Argument<bool>(() => false)
-                },
-                new Option("withproject", "Includes a layout VS Solution, to give intellisense when editing razor layout files")
-                {
-                    Argument = new Argument<bool>()
-                },
-                new Option("wiki", "Creates a wiki instead of a blog (razor template only)")
-                {
-                    Argument = new Argument<bool>()
-                },
-                new Option("cleantarget", "Delete the target directory (_site by default)")
-                {
-                    Argument = new Argument<bool>()
-                },
-                new Option(new [] { "newposttitle", "n" }, "The title of the new post (\"New post\" by default")
-                {
-                    Argument = new Argument<string>(() => "New post")
-                }
+
             };
 
             // Allow extensions to register command line args

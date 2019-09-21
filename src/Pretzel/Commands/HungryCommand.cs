@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.CommandLine.Invocation;
 using System.Composition;
 using System.IO;
+using System.Threading.Tasks;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 
@@ -11,8 +13,6 @@ namespace Pretzel.Commands
     [CommandInfo(CommandName = BuiltInCommands.Hungry, CommandDescription = "use only when hungry")]
     public sealed class HungryCommand : ICommand
     {
-
-
         private readonly string recipe = @"===== Ingredients ======
 
 == Dough====
@@ -52,7 +52,7 @@ If you want to make sweet pretzels rather than savoury/traditional pretzels, rep
 
 Eat the pretzels warm, or reheat them in an oven or microwave.";
 
-        public void Execute(IEnumerable<string> arguments)
+        public async Task Execute()
         {
             Tracing.Info(recipe);
         }

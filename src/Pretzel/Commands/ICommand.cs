@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using System.IO;
+using System.Threading.Tasks;
 
 namespace Pretzel.Commands
 {
     public interface ICommand
     {
-        void Execute(IEnumerable<string> arguments);
-        void WriteHelp(TextWriter writer); // TODO: obsolete this?
+        Task Execute();
     }
 }

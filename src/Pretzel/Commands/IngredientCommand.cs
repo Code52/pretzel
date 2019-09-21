@@ -2,12 +2,36 @@ using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Recipe;
 using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
+using System.Threading.Tasks;
 
 namespace Pretzel.Commands
 {
+    [Export]
+    [Shared]
+    [CommandArguments(CommandName = BuiltInCommands.Ingredient)]
+    public class IngredientCommandParameters : PretzelBaseCommandParameters
+    {
+        public IngredientCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
+
+        protected override void WithOptions(List<Option> options)
+        {
+            options.AddRange(new[]
+            {
+                new Option(new [] { "newposttitle", "n" }, "The title of the new post (\"New post\" by default")
+                {
+                    Argument = new Argument<string>(() => "New post")
+                }
+            });
+        }
+
+        public string NewPostTitle { get; set; }
+    }
+
     [Shared]
     [CommandInfo(CommandName = BuiltInCommands.Ingredient, CommandDescription = "create a new post")]
     public sealed class IngredientCommand : ICommand
@@ -18,24 +42,16 @@ namespace Pretzel.Commands
         public IFileSystem FileSystem { get; set; }
 
         [Import]
-        public CommandParameters Parameters { get; set; }
+        public IngredientCommandParameters Parameters { get; set; }
 
 #pragma warning restore 649
 
-        public void Execute(IEnumerable<string> arguments)
+        public async Task Execute()
         {
             Tracing.Info("ingredient - create a new post");
 
-            Parameters.Parse(arguments);
-
-            var ingredient = new Ingredient(FileSystem, Parameters.NewPostTitle, Parameters.Path, Parameters.IncludeDrafts);
+            var ingredient = new Ingredient(FileSystem, Parameters.NewPostTitle, Parameters.Path, Parameters.Drafts);
             ingredient.Create();
-        }
-
-        public void WriteHelp(TextWriter writer)
-        {
-            writer.Write("   Create a new post\r\n");
-            Parameters.WriteOptions(writer, "newposttitle", "drafts", "-s");
         }
     }
 }

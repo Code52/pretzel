@@ -7,13 +7,46 @@ using Pretzel.Logic.Templating.Context;
 using Pretzel.Modules;
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Composition;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
+using System.Threading.Tasks;
 
 namespace Pretzel.Commands
 {
+    [Export]
+    [Shared]
+    [CommandArguments(CommandName = BuiltInCommands.Taste)]
+    public class TasteParameters : BakeBaseCommandParameters
+    {
+        [ImportingConstructor]
+        public TasteParameters(IFileSystem fileSystem) : base(fileSystem) { }
+
+        protected override void WithOptions(List<Option> options)
+        {
+            base.WithOptions(options);
+            options.AddRange(new[]
+            {
+                new Option(new[] { "port", "p" }, "The port to test the site locally")
+                {
+                    Argument = new Argument<int>(() => 8080)
+                },
+                new Option("nobrowser", "Do not launch a browser (false by default)")
+                {
+                    Argument = new Argument<bool>(() => false)
+                },
+            });
+        }
+
+        public int Port { get; set; }
+
+        public bool NoBrowser { get; set; }
+
+        public bool LaunchBrowser => !NoBrowser;
+    }
+
     [Shared]
     [CommandInfo(CommandName = BuiltInCommands.Taste, CommandDescription = "testing a site locally")]
     public sealed class TasteCommand : ICommand
@@ -28,7 +61,7 @@ namespace Pretzel.Commands
         public SiteContextGenerator Generator { get; set; }
 
         [Import]
-        public CommandParameters Parameters { get; set; }
+        public TasteParameters Parameters { get; set; }
 
         [ImportMany]
         public IEnumerable<ITransform> Transforms { get; set; }
@@ -41,13 +74,11 @@ namespace Pretzel.Commands
 
 #pragma warning restore 649
 
-        public void Execute(IEnumerable<string> arguments)
+        public async Task Execute()
         {
             Tracing.Info("taste - testing a site locally");
-
-            Parameters.Parse(arguments);
-
-            var context = Generator.BuildContext(Parameters.Path, Parameters.DestinationPath, Parameters.IncludeDrafts);
+            
+            var context = Generator.BuildContext(Parameters.Path, Parameters.Destination, Parameters.Drafts);
 
             if (Parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
@@ -74,11 +105,11 @@ namespace Pretzel.Commands
             foreach (var t in Transforms)
                 t.Transform(context);
 
-            using (var watcher = new SimpleFileSystemWatcher(Parameters.DestinationPath))
+            using (var watcher = new SimpleFileSystemWatcher(Parameters.Destination))
             {
                 watcher.OnChange(Parameters.Path, WatcherOnChanged);
 
-                using (var w = new WebHost(Parameters.DestinationPath, new FileContentProvider(), Convert.ToInt32(Parameters.Port)))
+                using (var w = new WebHost(Parameters.Destination, new FileContentProvider(), Convert.ToInt32(Parameters.Port)))
                 {
                     try
                     {
@@ -96,7 +127,7 @@ namespace Pretzel.Commands
                         Tracing.Info("Opening {0} in default browser...", url);
                         try
                         {
-                            Process.Start(url);
+                            System.Diagnostics.Process.Start(url);
                         }
                         catch (Exception)
                         {
@@ -135,7 +166,7 @@ namespace Pretzel.Commands
 
             ((Configuration)Configuration).ReadFromFile();
 
-            var context = Generator.BuildContext(Parameters.Path, Parameters.DestinationPath, Parameters.IncludeDrafts);
+            var context = Generator.BuildContext(Parameters.Path, Parameters.Destination, Parameters.Drafts);
             if (Parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
                 FileSystem.Directory.Delete(context.OutputFolder, true);
@@ -143,11 +174,6 @@ namespace Pretzel.Commands
             engine.Process(context, true);
             foreach (var t in Transforms)
                 t.Transform(context);
-        }
-
-        public void WriteHelp(TextWriter writer)
-        {
-            Parameters.WriteOptions(writer, "-t", "-d", "-p", "--nobrowser", "-cleantarget", "-s", "-destination");
         }
     }
 }

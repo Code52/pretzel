@@ -1,50 +1,113 @@
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Pretzel.Commands
 {
-
     [Shared]
+    [Export]
     [CommandArguments(CommandName = BuiltInCommands.Bake)]
-    public sealed class BakeCommandParameters : ICommandParameters
+    public sealed class BakeCommandParameters : BakeBaseCommandParameters
     {
-        //[ImportMany]
-        //public ExportFactory<IHaveCommandLineArgs, CommandArgumentsAttribute>[] ArgumentExtenders { get; set; }
+        [ImportingConstructor]
+        public BakeCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
+    }
 
-        [Export]
-        public IList<Option> Options { get; set; }
-
-        [OnImportsSatisfied]
-        internal void OnImportsSatisfied()
+    public abstract class PretzelBaseCommandParameters : BParameters
+    {
+        protected readonly IFileSystem fileSystem;
+        protected PretzelBaseCommandParameters(IFileSystem fileSystem)
         {
-            Options = new List<Option>
+            this.fileSystem = fileSystem;
+        }
+
+        protected override void WithOptions(List<Option> options)
+        {
+            options.AddRange(new[]
             {
-                new Option(new []{ "--template", "-t" },"The templating engine to use")
+                new Option(new []{ "-t", "--template" },"The templating engine to use")
                 {
                     Argument = new Argument<string>()
                 },
-            };
-
-            //var attr = GetType().GetCustomAttributes(typeof(CommandArgumentsAttribute), true).FirstOrDefault();
-
-            //if (attr is CommandArgumentsAttribute commandArgumentAttribute)
-            //{
-            //    foreach (var factory in ArgumentExtenders.Where(a => a.Metadata.CommandType == commandArgumentAttribute.CommandType))
-            //    {
-            //        factory.CreateExport().Value.UpdateOptions(Options);
-            //    }
-            //}
+                new Option(new [] { "-d", "--destination" }, "The path to the destination site (default _site)")
+                {
+                    Argument = new Argument<string>(() => "_site")
+                },
+                new Option("--drafts", "Add the posts in the drafts folder")
+                {
+                    Argument = new Argument<bool>()
+                },
+            });
         }
+        // Default Option that get injected from Program
+        public string Source { get; set; }
+        // Default Option that get injected from Program
+        public bool Debug { get; set; }
+        // Default Option that get injected from Program
+        public bool Safe { get; set; }
+
+
+        public string Template { get; set; }
+        public string Destination { get; set; }
+        public bool Drafts { get; set; }
+        public string Path => Source;
+
+        public override void BindingCompleted()
+        {
+            if (string.IsNullOrEmpty(Destination))
+            {
+                Destination = "_site";
+            }
+            if (!fileSystem.Path.IsPathRooted(Destination))
+            {
+                Destination = fileSystem.Path.Combine(Path, Destination);
+            }
+        }
+
+        public void DetectFromDirectory(IDictionary<string, ISiteEngine> engines, SiteContext context)
+        {
+            foreach (var engine in engines)
+            {
+                if (!engine.Value.CanProcess(context)) continue;
+                Tracing.Info("Recommended engine for directory: '{0}'", engine.Key);
+                Template = engine.Key;
+                return;
+            }
+
+            if (Template == null)
+                Template = "liquid";
+        }
+    }
+
+    public abstract class BakeBaseCommandParameters : PretzelBaseCommandParameters
+    {
+        protected BakeBaseCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
+
+        protected override void WithOptions(List<Option> options)
+        {
+            options.AddRange(new[]
+            {
+                new Option(new [] { "-c", "--cleantarget" }, "Delete the target directory (_site by default)")
+                {
+                    Argument = new Argument<bool>()
+                },
+            });
+        }
+
+        public bool CleanTarget { get; set; }
     }
 
     [Shared]
@@ -59,36 +122,34 @@ namespace Pretzel.Commands
         [Import]
         public SiteContextGenerator Generator { get; set; }
 
-        [Import]
-        public CommandParameters parameters { get; set; }
-
         [ImportMany]
         public IEnumerable<ITransform> transforms { get; set; }
+
+        [Import]
+        public BakeCommandParameters Parameters { get; set; }
 
         [Import]
         public IFileSystem FileSystem { get; set; }
 
 #pragma warning restore 649
 
-        public void Execute(IEnumerable<string> arguments)
+        public async Task Execute()
         {
             Tracing.Info("bake - transforming content into a website");
 
-            parameters.Parse(arguments);
+            var siteContext = Generator.BuildContext(Parameters.Path, Parameters.Destination, Parameters.Drafts);
 
-            var siteContext = Generator.BuildContext(parameters.Path, parameters.DestinationPath, parameters.IncludeDrafts);
-
-            if (parameters.CleanTarget && FileSystem.Directory.Exists(siteContext.OutputFolder))
+            if (Parameters.CleanTarget && FileSystem.Directory.Exists(siteContext.OutputFolder))
             {
                 FileSystem.Directory.Delete(siteContext.OutputFolder, true);
             }
 
-            if (string.IsNullOrWhiteSpace(parameters.Template))
+            if (string.IsNullOrWhiteSpace(Parameters.Template))
             {
-                parameters.DetectFromDirectory(templateEngines.Engines, siteContext);
+                Parameters.DetectFromDirectory(templateEngines.Engines, siteContext);
             }
 
-            var engine = templateEngines[parameters.Template];
+            var engine = templateEngines[Parameters.Template];
             if (engine != null)
             {
                 var watch = new Stopwatch();
@@ -105,13 +166,8 @@ namespace Pretzel.Commands
             }
             else
             {
-                Tracing.Info("Cannot find engine for input: '{0}'", parameters.Template);
+                Tracing.Info("Cannot find engine for input: '{0}'", Parameters.Template);
             }
-        }
-
-        public void WriteHelp(TextWriter writer)
-        {
-            parameters.WriteOptions(writer, "-t", "-p", "-d", "-cleantarget", "-s", "-destination");
         }
     }
 }
