@@ -4,15 +4,68 @@ using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
+using System.Linq;
 
 namespace Pretzel.Commands
 {
+    [MetadataAttribute]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    public sealed class CommandArgumentsAttribute : ExportAttribute
+    {
+        public Type CommandType { get; set; }
+
+        public CommandArgumentsAttribute() : base(typeof(ICommandParameters))
+        {
+        }
+    }
+
+    public interface ICommandParameters
+    {
+        IList<Option> Options { get; }
+    }
+
     [Shared]
-    [CommandInfo(CommandName = "bake")]
+    [CommandArguments(CommandType = typeof(BakeCommand))]
+    public sealed class BakeCommandParameters : ICommandParameters
+    {
+        //[ImportMany]
+        //public ExportFactory<IHaveCommandLineArgs, CommandArgumentsAttribute>[] ArgumentExtenders { get; set; }
+
+        [Export]
+        public IList<Option> Options { get; set; }
+
+        [OnImportsSatisfied]
+        internal void OnImportsSatisfied()
+        {
+            Options = new List<Option>
+            {
+                new Option(new []{ "--template", "-t" },"The templating engine to use")
+                {
+                    Argument = new Argument<string>()
+                },
+            };
+
+            //var attr = GetType().GetCustomAttributes(typeof(CommandArgumentsAttribute), true).FirstOrDefault();
+
+            //if (attr is CommandArgumentsAttribute commandArgumentAttribute)
+            //{
+            //    foreach (var factory in ArgumentExtenders.Where(a => a.Metadata.CommandType == commandArgumentAttribute.CommandType))
+            //    {
+            //        factory.CreateExport().Value.UpdateOptions(Options);
+            //    }
+            //}
+        }
+    }
+
+
+
+    [Shared]
+    [CommandInfo(CommandName = "bake", CommandDescription = "transforming content into a website", CommandType = typeof(BakeCommand))]
     public sealed class BakeCommand : ICommand
     {
 #pragma warning disable 649

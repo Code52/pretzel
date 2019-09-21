@@ -6,7 +6,7 @@ using System.Reflection;
 namespace Pretzel.Commands
 {
     [Shared]
-    [CommandInfo(CommandName = "version")]
+    [CommandInfo(CommandName = "version", CommandDescription = "display current Pretzel version")]
     public sealed class VersionCommand : ICommand
     {
         public void Execute(IEnumerable<string> arguments)

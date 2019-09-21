@@ -1,5 +1,6 @@
-using NDesk.Options;
 using Pretzel.Logic.Extensions;
+using System.Collections.Generic;
+using System.CommandLine;
 using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
@@ -23,9 +24,12 @@ namespace Pretzel.Logic.Extensibility.Extensions
             this.assembly = assembly;
         }
 
-        public void UpdateOptions(OptionSet options)
+        public void UpdateOptions(IList<Option> options)
         {
-            options.Add("azure", "Enables deploy to azure support", v => performAzureWorkaround = (v != null));
+            options.Add(new Option("azure", "Enables deploy to azure support")
+            {
+                Argument = new Argument<bool>()
+            });
         }
 
         public string[] GetArguments(string command)

@@ -15,7 +15,7 @@ using System.IO.Abstractions;
 namespace Pretzel.Commands
 {
     [Shared]
-    [CommandInfo(CommandName = "taste")]
+    [CommandInfo(CommandName = "taste", CommandDescription = "testing a site locally")]
     public sealed class TasteCommand : ICommand
     {
         private ISiteEngine engine;
@@ -122,7 +122,7 @@ namespace Pretzel.Commands
 
         private void WatcherOnChanged(string file)
         {
-            if(file.StartsWith(Parameters.Path))
+            if (file.StartsWith(Parameters.Path))
             {
                 var relativeFile = file.Substring(Parameters.Path.Length).ToRelativeFile();
                 if (Generator.IsExcludedPath(relativeFile))

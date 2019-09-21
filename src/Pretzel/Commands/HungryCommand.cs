@@ -7,7 +7,7 @@ using Pretzel.Logic.Extensions;
 namespace Pretzel.Commands
 {
     [Shared]
-    [CommandInfo(CommandName = "hungry")]
+    [CommandInfo(CommandName = "hungry", CommandDescription = "use only when hungry")]
     public sealed class HungryCommand : ICommand
     {
 

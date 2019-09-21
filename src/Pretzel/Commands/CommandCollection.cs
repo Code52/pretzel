@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.Composition;
 using System.Linq;
-using NDesk.Options;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 
@@ -14,8 +14,12 @@ namespace Pretzel.Commands
     {
         [ImportMany]
         public ExportFactory<ICommand, CommandInfoAttribute>[] Commands { get; set; }
+
         [ImportMany]
-        public IEnumerable<Lazy<IHaveCommandLineArgs>> CommandLineExtensions { get; set; }
+        public ExportFactory<ICommandParameters, CommandArgumentsAttribute>[] CommandArguments { get; set; }
+
+        //[ImportMany]
+        //public IEnumerable<Lazy<IHaveCommandLineArgs>> CommandLineExtensions { get; set; }
         [Import]
         public Lazy<CommandParameters> Parameters { get; set; }
 
@@ -31,36 +35,52 @@ namespace Pretzel.Commands
             }
         }
 
+        [Export]
+        public RootCommand RootCommand { get; set; }
+
         [OnImportsSatisfied]
         public void OnImportsSatisfied()
         {
             commandMap = new Dictionary<string, ICommand>(Commands.Length);
 
+            RootCommand = new RootCommand();
+
             foreach (var command in Commands)
             {
                 if (!commandMap.ContainsKey(command.Metadata.CommandName))
                 {
-                    var export = command.CreateExport();
-                    commandMap.Add(command.Metadata.CommandName, export.Value);
+                    var subCommand = new Command(command.Metadata.CommandName, command.Metadata.CommandDescription);
+
+                    foreach (var commandArguments in CommandArguments.Where(a => a.Metadata.CommandType == command.Metadata.CommandType))
+                    {
+                        foreach(var option in commandArguments.CreateExport().Value.Options)
+                        {
+                            subCommand.AddOption(option);
+                        }
+                    }
+
+                    RootCommand.AddCommand(subCommand);
+                    //var export = command.CreateExport();
+                    //commandMap.Add(command.Metadata.CommandName, export.Value);
                 }
             }
         }
 
-        public void WriteHelp(OptionSet defaultSet)
+        public void WriteHelp(List<Option> defaultSet)
         {
             Console.WriteLine(@"Usage:");
             Console.WriteLine(@"Pretzel.exe command [options]");
             Console.WriteLine();
-            defaultSet.WriteOptionDescriptions(Console.Out);
+            //defaultSet.WriteOptionDescriptions(Console.Out);
             Console.WriteLine();
 
             foreach (var command in commandMap)
             {
                 Console.WriteLine(@"Command: " + command.Key);
                 command.Value.WriteHelp(Console.Out);
-                var extraArgs = CommandLineExtensions.SelectMany(e => e.Value.GetArguments(command.Key)).ToArray();
-                if (extraArgs.Any())
-                    Parameters.Value.WriteOptions(Console.Out, extraArgs);
+                //var extraArgs = CommandLineExtensions.SelectMany(e => e.Value.GetArguments(command.Key)).ToArray();
+                //if (extraArgs.Any())
+                //    Parameters.Value.WriteOptions(Console.Out, extraArgs);
                 Console.WriteLine();
             }
         }

@@ -2,19 +2,25 @@ using Pretzel.Commands;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using System;
+using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Invocation;
 using System.Composition;
 using System.Composition.Hosting;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Pretzel
 {
+    [Export]
     internal class Program
     {
         [Import]
-        public CommandCollection Commands { get; set; }
+        public CommandCollection CommandCollection { get; set; }
 
         [Export]
         public IFileSystem FileSystem { get; set; } = new FileSystem();
@@ -22,68 +28,119 @@ namespace Pretzel
         [Export("SourcePath")]
         public string SourcePath { get; }
 
-        private BaseParameters parameters { get; }
-
         public Program()
         {
-            parameters = BaseParameters.Parse(Args, FileSystem);
-            SourcePath = parameters.Path;
+            SourcePath = sourcePath;
         }
 
-        private static string[] Args;
-        private static void Main(string[] args)
+        private static string sourcePath;
+        private static async Task<int> Main(string[] args)
         {
-            Args = args;
-            var program = new Program();
-
-            program.InitializeTrace();
-            Tracing.Info("starting pretzel...");
-            Tracing.Debug("V{0}", Assembly.GetExecutingAssembly().GetName().Version);
-
-            using (program.Compose())
+            var rootCommand = new RootCommand
             {
+                TreatUnmatchedTokensAsErrors = false
+            };
 
-                if (program.parameters.Help || !args.Any())
+            var globalOptions = new[]
+            {
+                new Option("--debug", "Enable debugging")
                 {
-                    program.ShowHelp();
-                    return;
+                    Argument = new Argument<bool>()
+                },
+                new Option("--safe", "Disable custom plugins")
+                {
+                    Argument = new Argument<bool>()
+                },
+                new Option(new[] { "-s", "--source" }, "The path to the source site (default current directory)")
+                {
+                    Argument = new Argument<string>(() => Environment.CurrentDirectory)
                 }
+            };
 
-                program.Run();
+            foreach (var option in globalOptions)
+            {
+                rootCommand.AddOption(option);
+            }
+
+            rootCommand.Handler = CommandHandler.Create(async (bool debug, bool safe, string source) =>
+            {
+                sourcePath = source;
+                try
+                {
+                    InitializeTrace(debug);
+                    Tracing.Info("starting pretzel...");
+                    Tracing.Debug("V{0}", Assembly.GetExecutingAssembly().GetName().Version);
+
+                    using (var host = Compose(debug, safe, source))
+                    {
+                        var program = host.GetExport<Program>();
+
+                        return await program.Run(globalOptions, args);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Tracing.Error(ex.Message);
+                    WaitForClose();
+                    return -1;
+                }
+            });
+            try
+            {
+                return await rootCommand.InvokeAsync(args);
+            }
+            catch (Exception ex)
+            {
+                Tracing.Error(ex.Message);
+                WaitForClose();
+                return -1;
             }
         }
 
-        private void InitializeTrace()
+        private static void InitializeTrace(bool debug)
         {
             Tracing.SetTrace(ConsoleTrace.Write);
 
-            if (parameters.Debug)
+            if (debug)
             {
                 Tracing.SetMinimalLevel(TraceLevel.Debug);
             }
         }
 
-        private void ShowHelp()
+        private async Task<int> Run(IEnumerable<Option> globalOptions, string[] args)
         {
-            Commands.WriteHelp(parameters.Options);
-            WaitForClose();
-        }
-
-        private void Run()
-        {
-            if (Commands[parameters.CommandName] == null)
+            try
             {
-                Console.WriteLine(@"Can't find command ""{0}""", parameters.CommandName);
-                Commands.WriteHelp(parameters.Options);
-                return;
-            }
+                foreach (var option in globalOptions)
+                {
+                    CommandCollection.RootCommand.AddOption(option);
 
-            Commands[parameters.CommandName].Execute(parameters.CommandArgs);
-            WaitForClose();
+                    foreach(var command in CommandCollection.RootCommand.OfType<Command>())
+                    {
+                        command.AddOption(option);
+                    }
+                }
+
+                return await CommandCollection.RootCommand.InvokeAsync(args);
+            }
+            catch (Exception ex)
+            {
+                Tracing.Error(ex.Message);
+                WaitForClose();
+                return -1;
+            }
+            //if (Commands[parameters.CommandName] == null)
+            //{
+            //    Console.WriteLine(@"Can't find command ""{0}""", parameters.CommandName);
+            //    //Commands.WriteHelp(parameters.Options);
+            //    return -1;
+            //}
+
+            //Commands[parameters.CommandName].Execute(parameters.CommandArgs);
         }
 
         [System.Diagnostics.Conditional("DEBUG")]
-        public void WaitForClose()
+        public static void WaitForClose()
         {
             Console.WriteLine(@"Press any key to continue...");
             try
@@ -96,7 +153,7 @@ namespace Pretzel
             }
         }
 
-        public IDisposable Compose()
+        public static CompositionHost Compose(bool debug, bool safe, string path)
         {
             try
             {
@@ -107,11 +164,9 @@ namespace Pretzel
                     .WithAssembly(typeof(Logic.SanityCheck).Assembly)
                     ;
 
-                LoadPlugins(configuration);
+                LoadPlugins(configuration, safe, path);
 
                 var container = configuration.CreateContainer();
-
-                container.SatisfyImports(this);
 
                 return container;
             }
@@ -124,11 +179,11 @@ namespace Pretzel
             }
         }
 
-        private void LoadPlugins(ContainerConfiguration configuration)
+        private static void LoadPlugins(ContainerConfiguration configuration, bool safe, string path)
         {
-            if (!parameters.Safe)
+            if (!safe)
             {
-                var pluginsPath = Path.Combine(parameters.Path, "_plugins");
+                var pluginsPath = Path.Combine(path, "_plugins");
 
                 if (Directory.Exists(pluginsPath))
                 {
@@ -153,7 +208,7 @@ namespace Pretzel
             }
         }
 
-        private void AddScriptCs(ContainerConfiguration configuration, string pluginsPath)
+        private static void AddScriptCs(ContainerConfiguration configuration, string pluginsPath)
         {
             var pretzelScriptCsPath = Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).DirectoryName, "Pretzel.ScriptCs.dll");
             if (File.Exists(pretzelScriptCsPath))

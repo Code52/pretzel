@@ -1,8 +1,9 @@
+using System.Collections.Generic;
+using System.CommandLine;
 using System.Composition;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text.RegularExpressions;
-using NDesk.Options;
 using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Logic.Extensibility.Extensions
@@ -42,9 +43,12 @@ namespace Pretzel.Logic.Extensibility.Extensions
             }
         }
 
-        public void UpdateOptions(OptionSet options)
+        public void UpdateOptions(IList<Option> options)
         {
-            options.Add("vDir=", "Rewrite url's to work inside the specified virtual directory", v => VirtualDirectory = v);
+            options.Add(new Option("vDir", "Rewrite url's to work inside the specified virtual directory")
+            {
+                Argument = new Argument<string>()
+            });
         }
 
         public string[] GetArguments(string command)

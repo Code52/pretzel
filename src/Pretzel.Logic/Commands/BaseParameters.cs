@@ -1,6 +1,6 @@
-using NDesk.Options;
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.Composition;
 using System.IO.Abstractions;
 using System.Linq;
@@ -9,7 +9,8 @@ namespace Pretzel.Logic.Commands
 {
     public sealed class BaseParameters
     {
-        public OptionSet Options { get; }
+        [Export]
+        public IEnumerable<Option> Options { get; }
 
         public string CommandName { get; }
 
@@ -27,20 +28,31 @@ namespace Pretzel.Logic.Commands
 
         private BaseParameters(string[] arguments, IFileSystem fileSystem)
         {
-            Options = new OptionSet
+            Options = new []
             {
-                { "help", "Display help mode", p => Help = true },
-                { "debug", "Enable debugging", p => Debug = true },
-                { "safe", "Disable custom plugins", v => Safe = true },
-                { "d|directory=", "[Obsolete, use --source instead] The path to site directory", p => Path = p },
-                { "s|source=", "The path to the source site (default current directory)", p => Path = p }
+                new Option("debug", "Enable debugging")
+                {
+                    Argument = new Argument<bool>()
+                },
+                new Option("safe", "Disable custom plugins")
+                {
+                    Argument = new Argument<bool>()
+                },
+                new Option(new [] { "d", "directory"}, "[Obsolete, use --source instead] The path to site directory")
+                {
+                    Argument = new Argument<string>()
+                },
+                new Option(new [] { "s", "source"}, "The path to the source site (default current directory)")
+                {
+                    Argument = new Argument<string>()
+                }
             };
 
             FileSystem = fileSystem;
 
             CommandName = arguments.Take(1).FirstOrDefault();
 
-            CommandArgs = Options.Parse(arguments.Skip(1));
+            //CommandArgs = Options.Parse(arguments.Skip(1));
 
             SetPath(CommandArgs.FirstOrDefault());
         }

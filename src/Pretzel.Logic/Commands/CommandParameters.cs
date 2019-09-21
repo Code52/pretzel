@@ -1,4 +1,3 @@
-using NDesk.Options;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
@@ -22,7 +21,7 @@ namespace Pretzel.Logic.Commands
         {
             this.fileSystem = fileSystem;
 
-            Settings = new[]
+            Settings = new List<Option>
             {
                 new Option(new []{ "template", "t" },"The templating engine to use")
                 {
@@ -108,7 +107,7 @@ namespace Pretzel.Logic.Commands
         }
 
         [Export]
-        private IEnumerable<Option> Settings { get; set; }
+        private List<Option> Settings { get; set; }
 
         private readonly IFileSystem fileSystem;
 
@@ -116,7 +115,7 @@ namespace Pretzel.Logic.Commands
         {
             var argumentList = arguments.ToArray();
 
-            Settings.Parse(argumentList);
+            //Settings.Parse(argumentList);
 
             if (string.IsNullOrEmpty(DestinationPath))
             {
@@ -148,16 +147,16 @@ namespace Pretzel.Logic.Commands
 
         public void WriteOptions(TextWriter writer, params string[] args)
         {
-            if (args.Length == 0)
-                Settings.WriteOptionDescriptions(writer);
-            else
-                WriteSubset(writer, args);
+            //if (args.Length == 0)
+            //    Settings.WriteOptionDescriptions(writer);
+            //else
+            //    WriteSubset(writer, args);
         }
 
         private void WriteSubset(TextWriter writer, string[] args)
         {
             var textWriter = new StringWriter();
-            Settings.WriteOptionDescriptions(textWriter);
+            //Settings.WriteOptionDescriptions(textWriter);
             var output = textWriter.ToString();
 
             var strings = RecombineMultilineArgs(output.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries));

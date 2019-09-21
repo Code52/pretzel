@@ -1,10 +1,10 @@
-using NDesk.Options;
+using System.Collections.Generic;
+using System.CommandLine;
 
 namespace Pretzel.Logic.Extensibility
 {
     public interface IHaveCommandLineArgs
     {
-        void UpdateOptions(OptionSet options);
-        string[] GetArguments(string command);
+        void UpdateOptions(IList<Option> options);
     }
 }
