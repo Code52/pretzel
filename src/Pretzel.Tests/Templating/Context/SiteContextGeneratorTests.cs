@@ -1,7 +1,3 @@
-using NSubstitute;
-using Pretzel.Logic;
-using Pretzel.Logic.Extensions;
-using Pretzel.Logic.Templating.Context;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,9 +7,12 @@ using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using NSubstitute;
+using Pretzel.Logic;
 using Pretzel.Logic.Extensibility;
+using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Templating.Context;
 using Xunit;
-using DotLiquid;
 
 namespace Pretzel.Tests.Templating.Context
 {
