@@ -73,18 +73,16 @@ namespace Pretzel
                         ? firstArgument
                         : fileSystem.Path.Combine(fileSystem.Directory.GetCurrentDirectory(), firstArgument);
 
+                    path = string.IsNullOrWhiteSpace(path)
+                        ? fileSystem.Directory.GetCurrentDirectory()
+                        : fileSystem.Path.GetFullPath(path);
+
                     arguments[1] = "-s";
                     arguments.Insert(2, path);
                     args = arguments.ToArray();
                 }
-
-                Path = string.IsNullOrWhiteSpace(Path)
-                    ? fileSystem.Directory.GetCurrentDirectory()
-                    : fileSystem.Path.GetFullPath(Path);
-
-                Console.WriteLine(Path);
             }
-            
+
 
             foreach (var option in globalOptions)
             {
@@ -144,7 +142,7 @@ namespace Pretzel
                 {
                     CommandCollection.RootCommand.AddOption(option);
 
-                    foreach(var command in CommandCollection.RootCommand.OfType<Command>())
+                    foreach (var command in CommandCollection.RootCommand.OfType<Command>())
                     {
                         command.AddOption(option);
                     }

@@ -16,7 +16,7 @@ namespace Pretzel.Commands
     [Export]
     [Shared]
     [CommandArguments(CommandName = BuiltInCommands.Import)]
-    public class ImportParameters : BParameters
+    public class ImportParameters : BaseParameters
     {
         protected override void WithOptions(List<Option> options)
         {

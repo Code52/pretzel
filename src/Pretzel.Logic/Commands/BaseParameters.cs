@@ -15,7 +15,7 @@ namespace Pretzel.Logic.Commands
         }
     }
 
-    public abstract class BParameters : ICommandParameters, ICommandParametersExtendable
+    public abstract class BaseParameters : ICommandParameters, ICommandParametersExtendable
     {
         [ImportMany]
         public ExportFactory<IHaveCommandLineArgs, CommandArgumentsExtentionAttribute>[] ArgumentExtenders { get; set; }

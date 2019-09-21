@@ -26,7 +26,7 @@ namespace Pretzel.Commands
         public BakeCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
     }
 
-    public abstract class PretzelBaseCommandParameters : BParameters
+    public abstract class PretzelBaseCommandParameters : BaseParameters
     {
         protected readonly IFileSystem fileSystem;
         protected PretzelBaseCommandParameters(IFileSystem fileSystem)
@@ -58,22 +58,27 @@ namespace Pretzel.Commands
         public bool Debug { get; set; }
         // Default Option that get injected from Program
         public bool Safe { get; set; }
+        [Obsolete("Use '" + nameof(Source) + "' instead.")]
+        public string Path => Source;
 
 
         public string Template { get; set; }
         public string Destination { get; set; }
         public bool Drafts { get; set; }
-        public string Path => Source;
 
         public override void BindingCompleted()
         {
+            Source = string.IsNullOrWhiteSpace(Source)
+                ? fileSystem.Directory.GetCurrentDirectory()
+                : fileSystem.Path.GetFullPath(Source);
+
             if (string.IsNullOrEmpty(Destination))
             {
                 Destination = "_site";
             }
             if (!fileSystem.Path.IsPathRooted(Destination))
             {
-                Destination = fileSystem.Path.Combine(Path, Destination);
+                Destination = fileSystem.Path.Combine(Source, Destination);
             }
         }
 
