@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.CommandLine.Invocation;
 using System.Composition;
-using System.IO;
 using System.Threading.Tasks;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;

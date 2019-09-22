@@ -30,25 +30,21 @@ namespace Pretzel.Commands
     [CommandInfo(CommandName = BuiltInCommands.Bake, CommandDescription = "transforming content into a website")]
     public sealed class BakeCommand : ICommand
     {
-#pragma warning disable 649
-
         [Import]
-        public TemplateEngineCollection templateEngines { get; set; }
+        public TemplateEngineCollection TemplateEngines { get; set; }
 
         [Import]
         public SiteContextGenerator Generator { get; set; }
 
         [ImportMany]
-        public IEnumerable<ITransform> transforms { get; set; }
+        public IEnumerable<ITransform> Transforms { get; set; }
 
         [Import]
         public BakeCommandParameters Parameters { get; set; }
 
         [Import]
         public IFileSystem FileSystem { get; set; }
-
-#pragma warning restore 649
-
+        
         public async Task Execute()
         {
             Tracing.Info("bake - transforming content into a website");
@@ -62,17 +58,17 @@ namespace Pretzel.Commands
 
             if (string.IsNullOrWhiteSpace(Parameters.Template))
             {
-                Parameters.DetectFromDirectory(templateEngines.Engines, siteContext);
+                Parameters.DetectFromDirectory(TemplateEngines.Engines, siteContext);
             }
 
-            var engine = templateEngines[Parameters.Template];
+            var engine = TemplateEngines[Parameters.Template];
             if (engine != null)
             {
                 var watch = new Stopwatch();
                 watch.Start();
                 engine.Initialize();
                 engine.Process(siteContext);
-                foreach (var t in transforms)
+                foreach (var t in Transforms)
                     t.Transform(siteContext);
 
                 engine.CompressSitemap(siteContext, FileSystem);

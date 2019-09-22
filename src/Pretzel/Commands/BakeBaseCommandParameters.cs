@@ -1,8 +1,8 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.IO.Abstractions;
-using System.Linq;
 
 namespace Pretzel.Commands
 {

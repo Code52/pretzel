@@ -1,9 +1,8 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.Composition;
 using System.IO.Abstractions;
-using System.Linq;
 using Pretzel.Logic;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
@@ -39,11 +38,11 @@ namespace Pretzel.Commands
                 },
             });
         }
-        // Default Option that get injected from Program
+        // Default Option that get's injected from Program
         public string Source { get; set; }
-        // Default Option that get injected from Program
+        // Default Option that get's injected from Program
         public bool Debug { get; set; }
-        // Default Option that get injected from Program
+        // Default Option that get's injected from Program
         public bool Safe { get; set; }
         [Obsolete("Use '" + nameof(Source) + "' instead.")]
         public string Path => Source;

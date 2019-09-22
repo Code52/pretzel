@@ -45,8 +45,6 @@ namespace Pretzel.Commands
     {
         private static readonly List<string> TemplateEngines = new List<string>(new[] { "Liquid", "Razor" });
 
-#pragma warning disable 649
-
         [Import]
         public IFileSystem FileSystem { get; set; }
 
@@ -55,8 +53,6 @@ namespace Pretzel.Commands
 
         [ImportMany]
         public IEnumerable<IAdditionalIngredient> AdditionalIngredients { get; set; }
-
-#pragma warning restore 649
 
         public async Task Execute()
         {

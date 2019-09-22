@@ -1,13 +1,11 @@
+using System.Collections.Generic;
+using System.CommandLine;
+using System.Composition;
+using System.IO.Abstractions;
+using System.Threading.Tasks;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Recipe;
-using System.Collections.Generic;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.Composition;
-using System.IO;
-using System.IO.Abstractions;
-using System.Threading.Tasks;
 
 namespace Pretzel.Commands
 {

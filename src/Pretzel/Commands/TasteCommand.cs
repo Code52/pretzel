@@ -1,3 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.CommandLine;
+using System.Composition;
+using System.IO.Abstractions;
+using System.Threading.Tasks;
 using Pretzel.Logic;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
@@ -5,14 +11,6 @@ using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Modules;
-using System;
-using System.Collections.Generic;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.Composition;
-using System.IO;
-using System.IO.Abstractions;
-using System.Threading.Tasks;
 
 namespace Pretzel.Commands
 {
@@ -52,7 +50,6 @@ namespace Pretzel.Commands
     public sealed class TasteCommand : ICommand
     {
         private ISiteEngine engine;
-#pragma warning disable 649
 
         [Import]
         public TemplateEngineCollection TemplateEngines { get; set; }
@@ -71,8 +68,6 @@ namespace Pretzel.Commands
 
         [Import]
         public IConfiguration Configuration { get; set; }
-
-#pragma warning restore 649
 
         public async Task Execute()
         {
