@@ -17,6 +17,7 @@ namespace Pretzel.Commands
     [CommandArguments(CommandName = BuiltInCommands.Create)]
     public class RecipeCommandParameters : PretzelBaseCommandParameters
     {
+        [ImportingConstructor]
         public RecipeCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
 
         protected override void WithOptions(List<Option> options)

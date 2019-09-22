@@ -2,8 +2,8 @@
   "profiles": {
     "Pretzel": {
       "commandName": "Project",
-      "commandLineArgs": "bake Scissors.Blog",
-      "workingDirectory": "c:\\f\\git"
+      "commandLineArgs": "hungry",
+      "workingDirectory": "c:\\f\\git\\Scissors.Blog"
     }
   }
 }

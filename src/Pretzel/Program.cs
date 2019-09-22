@@ -25,20 +25,10 @@ namespace Pretzel
         [Export]
         public IFileSystem FileSystem { get; set; } = new FileSystem();
 
-        //[Export("SourcePath")]
-        //public string SourcePath { get; }
-
-        //public Program()
-        //{
-        //    SourcePath = sourcePath;
-        //}
-
-        //private static string sourcePath;
-
-
-
         private static async Task<int> Main(string[] args)
         {
+            var fileSystem = new FileSystem();
+
             var rootCommand = new RootCommand
             {
                 TreatUnmatchedTokensAsErrors = false
@@ -56,13 +46,12 @@ namespace Pretzel
                 },
                 new Option(new[] { "-s", "--source" }, "The path to the source site (default current directory)")
                 {
-                    Argument = new Argument<string>()
+                    Argument = new Argument<string>(() => fileSystem.Directory.GetCurrentDirectory())
                 }
             };
 
             if (args.Length > 1 && !args.Contains("-s") && !args.Contains("--source"))
             {
-                var fileSystem = new FileSystem();
                 var firstArgument = args[1];
 
                 // take the first argument after the command

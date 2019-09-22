@@ -10,18 +10,21 @@ using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using System.Threading.Tasks;
 using System.Reflection;
+using Pretzel.Logic;
 
 namespace Pretzel.Commands
 {
 
     public class PretzelCommandHandler : ICommandHandler
     {
-        private ICommandParameters commandParameters;
-        private ExportFactory<ICommand, CommandInfoAttribute> command;
+        private readonly ICommandParameters commandParameters;
+        private readonly ExportFactory<ICommand, CommandInfoAttribute> command;
+        private readonly IConfiguration configuration;
 
-        public PretzelCommandHandler(ICommandParameters commandArguments, ExportFactory<ICommand, CommandInfoAttribute> command)
+        public PretzelCommandHandler(IConfiguration configuration, ICommandParameters commandParameters, ExportFactory<ICommand, CommandInfoAttribute> command)
         {
-            this.commandParameters = commandArguments;
+            this.configuration = configuration;
+            this.commandParameters = commandParameters;
             this.command = command;
         }
 
@@ -29,10 +32,18 @@ namespace Pretzel.Commands
         {
             var bindingContext = context.BindingContext;
 
-            new ModelBinder(commandParameters.GetType())
-                .UpdateInstance(commandParameters, bindingContext);
+            if (commandParameters != null)
+            {
+                new ModelBinder(commandParameters.GetType())
+                   .UpdateInstance(commandParameters, bindingContext);
 
-            commandParameters.BindingCompleted();
+                commandParameters.BindingCompleted();
+            }
+
+            if (commandParameters is IPathProvider pathProvider)
+            {
+                configuration.ReadFromFile(pathProvider.Path);
+            }
 
             if (commandParameters is ICommandParametersExtendable commandParametersExtendable)
             {
@@ -62,9 +73,12 @@ namespace Pretzel.Commands
 
         [ImportMany]
         public ExportFactory<ICommandParameters, CommandArgumentsAttribute>[] CommandArguments { get; set; }
-        
+
         [Export]
         public RootCommand RootCommand { get; set; }
+
+        [Import]
+        public IConfiguration Configuration { get; set; }
 
         [OnImportsSatisfied]
         public void OnImportsSatisfied()
@@ -78,12 +92,17 @@ namespace Pretzel.Commands
                 foreach (var commandArgumentsExport in CommandArguments.Where(a => a.Metadata.CommandName == command.Metadata.CommandName))
                 {
                     var commandArguments = commandArgumentsExport.CreateExport().Value;
+
                     foreach (var option in commandArguments.Options)
                     {
                         subCommand.AddOption(option);
                     }
 
-                    subCommand.Handler = new PretzelCommandHandler(commandArguments, command);
+                    subCommand.Handler = new PretzelCommandHandler(Configuration, commandArguments, command);
+                }
+                if(subCommand.Handler == null)
+                {
+                    subCommand.Handler = new PretzelCommandHandler(Configuration, null, command);
                 }
 
                 RootCommand.AddCommand(subCommand);

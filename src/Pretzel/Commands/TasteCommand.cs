@@ -164,7 +164,7 @@ namespace Pretzel.Commands
 
             Tracing.Info("File change: {0}", file);
 
-            ((Configuration)Configuration).ReadFromFile();
+            Configuration.ReadFromFile(Parameters.Path);
 
             var context = Generator.BuildContext(Parameters.Path, Parameters.Destination, Parameters.Drafts);
             if (Parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))

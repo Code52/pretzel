@@ -1,11 +1,17 @@
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.IO.Abstractions;
 
 namespace Pretzel.Logic
 {
+    public interface IPathProvider
+    {
+        string Path { get; }
+    }
+
     public interface IConfiguration
     {
         object this[string key] { get; }
@@ -17,6 +23,8 @@ namespace Pretzel.Logic
         IDictionary<string, object> ToDictionary();
 
         IDefaultsConfiguration Defaults { get; }
+
+        void ReadFromFile(string path);
     }
 
     [Shared]
@@ -27,14 +35,11 @@ namespace Pretzel.Logic
         public const string DefaultPermalink = "date";
 
         private IDictionary<string, object> _config;
-        private IDefaultsConfiguration _defaultsConfiguration;
         private readonly IFileSystem _fileSystem;
-        private readonly string _configFilePath;
-
         public object this[string key] => _config[key];
 
-        public IDefaultsConfiguration Defaults => _defaultsConfiguration;
-
+        public IDefaultsConfiguration Defaults { get; private set; }
+        
         internal Configuration()
         {
             _config = new Dictionary<string, object>();
@@ -42,11 +47,10 @@ namespace Pretzel.Logic
         }
 
         [ImportingConstructor]
-        public Configuration(IFileSystem fileSystem, [Import("SourcePath")] string sitePath)
+        public Configuration(IFileSystem fileSystem)
             : this()
         {
             _fileSystem = fileSystem;
-            _configFilePath = _fileSystem.Path.Combine(sitePath, ConfigFileName);
         }
 
         private void EnsureDefaults()
@@ -56,16 +60,16 @@ namespace Pretzel.Logic
                 _config.Add("permalink", DefaultPermalink);
             }
 
-            _defaultsConfiguration = new DefaultsConfiguration(_config);
+            Defaults = new DefaultsConfiguration(_config);
         }
 
-        [OnImportsSatisfied]
-        internal void ReadFromFile()
+        public void ReadFromFile(string path)
         {
+            var configFilePath = _fileSystem.Path.Combine(path, ConfigFileName);
             _config = new Dictionary<string, object>();
-            if (_fileSystem.File.Exists(_configFilePath))
+            if (_fileSystem.File.Exists(configFilePath))
             {
-                _config = _fileSystem.File.ReadAllText(_configFilePath).ParseYaml();
+                _config = _fileSystem.File.ReadAllText(configFilePath).ParseYaml();
                 EnsureDefaults();
             }
         }
