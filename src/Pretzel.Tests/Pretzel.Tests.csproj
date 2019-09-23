@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pretzel.Logic\Pretzel.Logic.csproj" />
+    <ProjectReference Include="..\Pretzel\Pretzel.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
@@ -50,8 +51,5 @@
     <Compile Remove="Commands\CommandParameterOutputTests.cs" />
     <Compile Remove="Commands\CommandParameterTests.cs" />
     <Compile Remove="Templating\Context\PageContextTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Commands\" />
   </ItemGroup>
 </Project>

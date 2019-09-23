@@ -7,7 +7,6 @@ using Pretzel.Logic.Commands;
 
 namespace Pretzel.Commands
 {
-
     [Export]
     [Shared]
     public sealed class CommandCollection

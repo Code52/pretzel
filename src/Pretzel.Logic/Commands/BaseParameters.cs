@@ -49,7 +49,7 @@ namespace Pretzel.Logic.Commands
         {
             var attr = commandParametersExtendable.GetType().GetCustomAttributes(typeof(CommandArgumentsAttribute), true).FirstOrDefault();
 
-            if (attr is CommandArgumentsAttribute commandArgumentAttribute)
+            if (attr is CommandArgumentsAttribute commandArgumentAttribute && commandParametersExtendable.ArgumentExtenders != null)
             {
                 foreach (var factory in commandParametersExtendable.ArgumentExtenders)
                 {
