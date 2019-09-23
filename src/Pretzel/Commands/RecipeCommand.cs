@@ -22,6 +22,7 @@ namespace Pretzel.Commands
 
         protected override void WithOptions(List<Option> options)
         {
+            base.WithOptions(options);
             options.AddRange(new[]
             {
                 new Option(new [] { "-p", "--withproject" }, "Includes a layout VS Solution, to give intellisense when editing razor layout files")
