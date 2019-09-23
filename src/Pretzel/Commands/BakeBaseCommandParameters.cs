@@ -12,6 +12,7 @@ namespace Pretzel.Commands
 
         protected override void WithOptions(List<Option> options)
         {
+            base.WithOptions(options);
             options.AddRange(new[]
             {
                 new Option(new [] { "-c", "--cleantarget" }, "Delete the target directory (_site by default)")

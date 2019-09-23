@@ -24,7 +24,7 @@ namespace Pretzel.Commands
         {
             options.AddRange(new[]
             {
-                new Option(new []{ "-t", "--template" },"The templating engine to use")
+                new Option(new []{ "-t", "--template" }, "The templating engine to use")
                 {
                     Argument = new Argument<string>()
                 },
