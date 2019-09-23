@@ -1,4 +1,5 @@
 using System;
+using System.IO.Abstractions;
 using System.Linq;
 using Pretzel.Commands;
 using Xunit;

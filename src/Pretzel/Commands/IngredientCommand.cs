@@ -19,6 +19,7 @@ namespace Pretzel.Commands
 
         protected override void WithOptions(List<Option> options)
         {
+            base.WithOptions(options);
             options.AddRange(new[]
             {
                 new Option(new [] { "--newposttitle", "-n" }, "The title of the new post (\"New post\" by default")
