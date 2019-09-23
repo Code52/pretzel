@@ -17,10 +17,10 @@ namespace Pretzel.Commands
     [Export]
     [Shared]
     [CommandArguments(CommandName = BuiltInCommands.Taste)]
-    public class TasteParameters : BakeBaseCommandParameters
+    public class TasteCommandParameters : BakeBaseCommandParameters
     {
         [ImportingConstructor]
-        public TasteParameters(IFileSystem fileSystem) : base(fileSystem) { }
+        public TasteCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
 
         protected override void WithOptions(List<Option> options)
         {
@@ -33,15 +33,13 @@ namespace Pretzel.Commands
                 },
                 new Option("--nobrowser", "Do not launch a browser (false by default)")
                 {
-                    Argument = new Argument<bool>(() => false)
+                    Argument = new Argument<bool>()
                 },
             });
         }
 
         public int Port { get; set; }
-
         public bool NoBrowser { get; set; }
-
         public bool LaunchBrowser => !NoBrowser;
     }
 
@@ -58,7 +56,7 @@ namespace Pretzel.Commands
         public SiteContextGenerator Generator { get; set; }
 
         [Import]
-        public TasteParameters Parameters { get; set; }
+        public TasteCommandParameters Parameters { get; set; }
 
         [ImportMany]
         public IEnumerable<ITransform> Transforms { get; set; }

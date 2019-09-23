@@ -1,24 +1,15 @@
-using NSubstitute;
-using Pretzel.Commands;
-using Pretzel.Logic.Commands;
 using System;
-using System.Collections.Generic;
-using System.CommandLine;
-using System.CommandLine.Binding;
-using System.CommandLine.Invocation;
 using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Pretzel.Commands;
 using Xunit;
 
 namespace Pretzel.Tests.Commands
 {
-    public class BakeCommandParametersTests : ParametersTests<BakeCommandParameters>
+    public class TasteCommandParametersTests : ParametersTests<TasteCommandParameters>
     {
-        protected override BakeCommandParameters CreateParameters(IFileSystem fileSystem)
-            => new BakeCommandParameters(fileSystem);
+        protected override TasteCommandParameters CreateParameters(IFileSystem fileSystem)
+            => new TasteCommandParameters(fileSystem);
 
         [Theory]
         [InlineData("-c")]
@@ -37,6 +28,43 @@ namespace Pretzel.Tests.Commands
             var sut = BuildParameters(argument);
 
             Assert.True(sut.Drafts);
+        }
+
+        [Theory]
+        [InlineData("--nobrowser", true)]
+        public void NoBrowser(string argument, bool expectedValue)
+        {
+            var sut = BuildParameters(argument, expectedValue.ToString());
+
+            Assert.Equal(expectedValue, sut.NoBrowser);
+            Assert.Equal(!expectedValue, sut.LaunchBrowser);
+        }
+
+        [Fact]
+        public void NoBrowserDefaultValue()
+        {
+            var sut = BuildParameters();
+
+            Assert.False(sut.NoBrowser);
+            Assert.True(sut.LaunchBrowser);
+        }
+
+        [Theory]
+        [InlineData("--port", 9000)]
+        [InlineData("-p", 9090)]
+        public void Port(string argument, int expectedValue)
+        {
+            var sut = BuildParameters(argument, expectedValue.ToString());
+
+            Assert.Equal(expectedValue, sut.Port);
+        }
+
+        [Fact]
+        public void PortDefaultValue()
+        {
+            var sut = BuildParameters();
+
+            Assert.Equal(8080, sut.Port);
         }
 
         [Theory]
