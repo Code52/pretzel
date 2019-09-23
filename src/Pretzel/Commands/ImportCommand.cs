@@ -14,13 +14,14 @@ namespace Pretzel.Commands
     [Export]
     [Shared]
     [CommandArguments(CommandName = BuiltInCommands.Import)]
-    public class ImportParameters : PretzelBaseCommandParameters
+    public class ImportCommandParameters : PretzelBaseCommandParameters
     {
         [ImportingConstructor]
-        public ImportParameters(IFileSystem fileSystem) : base(fileSystem) { }
+        public ImportCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
 
         protected override void WithOptions(List<Option> options)
         {
+            base.WithOptions(options);
             options.AddRange(new[]
             {
                 new Option(new [] {"--importtype", "-i"}, "The import type")
@@ -47,7 +48,7 @@ namespace Pretzel.Commands
 
 #pragma warning disable 649
         [Import] public IFileSystem FileSystem { get; set; }
-        [Import] public ImportParameters Parameters { get; set; }
+        [Import] public ImportCommandParameters Parameters { get; set; }
 #pragma warning restore 649
 
         public async Task Execute()
