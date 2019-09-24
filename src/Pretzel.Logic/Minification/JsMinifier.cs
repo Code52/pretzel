@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.IO;
-using Microsoft.Ajax.Utilities;
+using NUglify;
+using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Logic.Minification
 {
@@ -20,13 +21,16 @@ namespace Pretzel.Logic.Minification
 
         public void Minify()
         {
-            var minifer = new Minifier();
-            var codeSettings = new CodeSettings();
-
             var content = fileSystem.BundleFiles(files);
-            var minified =  minifer.MinifyJavaScript(content, codeSettings);
-
-            fileSystem.File.WriteAllText(outputPath, minified);
+            var minified = Uglify.Js(content);
+            if(minified.HasErrors)
+            {
+                foreach(var error in minified.Errors)
+                {
+                    Tracing.Error(error.ToString());
+                }
+            }
+            fileSystem.File.WriteAllText(outputPath, minified.Code);
         }
     }
 }
