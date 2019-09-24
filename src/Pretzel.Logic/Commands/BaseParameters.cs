@@ -7,14 +7,6 @@ using System.Linq;
 
 namespace Pretzel.Logic.Commands
 {
-    public interface ICommandParametersExtendable
-    {
-        ExportFactory<IHaveCommandLineArgs, CommandArgumentsExtentionAttribute>[] ArgumentExtenders
-        {
-            get;
-        }
-    }
-
     public abstract class BaseParameters : ICommandParameters, ICommandParametersExtendable
     {
         [ImportMany]
@@ -40,25 +32,6 @@ namespace Pretzel.Logic.Commands
 
         public virtual void BindingCompleted()
         {
-        }
-    }
-
-    public static class ICommandParametersExtentions
-    {
-        public static IEnumerable<ExportFactory<IHaveCommandLineArgs, CommandArgumentsExtentionAttribute>> GetCommandExtentions(this ICommandParametersExtendable commandParametersExtendable)
-        {
-            var attr = commandParametersExtendable.GetType().GetCustomAttributes(typeof(CommandArgumentsAttribute), true).FirstOrDefault();
-
-            if (attr is CommandArgumentsAttribute commandArgumentAttribute && commandParametersExtendable.ArgumentExtenders != null)
-            {
-                foreach (var factory in commandParametersExtendable.ArgumentExtenders)
-                {
-                    if (factory.Metadata.CommandNames.Contains(commandArgumentAttribute.CommandName))
-                    {
-                        yield return factory;
-                    }
-                }
-            }
         }
     }
 }

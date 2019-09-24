@@ -46,10 +46,10 @@ namespace Pretzel.Commands
     {
         readonly static List<string> Importers = new List<string>(new[] { "wordpress", "blogger" });
 
-#pragma warning disable 649
-        [Import] public IFileSystem FileSystem { get; set; }
-        [Import] public ImportCommandParameters Parameters { get; set; }
-#pragma warning restore 649
+        [Import]
+        public IFileSystem FileSystem { get; set; }
+        [Import]
+        public ImportCommandParameters Parameters { get; set; }
 
         public async Task Execute()
         {
