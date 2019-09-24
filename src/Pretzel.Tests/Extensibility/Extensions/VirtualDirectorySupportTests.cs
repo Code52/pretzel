@@ -25,9 +25,8 @@ namespace Pretzel.Tests.Extensibility.Extensions
             // arrange
             var returnThis = Substitute.For<FileBase>();
             fileSystem.File.Returns(returnThis);
-            //var optionSet = new OptionSet();
-            //vdirSupport.UpdateOptions(optionSet);
-            //optionSet.Parse(new string[0]);
+
+            vdirSupport.Arguments = new VirtualDirectorySupportArguments();
 
             // act
             vdirSupport.Transform(new SiteContext
@@ -51,9 +50,11 @@ namespace Pretzel.Tests.Extensibility.Extensions
             // arrange
             var returnThis = Substitute.For<FileBase>();
             fileSystem.File.Returns(returnThis);
-            //var optionSet = new OptionSet();
-            //vdirSupport.UpdateOptions(optionSet);
-            //optionSet.Parse(new[] { "--vDir", "something" });
+
+            vdirSupport.Arguments = new VirtualDirectorySupportArguments
+            {
+                VirtualDirectory = "something"
+            };
 
             // act
             vdirSupport.Transform(new SiteContext
@@ -77,9 +78,11 @@ namespace Pretzel.Tests.Extensibility.Extensions
             // arrange
             var returnThis = Substitute.For<FileBase>();
             fileSystem.File.Returns(returnThis);
-            //var optionSet = new OptionSet();
-            //vdirSupport.UpdateOptions(optionSet);
-            //optionSet.Parse(new[] { "--vDir", "something" });
+
+            vdirSupport.Arguments = new VirtualDirectorySupportArguments
+            {
+                VirtualDirectory = "something"
+            };
 
             // act
             vdirSupport.Transform(new SiteContext
@@ -118,9 +121,11 @@ namespace Pretzel.Tests.Extensibility.Extensions
             // arrange
             var returnThis = Substitute.For<FileBase>();
             fileSystem.File.Returns(returnThis);
-            //var optionSet = new OptionSet();
-            //vdirSupport.UpdateOptions(optionSet);
-            //optionSet.Parse(new[] { "--vDir", "something" });
+
+            vdirSupport.Arguments = new VirtualDirectorySupportArguments
+            {
+                VirtualDirectory = "something"
+            };
 
             const string body = @"<body>
 <a href=""/dir/file.html"" />
@@ -147,31 +152,5 @@ namespace Pretzel.Tests.Extensibility.Extensions
 </body>";
             returnThis.Received().WriteAllText("Test.html", newBody);
         }
-
-        //[InlineData("bake")]
-        //[InlineData("taste")]
-        //[Theory]
-        //public void GetArguments_Bake_Or_Taste_Should_Return_VDir(string command)
-        //{
-        //    // act
-        //    var args = vdirSupport.GetArguments(command);
-
-        //    // assert
-        //    Assert.Single(args);
-        //    Assert.Equal("-vDir", args[0]);
-        //}
-
-        //[InlineData(null)]
-        //[InlineData("")]
-        //[InlineData("create")]
-        //[Theory]
-        //public void GetArguments_Default_Should_Return_Empty_Array(string command)
-        //{
-        //    // act
-        //    var args = vdirSupport.GetArguments(command);
-
-        //    // assert
-        //    Assert.Empty(args);
-        //}
     }
 }

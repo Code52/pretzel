@@ -23,6 +23,8 @@ namespace Pretzel.Logic.Extensibility.Extensions
             });
         }
 
+        public bool Azure { get; set; }
+
         public void BindingCompleted()
         {
         }
@@ -33,7 +35,9 @@ namespace Pretzel.Logic.Extensibility.Extensions
     {
         private readonly IFileSystem fileSystem;
         private readonly IAssembly assembly;
-        private bool performAzureWorkaround;
+
+        [Import]
+        public AzureHostSupportArguments Arguments { get; set; }
 
         [ImportingConstructor]
         public AzureHostSupport(IFileSystem fileSystem, IAssembly assembly)
@@ -42,15 +46,9 @@ namespace Pretzel.Logic.Extensibility.Extensions
             this.assembly = assembly;
         }
 
-
-        public string[] GetArguments(string command)
-        {
-            return command == "create" ? new[] { "-azure" } : new string[0];
-        }
-
         public void MixIn(string directory)
         {
-            if (!performAzureWorkaround) return;
+            if (!Arguments.Azure) return;
             // Move everything under the _source folder
             var sourceFolder = Path.Combine(directory, "_source");
             if (!fileSystem.Directory.Exists(sourceFolder))
