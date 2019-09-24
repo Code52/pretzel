@@ -40,7 +40,6 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="System.CommandLine.Experimental" Version="0.3.0-alpha.19405.1" />
-    <PackageReference Include="System.IO.Abstractions" Version="2.0.0.116" />
     <PackageReference Include="System.IO.Abstractions" Version="6.0.32" />
     <PackageReference Include="YamlDotNet" Version="6.1.2" />
     <PackageReference Include="System.Composition" Version="1.2.0" />
