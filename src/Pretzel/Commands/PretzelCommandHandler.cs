@@ -11,35 +11,35 @@ namespace Pretzel.Commands
 {
     public class PretzelCommandHandler : ICommandHandler
     {
-        private readonly ICommandParameters commandParameters;
-        private readonly ExportFactory<ICommand, CommandInfoAttribute> command;
-        private readonly IConfiguration configuration;
+        public ICommandParameters CommandParameters { get; }
+        public ExportFactory<ICommand, CommandInfoAttribute> Command { get; }
+        public IConfiguration Configuration { get; }
 
         public PretzelCommandHandler(IConfiguration configuration, ICommandParameters commandParameters, ExportFactory<ICommand, CommandInfoAttribute> command)
         {
-            this.configuration = configuration;
-            this.commandParameters = commandParameters;
-            this.command = command;
+            Configuration = configuration;
+            CommandParameters = commandParameters;
+            Command = command;
         }
 
         public async Task<int> InvokeAsync(InvocationContext context)
         {
             var bindingContext = context.BindingContext;
 
-            if (commandParameters != null)
+            if (CommandParameters != null)
             {
-                new ModelBinder(commandParameters.GetType())
-                   .UpdateInstance(commandParameters, bindingContext);
+                new ModelBinder(CommandParameters.GetType())
+                   .UpdateInstance(CommandParameters, bindingContext);
 
-                commandParameters.BindingCompleted();
+                CommandParameters.BindingCompleted();
             }
 
-            if (commandParameters is IPathProvider pathProvider)
+            if (CommandParameters is IPathProvider pathProvider)
             {
-                configuration.ReadFromFile(pathProvider.Path);
+                Configuration.ReadFromFile(pathProvider.Path);
             }
 
-            if (commandParameters is ICommandParametersExtendable commandParametersExtendable)
+            if (CommandParameters is ICommandParametersExtendable commandParametersExtendable)
             {
                 foreach (var factory in commandParametersExtendable.GetCommandExtentions())
                 {
@@ -52,7 +52,7 @@ namespace Pretzel.Commands
                 }
             }
 
-            await command.CreateExport().Value.Execute();
+            await Command.CreateExport().Value.Execute();
 
             return 0;
         }
