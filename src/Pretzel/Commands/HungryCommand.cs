@@ -9,7 +9,7 @@ namespace Pretzel.Commands
     [Shared]
     [Export]
     [CommandInfo(CommandName = BuiltInCommands.Hungry, CommandDescription = "use only when hungry")]
-    public sealed class HungryCommand : ICommand
+    public sealed class HungryCommand : IPretzelCommand
     {
         private readonly string recipe = @"===== Ingredients ======
 

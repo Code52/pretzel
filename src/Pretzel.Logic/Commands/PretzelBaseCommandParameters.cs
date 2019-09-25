@@ -1,15 +1,13 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.IO.Abstractions;
-using Pretzel.Logic;
-using Pretzel.Logic.Commands;
+using System.Linq;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
 
-namespace Pretzel.Commands
+namespace Pretzel.Logic.Commands
 {
     public abstract class PretzelBaseCommandParameters : BaseParameters, IPathProvider
     {

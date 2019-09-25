@@ -34,7 +34,7 @@ namespace Pretzel.Commands
 
     [Shared]
     [CommandInfo(CommandName = BuiltInCommands.Ingredient, CommandDescription = "create a new post")]
-    public sealed class IngredientCommand : ICommand
+    public sealed class IngredientCommand : IPretzelCommand
     {
 #pragma warning disable 649
 

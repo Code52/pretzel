@@ -42,7 +42,7 @@ namespace Pretzel.Commands
 
     [Shared]
     [CommandInfo(CommandName = BuiltInCommands.Import, CommandDescription = "import posts from external source")]
-    class ImportCommand : ICommand
+    class ImportCommand : IPretzelCommand
     {
         readonly static List<string> Importers = new List<string>(new[] { "wordpress", "blogger" });
 

@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using Pretzel.Commands;
+using Pretzel.Logic.Commands;
 using Xunit;
 
 namespace Pretzel.Tests.Commands

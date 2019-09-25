@@ -28,7 +28,7 @@ namespace Pretzel.Commands
 
     [Shared]
     [CommandInfo(CommandName = BuiltInCommands.Bake, CommandDescription = "transforming content into a website")]
-    public sealed class BakeCommand : ICommand
+    public sealed class BakeCommand : IPretzelCommand
     {
         [Import]
         public TemplateEngineCollection TemplateEngines { get; set; }
@@ -44,7 +44,7 @@ namespace Pretzel.Commands
 
         [Import]
         public IFileSystem FileSystem { get; set; }
-        
+
         public async Task Execute()
         {
             Tracing.Info("bake - transforming content into a website");

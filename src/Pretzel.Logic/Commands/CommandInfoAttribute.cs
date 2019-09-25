@@ -1,7 +1,7 @@
 using System;
 using System.Composition;
 
-namespace Pretzel.Commands
+namespace Pretzel.Logic.Commands
 {
     [MetadataAttribute]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
@@ -11,7 +11,7 @@ namespace Pretzel.Commands
 
         public string CommandDescription { get; set; }
 
-        public CommandInfoAttribute() : base(typeof(ICommand))
+        public CommandInfoAttribute() : base(typeof(IPretzelCommand))
         {
         }
     }

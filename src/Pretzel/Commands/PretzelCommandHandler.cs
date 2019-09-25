@@ -12,10 +12,10 @@ namespace Pretzel.Commands
     public class PretzelCommandHandler : ICommandHandler
     {
         public ICommandParameters CommandParameters { get; }
-        public ExportFactory<ICommand, CommandInfoAttribute> Command { get; }
+        public ExportFactory<IPretzelCommand, CommandInfoAttribute> Command { get; }
         public IConfiguration Configuration { get; }
 
-        public PretzelCommandHandler(IConfiguration configuration, ICommandParameters commandParameters, ExportFactory<ICommand, CommandInfoAttribute> command)
+        public PretzelCommandHandler(IConfiguration configuration, ICommandParameters commandParameters, ExportFactory<IPretzelCommand, CommandInfoAttribute> command)
         {
             Configuration = configuration;
             CommandParameters = commandParameters;

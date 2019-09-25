@@ -8,7 +8,7 @@ namespace Pretzel.Commands
 {
     [Shared]
     [CommandInfo(CommandName = BuiltInCommands.Version, CommandDescription = "display current Pretzel version")]
-    public sealed class VersionCommand : ICommand
+    public sealed class VersionCommand : IPretzelCommand
     {
         public async Task Execute()
         {

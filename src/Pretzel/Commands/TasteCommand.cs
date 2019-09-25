@@ -45,7 +45,7 @@ namespace Pretzel.Commands
 
     [Shared]
     [CommandInfo(CommandName = BuiltInCommands.Taste, CommandDescription = "testing a site locally")]
-    public sealed class TasteCommand : ICommand
+    public sealed class TasteCommand : IPretzelCommand
     {
         private ISiteEngine engine;
 

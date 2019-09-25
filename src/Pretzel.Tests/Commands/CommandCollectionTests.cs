@@ -26,9 +26,9 @@ namespace Pretzel.Tests.Commands
         {
             var collection = new CommandCollection
             {
-                Commands = new ExportFactory<Pretzel.Commands.ICommand, CommandInfoAttribute>[]
+                Commands = new ExportFactory<Logic.Commands.IPretzelCommand, CommandInfoAttribute>[]
                 {
-                    new ExportFactory<Pretzel.Commands.ICommand, CommandInfoAttribute>(CreateCommand, new CommandInfoAttribute{ CommandName = "test", CommandDescription = "desc" })
+                    new ExportFactory<Logic.Commands.IPretzelCommand, CommandInfoAttribute>(CreateCommand, new CommandInfoAttribute{ CommandName = "test", CommandDescription = "desc" })
                 }
             };
             collection.OnImportsSatisfied();
@@ -40,7 +40,7 @@ namespace Pretzel.Tests.Commands
         [Fact]
         public void SubCommandsWithoutArgumentGetsHandler()
         {
-            var exportFactory = new ExportFactory<Pretzel.Commands.ICommand, CommandInfoAttribute>(
+            var exportFactory = new ExportFactory<Logic.Commands.IPretzelCommand, CommandInfoAttribute>(
                 CreateCommand,
                 new CommandInfoAttribute
                 {
@@ -51,7 +51,7 @@ namespace Pretzel.Tests.Commands
             var collection = new CommandCollection
             {
                 Configuration = Substitute.For<IConfiguration>(),
-                Commands = new ExportFactory<Pretzel.Commands.ICommand, CommandInfoAttribute>[]
+                Commands = new ExportFactory<Logic.Commands.IPretzelCommand, CommandInfoAttribute>[]
                 {
                     exportFactory
                 }
@@ -78,7 +78,7 @@ namespace Pretzel.Tests.Commands
                 new Option("-i")
             });
 
-            var commandExportFactory = new ExportFactory<Pretzel.Commands.ICommand, CommandInfoAttribute>(
+            var commandExportFactory = new ExportFactory<Logic.Commands.IPretzelCommand, CommandInfoAttribute>(
                 CreateCommand,
                 new CommandInfoAttribute
                 {
@@ -96,7 +96,7 @@ namespace Pretzel.Tests.Commands
             var collection = new CommandCollection
             {
                 Configuration = Substitute.For<IConfiguration>(),
-                Commands = new ExportFactory<Pretzel.Commands.ICommand, CommandInfoAttribute>[]
+                Commands = new ExportFactory<Logic.Commands.IPretzelCommand, CommandInfoAttribute>[]
                 {
                     commandExportFactory
                 },
@@ -127,8 +127,8 @@ namespace Pretzel.Tests.Commands
             Assert.Equal(commandExportFactory, ((PretzelCommandHandler)command.Handler).Command);
         }
 
-        Tuple<Pretzel.Commands.ICommand, Action> CreateCommand()
-            => Tuple.Create(Substitute.For<Pretzel.Commands.ICommand>(), new Action(() => { }));
+        Tuple<Logic.Commands.IPretzelCommand, Action> CreateCommand()
+            => Tuple.Create(Substitute.For<Logic.Commands.IPretzelCommand>(), new Action(() => { }));
         Tuple<ICommandParameters, Action> CreateArgument(ICommandParameters parameters)
             => Tuple.Create(parameters, new Action(() => { }));
     }
