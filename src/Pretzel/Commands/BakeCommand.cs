@@ -1,19 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Composition;
+using System.Diagnostics;
+using System.IO.Abstractions;
+using System.Linq;
+using System.Threading.Tasks;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
-using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
-using System;
-using System.Collections.Generic;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.Composition;
-using System.Diagnostics;
-using System.IO;
-using System.IO.Abstractions;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Pretzel.Commands
 {
