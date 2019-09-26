@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.Composition;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Threading.Tasks;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
