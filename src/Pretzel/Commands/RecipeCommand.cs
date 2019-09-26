@@ -55,7 +55,7 @@ namespace Pretzel.Commands
         [ImportMany]
         public IEnumerable<IAdditionalIngredient> AdditionalIngredients { get; set; }
 
-        public async Task Execute()
+        public Task Execute()
         {
             Tracing.Info("create - configure a new site");
 
@@ -66,13 +66,16 @@ namespace Pretzel.Commands
             if (!TemplateEngines.Any(e => String.Equals(e, engine, StringComparison.InvariantCultureIgnoreCase)))
             {
                 Tracing.Info("Requested templating engine not found: {0}", engine);
-                return;
+
+                return Task.CompletedTask;
             }
 
             Tracing.Info("Using {0} Engine", engine);
 
-            var recipe = new Recipe(FileSystem, engine, Parameters.Path, AdditionalIngredients, Parameters.WithProject, Parameters.Wiki, Parameters.Drafts);
+            var recipe = new Recipe(FileSystem, engine, Parameters.Source, AdditionalIngredients, Parameters.WithProject, Parameters.Wiki, Parameters.Drafts);
             recipe.Create();
+
+            return Task.CompletedTask;
         }
     }
 }

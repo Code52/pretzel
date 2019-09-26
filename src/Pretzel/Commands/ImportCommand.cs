@@ -51,28 +51,31 @@ namespace Pretzel.Commands
         [Import]
         public ImportCommandParameters Parameters { get; set; }
 
-        public async Task Execute()
+        public Task Execute()
         {
             Tracing.Info("import - import posts from external source");
 
             if (!Importers.Any(e => String.Equals(e, Parameters.ImportType, StringComparison.InvariantCultureIgnoreCase)))
             {
                 Tracing.Info("Requested import type not found: {0}", Parameters.ImportType);
-                return;
+
+                return Task.CompletedTask;
             }
 
             if (string.Equals("wordpress", Parameters.ImportType, StringComparison.InvariantCultureIgnoreCase))
             {
-                var wordpressImporter = new WordpressImport(FileSystem, Parameters.Path, Parameters.ImportFile);
+                var wordpressImporter = new WordpressImport(FileSystem, Parameters.Source, Parameters.ImportFile);
                 wordpressImporter.Import();
             }
             else if (string.Equals("blogger", Parameters.ImportType, StringComparison.InvariantCultureIgnoreCase))
             {
-                var bloggerImporter = new BloggerImport(FileSystem, Parameters.Path, Parameters.ImportFile);
+                var bloggerImporter = new BloggerImport(FileSystem, Parameters.Source, Parameters.ImportFile);
                 bloggerImporter.Import();
             }
 
             Tracing.Info("Import complete");
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -50,9 +50,11 @@ If you want to make sweet pretzels rather than savoury/traditional pretzels, rep
 
 Eat the pretzels warm, or reheat them in an oven or microwave.";
 
-        public async Task Execute()
+        public Task Execute()
         {
             Tracing.Info(recipe);
+
+            return Task.CompletedTask;
         }
     }
 }

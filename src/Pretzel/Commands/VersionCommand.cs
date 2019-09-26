@@ -10,9 +10,11 @@ namespace Pretzel.Commands
     [CommandInfo(CommandName = BuiltInCommands.Version, CommandDescription = "display current Pretzel version")]
     public sealed class VersionCommand : IPretzelCommand
     {
-        public async Task Execute()
+        public Task Execute()
         {
             Tracing.Info("V{0}", Assembly.GetExecutingAssembly().GetName().Version);
+
+            return Task.CompletedTask;
         }
     }
 }

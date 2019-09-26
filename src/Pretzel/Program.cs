@@ -205,9 +205,11 @@ namespace Pretzel
                         }
                         catch (ReflectionTypeLoadException)
                         {
+                            //Cannot load the type
                         }
                         catch (BadImageFormatException)
                         {
+                            //Cannot load the type. It's probably wrong bitness
                         }
                     }
 

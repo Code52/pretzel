@@ -40,11 +40,11 @@ namespace Pretzel.Commands
         [Import]
         public IFileSystem FileSystem { get; set; }
 
-        public async Task Execute()
+        public Task Execute()
         {
             Tracing.Info("bake - transforming content into a website");
 
-            var siteContext = Generator.BuildContext(Parameters.Path, Parameters.Destination, Parameters.Drafts);
+            var siteContext = Generator.BuildContext(Parameters.Source, Parameters.Destination, Parameters.Drafts);
 
             if (Parameters.CleanTarget && FileSystem.Directory.Exists(siteContext.OutputFolder))
             {
@@ -75,6 +75,7 @@ namespace Pretzel.Commands
             {
                 Tracing.Info("Cannot find engine for input: '{0}'", Parameters.Template);
             }
+            return Task.CompletedTask;
         }
     }
 }

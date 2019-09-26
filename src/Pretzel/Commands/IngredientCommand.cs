@@ -44,12 +44,14 @@ namespace Pretzel.Commands
         [Import]
         public IngredientCommandParameters Parameters { get; set; }
 
-        public async Task Execute()
+        public Task Execute()
         {
             Tracing.Info("ingredient - create a new post");
 
-            var ingredient = new Ingredient(FileSystem, Parameters.NewPostTitle, Parameters.Path, Parameters.Drafts);
+            var ingredient = new Ingredient(FileSystem, Parameters.NewPostTitle, Parameters.Source, Parameters.Drafts);
             ingredient.Create();
+
+            return Task.CompletedTask;
         }
     }
 }

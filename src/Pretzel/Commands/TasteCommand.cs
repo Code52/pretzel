@@ -67,11 +67,11 @@ namespace Pretzel.Commands
         [Import]
         public IConfiguration Configuration { get; set; }
 
-        public async Task Execute()
+        public Task Execute()
         {
             Tracing.Info("taste - testing a site locally");
             
-            var context = Generator.BuildContext(Parameters.Path, Parameters.Destination, Parameters.Drafts);
+            var context = Generator.BuildContext(Parameters.Source, Parameters.Destination, Parameters.Drafts);
 
             if (Parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
@@ -90,7 +90,7 @@ namespace Pretzel.Commands
                 Tracing.Info("template engine {0} not found - (engines: {1})", Parameters.Template,
                                            string.Join(", ", TemplateEngines.Engines.Keys));
 
-                return;
+                return Task.CompletedTask;
             }
 
             engine.Initialize();
@@ -100,7 +100,7 @@ namespace Pretzel.Commands
 
             using (var watcher = new SimpleFileSystemWatcher(Parameters.Destination))
             {
-                watcher.OnChange(Parameters.Path, WatcherOnChanged);
+                watcher.OnChange(Parameters.Source, WatcherOnChanged);
 
                 using (var w = new WebHost(Parameters.Destination, new FileContentProvider(), Convert.ToInt32(Parameters.Port)))
                 {
@@ -111,7 +111,8 @@ namespace Pretzel.Commands
                     catch (System.Net.Sockets.SocketException)
                     {
                         Tracing.Info("Port {0} is already in use", Parameters.Port);
-                        return;
+
+                        return Task.CompletedTask;
                     }
 
                     var url = string.Format("http://localhost:{0}/", Parameters.Port);
@@ -142,13 +143,15 @@ namespace Pretzel.Commands
                     Console.WriteLine();
                 }
             }
+
+            return Task.CompletedTask;
         }
 
         private void WatcherOnChanged(string file)
         {
-            if (file.StartsWith(Parameters.Path))
+            if (file.StartsWith(Parameters.Source))
             {
-                var relativeFile = file.Substring(Parameters.Path.Length).ToRelativeFile();
+                var relativeFile = file.Substring(Parameters.Source.Length).ToRelativeFile();
                 if (Generator.IsExcludedPath(relativeFile))
                 {
                     return;
@@ -157,9 +160,9 @@ namespace Pretzel.Commands
 
             Tracing.Info("File change: {0}", file);
 
-            Configuration.ReadFromFile(Parameters.Path);
+            Configuration.ReadFromFile(Parameters.Source);
 
-            var context = Generator.BuildContext(Parameters.Path, Parameters.Destination, Parameters.Drafts);
+            var context = Generator.BuildContext(Parameters.Source, Parameters.Destination, Parameters.Drafts);
             if (Parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
                 FileSystem.Directory.Delete(context.OutputFolder, true);

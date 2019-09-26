@@ -24,6 +24,7 @@ namespace Pretzel.Logic.Extensibility.Extensions
 
         public void BindingCompleted()
         {
+            //Not used
         }
 
         public string VirtualDirectory { get; set; }

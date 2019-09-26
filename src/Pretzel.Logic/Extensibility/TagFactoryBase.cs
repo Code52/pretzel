@@ -9,7 +9,7 @@ namespace Pretzel.Logic.Extensibility
         
         protected SiteContext SiteContext { get; private set; }
 
-        public TagFactoryBase(string tagName)
+        protected TagFactoryBase(string tagName)
         {
             _tageName = tagName.ToUnderscoreCase();
         }

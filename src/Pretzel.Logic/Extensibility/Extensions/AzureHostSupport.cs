@@ -27,6 +27,7 @@ namespace Pretzel.Logic.Extensibility.Extensions
 
         public void BindingCompleted()
         {
+            //Not used
         }
     }
 
