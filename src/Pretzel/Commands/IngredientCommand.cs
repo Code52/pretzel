@@ -38,15 +38,11 @@ namespace Pretzel.Commands
     [CommandInfo(CommandName = BuiltInCommands.Ingredient, CommandDescription = "create a new post")]
     public sealed class IngredientCommand : IPretzelCommand
     {
-#pragma warning disable 649
-
         [Import]
         public IFileSystem FileSystem { get; set; }
 
         [Import]
         public IngredientCommandParameters Parameters { get; set; }
-
-#pragma warning restore 649
 
         public async Task Execute()
         {
