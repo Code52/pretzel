@@ -1,7 +1,11 @@
 using System;
-using System.IO.Abstractions;
+using System.Collections.Generic;
 using System.Linq;
+using NSubstitute;
+using Pretzel.Logic;
 using Pretzel.Logic.Commands;
+using Pretzel.Logic.Templating;
+using Pretzel.Logic.Templating.Context;
 using Xunit;
 
 namespace Pretzel.Tests.Commands
@@ -61,6 +65,107 @@ namespace Pretzel.Tests.Commands
             var sut = BuildParameters();
 
             Assert.Equal(fileSystem.Path.Combine(sut.Source, "_site"), sut.Destination);
+        }
+
+        [Fact]
+        public void DetectFromDirectory_WhenSpecifyingNoSiteEngines_DefaultValueIsLiquid()
+        {
+            var sut = BuildParameters();
+
+            var siteContext = new SiteContext();
+
+            sut.DetectFromDirectory(new Dictionary<string, ISiteEngine>(), siteContext);
+
+            Assert.Equal("liquid", sut.Template);
+        }
+
+        [Fact]
+        public void DetectFromDirectory_WhenSpecifyingTwoSiteEngines_CorrectValueIsPicked()
+        {
+            var sut = BuildParameters();
+
+            var siteContext = new SiteContext { Config = new ConfigurationMock(new Dictionary<string, object> { { "pretzel", new Dictionary<string, object> { { "engine", "engine2" } } } }) };
+
+            var siteEngine1 = Substitute.For<ISiteEngine>();
+            siteEngine1.CanProcess(Arg.Any<SiteContext>())
+                .Returns(ci => ci.Arg<SiteContext>().Engine == "engine1");
+
+            var siteEngine2 = Substitute.For<ISiteEngine>();
+            siteEngine2.CanProcess(Arg.Any<SiteContext>())
+                .Returns(ci => ci.Arg<SiteContext>().Engine == "engine2");
+
+            var siteEngines = new Dictionary<string, ISiteEngine>
+            {
+                { "engine1", siteEngine1 },
+                { "engine2", siteEngine2 },
+            };
+
+            sut.DetectFromDirectory(siteEngines, siteContext);
+
+            Assert.Equal("engine2", sut.Template);
+        }
+
+        [Fact]
+        public void DetectFromDirectory_WhenSpecifyingNoPretzelConfig_DefaultValueIsLiquid()
+        {
+            var sut = BuildParameters();
+
+            var siteContext = new SiteContext { Config = new Configuration() };
+
+            var siteEngine1 = Substitute.For<ISiteEngine>();
+            siteEngine1.CanProcess(Arg.Any<SiteContext>())
+                .Returns(ci => ci.Arg<SiteContext>().Engine == "engine1");
+
+            var siteEngines = new Dictionary<string, ISiteEngine>
+            {
+                { "engine1", siteEngine1 }
+            };
+
+            sut.DetectFromDirectory(siteEngines, siteContext);
+
+            Assert.Equal("liquid", sut.Template);
+        }
+
+        [Fact]
+        public void DetectFromDirectory_WhenSpecifyingNoEnginInPretzelConfig_DefaultValueIsLiquid()
+        {
+            var sut = BuildParameters();
+
+            var siteContext = new SiteContext { Config = new ConfigurationMock(new Dictionary<string, object> { { "pretzel", new Dictionary<string, object> { } } }) };
+
+            var siteEngine1 = Substitute.For<ISiteEngine>();
+            siteEngine1.CanProcess(Arg.Any<SiteContext>())
+                .Returns(ci => ci.Arg<SiteContext>().Engine == "engine1");
+
+            var siteEngines = new Dictionary<string, ISiteEngine>
+            {
+                { "engine1", siteEngine1 }
+            };
+
+            sut.DetectFromDirectory(siteEngines, siteContext);
+
+            Assert.Equal("liquid", sut.Template);
+        }
+
+        [Fact]
+        public void DetectFromDirectory_WhenSpecifyingPretzelConfigSimpleValue_DefaultValueIsLiquid()
+        {
+            var sut = BuildParameters();
+
+            var siteContext = new SiteContext { Config = new ConfigurationMock(new Dictionary<string, object> { { "pretzel", 42 } }) };
+
+            var siteEngine1 = Substitute.For<ISiteEngine>();
+            siteEngine1.CanProcess(Arg.Any<SiteContext>())
+                .Returns(ci => ci.Arg<SiteContext>().Engine == "engine1");
+
+            var siteEngines = new Dictionary<string, ISiteEngine>
+            {
+                { "engine1", siteEngine1 }
+            };
+
+            sut.DetectFromDirectory(siteEngines, siteContext);
+
+            Assert.Equal("liquid", sut.Template);
         }
     }
 }
