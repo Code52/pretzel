@@ -28,6 +28,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommonMark.NET" Version="0.15.1" />
+    <PackageReference Include="CsvHelper" Version="12.1.2" />
     <PackageReference Include="dotless.Core" Version="1.6.7" />
     <PackageReference Include="DotLiquid" Version="2.0.314" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.12" />
