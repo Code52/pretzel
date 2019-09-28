@@ -18,6 +18,10 @@
     <PackageReference Include="Common.Logging" Version="3.4.1" />
     <PackageReference Include="Common.Logging.Core" Version="3.4.1" />
     <PackageReference Include="ICSharpCode.NRefactory" Version="5.5.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Web.Xdt" Version="3.0.0" />
     <PackageReference Include="Mono.Cecil" Version="0.11.0" />
     <PackageReference Include="Mono.CSharp" Version="4.0.0.143" />
