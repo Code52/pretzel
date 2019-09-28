@@ -7,9 +7,9 @@ using System.IO.Abstractions;
 
 namespace Pretzel.Logic
 {
-    public interface IPathProvider
+    public interface ISourcePathProvider
     {
-        string Path { get; }
+        string Source { get; }
     }
 
     public interface IConfiguration

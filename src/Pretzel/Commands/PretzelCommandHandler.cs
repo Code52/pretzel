@@ -34,9 +34,9 @@ namespace Pretzel.Commands
                 CommandParameters.BindingCompleted();
             }
 
-            if (CommandParameters is IPathProvider pathProvider)
+            if (CommandParameters is ISourcePathProvider pathProvider)
             {
-                Configuration.ReadFromFile(pathProvider.Path);
+                Configuration.ReadFromFile(pathProvider.Source);
             }
 
             if (CommandParameters is ICommandParametersExtendable commandParametersExtendable)

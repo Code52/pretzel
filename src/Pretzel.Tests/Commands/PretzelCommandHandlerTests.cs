@@ -81,8 +81,8 @@ namespace Pretzel.Tests.Commands
             var configuration = Substitute.For<IConfiguration>();
 
             var rootCommand = new RootCommand();
-            var testParams = Substitute.For<ICommandParameters, IPathProvider>();
-            ((IPathProvider)testParams).Path.Returns("foo");
+            var testParams = Substitute.For<ICommandParameters, ISourcePathProvider>();
+            ((ISourcePathProvider)testParams).Source.Returns("foo");
 
             var context = new InvocationContext(new Parser(rootCommand).Parse(string.Empty), Substitute.For<IConsole>());
 
@@ -213,8 +213,8 @@ namespace Pretzel.Tests.Commands
 
             var context = new InvocationContext(new Parser(rootCommand).Parse(""), Substitute.For<IConsole>());
             var configuration = Substitute.For<IConfiguration>();
-            var @params = Substitute.For<ICommandParameters, IPathProvider>();
-            ((IPathProvider)@params).Path.Returns("bar");
+            var @params = Substitute.For<ICommandParameters, ISourcePathProvider>();
+            ((ISourcePathProvider)@params).Source.Returns("bar");
             var command = Substitute.For<IPretzelCommand>();
 
             var sut = new PretzelCommandHandler(
