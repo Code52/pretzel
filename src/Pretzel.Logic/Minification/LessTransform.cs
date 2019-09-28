@@ -83,6 +83,12 @@ namespace Pretzel.Logic.Minification
             foreach (var less in shouldCompile)
             {
                 filePath = less.OutputFile;
+
+                if (!fileSystem.Directory.Exists(Path.GetDirectoryName(filePath)))
+                {
+                    fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                }
+
                 fileSystem.File.WriteAllText(less.OutputFile.Replace(".less", ".css"), ProcessCss(siteContext, less.Filepath));
                 fileSystem.File.Delete(less.OutputFile);
             }
@@ -109,7 +115,7 @@ namespace Pretzel.Logic.Minification
             // Clean the leftover directories
             foreach (var folder in foldersToDelete)
             {
-                if(!fileSystem.Directory.EnumerateFileSystemEntries(folder, "*").Any())
+                if (!fileSystem.Directory.EnumerateFileSystemEntries(folder, "*").Any())
                 {
                     fileSystem.Directory.Delete(folder);
                 }

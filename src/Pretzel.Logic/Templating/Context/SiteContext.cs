@@ -23,6 +23,8 @@ namespace Pretzel.Logic.Templating.Context
 
         public List<Page> Pages { get; set; }
 
+        public Data Data { get; set; }
+
         public List<Page> Html_Pages
         {
             get
@@ -35,7 +37,7 @@ namespace Pretzel.Logic.Templating.Context
         {
             get
             {
-                if(Config.ContainsKey("title"))
+                if (Config.ContainsKey("title"))
                 {
                     title = Config["title"].ToString();
                 }
