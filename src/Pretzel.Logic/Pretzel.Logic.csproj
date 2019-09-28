@@ -27,6 +27,10 @@
     <DefineConstants>NETSTANDARD</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="AjaxMin" Version="5.14.5506.26202" />
     <PackageReference Include="CommonMark.NET" Version="0.15.1" />
     <PackageReference Include="DotlessClientOnly" Version="1.5.2" />
