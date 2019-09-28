@@ -38,6 +38,7 @@ namespace Pretzel.Logic.Templating.Jekyll.Liquid
             x["tags"] = context.Tags;
             x["categories"] = context.Categories;
             x["time"] = Time;
+            x["data"] = context.Data;
 
             return x;
         }

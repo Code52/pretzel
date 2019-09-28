@@ -48,7 +48,7 @@ namespace Pretzel.Tests.Minification
                                         color: @brand_color;
                                     }";
 
-            var lessOutput = @"#header{color:#4d926f}h2{color:#4d926f}";
+            var lessOutput = @"#header{color:#4D926F}h2{color:#4D926F}";
 
             var filepath = @"c:\css\style.less";
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
@@ -81,7 +81,7 @@ namespace Pretzel.Tests.Minification
                                         color: @brand_color;
                                     }";
 
-            var lessOutput = @"#header{color:#4d926f}h2{color:#4d926f}";
+            var lessOutput = @"#header{color:#4D926F}h2{color:#4D926F}";
 
             var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
@@ -115,7 +115,7 @@ namespace Pretzel.Tests.Minification
                 { filepath2, new MockFileData(fileContent2) }
             });
 
-            var expectedOutput = @"a{color:#4d926f}";
+            var expectedOutput = @"a{color:#4D926F}";
 
             var minifier = new LessTransform(fileSystem);
             var context = new SiteContext { SourceFolder = @"C:\", OutputFolder = @"C:\_site" };
@@ -156,10 +156,10 @@ namespace Pretzel.Tests.Minification
             });
             fileSystem.AddDirectory(@"c:\css\emptysubfolder");
 
-            var expectedOutput = @"a{color:#4d926f;width:24px;height:24px;foo:bold}";
+            var expectedOutput = @"a{color:#4D926F;width:24px;height:24px;foo:bold}";
 
             var minifier = new LessTransform(fileSystem);
-            var context = new SiteContext { SourceFolder = @"C:\", OutputFolder = @"C:\_site" };
+            var context = new SiteContext { SourceFolder = @"c:\", OutputFolder = @"c:\_site" };
             context.Pages.Add(new NonProcessedPage { OutputFile = HtmlFilePath, Content = PageContent });
             context.Pages.Add(new NonProcessedPage { OutputFile = filepath1, Content = fileContent1, Filepath = filepath1 });
             context.Pages.Add(new NonProcessedPage { OutputFile = filepath2, Content = fileContent2, Filepath = filepath2 });
@@ -178,7 +178,6 @@ namespace Pretzel.Tests.Minification
             Assert.False(fileSystem.File.Exists(@"c:\css\style.less"));
             Assert.True(fileSystem.Directory.Exists(@"c:\css\subfolder"));
             Assert.True(fileSystem.File.Exists(@"c:\css\subfolder\anothersubfolder\anything.less"));
-            Assert.True(fileSystem.Directory.Exists(@"c:\_site"));
         }
 
         [Fact]
