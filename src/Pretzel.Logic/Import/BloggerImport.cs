@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -102,7 +102,14 @@ namespace Pretzel.Logic.Import
 
             try
             {
-                fileSystem.File.WriteAllText(Path.Combine(pathToSite, Path.Combine("_posts", fileName)), postContent);
+                var postsPath = Path.Combine(pathToSite, "_posts");
+                var path = Path.Combine(postsPath, fileName);
+
+                if (!fileSystem.Directory.Exists(postsPath))
+                {
+                    fileSystem.Directory.CreateDirectory(postsPath);
+                }
+                fileSystem.File.WriteAllText(path, postContent);
             }
             catch (Exception e)
             {
