@@ -19,61 +19,42 @@ namespace Pretzel
     [Export]
     internal class Program
     {
+#pragma warning disable S2223 // Non-constant static fields should not be visible
+        internal static IFileSystem fileSystem = new FileSystem();
+
+        internal static Option[] GlobalOptions = new[]
+        {
+            new Option("--debug", "Enable debugging")
+            {
+                Argument = new Argument<bool>()
+            },
+            new Option("--safe", "Disable custom plugins")
+            {
+                Argument = new Argument<bool>()
+            },
+            new Option(new[] { "--source", "-source", "-s", "--s" }, "The path to the source site (default current directory)")
+            {
+                Argument = new Argument<string>(() => fileSystem.Directory.GetCurrentDirectory())
+            }
+        };
+#pragma warning restore S2223 // Non-constant static fields should not be visible
+
         [Import]
         public CommandCollection CommandCollection { get; set; }
-
+        
         [Export]
-        public IFileSystem FileSystem { get; set; } = new FileSystem();
+        public IFileSystem FileSystem { get; set; } = fileSystem;
 
         private static async Task<int> Main(string[] args)
         {
-            var fileSystem = new FileSystem();
-
             var rootCommand = new RootCommand
             {
                 TreatUnmatchedTokensAsErrors = false
             };
 
-            var globalOptions = new[]
-            {
-                new Option("--debug", "Enable debugging")
-                {
-                    Argument = new Argument<bool>()
-                },
-                new Option("--safe", "Disable custom plugins")
-                {
-                    Argument = new Argument<bool>()
-                },
-                new Option(new[] { "-s", "--source" }, "The path to the source site (default current directory)")
-                {
-                    Argument = new Argument<string>(() => fileSystem.Directory.GetCurrentDirectory())
-                }
-            };
+            args = PatchSourcePath(args);
 
-            if (args.Length > 1 && !args.Contains("-s") && !args.Contains("--source"))
-            {
-                var firstArgument = args[1];
-
-                // take the first argument after the command
-                if (firstArgument != null && !firstArgument.StartsWith("-") && !firstArgument.StartsWith("/"))
-                {
-                    var arguments = args.ToList();
-                    var path = fileSystem.Path.IsPathRooted(firstArgument)
-                        ? firstArgument
-                        : fileSystem.Path.Combine(fileSystem.Directory.GetCurrentDirectory(), firstArgument);
-
-                    path = string.IsNullOrWhiteSpace(path)
-                        ? fileSystem.Directory.GetCurrentDirectory()
-                        : fileSystem.Path.GetFullPath(path);
-
-                    arguments[1] = "-s";
-                    arguments.Insert(2, path);
-                    args = arguments.ToArray();
-                }
-            }
-
-
-            foreach (var option in globalOptions)
+            foreach (var option in GlobalOptions)
             {
                 rootCommand.AddOption(option);
             }
@@ -89,7 +70,7 @@ namespace Pretzel
                     using (var host = Compose(debug, safe, source))
                     {
                         var program = host.GetExport<Program>();
-                        var result = await program.Run(globalOptions, args);
+                        var result = await program.Run(GlobalOptions, args);
                         WaitForClose();
                         return result;
                     }
@@ -111,6 +92,33 @@ namespace Pretzel
                 WaitForClose();
                 return -1;
             }
+        }
+
+        internal static string[] PatchSourcePath(string[] args)
+        {
+            if (args.Length > 1 && !args.Contains("-s") && !args.Contains("--source"))
+            {
+                var firstArgument = args[1];
+
+                // take the first argument after the command
+                if (firstArgument != null && !firstArgument.StartsWith("-") && !firstArgument.StartsWith("/"))
+                {
+                    var arguments = args.ToList();
+                    var path = fileSystem.Path.IsPathRooted(firstArgument)
+                        ? firstArgument
+                        : fileSystem.Path.Combine(fileSystem.Directory.GetCurrentDirectory(), firstArgument);
+
+                    path = string.IsNullOrWhiteSpace(path)
+                        ? fileSystem.Directory.GetCurrentDirectory()
+                        : fileSystem.Path.GetFullPath(path);
+
+                    arguments[1] = "-s";
+                    arguments.Insert(2, path);
+                    return arguments.ToArray();
+                }
+            }
+
+            return args;
         }
 
         private static void InitializeTrace(bool debug)
@@ -161,7 +169,7 @@ namespace Pretzel
             }
         }
 
-        public static CompositionHost Compose(bool debug, bool safe, string path)
+        internal static CompositionHost Compose(bool debug, bool safe, string path)
         {
             try
             {
