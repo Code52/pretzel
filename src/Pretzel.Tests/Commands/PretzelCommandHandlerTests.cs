@@ -119,10 +119,7 @@ namespace Pretzel.Tests.Commands
                     BindingCompletedCalled = true;
                 }
 
-                public void UpdateOptions(IList<Option> options)
-                {
-                    throw new NotImplementedException();
-                }
+                public IList<Option> Options { get; } = Array.Empty<Option>();
 
                 public bool OtherOption { get; set; }
             }

@@ -66,7 +66,8 @@ namespace Pretzel.Commands
 
                 foreach (var arugumentExtension in argument.Extensions)
                 {
-                    arugumentExtension.UpdateOptions(argument.Options);
+                    foreach (var option in arugumentExtension.Options)
+                        argument.Options.Add(option);
                 }
 
                 foreach (var option in argument.Options)

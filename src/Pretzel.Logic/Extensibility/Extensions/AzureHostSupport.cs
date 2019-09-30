@@ -14,20 +14,19 @@ namespace Pretzel.Logic.Extensibility.Extensions
     [CommandArgumentsExtension(CommandNames = new[] { BuiltInCommands.Create })]
     public class AzureHostSupportArguments : ICommandArgumentsExtension
     {
-        public void UpdateOptions(IList<Option> options)
+        public IList<Option> Options { get; } = new[]
         {
-            options.Add(new Option("azure", "Enables deploy to azure support")
+            new Option("azure", "Enables deploy to azure support")
             {
                 Argument = new Argument<bool>()
-            });
-        }
-
-        public bool Azure { get; set; }
+            }
+        };
 
         public void BindingCompleted()
         {
             //Not used
         }
+        public bool Azure { get; set; }
     }
 
     [Export(typeof(IAdditionalIngredient))]

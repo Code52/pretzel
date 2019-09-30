@@ -5,7 +5,7 @@ using System.CommandLine;
 namespace Pretzel.Logic.Commands
 {
     /// <summary>
-    /// All commands can have 1 command argument
+    /// Specifies a command argument for a single command. Implementors should be decorated with the <see cref="CommandArgumentsAttribute"/>
     /// </summary>
     public interface ICommandArguments
     {

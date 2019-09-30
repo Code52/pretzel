@@ -14,13 +14,13 @@ namespace Pretzel.Logic.Extensibility.Extensions
     [CommandArgumentsExtension(CommandNames = new[] { BuiltInCommands.Bake, BuiltInCommands.Taste })]
     public class VirtualDirectorySupportArguments : ICommandArgumentsExtension
     {
-        public void UpdateOptions(IList<Option> options)
+        public IList<Option> Options { get; } = new[]
         {
-            options.Add(new Option(new [] { "-vDir", "--virtualdirectory"}, "Rewrite url's to work inside the specified virtual directory")
+            new Option(new [] { "-vDir", "--virtualdirectory"}, "Rewrite url's to work inside the specified virtual directory")
             {
                 Argument = new Argument<string>()
-            });
-        }
+            }
+        };
 
         public void BindingCompleted()
         {
@@ -28,6 +28,7 @@ namespace Pretzel.Logic.Extensibility.Extensions
         }
 
         public string VirtualDirectory { get; set; }
+
     }
 
     [Export(typeof(ITransform))]

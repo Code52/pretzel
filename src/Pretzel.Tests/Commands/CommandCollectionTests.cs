@@ -196,9 +196,7 @@ namespace Pretzel.Tests.Commands
             [CommandArgumentsExtension(CommandNames = new[] { "test1" })]
             public class Extender1 : ICommandArgumentsExtension
             {
-                public void UpdateOptions(IList<Option> options)
-                {
-                }
+                public IList<Option> Options { get; } = Array.Empty<Option>();
 
                 public void BindingCompleted()
                 {
@@ -208,9 +206,7 @@ namespace Pretzel.Tests.Commands
             [CommandArgumentsExtension(CommandNames = new[] { "test2" })]
             public class Extender2 : ICommandArgumentsExtension
             {
-                public void UpdateOptions(IList<Option> options)
-                {
-                }
+                public IList<Option> Options { get; } = Array.Empty<Option>();
 
                 public void BindingCompleted()
                 {
@@ -220,9 +216,7 @@ namespace Pretzel.Tests.Commands
             [CommandArgumentsExtension(CommandNames = new[] { "test1", "test2" })]
             public class Extender3 : ICommandArgumentsExtension
             {
-                public void UpdateOptions(IList<Option> options)
-                {
-                }
+                public IList<Option> Options { get; } = Array.Empty<Option>();
 
                 public void BindingCompleted()
                 {
