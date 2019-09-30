@@ -13,7 +13,7 @@ namespace Pretzel.Tests.Commands
     {
         [Export]
         [Shared]
-        [CommandArguments(CommandName = "test")]
+        [CommandArguments]
         public class BaseParametersImpl : BaseCommandArguments
         {
             protected override IEnumerable<Option> CreateOptions() => new[]

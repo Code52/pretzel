@@ -102,7 +102,7 @@ namespace Pretzel.Tests.Commands
             configuration.Received().ReadFromFile("foo");
         }
 
-        [CommandArguments(CommandName = nameof(TestArguments2))]
+        [CommandArguments]
         public class TestArguments2 : ICommandArguments
         {
             public IList<Option> Options { get; } = new List<Option>();

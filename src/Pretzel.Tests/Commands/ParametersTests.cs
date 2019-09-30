@@ -20,7 +20,7 @@ namespace Pretzel.Tests.Commands
             var rootCommand = new RootCommand();
 
             var parameters = CreateParameters(fileSystem);
-            parameters.OnImportsSatisfied();
+            parameters.BuildOptions();
 
             foreach (var option in parameters.Options)
                 rootCommand.AddOption(option);

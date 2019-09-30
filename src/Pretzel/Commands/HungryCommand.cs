@@ -8,6 +8,9 @@ using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Commands
 {
+    [Shared]
+    [Export]
+    [CommandArguments]
     public class HungryCommandArguments : BaseCommandArguments
     {
         protected override IEnumerable<Option> CreateOptions() => Array.Empty<Option>();
@@ -15,7 +18,11 @@ namespace Pretzel.Commands
 
     [Shared]
     [Export]
-    [CommandInfo(CommandName = BuiltInCommands.Hungry, CommandDescription = "use only when hungry")]
+    [CommandInfo(
+        CommandName = BuiltInCommands.Hungry,
+        CommandDescription = "use only when hungry",
+        CommandArgumentsType = typeof(HungryCommandArguments)
+        )]
     public sealed class HungryCommand : Command<HungryCommandArguments>
     {
         private readonly string recipe = @"===== Ingredients ======

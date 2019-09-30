@@ -14,7 +14,7 @@ namespace Pretzel.Commands
 {
     [Shared]
     [Export]
-    [CommandArguments(CommandName = BuiltInCommands.Bake)]
+    [CommandArguments]
     public sealed class BakeCommandArguments : BakeBaseCommandArguments
     {
         [ImportingConstructor]
@@ -22,7 +22,11 @@ namespace Pretzel.Commands
     }
 
     [Shared]
-    [CommandInfo(CommandName = BuiltInCommands.Bake, CommandDescription = "transforming content into a website")]
+    [CommandInfo(
+        CommandName = BuiltInCommands.Bake,
+        CommandDescription = "transforming content into a website",
+        CommandArgumentsType = typeof(BakeCommandArguments)
+        )]
     public sealed class BakeCommand : Command<BakeCommandArguments>
     {
         [Import]

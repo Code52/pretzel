@@ -13,7 +13,7 @@ namespace Pretzel.Commands
 {
     [Export]
     [Shared]
-    [CommandArguments(CommandName = BuiltInCommands.Ingredient)]
+    [CommandArguments]
     public class IngredientCommandArguments : PretzelBaseCommandArguments
     {
         [ImportingConstructor]
@@ -31,7 +31,10 @@ namespace Pretzel.Commands
     }
 
     [Shared]
-    [CommandInfo(CommandName = BuiltInCommands.Ingredient, CommandDescription = "create a new post")]
+    [CommandInfo(
+        CommandName = BuiltInCommands.Ingredient,
+        CommandDescription = "create a new post",
+        CommandArgumentsType = typeof(IngredientCommandArguments))]
     public sealed class IngredientCommand : Command<IngredientCommandArguments>
     {
         [Import]

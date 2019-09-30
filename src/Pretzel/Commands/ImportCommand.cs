@@ -13,7 +13,7 @@ namespace Pretzel.Commands
 {
     [Export]
     [Shared]
-    [CommandArguments(CommandName = BuiltInCommands.Import)]
+    [CommandArguments]
     public class ImportCommandArguments : PretzelBaseCommandArguments
     {
         [ImportingConstructor]
@@ -37,7 +37,11 @@ namespace Pretzel.Commands
     }
 
     [Shared]
-    [CommandInfo(CommandName = BuiltInCommands.Import, CommandDescription = "import posts from external source")]
+    [CommandInfo(
+        CommandName = BuiltInCommands.Import,
+        CommandDescription = "import posts from external source",
+        CommandArgumentsType = typeof(ImportCommandArguments)
+        )]
     class ImportCommand : Command<ImportCommandArguments>
     {
         readonly static List<string> Importers = new List<string>(new[] { "wordpress", "blogger" });

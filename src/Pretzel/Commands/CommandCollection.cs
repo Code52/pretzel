@@ -16,15 +16,15 @@ namespace Pretzel.Commands
         [ImportMany]
         public ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>[] Commands
         {
-            get => commands ?? new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>[] { };
+            get => commands ?? Array.Empty<ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>>();
             set => commands = value;
         }
 
-        ExportFactory<ICommandArguments, CommandArgumentsAttribute>[] commandArguments;
+        ICommandArguments[] commandArguments;
         [ImportMany]
-        public ExportFactory<ICommandArguments, CommandArgumentsAttribute>[] CommandArguments
+        public ICommandArguments[] CommandArguments
         {
-            get => commandArguments ?? new ExportFactory<ICommandArguments, CommandArgumentsAttribute>[] { };
+            get => commandArguments ?? Array.Empty<ICommandArguments>();
             set => commandArguments = value;
         }
 
@@ -32,14 +32,8 @@ namespace Pretzel.Commands
         [ImportMany]
         public ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>[] ArgumentExtensions
         {
-            get
-            {
-                return argumentExtensions ?? new ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>[] { };
-            }
-            set
-            {
-                argumentExtensions = value;
-            }
+            get => argumentExtensions ?? Array.Empty<ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>>();
+            set => argumentExtensions = value;
         }
 
         [Export]
@@ -52,38 +46,35 @@ namespace Pretzel.Commands
         internal void OnImportsSatisfied()
         {
             RootCommand = new RootCommand();
-
+            
             foreach (var command in Commands)
             {
                 var subCommand = new Command(command.Metadata.CommandName, command.Metadata.CommandDescription);
 
-                foreach (var commandArgumentsExport in CommandArguments?.Where(a => a.Metadata.CommandName == command.Metadata.CommandName))
+                var argument = CommandArguments.First(c => c.GetType() == command.Metadata.CommandArgumentsType);
+
+                if (argument is BaseCommandArguments baseCommandArguments)
                 {
-                    var args = commandArgumentsExport.CreateExport().Value;
-
-                    foreach (var argumentExtensionsExport in ArgumentExtensions.Where(a => a.Metadata.CommandNames.Contains(commandArgumentsExport.Metadata.CommandName)))
-                    {
-                        var arugumentExtension = argumentExtensionsExport.CreateExport().Value;
-                        args.Extensions.Add(arugumentExtension);
-                    }
-
-                    foreach(var arugumentExtension in args.Extensions)
-                    {
-                        arugumentExtension.UpdateOptions(args.Options);
-                    }
-
-                    foreach (var option in args.Options)
-                    {
-                        subCommand.AddOption(option);
-                    }
-
-                    subCommand.Handler = new PretzelCommandHandler(Configuration, args, command);
+                    baseCommandArguments.BuildOptions();
                 }
 
-                if (subCommand.Handler == null)
+                foreach (var argumentExtensionsExport in ArgumentExtensions.Where(a => a.Metadata.CommandNames.Contains(command.Metadata.CommandName)))
                 {
-                    subCommand.Handler = new PretzelCommandHandler(Configuration, null, command);
+                    var arugumentExtension = argumentExtensionsExport.CreateExport().Value;
+                    argument.Extensions.Add(arugumentExtension);
                 }
+
+                foreach (var arugumentExtension in argument.Extensions)
+                {
+                    arugumentExtension.UpdateOptions(argument.Options);
+                }
+
+                foreach (var option in argument.Options)
+                {
+                    subCommand.AddOption(option);
+                }
+
+                subCommand.Handler = new PretzelCommandHandler(Configuration, argument, command);
 
                 RootCommand.AddCommand(subCommand);
             }

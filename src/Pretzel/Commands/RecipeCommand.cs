@@ -14,7 +14,7 @@ namespace Pretzel.Commands
 {
     [Export]
     [Shared]
-    [CommandArguments(CommandName = BuiltInCommands.Create)]
+    [CommandArguments]
     public class RecipeCommandArguments : PretzelBaseCommandArguments
     {
         [ImportingConstructor]
@@ -37,7 +37,11 @@ namespace Pretzel.Commands
     }
 
     [Shared]
-    [CommandInfo(CommandName = BuiltInCommands.Create, CommandDescription = "configure a new site")]
+    [CommandInfo(
+        CommandName = BuiltInCommands.Create,
+        CommandDescription = "configure a new site",
+        CommandArgumentsType = typeof(RecipeCommandArguments)
+        )]
     public sealed class RecipeCommand : Command<RecipeCommandArguments>
     {
         private static readonly List<string> TemplateEngines = new List<string>(new[] { "Liquid", "Razor" });

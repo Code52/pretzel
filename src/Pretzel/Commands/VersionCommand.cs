@@ -9,13 +9,20 @@ using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Commands
 {
+    [Shared]
+    [Export]
+    [CommandArguments]
     public class VersionCommandArguments : BaseCommandArguments
     {
         protected override IEnumerable<Option> CreateOptions() => Array.Empty<Option>();
     }
 
     [Shared]
-    [CommandInfo(CommandName = BuiltInCommands.Version, CommandDescription = "display current Pretzel version")]
+    [CommandInfo(
+        CommandName = BuiltInCommands.Version,
+        CommandDescription = "display current Pretzel version",
+        CommandArgumentsType = typeof(VersionCommandArguments)
+        )]
     public sealed class VersionCommand : Command<VersionCommandArguments>
     {
         protected override Task<int> Execute(VersionCommandArguments arguments)

@@ -9,15 +9,13 @@ namespace Pretzel.Logic.Commands
 {
     public abstract class BaseCommandArguments : ICommandArguments
     {
+        readonly List<Option> options = new List<Option>();
         [Export]
-        public IList<Option> Options { get; set; }
+        public IList<Option> Options => options;
         public IList<ICommandArgumentsExtension> Extensions { get; } = new List<ICommandArgumentsExtension>();
 
-        [OnImportsSatisfied]
-        internal void OnImportsSatisfied()
+        internal void BuildOptions()
         {
-            var options = new List<Option>();
-            Options = options;
             options.AddRange(CreateOptions());
         }
 

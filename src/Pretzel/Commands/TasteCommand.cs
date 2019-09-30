@@ -17,7 +17,7 @@ namespace Pretzel.Commands
 {
     [Export]
     [Shared]
-    [CommandArguments(CommandName = BuiltInCommands.Taste)]
+    [CommandArguments]
     public class TasteCommandArguments : BakeBaseCommandArguments
     {
         [ImportingConstructor]
@@ -41,7 +41,11 @@ namespace Pretzel.Commands
     }
 
     [Shared]
-    [CommandInfo(CommandName = BuiltInCommands.Taste, CommandDescription = "testing a site locally")]
+    [CommandInfo(
+        CommandName = BuiltInCommands.Taste,
+        CommandDescription = "testing a site locally",
+        CommandArgumentsType = typeof(TasteCommandArguments)
+        )]
     public sealed class TasteCommand : Command<TasteCommandArguments>
     {
         private ISiteEngine engine;

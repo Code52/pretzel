@@ -27,49 +27,24 @@ namespace Pretzel.Tests.Commands
         [Fact]
         public void SubCommandAreAddedToRootCommand()
         {
+            var arguments = Substitute.For<ICommandArguments>();
             var collection = new CommandCollection
             {
                 Commands = new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>[]
                 {
-                    new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>(CreateCommand, new CommandInfoAttribute{ CommandName = "test", CommandDescription = "desc" })
-                }
+                    new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>(CreateCommand, new CommandInfoAttribute
+                    {
+                        CommandName = "test",
+                        CommandDescription = "desc",
+                        CommandArgumentsType = arguments.GetType()
+                    })
+                },
+                CommandArguments = new[] { arguments }
             };
             collection.OnImportsSatisfied();
 
             Assert.Contains(collection.RootCommand.Children.OfType<Command>(), c => c.Name == "test");
             Assert.Contains(collection.RootCommand.Children.OfType<Command>(), c => c.Description == "desc");
-        }
-
-        [Fact]
-        public void SubCommandsWithoutArgumentGetsHandler()
-        {
-            var exportFactory = new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>(
-                CreateCommand,
-                new CommandInfoAttribute
-                {
-                    CommandName = "test",
-                    CommandDescription = "desc"
-                });
-
-            var collection = new CommandCollection
-            {
-                Configuration = Substitute.For<IConfiguration>(),
-                Commands = new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>[]
-                {
-                    exportFactory
-                }
-            };
-
-            collection.OnImportsSatisfied();
-
-            var command = collection.RootCommand.Children.OfType<Command>().First();
-            Assert.NotNull(command.Handler);
-            Assert.IsType<PretzelCommandHandler>(command.Handler);
-            Assert.Null(((PretzelCommandHandler)command.Handler).CommandArguments);
-            Assert.NotNull(((PretzelCommandHandler)command.Handler).Configuration);
-            Assert.Equal(collection.Configuration, ((PretzelCommandHandler)command.Handler).Configuration);
-            Assert.NotNull(((PretzelCommandHandler)command.Handler).Command);
-            Assert.Equal(exportFactory, ((PretzelCommandHandler)command.Handler).Command);
         }
 
         [Fact]
@@ -86,16 +61,11 @@ namespace Pretzel.Tests.Commands
                 new CommandInfoAttribute
                 {
                     CommandName = "test",
-                    CommandDescription = "desc"
+                    CommandDescription = "desc",
+                    CommandArgumentsType = parameters.GetType()
                 });
 
-            var argumentExportFactory = new ExportFactory<Logic.Commands.ICommandArguments, Logic.Commands.CommandArgumentsAttribute>(
-                () => CreateArgument(parameters),
-                new Logic.Commands.CommandArgumentsAttribute
-                {
-                    CommandName = "test"
-                });
-
+         
             var collection = new CommandCollection
             {
                 Configuration = Substitute.For<IConfiguration>(),
@@ -103,15 +73,9 @@ namespace Pretzel.Tests.Commands
                 {
                     commandExportFactory
                 },
-                CommandArguments = new ExportFactory<Logic.Commands.ICommandArguments, Logic.Commands.CommandArgumentsAttribute>[]
+                CommandArguments = new Logic.Commands.ICommandArguments[]
                 {
-                    argumentExportFactory,
-                    new ExportFactory<Logic.Commands.ICommandArguments, Logic.Commands.CommandArgumentsAttribute>(
-                    () => CreateArgument(Substitute.For<ICommandArguments>()),
-                    new Logic.Commands.CommandArgumentsAttribute
-                    {
-                        CommandName = "othercommand"
-                    })
+                    parameters
                 }
             };
 
@@ -132,9 +96,6 @@ namespace Pretzel.Tests.Commands
 
         Tuple<Logic.Commands.ICommand, Action> CreateCommand()
             => Tuple.Create(Substitute.For<Logic.Commands.ICommand>(), new Action(() => { }));
-        Tuple<ICommandArguments, Action> CreateArgument(ICommandArguments parameters)
-            => Tuple.Create(parameters, new Action(() => { }));
-
 
         public class ICommandParametersExtentionsTests : IDisposable
         {
@@ -182,7 +143,7 @@ namespace Pretzel.Tests.Commands
 
             [Export]
             [Shared]
-            [CommandArguments(CommandName = "test1")]
+            [CommandArguments]
             public class TestCommandArguments1 : ICommandArguments
             {
                 [ImportMany]
@@ -197,7 +158,7 @@ namespace Pretzel.Tests.Commands
 
             [Export]
             [Shared]
-            [CommandInfo(CommandName = "test1")]
+            [CommandInfo(CommandName = "test1", CommandArgumentsType = typeof(TestCommandArguments1))]
             public class TestCommand1 : Logic.Commands.ICommand
             {
                 public Task<int> Execute(ICommandArguments arguments)
@@ -208,7 +169,7 @@ namespace Pretzel.Tests.Commands
 
             [Export]
             [Shared]
-            [CommandArguments(CommandName = "test2")]
+            [CommandArguments]
             public class TestCommandArguments2 : ICommandArguments
             {
                 [ImportMany]
@@ -223,7 +184,7 @@ namespace Pretzel.Tests.Commands
 
             [Export]
             [Shared]
-            [CommandInfo(CommandName = "test2")]
+            [CommandInfo(CommandName = "test2", CommandArgumentsType = typeof(TestCommandArguments2))]
             public class TestCommand2 : Logic.Commands.ICommand
             {
                 public Task<int> Execute(ICommandArguments arguments)
