@@ -43,8 +43,6 @@ namespace Pretzel.Logic.Commands
         public bool Debug { get; set; }
         // Default Option that get's injected from Program
         public bool Safe { get; set; }
-        [Obsolete("Use '" + nameof(Source) + "' instead.")]
-        public string Path => Source;
 
         public string Template { get; set; }
         public string Destination { get; set; }
