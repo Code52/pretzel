@@ -1,13 +1,11 @@
-using Pretzel.Logic.Commands;
-using Pretzel.Logic.Extensibility;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.Composition;
 using System.Composition.Hosting;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Pretzel.Logic.Commands;
+using Pretzel.Logic.Extensibility;
 using Xunit;
 
 namespace Pretzel.Tests.Commands
@@ -19,10 +17,10 @@ namespace Pretzel.Tests.Commands
         [CommandArguments(CommandName = "test")]
         public class BaseParametersImpl : BaseParameters
         {
-            protected override void WithOptions(List<Option> options)
+            protected override IEnumerable<Option> CreateOptions() => new[]
             {
-                options.Add(new Option("-base"));
-            }
+                new Option("-base")
+            };
         }
 
         [Export]

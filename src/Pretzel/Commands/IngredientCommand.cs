@@ -19,17 +19,13 @@ namespace Pretzel.Commands
         [ImportingConstructor]
         public IngredientCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
 
-        protected override void WithOptions(List<Option> options)
+        protected override IEnumerable<Option> CreateOptions() => base.CreateOptions().Concat(new[]
         {
-            base.WithOptions(options);
-            options.AddRange(new[]
+            new Option(new [] { "--newposttitle", "-n" }, "The title of the new post (\"New post\" by default")
             {
-                new Option(new [] { "--newposttitle", "-n" }, "The title of the new post (\"New post\" by default")
-                {
-                    Argument = new Argument<string>(() => "New post")
-                }
-            });
-        }
+                Argument = new Argument<string>(() => "New post")
+            }
+        });
 
         public string NewPostTitle { get; set; }
     }

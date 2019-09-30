@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.Composition;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Threading.Tasks;
 using Pretzel.Logic;
 using Pretzel.Logic.Commands;
@@ -22,21 +23,17 @@ namespace Pretzel.Commands
         [ImportingConstructor]
         public TasteCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
 
-        protected override void WithOptions(List<Option> options)
+        protected override IEnumerable<Option> CreateOptions() => base.CreateOptions().Concat(new[]
         {
-            base.WithOptions(options);
-            options.AddRange(new[]
+            new Option(new[] { "--port", "-p" }, "The port to test the site locally")
             {
-                new Option(new[] { "--port", "-p" }, "The port to test the site locally")
-                {
-                    Argument = new Argument<int>(() => 8080)
-                },
-                new Option("--nobrowser", "Do not launch a browser (false by default)")
-                {
-                    Argument = new Argument<bool>()
-                },
-            });
-        }
+                Argument = new Argument<int>(() => 8080)
+            },
+            new Option("--nobrowser", "Do not launch a browser (false by default)")
+            {
+                Argument = new Argument<bool>()
+            },
+        });
 
         public int Port { get; set; }
         public bool NoBrowser { get; set; }

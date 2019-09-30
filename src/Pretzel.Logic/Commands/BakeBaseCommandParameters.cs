@@ -10,17 +10,13 @@ namespace Pretzel.Logic.Commands
     {
         protected BakeBaseCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
 
-        protected override void WithOptions(List<Option> options)
+        protected override IEnumerable<Option> CreateOptions() => base.CreateOptions().Concat(new[]
         {
-            base.WithOptions(options);
-            options.AddRange(new[]
+            new Option(new [] { "-c", "--cleantarget" }, "Delete the target directory (_site by default)")
             {
-                new Option(new [] { "-c", "--cleantarget" }, "Delete the target directory (_site by default)")
-                {
-                    Argument = new Argument<bool>()
-                },
-            });
-        }
+                Argument = new Argument<bool>()
+            },
+        });
 
         public bool CleanTarget { get; set; }
     }

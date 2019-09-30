@@ -18,24 +18,21 @@ namespace Pretzel.Logic.Commands
             this.fileSystem = fileSystem;
         }
 
-        protected override void WithOptions(List<Option> options)
+        protected override IEnumerable<Option> CreateOptions() => new[]
         {
-            options.AddRange(new[]
+            new Option(new []{ "-t", "--template" }, "The templating engine to use")
             {
-                new Option(new []{ "-t", "--template" }, "The templating engine to use")
-                {
-                    Argument = new Argument<string>()
-                },
-                new Option(new [] { "-d", "--destination" }, "The path to the destination site (default _site)")
-                {
-                    Argument = new Argument<string>(() => "_site")
-                },
-                new Option("--drafts", "Add the posts in the drafts folder")
-                {
-                    Argument = new Argument<bool>()
-                },
-            });
-        }
+                Argument = new Argument<string>()
+            },
+            new Option(new [] { "-d", "--destination" }, "The path to the destination site (default _site)")
+            {
+                Argument = new Argument<string>(() => "_site")
+            },
+            new Option("--drafts", "Add the posts in the drafts folder")
+            {
+                Argument = new Argument<bool>()
+            },
+        };
 
         // Default Option that get's injected from Program
         public string Source { get; set; }

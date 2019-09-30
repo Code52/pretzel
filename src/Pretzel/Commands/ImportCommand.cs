@@ -19,21 +19,17 @@ namespace Pretzel.Commands
         [ImportingConstructor]
         public ImportCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
 
-        protected override void WithOptions(List<Option> options)
+        protected override IEnumerable<Option> CreateOptions() => base.CreateOptions().Concat(new[]
         {
-            base.WithOptions(options);
-            options.AddRange(new[]
+            new Option(new [] {"--importtype", "-i"}, "The import type")
             {
-                new Option(new [] {"--importtype", "-i"}, "The import type")
-                {
-                    Argument = new Argument<string>()
-                },
-                new Option(new [] {"--importfile", "-f"}, "Path to import file")
-                {
-                    Argument = new Argument<string>()
-                },
-            });
-        }
+                Argument = new Argument<string>()
+            },
+            new Option(new [] {"--importfile", "-f"}, "Path to import file")
+            {
+                Argument = new Argument<string>()
+            }
+        });
 
         public string ImportType { get; set; }
 

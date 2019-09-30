@@ -20,7 +20,7 @@ namespace Pretzel.Logic.Commands
         {
             var options = new List<Option>();
             Options = options;
-            WithOptions(options);
+            options.AddRange(CreateOptions());
 
             foreach (var factory in this.GetCommandExtentions())
             {
@@ -28,7 +28,7 @@ namespace Pretzel.Logic.Commands
             }
         }
 
-        protected abstract void WithOptions(List<Option> options);
+        protected abstract IEnumerable<Option> CreateOptions();
 
         public virtual void BindingCompleted()
         {

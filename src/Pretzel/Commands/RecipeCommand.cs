@@ -20,21 +20,17 @@ namespace Pretzel.Commands
         [ImportingConstructor]
         public RecipeCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
 
-        protected override void WithOptions(List<Option> options)
+        protected override IEnumerable<Option> CreateOptions() => base.CreateOptions().Concat(new[]
         {
-            base.WithOptions(options);
-            options.AddRange(new[]
+            new Option(new [] { "-p", "--withproject" }, "Includes a layout VS Solution, to give intellisense when editing razor layout files")
             {
-                new Option(new [] { "-p", "--withproject" }, "Includes a layout VS Solution, to give intellisense when editing razor layout files")
-                {
-                    Argument = new Argument<bool>()
-                },
-                new Option(new [] { "-w", "--wiki"}, "Creates a wiki instead of a blog (razor template only)")
-                {
-                    Argument = new Argument<bool>()
-                },
-            });
-        }
+                Argument = new Argument<bool>()
+            },
+            new Option(new [] { "-w", "--wiki"}, "Creates a wiki instead of a blog (razor template only)")
+            {
+                Argument = new Argument<bool>()
+            },
+        });
 
         public bool WithProject { get; set; }
         public bool Wiki { get; set; }
