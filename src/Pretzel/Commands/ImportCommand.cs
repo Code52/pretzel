@@ -11,10 +11,10 @@ using Pretzel.Logic.Import;
 
 namespace Pretzel.Commands
 {
-    [Export]
     [Shared]
+    [Export(typeof(IImportCommandArguments))]
     [CommandArguments]
-    public class ImportCommandArguments : PretzelBaseCommandArguments
+    public class ImportCommandArguments : PretzelBaseCommandArguments, IImportCommandArguments
     {
         [ImportingConstructor]
         public ImportCommandArguments(IFileSystem fileSystem) : base(fileSystem) { }

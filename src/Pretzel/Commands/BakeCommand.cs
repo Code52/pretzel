@@ -13,9 +13,9 @@ using Pretzel.Logic.Templating.Context;
 namespace Pretzel.Commands
 {
     [Shared]
-    [Export]
+    [Export(typeof(IBakeCommandArguments))]
     [CommandArguments]
-    public sealed class BakeCommandArguments : BakeBaseCommandArguments
+    public sealed class BakeCommandArguments : BakeBaseCommandArguments, IBakeCommandArguments
     {
         [ImportingConstructor]
         public BakeCommandArguments(IFileSystem fileSystem) : base(fileSystem) { }

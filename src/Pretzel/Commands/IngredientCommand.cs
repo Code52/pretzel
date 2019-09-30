@@ -11,10 +11,10 @@ using Pretzel.Logic.Recipe;
 
 namespace Pretzel.Commands
 {
-    [Export]
     [Shared]
+    [Export(typeof(IIngredientCommandArguments))]
     [CommandArguments]
-    public class IngredientCommandArguments : PretzelBaseCommandArguments
+    public class IngredientCommandArguments : PretzelBaseCommandArguments, IIngredientCommandArguments
     {
         [ImportingConstructor]
         public IngredientCommandArguments(IFileSystem fileSystem) : base(fileSystem) { }
@@ -39,7 +39,7 @@ namespace Pretzel.Commands
     {
         [Import]
         public IFileSystem FileSystem { get; set; }
-        
+
         protected override Task<int> Execute(IngredientCommandArguments arguments)
         {
             Tracing.Info("ingredient - create a new post");

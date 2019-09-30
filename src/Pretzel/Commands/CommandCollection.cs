@@ -46,19 +46,19 @@ namespace Pretzel.Commands
         internal void OnImportsSatisfied()
         {
             RootCommand = new RootCommand();
-            
+
             foreach (var command in Commands)
             {
                 var subCommand = new Command(command.Metadata.CommandName, command.Metadata.CommandDescription);
 
-                var argument = CommandArguments.First(c => c.GetType() == command.Metadata.CommandArgumentsType);
+                var argument = CommandArguments.First(c => command.Metadata.CommandArgumentsType.IsAssignableFrom(c.GetType()));
 
                 if (argument is BaseCommandArguments baseCommandArguments)
                 {
                     baseCommandArguments.BuildOptions();
                 }
 
-                foreach (var argumentExtensionsExport in ArgumentExtensions.Where(a => a.Metadata.CommandNames.Contains(command.Metadata.CommandName)))
+                foreach (var argumentExtensionsExport in ArgumentExtensions.Where(a => a.Metadata.CommandArgumentTypes.Any(type => type.IsAssignableFrom(argument.GetType()))))
                 {
                     var arugumentExtension = argumentExtensionsExport.CreateExport().Value;
                     argument.Extensions.Add(arugumentExtension);

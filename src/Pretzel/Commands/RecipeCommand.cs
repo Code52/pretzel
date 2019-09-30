@@ -12,10 +12,10 @@ using Pretzel.Logic.Recipe;
 
 namespace Pretzel.Commands
 {
-    [Export]
     [Shared]
+    [Export(typeof(IRecipeCommandArguments))]
     [CommandArguments]
-    public class RecipeCommandArguments : PretzelBaseCommandArguments
+    public class RecipeCommandArguments : PretzelBaseCommandArguments, IRecipeCommandArguments
     {
         [ImportingConstructor]
         public RecipeCommandArguments(IFileSystem fileSystem) : base(fileSystem) { }

@@ -106,11 +106,14 @@ namespace Pretzel.Tests.Commands
                 configuration.WithPart<CommandCollection>();
                 configuration.WithPart<TestCommand1>();
                 configuration.WithPart<TestCommand2>();
+                configuration.WithPart<TestCommand3>();
                 configuration.WithPart<TestCommandArguments1>();
                 configuration.WithPart<TestCommandArguments2>();
+                configuration.WithPart<TestCommandArguments3>();
                 configuration.WithPart<Extender1>();
                 configuration.WithPart<Extender2>();
                 configuration.WithPart<Extender3>();
+                configuration.WithPart<Extender4>();
                 configuration.WithPart<ConfigurationMock>();
                 Container = configuration.CreateContainer();
             }
@@ -135,7 +138,16 @@ namespace Pretzel.Tests.Commands
                 Assert.Equal(2, target.Extensions.Count);
                 Assert.Contains(target.Extensions, e => e is Extender2);
                 Assert.Contains(target.Extensions, e => e is Extender3);
+            }
 
+            [Fact]
+            public void CollectsOnlyCommandsWhereInterfacesAreExported()
+            {
+                Container.GetExport<CommandCollection>();
+                var target = Container.GetExport<ITestCommandArguments3>();
+
+                Assert.Equal(1, target.Extensions.Count);
+                Assert.Contains(target.Extensions, e => e is Extender4);
             }
 
             public void Dispose()
@@ -182,6 +194,7 @@ namespace Pretzel.Tests.Commands
                 public void BindingCompleted() { }
             }
 
+
             [Export]
             [Shared]
             [CommandInfo(CommandName = "test2", CommandArgumentsType = typeof(TestCommandArguments2))]
@@ -193,7 +206,35 @@ namespace Pretzel.Tests.Commands
                 }
             }
 
-            [CommandArgumentsExtension(CommandNames = new[] { "test1" })]
+            public interface ITestCommandArguments3 : ICommandArguments { }
+
+            [Export(typeof(ITestCommandArguments3))]
+            [Shared]
+            [CommandArguments]
+            public class TestCommandArguments3 : ITestCommandArguments3
+            {
+                [ImportMany]
+                public ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>[] ArgumentExtensions { get; set; }
+
+                public IList<Option> Options => new List<Option>();
+
+                public IList<ICommandArgumentsExtension> Extensions { get; } = new List<ICommandArgumentsExtension>();
+
+                public void BindingCompleted() { }
+            }
+
+            [Export]
+            [Shared]
+            [CommandInfo(CommandName = "test3", CommandArgumentsType = typeof(ITestCommandArguments3))]
+            public class TestCommand3 : Logic.Commands.ICommand
+            {
+                public Task<int> Execute(ICommandArguments arguments)
+                {
+                    return Task.FromResult(0);
+                }
+            }
+
+            [CommandArgumentsExtension(CommandArgumentTypes = new[] { typeof(TestCommandArguments1) })]
             public class Extender1 : ICommandArgumentsExtension
             {
                 public IList<Option> Options { get; } = Array.Empty<Option>();
@@ -203,7 +244,7 @@ namespace Pretzel.Tests.Commands
                 }
             }
 
-            [CommandArgumentsExtension(CommandNames = new[] { "test2" })]
+            [CommandArgumentsExtension(CommandArgumentTypes = new[] { typeof(TestCommandArguments2) })]
             public class Extender2 : ICommandArgumentsExtension
             {
                 public IList<Option> Options { get; } = Array.Empty<Option>();
@@ -213,8 +254,18 @@ namespace Pretzel.Tests.Commands
                 }
             }
 
-            [CommandArgumentsExtension(CommandNames = new[] { "test1", "test2" })]
+            [CommandArgumentsExtension(CommandArgumentTypes = new[] { typeof(TestCommandArguments1), typeof(TestCommandArguments2) })]
             public class Extender3 : ICommandArgumentsExtension
+            {
+                public IList<Option> Options { get; } = Array.Empty<Option>();
+
+                public void BindingCompleted()
+                {
+                }
+            }
+
+            [CommandArgumentsExtension(CommandArgumentTypes = new[] { typeof(ITestCommandArguments3) })]
+            public class Extender4 : ICommandArgumentsExtension
             {
                 public IList<Option> Options { get; } = Array.Empty<Option>();
 

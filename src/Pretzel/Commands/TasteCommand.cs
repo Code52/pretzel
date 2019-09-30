@@ -15,10 +15,10 @@ using Pretzel.Modules;
 
 namespace Pretzel.Commands
 {
-    [Export]
     [Shared]
+    [Export(typeof(ITasteCommandArguments))]
     [CommandArguments]
-    public class TasteCommandArguments : BakeBaseCommandArguments
+    public class TasteCommandArguments : BakeBaseCommandArguments, ITasteCommandArguments
     {
         [ImportingConstructor]
         public TasteCommandArguments(IFileSystem fileSystem) : base(fileSystem) { }
