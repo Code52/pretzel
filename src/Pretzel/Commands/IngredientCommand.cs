@@ -32,19 +32,16 @@ namespace Pretzel.Commands
 
     [Shared]
     [CommandInfo(CommandName = BuiltInCommands.Ingredient, CommandDescription = "create a new post")]
-    public sealed class IngredientCommand : IPretzelCommand
+    public sealed class IngredientCommand : Command<IngredientCommandArguments>
     {
         [Import]
         public IFileSystem FileSystem { get; set; }
-
-        [Import]
-        public IngredientCommandArguments Parameters { get; set; }
-
-        public Task<int> Execute()
+        
+        protected override Task<int> Execute(IngredientCommandArguments arguments)
         {
             Tracing.Info("ingredient - create a new post");
 
-            var ingredient = new Ingredient(FileSystem, Parameters.NewPostTitle, Parameters.Source, Parameters.Drafts);
+            var ingredient = new Ingredient(FileSystem, arguments.NewPostTitle, arguments.Source, arguments.Drafts);
             ingredient.Create();
 
             return Task.FromResult(0);

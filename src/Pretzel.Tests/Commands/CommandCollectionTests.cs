@@ -29,9 +29,9 @@ namespace Pretzel.Tests.Commands
         {
             var collection = new CommandCollection
             {
-                Commands = new ExportFactory<Logic.Commands.IPretzelCommand, CommandInfoAttribute>[]
+                Commands = new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>[]
                 {
-                    new ExportFactory<Logic.Commands.IPretzelCommand, CommandInfoAttribute>(CreateCommand, new CommandInfoAttribute{ CommandName = "test", CommandDescription = "desc" })
+                    new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>(CreateCommand, new CommandInfoAttribute{ CommandName = "test", CommandDescription = "desc" })
                 }
             };
             collection.OnImportsSatisfied();
@@ -43,7 +43,7 @@ namespace Pretzel.Tests.Commands
         [Fact]
         public void SubCommandsWithoutArgumentGetsHandler()
         {
-            var exportFactory = new ExportFactory<Logic.Commands.IPretzelCommand, CommandInfoAttribute>(
+            var exportFactory = new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>(
                 CreateCommand,
                 new CommandInfoAttribute
                 {
@@ -54,7 +54,7 @@ namespace Pretzel.Tests.Commands
             var collection = new CommandCollection
             {
                 Configuration = Substitute.For<IConfiguration>(),
-                Commands = new ExportFactory<Logic.Commands.IPretzelCommand, CommandInfoAttribute>[]
+                Commands = new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>[]
                 {
                     exportFactory
                 }
@@ -65,7 +65,7 @@ namespace Pretzel.Tests.Commands
             var command = collection.RootCommand.Children.OfType<Command>().First();
             Assert.NotNull(command.Handler);
             Assert.IsType<PretzelCommandHandler>(command.Handler);
-            Assert.Null(((PretzelCommandHandler)command.Handler).CommandParameters);
+            Assert.Null(((PretzelCommandHandler)command.Handler).CommandArguments);
             Assert.NotNull(((PretzelCommandHandler)command.Handler).Configuration);
             Assert.Equal(collection.Configuration, ((PretzelCommandHandler)command.Handler).Configuration);
             Assert.NotNull(((PretzelCommandHandler)command.Handler).Command);
@@ -81,7 +81,7 @@ namespace Pretzel.Tests.Commands
                 new Option("-i")
             });
 
-            var commandExportFactory = new ExportFactory<Logic.Commands.IPretzelCommand, CommandInfoAttribute>(
+            var commandExportFactory = new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>(
                 CreateCommand,
                 new CommandInfoAttribute
                 {
@@ -99,7 +99,7 @@ namespace Pretzel.Tests.Commands
             var collection = new CommandCollection
             {
                 Configuration = Substitute.For<IConfiguration>(),
-                Commands = new ExportFactory<Logic.Commands.IPretzelCommand, CommandInfoAttribute>[]
+                Commands = new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>[]
                 {
                     commandExportFactory
                 },
@@ -122,16 +122,16 @@ namespace Pretzel.Tests.Commands
             Assert.Single(command.OfType<Option>());
             Assert.NotNull(command.Handler);
             Assert.IsType<PretzelCommandHandler>(command.Handler);
-            Assert.NotNull(((PretzelCommandHandler)command.Handler).CommandParameters);
-            Assert.Equal(parameters, ((PretzelCommandHandler)command.Handler).CommandParameters);
+            Assert.NotNull(((PretzelCommandHandler)command.Handler).CommandArguments);
+            Assert.Equal(parameters, ((PretzelCommandHandler)command.Handler).CommandArguments);
             Assert.NotNull(((PretzelCommandHandler)command.Handler).Configuration);
             Assert.Equal(collection.Configuration, ((PretzelCommandHandler)command.Handler).Configuration);
             Assert.NotNull(((PretzelCommandHandler)command.Handler).Command);
             Assert.Equal(commandExportFactory, ((PretzelCommandHandler)command.Handler).Command);
         }
 
-        Tuple<Logic.Commands.IPretzelCommand, Action> CreateCommand()
-            => Tuple.Create(Substitute.For<Logic.Commands.IPretzelCommand>(), new Action(() => { }));
+        Tuple<Logic.Commands.ICommand, Action> CreateCommand()
+            => Tuple.Create(Substitute.For<Logic.Commands.ICommand>(), new Action(() => { }));
         Tuple<ICommandArguments, Action> CreateArgument(ICommandArguments parameters)
             => Tuple.Create(parameters, new Action(() => { }));
 
@@ -198,9 +198,9 @@ namespace Pretzel.Tests.Commands
             [Export]
             [Shared]
             [CommandInfo(CommandName = "test1")]
-            public class TestCommand1 : IPretzelCommand
+            public class TestCommand1 : Logic.Commands.ICommand
             {
-                public Task<int> Execute()
+                public Task<int> Execute(ICommandArguments arguments)
                 {
                     return Task.FromResult(0);
                 }
@@ -224,9 +224,9 @@ namespace Pretzel.Tests.Commands
             [Export]
             [Shared]
             [CommandInfo(CommandName = "test2")]
-            public class TestCommand2 : IPretzelCommand
+            public class TestCommand2 : Logic.Commands.ICommand
             {
-                public Task<int> Execute()
+                public Task<int> Execute(ICommandArguments arguments)
                 {
                     return Task.FromResult(0);
                 }

@@ -12,11 +12,11 @@ namespace Pretzel.Commands
     [Shared]
     public sealed class CommandCollection
     {
-        ExportFactory<IPretzelCommand, CommandInfoAttribute>[] commands;
+        ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>[] commands;
         [ImportMany]
-        public ExportFactory<IPretzelCommand, CommandInfoAttribute>[] Commands
+        public ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>[] Commands
         {
-            get => commands ?? new ExportFactory<IPretzelCommand, CommandInfoAttribute>[] { };
+            get => commands ?? new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>[] { };
             set => commands = value;
         }
 

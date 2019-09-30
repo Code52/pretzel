@@ -11,7 +11,7 @@ namespace Pretzel.Logic.Commands
 
         public string CommandDescription { get; set; }
 
-        public CommandInfoAttribute() : base(typeof(IPretzelCommand))
+        public CommandInfoAttribute() : base(typeof(ICommand))
         {
         }
     }

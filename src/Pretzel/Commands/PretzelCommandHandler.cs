@@ -11,14 +11,14 @@ namespace Pretzel.Commands
 {
     public class PretzelCommandHandler : ICommandHandler
     {
-        public ICommandArguments CommandParameters { get; }
-        public ExportFactory<IPretzelCommand, CommandInfoAttribute> Command { get; }
+        public ICommandArguments CommandArguments { get; }
+        public ExportFactory<ICommand, CommandInfoAttribute> Command { get; }
         public IConfiguration Configuration { get; }
 
-        public PretzelCommandHandler(IConfiguration configuration, ICommandArguments commandParameters, ExportFactory<IPretzelCommand, CommandInfoAttribute> command)
+        public PretzelCommandHandler(IConfiguration configuration, ICommandArguments commandParameters, ExportFactory<ICommand, CommandInfoAttribute> command)
         {
             Configuration = configuration;
-            CommandParameters = commandParameters;
+            CommandArguments = commandParameters;
             Command = command;
         }
 
@@ -26,20 +26,20 @@ namespace Pretzel.Commands
         {
             var bindingContext = context.BindingContext;
 
-            if (CommandParameters != null)
+            if (CommandArguments != null)
             {
-                new ModelBinder(CommandParameters.GetType())
-                   .UpdateInstance(CommandParameters, bindingContext);
+                new ModelBinder(CommandArguments.GetType())
+                   .UpdateInstance(CommandArguments, bindingContext);
 
-                CommandParameters.BindingCompleted();
+                CommandArguments.BindingCompleted();
             }
 
-            if (CommandParameters is ISourcePathProvider pathProvider)
+            if (CommandArguments is ISourcePathProvider pathProvider)
             {
                 Configuration.ReadFromFile(pathProvider.Source);
             }
 
-            foreach (var argumentsExtension in CommandParameters.Extensions)
+            foreach (var argumentsExtension in CommandArguments.Extensions)
             {
                 new ModelBinder(argumentsExtension.GetType())
                     .UpdateInstance(argumentsExtension, bindingContext);
@@ -47,7 +47,7 @@ namespace Pretzel.Commands
                 argumentsExtension.BindingCompleted();
             }
 
-            return await Command.CreateExport().Value.Execute();
+            return await Command.CreateExport().Value.Execute(CommandArguments);
         }
     }
 }

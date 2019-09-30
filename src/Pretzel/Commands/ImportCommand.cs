@@ -38,34 +38,32 @@ namespace Pretzel.Commands
 
     [Shared]
     [CommandInfo(CommandName = BuiltInCommands.Import, CommandDescription = "import posts from external source")]
-    class ImportCommand : IPretzelCommand
+    class ImportCommand : Command<ImportCommandArguments>
     {
         readonly static List<string> Importers = new List<string>(new[] { "wordpress", "blogger" });
 
         [Import]
         public IFileSystem FileSystem { get; set; }
-        [Import]
-        public ImportCommandArguments Parameters { get; set; }
 
-        public Task<int> Execute()
+        protected override Task<int> Execute(ImportCommandArguments arguments)
         {
             Tracing.Info("import - import posts from external source");
 
-            if (!Importers.Any(e => String.Equals(e, Parameters.ImportType, StringComparison.InvariantCultureIgnoreCase)))
+            if (!Importers.Any(e => String.Equals(e, arguments.ImportType, StringComparison.InvariantCultureIgnoreCase)))
             {
-                Tracing.Info("Requested import type not found: {0}", Parameters.ImportType);
+                Tracing.Info("Requested import type not found: {0}", arguments.ImportType);
 
                 return Task.FromResult(1);
             }
 
-            if (string.Equals("wordpress", Parameters.ImportType, StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals("wordpress", arguments.ImportType, StringComparison.InvariantCultureIgnoreCase))
             {
-                var wordpressImporter = new WordpressImport(FileSystem, Parameters.Source, Parameters.ImportFile);
+                var wordpressImporter = new WordpressImport(FileSystem, arguments.Source, arguments.ImportFile);
                 wordpressImporter.Import();
             }
-            else if (string.Equals("blogger", Parameters.ImportType, StringComparison.InvariantCultureIgnoreCase))
+            else if (string.Equals("blogger", arguments.ImportType, StringComparison.InvariantCultureIgnoreCase))
             {
-                var bloggerImporter = new BloggerImport(FileSystem, Parameters.Source, Parameters.ImportFile);
+                var bloggerImporter = new BloggerImport(FileSystem, arguments.Source, arguments.ImportFile);
                 bloggerImporter.Import();
             }
 

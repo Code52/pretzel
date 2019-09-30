@@ -44,9 +44,9 @@ namespace Pretzel.Tests.Commands
             var sut = new PretzelCommandHandler(
                 Substitute.For<IConfiguration>(),
                 testParams,
-                new ExportFactory<IPretzelCommand, CommandInfoAttribute>(
+                new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>(
                     () => Tuple.Create(
-                            Substitute.For<IPretzelCommand>(),
+                            Substitute.For<Logic.Commands.ICommand>(),
                             new Action(() => { })
                         ), new CommandInfoAttribute()));
 
@@ -66,9 +66,9 @@ namespace Pretzel.Tests.Commands
             var sut = new PretzelCommandHandler(
               Substitute.For<IConfiguration>(),
               testArgument,
-              new ExportFactory<IPretzelCommand, CommandInfoAttribute>(
+              new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>(
                   () => Tuple.Create(
-                          Substitute.For<IPretzelCommand>(),
+                          Substitute.For<Logic.Commands.ICommand>(),
                           new Action(() => { })
                       ), new CommandInfoAttribute()));
 
@@ -91,9 +91,9 @@ namespace Pretzel.Tests.Commands
             var sut = new PretzelCommandHandler(
                 configuration,
                 testArgument,
-                new ExportFactory<IPretzelCommand, CommandInfoAttribute>(
+                new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>(
                     () => Tuple.Create(
-                            Substitute.For<IPretzelCommand>(),
+                            Substitute.For<Logic.Commands.ICommand>(),
                             new Action(() => { })
                         ), new CommandInfoAttribute()));
 
@@ -155,9 +155,9 @@ namespace Pretzel.Tests.Commands
             var sut = new PretzelCommandHandler(
                 Substitute.For<IConfiguration>(),
                 testParams,
-                new ExportFactory<IPretzelCommand, CommandInfoAttribute>(
+                new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>(
                     () => Tuple.Create(
-                            Substitute.For<IPretzelCommand>(),
+                            Substitute.For<Logic.Commands.ICommand>(),
                             new Action(() => { })
                         ), new CommandInfoAttribute()));
 
@@ -181,9 +181,9 @@ namespace Pretzel.Tests.Commands
             var sut = new PretzelCommandHandler(
                 Substitute.For<IConfiguration>(),
                 testParams,
-                new ExportFactory<IPretzelCommand, CommandInfoAttribute>(
+                new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>(
                     () => Tuple.Create(
-                            Substitute.For<IPretzelCommand>(),
+                            Substitute.For<Logic.Commands.ICommand>(),
                             new Action(() => { })
                         ), new CommandInfoAttribute()));
 
@@ -198,12 +198,13 @@ namespace Pretzel.Tests.Commands
             var rootCommand = new RootCommand();
 
             var context = new InvocationContext(new Parser(rootCommand).Parse(""), Substitute.For<IConsole>());
-            var command = Substitute.For<IPretzelCommand>();
+            var command = Substitute.For<Logic.Commands.ICommand>();
+            var arguments = Substitute.For<ICommandArguments>();
 
             var sut = new PretzelCommandHandler(
                 Substitute.For<IConfiguration>(),
-                Substitute.For<ICommandArguments>(),
-                new ExportFactory<IPretzelCommand, CommandInfoAttribute>(
+                arguments,
+                new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>(
                     () => Tuple.Create(
                             command,
                             new Action(() => { })
@@ -211,7 +212,7 @@ namespace Pretzel.Tests.Commands
 
             await sut.InvokeAsync(context);
 
-            await command.Received(1).Execute();
+            await command.Received(1).Execute(arguments);
         }
 
         [Fact]
@@ -221,14 +222,14 @@ namespace Pretzel.Tests.Commands
 
             var context = new InvocationContext(new Parser(rootCommand).Parse(""), Substitute.For<IConsole>());
             var configuration = Substitute.For<IConfiguration>();
-            var @params = Substitute.For<ICommandArguments, ISourcePathProvider>();
-            ((ISourcePathProvider)@params).Source.Returns("bar");
-            var command = Substitute.For<IPretzelCommand>();
+            var arguments = Substitute.For<ICommandArguments, ISourcePathProvider>();
+            ((ISourcePathProvider)arguments).Source.Returns("bar");
+            var command = Substitute.For<Logic.Commands.ICommand>();
 
             var sut = new PretzelCommandHandler(
                 configuration,
-                @params,
-                new ExportFactory<IPretzelCommand, CommandInfoAttribute>(
+                arguments,
+                new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>(
                     () => Tuple.Create(
                             command,
                             new Action(() => { })
@@ -238,9 +239,9 @@ namespace Pretzel.Tests.Commands
 
             Received.InOrder(async () =>
             {
-                @params.BindingCompleted();
+                arguments.BindingCompleted();
                 configuration.ReadFromFile("bar");
-                await command.Execute();
+                await command.Execute(arguments);
             });
         }
     }

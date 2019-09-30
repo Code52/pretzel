@@ -23,7 +23,7 @@ namespace Pretzel.Commands
 
     [Shared]
     [CommandInfo(CommandName = BuiltInCommands.Bake, CommandDescription = "transforming content into a website")]
-    public sealed class BakeCommand : IPretzelCommand
+    public sealed class BakeCommand : Command<BakeCommandArguments>
     {
         [Import]
         public TemplateEngineCollection TemplateEngines { get; set; }
@@ -33,30 +33,27 @@ namespace Pretzel.Commands
 
         [ImportMany]
         public IEnumerable<ITransform> Transforms { get; set; }
-
-        [Import]
-        public BakeCommandArguments Parameters { get; set; }
-
+        
         [Import]
         public IFileSystem FileSystem { get; set; }
 
-        public Task<int> Execute()
+        protected override Task<int> Execute(BakeCommandArguments arguments)
         {
             Tracing.Info("bake - transforming content into a website");
 
-            var siteContext = Generator.BuildContext(Parameters.Source, Parameters.Destination, Parameters.Drafts);
+            var siteContext = Generator.BuildContext(arguments.Source, arguments.Destination, arguments.Drafts);
 
-            if (Parameters.CleanTarget && FileSystem.Directory.Exists(siteContext.OutputFolder))
+            if (arguments.CleanTarget && FileSystem.Directory.Exists(siteContext.OutputFolder))
             {
                 FileSystem.Directory.Delete(siteContext.OutputFolder, true);
             }
 
-            if (string.IsNullOrWhiteSpace(Parameters.Template))
+            if (string.IsNullOrWhiteSpace(arguments.Template))
             {
-                Parameters.DetectFromDirectory(TemplateEngines.Engines, siteContext);
+                arguments.DetectFromDirectory(TemplateEngines.Engines, siteContext);
             }
 
-            var engine = TemplateEngines[Parameters.Template];
+            var engine = TemplateEngines[arguments.Template];
             if (engine != null)
             {
                 var watch = new Stopwatch();
@@ -73,7 +70,7 @@ namespace Pretzel.Commands
             }
             else
             {
-                Tracing.Info("Cannot find engine for input: '{0}'", Parameters.Template);
+                Tracing.Info("Cannot find engine for input: '{0}'", arguments.Template);
                 return Task.FromResult(1);
             }
             return Task.FromResult(0);

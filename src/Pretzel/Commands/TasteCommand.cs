@@ -42,7 +42,7 @@ namespace Pretzel.Commands
 
     [Shared]
     [CommandInfo(CommandName = BuiltInCommands.Taste, CommandDescription = "testing a site locally")]
-    public sealed class TasteCommand : IPretzelCommand
+    public sealed class TasteCommand : Command<TasteCommandArguments>
     {
         private ISiteEngine engine;
 
@@ -51,9 +51,6 @@ namespace Pretzel.Commands
 
         [Import]
         public SiteContextGenerator Generator { get; set; }
-
-        [Import]
-        public TasteCommandArguments Parameters { get; set; }
 
         [ImportMany]
         public IEnumerable<ITransform> Transforms { get; set; }
@@ -64,27 +61,27 @@ namespace Pretzel.Commands
         [Import]
         public IConfiguration Configuration { get; set; }
 
-        public Task<int> Execute()
+        protected override Task<int> Execute(TasteCommandArguments arguments)
         {
             Tracing.Info("taste - testing a site locally");
-            
-            var context = Generator.BuildContext(Parameters.Source, Parameters.Destination, Parameters.Drafts);
 
-            if (Parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
+            var context = Generator.BuildContext(arguments.Source, arguments.Destination, arguments.Drafts);
+
+            if (arguments.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
                 FileSystem.Directory.Delete(context.OutputFolder, true);
             }
 
-            if (string.IsNullOrWhiteSpace(Parameters.Template))
+            if (string.IsNullOrWhiteSpace(arguments.Template))
             {
-                Parameters.DetectFromDirectory(TemplateEngines.Engines, context);
+                arguments.DetectFromDirectory(TemplateEngines.Engines, context);
             }
 
-            engine = TemplateEngines[Parameters.Template];
+            engine = TemplateEngines[arguments.Template];
 
             if (engine == null)
             {
-                Tracing.Info("template engine {0} not found - (engines: {1})", Parameters.Template,
+                Tracing.Info("template engine {0} not found - (engines: {1})", arguments.Template,
                                            string.Join(", ", TemplateEngines.Engines.Keys));
 
                 return Task.FromResult(1);
@@ -95,11 +92,11 @@ namespace Pretzel.Commands
             foreach (var t in Transforms)
                 t.Transform(context);
 
-            using (var watcher = new SimpleFileSystemWatcher(Parameters.Destination))
+            using (var watcher = new SimpleFileSystemWatcher(arguments.Destination))
             {
-                watcher.OnChange(Parameters.Source, WatcherOnChanged);
+                watcher.OnChange(arguments.Source, file => WatcherOnChanged(file, arguments));
 
-                using (var w = new WebHost(Parameters.Destination, new FileContentProvider(), Convert.ToInt32(Parameters.Port)))
+                using (var w = new WebHost(arguments.Destination, new FileContentProvider(), Convert.ToInt32(arguments.Port)))
                 {
                     try
                     {
@@ -107,13 +104,13 @@ namespace Pretzel.Commands
                     }
                     catch (System.Net.Sockets.SocketException)
                     {
-                        Tracing.Info("Port {0} is already in use", Parameters.Port);
+                        Tracing.Info("Port {0} is already in use", arguments.Port);
 
                         return Task.FromResult(1);
                     }
 
-                    var url = string.Format("http://localhost:{0}/", Parameters.Port);
-                    if (Parameters.LaunchBrowser)
+                    var url = string.Format("http://localhost:{0}/", arguments.Port);
+                    if (arguments.LaunchBrowser)
                     {
                         Tracing.Info("Opening {0} in default browser...", url);
                         try
@@ -144,11 +141,11 @@ namespace Pretzel.Commands
             return Task.FromResult(0);
         }
 
-        private void WatcherOnChanged(string file)
+        private void WatcherOnChanged(string file, TasteCommandArguments arguments)
         {
-            if (file.StartsWith(Parameters.Source))
+            if (file.StartsWith(arguments.Source))
             {
-                var relativeFile = file.Substring(Parameters.Source.Length).ToRelativeFile();
+                var relativeFile = file.Substring(arguments.Source.Length).ToRelativeFile();
                 if (Generator.IsExcludedPath(relativeFile))
                 {
                     return;
@@ -157,10 +154,10 @@ namespace Pretzel.Commands
 
             Tracing.Info("File change: {0}", file);
 
-            Configuration.ReadFromFile(Parameters.Source);
+            Configuration.ReadFromFile(arguments.Source);
 
-            var context = Generator.BuildContext(Parameters.Source, Parameters.Destination, Parameters.Drafts);
-            if (Parameters.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
+            var context = Generator.BuildContext(arguments.Source, arguments.Destination, arguments.Drafts);
+            if (arguments.CleanTarget && FileSystem.Directory.Exists(context.OutputFolder))
             {
                 FileSystem.Directory.Delete(context.OutputFolder, true);
             }
