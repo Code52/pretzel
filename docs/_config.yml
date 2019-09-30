@@ -1,0 +1,20 @@
+permalink: /:title.html
+auto: true
+markdown: rdiscount
+exclude: rakefile.rb, server.bat, config.ru
+appname: Pretzel
+appslogan: 'Build delicious sites with '
+username: Code52
+reponame: pretzel
+accent: "000000"
+darkaccent: cacaca
+description: 
+
+feature1title: 'Create a site quickly'
+feature2title: 'See live changes to your site'
+feature3title: 'No messing around with Ruby'
+
+
+feature1desc: 'With the power of Markdown and Liquid, going from nada to awesome has never been so quick'
+feature2desc: 'By using <em>taste</em>, Pretzel reprocesses your changes and spits out HTML on the fly'
+feature3desc: 'While Ruby is great, sometimes you care more about creating your website than installing Ruby, Ruby Dev Kit, Jekyll and the other half dozen requirements. Pretzel is a single exe.'
