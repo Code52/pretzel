@@ -6,9 +6,9 @@ using Xunit;
 
 namespace Pretzel.Tests.Commands
 {
-    public class RecipeCommandParametersTests : PretzelBaseCommandParametersTests<RecipeCommandArguments>
+    public class RecipeCommandArgumentsTests : PretzelBaseCommandArgumentsTests<RecipeCommandArguments>
     {
-        protected override RecipeCommandArguments CreateParameters(IFileSystem fileSystem)
+        protected override RecipeCommandArguments CreateArguments(IFileSystem fileSystem)
             => new RecipeCommandArguments(fileSystem);
 
         [Theory]
@@ -16,7 +16,7 @@ namespace Pretzel.Tests.Commands
         [InlineData("", false)]
         public void WithWiki(string argument, bool expectedValue)
         {
-            var sut = BuildParameters(argument);
+            var sut = BuildArguments(argument);
 
             Assert.Equal(expectedValue, sut.Wiki);
         }
@@ -26,7 +26,7 @@ namespace Pretzel.Tests.Commands
         [InlineData("", false)]
         public void WithProject(string argument, bool expectedValue)
         {
-            var sut = BuildParameters(argument);
+            var sut = BuildArguments(argument);
 
             Assert.Equal(expectedValue, sut.WithProject);
         }

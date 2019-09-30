@@ -5,9 +5,9 @@ using Pretzel.Commands;
 
 namespace Pretzel.Tests.Commands
 {
-    public class BakeCommandParametersTests : BakeBaseCommandParametersTests<BakeCommandArguments>
+    public class BakeCommandArgumentsTests : BakeBaseCommandArgumentsTests<BakeCommandArguments>
     {
-        protected override BakeCommandArguments CreateParameters(IFileSystem fileSystem)
+        protected override BakeCommandArguments CreateArguments(IFileSystem fileSystem)
             => new BakeCommandArguments(fileSystem);
     }
 }

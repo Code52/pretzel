@@ -16,7 +16,7 @@ namespace Pretzel.Logic.Extensibility.Extensions
     {
         public IList<Option> Options { get; } = new[]
         {
-            new Option("azure", "Enables deploy to azure support")
+            new Option(new [] { "--azure", "-azure" }, "Enables deploy to azure support")
             {
                 Argument = new Argument<bool>()
             }

@@ -6,9 +6,9 @@ using Xunit;
 
 namespace Pretzel.Tests.Commands
 {
-    public class IngredientCommandParametersTests : PretzelBaseCommandParametersTests<IngredientCommandArguments>
+    public class IngredientCommandArgumentsTests : PretzelBaseCommandArgumentsTests<IngredientCommandArguments>
     {
-        protected override IngredientCommandArguments CreateParameters(IFileSystem fileSystem)
+        protected override IngredientCommandArguments CreateArguments(IFileSystem fileSystem)
             => new IngredientCommandArguments(fileSystem);
 
         [Theory]
@@ -16,7 +16,7 @@ namespace Pretzel.Tests.Commands
         [InlineData("-n", "This is the second blog")]
         public void NewPostTitle(string argument, string value)
         {
-            var sut = BuildParameters(argument, value);
+            var sut = BuildArguments(argument, value);
 
             Assert.Equal(value, sut.NewPostTitle);
         }
@@ -24,7 +24,7 @@ namespace Pretzel.Tests.Commands
         [Fact]
         public void NewPostTitleDefaultValue()
         {
-            var sut = BuildParameters();
+            var sut = BuildArguments();
 
             Assert.Equal("New post", sut.NewPostTitle);
         }

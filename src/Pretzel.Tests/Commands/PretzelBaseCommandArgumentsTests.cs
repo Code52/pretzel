@@ -10,14 +10,14 @@ using Xunit;
 
 namespace Pretzel.Tests.Commands
 {
-    public abstract class PretzelBaseCommandParametersTests<T> : ParametersTests<T>
+    public abstract class PretzelBaseCommandArgumentsTests<T> : BaseCommandArgumentsTests<T>
         where T : PretzelBaseCommandArguments
     {
         [Theory]
         [InlineData("--drafts")]
         public void Drafts(string argument)
         {
-            var sut = BuildParameters(argument);
+            var sut = BuildArguments(argument);
 
             Assert.True(sut.Drafts);
         }
@@ -27,7 +27,7 @@ namespace Pretzel.Tests.Commands
         [InlineData("--template", "razor")]
         public void Template(string argument, string value)
         {
-            var sut = BuildParameters(argument, value);
+            var sut = BuildArguments(argument, value);
 
             Assert.Equal(value, sut.Template);
         }
@@ -37,7 +37,7 @@ namespace Pretzel.Tests.Commands
         [InlineData("--destination", "bar/mySite")]
         public void Destination(string argument, string value)
         {
-            var sut = BuildParameters(argument, value);
+            var sut = BuildArguments(argument, value);
 
             Assert.Equal(fileSystem.Path.Combine(sut.Source, value), sut.Destination);
         }
@@ -46,7 +46,7 @@ namespace Pretzel.Tests.Commands
         [InlineData("-d", @"c:\tmp\_site")]
         public void DestinationRooted(string argument, string value)
         {
-            var sut = BuildParameters(argument, value);
+            var sut = BuildArguments(argument, value);
 
             Assert.Equal(value, sut.Destination);
         }
@@ -54,7 +54,7 @@ namespace Pretzel.Tests.Commands
         [Fact]
         public void DestinationEmpty()
         {
-            var sut = BuildParameters("-d");
+            var sut = BuildArguments("-d");
 
             Assert.Equal(fileSystem.Path.Combine(sut.Source, "_site"), sut.Destination);
         }
@@ -62,7 +62,7 @@ namespace Pretzel.Tests.Commands
         [Fact]
         public void DestinationDefaultValue()
         {
-            var sut = BuildParameters();
+            var sut = BuildArguments();
 
             Assert.Equal(fileSystem.Path.Combine(sut.Source, "_site"), sut.Destination);
         }
@@ -70,7 +70,7 @@ namespace Pretzel.Tests.Commands
         [Fact]
         public void DetectFromDirectory_WhenSpecifyingNoSiteEngines_DefaultValueIsLiquid()
         {
-            var sut = BuildParameters();
+            var sut = BuildArguments();
 
             var siteContext = new SiteContext();
 
@@ -82,7 +82,7 @@ namespace Pretzel.Tests.Commands
         [Fact]
         public void DetectFromDirectory_WhenSpecifyingTwoSiteEngines_CorrectValueIsPicked()
         {
-            var sut = BuildParameters();
+            var sut = BuildArguments();
 
             var siteContext = new SiteContext { Config = new ConfigurationMock(new Dictionary<string, object> { { "pretzel", new Dictionary<string, object> { { "engine", "engine2" } } } }) };
 
@@ -108,7 +108,7 @@ namespace Pretzel.Tests.Commands
         [Fact]
         public void DetectFromDirectory_WhenSpecifyingNoPretzelConfig_DefaultValueIsLiquid()
         {
-            var sut = BuildParameters();
+            var sut = BuildArguments();
 
             var siteContext = new SiteContext { Config = new Configuration() };
 
@@ -129,7 +129,7 @@ namespace Pretzel.Tests.Commands
         [Fact]
         public void DetectFromDirectory_WhenSpecifyingNoEnginInPretzelConfig_DefaultValueIsLiquid()
         {
-            var sut = BuildParameters();
+            var sut = BuildArguments();
 
             var siteContext = new SiteContext { Config = new ConfigurationMock(new Dictionary<string, object> { { "pretzel", new Dictionary<string, object> { } } }) };
 
@@ -150,7 +150,7 @@ namespace Pretzel.Tests.Commands
         [Fact]
         public void DetectFromDirectory_WhenSpecifyingPretzelConfigSimpleValue_DefaultValueIsLiquid()
         {
-            var sut = BuildParameters();
+            var sut = BuildArguments();
 
             var siteContext = new SiteContext { Config = new ConfigurationMock(new Dictionary<string, object> { { "pretzel", 42 } }) };
 

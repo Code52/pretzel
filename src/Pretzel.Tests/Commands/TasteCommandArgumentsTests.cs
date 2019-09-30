@@ -6,16 +6,16 @@ using Xunit;
 
 namespace Pretzel.Tests.Commands
 {
-    public class TasteCommandParametersTests : BakeBaseCommandParametersTests<TasteCommandArguments>
+    public class TasteCommandArgumentsTests : BakeBaseCommandArgumentsTests<TasteCommandArguments>
     {
-        protected override TasteCommandArguments CreateParameters(IFileSystem fileSystem)
+        protected override TasteCommandArguments CreateArguments(IFileSystem fileSystem)
             => new TasteCommandArguments(fileSystem);
 
         [Theory]
         [InlineData("--nobrowser", true)]
         public void NoBrowser(string argument, bool expectedValue)
         {
-            var sut = BuildParameters(argument, expectedValue.ToString());
+            var sut = BuildArguments(argument, expectedValue.ToString());
 
             Assert.Equal(expectedValue, sut.NoBrowser);
             Assert.Equal(!expectedValue, sut.LaunchBrowser);
@@ -24,7 +24,7 @@ namespace Pretzel.Tests.Commands
         [Fact]
         public void NoBrowserDefaultValue()
         {
-            var sut = BuildParameters();
+            var sut = BuildArguments();
 
             Assert.False(sut.NoBrowser);
             Assert.True(sut.LaunchBrowser);
@@ -35,7 +35,7 @@ namespace Pretzel.Tests.Commands
         [InlineData("-p", 9090)]
         public void Port(string argument, int expectedValue)
         {
-            var sut = BuildParameters(argument, expectedValue.ToString());
+            var sut = BuildArguments(argument, expectedValue.ToString());
 
             Assert.Equal(expectedValue, sut.Port);
         }
@@ -43,7 +43,7 @@ namespace Pretzel.Tests.Commands
         [Fact]
         public void PortDefaultValue()
         {
-            var sut = BuildParameters();
+            var sut = BuildArguments();
 
             Assert.Equal(8080, sut.Port);
         }

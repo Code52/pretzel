@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Pretzel.Tests.Commands
 {
-    public abstract class BakeBaseCommandParametersTests<T> : PretzelBaseCommandParametersTests<T>
+    public abstract class BakeBaseCommandArgumentsTests<T> : PretzelBaseCommandArgumentsTests<T>
         where T : BakeBaseCommandArguments
     {
         [Theory]
@@ -13,7 +13,7 @@ namespace Pretzel.Tests.Commands
         [InlineData("--cleantarget")]
         public void CleanTarget(string argument)
         {
-            var sut = BuildParameters(argument);
+            var sut = BuildArguments(argument);
 
             Assert.True(sut.CleanTarget);
         }  

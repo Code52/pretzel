@@ -6,9 +6,9 @@ using Xunit;
 
 namespace Pretzel.Tests.Commands
 {
-    public class ImportCommandParametersTests : PretzelBaseCommandParametersTests<ImportCommandArguments>
+    public class ImportCommandArgumentsTests : PretzelBaseCommandArgumentsTests<ImportCommandArguments>
     {
-        protected override ImportCommandArguments CreateParameters(IFileSystem fileSystem)
+        protected override ImportCommandArguments CreateArguments(IFileSystem fileSystem)
             => new ImportCommandArguments(fileSystem);
 
         [Theory]
@@ -16,7 +16,7 @@ namespace Pretzel.Tests.Commands
         [InlineData("-i", "bar")]
         public void ImportType(string argument, string expectedValue)
         {
-            var sut = BuildParameters(argument, expectedValue);
+            var sut = BuildArguments(argument, expectedValue);
 
             Assert.Equal(expectedValue, sut.ImportType);
         }
@@ -26,7 +26,7 @@ namespace Pretzel.Tests.Commands
         [InlineData("-f", "buzz")]
         public void ImportFile(string argument, string expectedValue)
         {
-            var sut = BuildParameters(argument, expectedValue);
+            var sut = BuildArguments(argument, expectedValue);
 
             Assert.Equal(expectedValue, sut.ImportFile);
         }

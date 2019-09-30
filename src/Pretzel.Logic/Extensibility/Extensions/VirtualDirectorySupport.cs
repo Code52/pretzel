@@ -16,7 +16,7 @@ namespace Pretzel.Logic.Extensibility.Extensions
     {
         public IList<Option> Options { get; } = new[]
         {
-            new Option(new [] { "-vDir", "--virtualdirectory"}, "Rewrite url's to work inside the specified virtual directory")
+            new Option(new [] { "--virtualdirectory", "-vDir" }, "Rewrite url's to work inside the specified virtual directory")
             {
                 Argument = new Argument<string>()
             }
