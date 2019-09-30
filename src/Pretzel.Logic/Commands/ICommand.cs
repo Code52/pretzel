@@ -4,6 +4,6 @@ namespace Pretzel.Logic.Commands
 {
     public interface IPretzelCommand
     {
-        Task Execute();
+        Task<int> Execute();
     }
 }

@@ -64,7 +64,7 @@ namespace Pretzel.Commands
         [Import]
         public IConfiguration Configuration { get; set; }
 
-        public Task Execute()
+        public Task<int> Execute()
         {
             Tracing.Info("taste - testing a site locally");
             
@@ -87,7 +87,7 @@ namespace Pretzel.Commands
                 Tracing.Info("template engine {0} not found - (engines: {1})", Parameters.Template,
                                            string.Join(", ", TemplateEngines.Engines.Keys));
 
-                return Task.CompletedTask;
+                return Task.FromResult(1);
             }
 
             engine.Initialize();
@@ -109,7 +109,7 @@ namespace Pretzel.Commands
                     {
                         Tracing.Info("Port {0} is already in use", Parameters.Port);
 
-                        return Task.CompletedTask;
+                        return Task.FromResult(1);
                     }
 
                     var url = string.Format("http://localhost:{0}/", Parameters.Port);
@@ -141,7 +141,7 @@ namespace Pretzel.Commands
                 }
             }
 
-            return Task.CompletedTask;
+            return Task.FromResult(0);
         }
 
         private void WatcherOnChanged(string file)

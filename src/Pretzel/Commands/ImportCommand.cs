@@ -47,7 +47,7 @@ namespace Pretzel.Commands
         [Import]
         public ImportCommandParameters Parameters { get; set; }
 
-        public Task Execute()
+        public Task<int> Execute()
         {
             Tracing.Info("import - import posts from external source");
 
@@ -55,7 +55,7 @@ namespace Pretzel.Commands
             {
                 Tracing.Info("Requested import type not found: {0}", Parameters.ImportType);
 
-                return Task.CompletedTask;
+                return Task.FromResult(1);
             }
 
             if (string.Equals("wordpress", Parameters.ImportType, StringComparison.InvariantCultureIgnoreCase))
@@ -71,7 +71,7 @@ namespace Pretzel.Commands
 
             Tracing.Info("Import complete");
 
-            return Task.CompletedTask;
+            return Task.FromResult(0);
         }
     }
 }

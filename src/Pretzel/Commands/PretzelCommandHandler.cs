@@ -52,9 +52,7 @@ namespace Pretzel.Commands
                 }
             }
 
-            await Command.CreateExport().Value.Execute();
-
-            return 0;
+            return await Command.CreateExport().Value.Execute();
         }
     }
 }
