@@ -6,9 +6,9 @@ using System.IO.Abstractions;
 
 namespace Pretzel.Logic.Commands
 {
-    public abstract class BakeBaseCommandParameters : PretzelBaseCommandParameters
+    public abstract class BakeBaseCommandArguments : PretzelBaseCommandArguments
     {
-        protected BakeBaseCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
+        protected BakeBaseCommandArguments(IFileSystem fileSystem) : base(fileSystem) { }
 
         protected override IEnumerable<Option> CreateOptions() => base.CreateOptions().Concat(new[]
         {

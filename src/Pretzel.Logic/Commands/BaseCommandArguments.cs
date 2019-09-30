@@ -7,13 +7,11 @@ using System.Linq;
 
 namespace Pretzel.Logic.Commands
 {
-    public abstract class BaseParameters : ICommandParameters, ICommandParametersExtendable
+    public abstract class BaseCommandArguments : ICommandArguments
     {
-        [ImportMany]
-        public ExportFactory<IHaveCommandLineArgs, CommandArgumentsExtentionAttribute>[] ArgumentExtenders { get; set; }
-
         [Export]
         public IList<Option> Options { get; set; }
+        public IList<ICommandArgumentsExtension> Extensions { get; } = new List<ICommandArgumentsExtension>();
 
         [OnImportsSatisfied]
         internal void OnImportsSatisfied()
@@ -21,11 +19,6 @@ namespace Pretzel.Logic.Commands
             var options = new List<Option>();
             Options = options;
             options.AddRange(CreateOptions());
-
-            foreach (var factory in this.GetCommandExtentions())
-            {
-                factory.CreateExport().Value.UpdateOptions(Options);
-            }
         }
 
         protected abstract IEnumerable<Option> CreateOptions();

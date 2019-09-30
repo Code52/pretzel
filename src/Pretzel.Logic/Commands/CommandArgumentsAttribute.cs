@@ -9,7 +9,7 @@ namespace Pretzel.Logic.Commands
     {
         public string CommandName { get; set; }
 
-        public CommandArgumentsAttribute() : base(typeof(ICommandParameters))
+        public CommandArgumentsAttribute() : base(typeof(ICommandArguments))
         {
         }
     }

@@ -15,10 +15,10 @@ namespace Pretzel.Commands
     [Shared]
     [Export]
     [CommandArguments(CommandName = BuiltInCommands.Bake)]
-    public sealed class BakeCommandParameters : BakeBaseCommandParameters
+    public sealed class BakeCommandArguments : BakeBaseCommandArguments
     {
         [ImportingConstructor]
-        public BakeCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
+        public BakeCommandArguments(IFileSystem fileSystem) : base(fileSystem) { }
     }
 
     [Shared]
@@ -35,7 +35,7 @@ namespace Pretzel.Commands
         public IEnumerable<ITransform> Transforms { get; set; }
 
         [Import]
-        public BakeCommandParameters Parameters { get; set; }
+        public BakeCommandArguments Parameters { get; set; }
 
         [Import]
         public IFileSystem FileSystem { get; set; }

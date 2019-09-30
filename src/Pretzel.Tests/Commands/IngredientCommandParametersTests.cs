@@ -6,10 +6,10 @@ using Xunit;
 
 namespace Pretzel.Tests.Commands
 {
-    public class IngredientCommandParametersTests : PretzelBaseCommandParametersTests<IngredientCommandParameters>
+    public class IngredientCommandParametersTests : PretzelBaseCommandParametersTests<IngredientCommandArguments>
     {
-        protected override IngredientCommandParameters CreateParameters(IFileSystem fileSystem)
-            => new IngredientCommandParameters(fileSystem);
+        protected override IngredientCommandArguments CreateParameters(IFileSystem fileSystem)
+            => new IngredientCommandArguments(fileSystem);
 
         [Theory]
         [InlineData("--newposttitle", "My AwesomeBlog")]

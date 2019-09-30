@@ -1,9 +1,7 @@
-using Pretzel.Logic.Extensibility.Extensions;
-using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
+using Pretzel.Logic.Extensibility.Extensions;
 using Xunit;
-using Xunit.Extensions;
 
 namespace Pretzel.Tests.Extensibility.Extensions
 {

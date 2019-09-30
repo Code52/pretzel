@@ -2,11 +2,14 @@ using NSubstitute;
 using Pretzel.Commands;
 using Pretzel.Logic;
 using Pretzel.Logic.Commands;
+using Pretzel.Logic.Extensibility;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.Composition;
+using System.Composition.Hosting;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Pretzel.Tests.Commands
@@ -72,7 +75,7 @@ namespace Pretzel.Tests.Commands
         [Fact]
         public void SubCommandsWithArgumentGetsHandler()
         {
-            var parameters = Substitute.For<ICommandParameters>();
+            var parameters = Substitute.For<ICommandArguments>();
             parameters.Options.Returns(new List<Option>
             {
                 new Option("-i")
@@ -86,7 +89,7 @@ namespace Pretzel.Tests.Commands
                     CommandDescription = "desc"
                 });
 
-            var argumentExportFactory = new ExportFactory<Logic.Commands.ICommandParameters, Logic.Commands.CommandArgumentsAttribute>(
+            var argumentExportFactory = new ExportFactory<Logic.Commands.ICommandArguments, Logic.Commands.CommandArgumentsAttribute>(
                 () => CreateArgument(parameters),
                 new Logic.Commands.CommandArgumentsAttribute
                 {
@@ -100,11 +103,11 @@ namespace Pretzel.Tests.Commands
                 {
                     commandExportFactory
                 },
-                CommandArguments = new ExportFactory<Logic.Commands.ICommandParameters, Logic.Commands.CommandArgumentsAttribute>[]
+                CommandArguments = new ExportFactory<Logic.Commands.ICommandArguments, Logic.Commands.CommandArgumentsAttribute>[]
                 {
                     argumentExportFactory,
-                    new ExportFactory<Logic.Commands.ICommandParameters, Logic.Commands.CommandArgumentsAttribute>(
-                    () => CreateArgument(Substitute.For<ICommandParameters>()),
+                    new ExportFactory<Logic.Commands.ICommandArguments, Logic.Commands.CommandArgumentsAttribute>(
+                    () => CreateArgument(Substitute.For<ICommandArguments>()),
                     new Logic.Commands.CommandArgumentsAttribute
                     {
                         CommandName = "othercommand"
@@ -129,7 +132,142 @@ namespace Pretzel.Tests.Commands
 
         Tuple<Logic.Commands.IPretzelCommand, Action> CreateCommand()
             => Tuple.Create(Substitute.For<Logic.Commands.IPretzelCommand>(), new Action(() => { }));
-        Tuple<ICommandParameters, Action> CreateArgument(ICommandParameters parameters)
+        Tuple<ICommandArguments, Action> CreateArgument(ICommandArguments parameters)
             => Tuple.Create(parameters, new Action(() => { }));
+
+
+        public class ICommandParametersExtentionsTests : IDisposable
+        {
+            CompositionHost Container;
+            public ICommandParametersExtentionsTests()
+            {
+                var configuration = new ContainerConfiguration();
+                configuration.WithPart<CommandCollection>();
+                configuration.WithPart<TestCommand1>();
+                configuration.WithPart<TestCommand2>();
+                configuration.WithPart<TestCommandArguments1>();
+                configuration.WithPart<TestCommandArguments2>();
+                configuration.WithPart<Extender1>();
+                configuration.WithPart<Extender2>();
+                configuration.WithPart<Extender3>();
+                configuration.WithPart<ConfigurationMock>();
+                Container = configuration.CreateContainer();
+            }
+
+            [Fact]
+            public void CollectsOnlyCommandsWhereNamesMatch1()
+            {
+                Container.GetExport<CommandCollection>();
+                var target = Container.GetExport<TestCommandArguments1>();
+                
+                Assert.Equal(2, target.Extensions.Count);
+                Assert.Contains(target.Extensions, e => e is Extender1);
+                Assert.Contains(target.Extensions, e => e is Extender3);
+            }
+
+            [Fact]
+            public void CollectsOnlyCommandsWhereNamesMatch2()
+            {
+                Container.GetExport<CommandCollection>();
+                var target = Container.GetExport<TestCommandArguments2>();
+                
+                Assert.Equal(2, target.Extensions.Count);
+                Assert.Contains(target.Extensions, e => e is Extender2);
+                Assert.Contains(target.Extensions, e => e is Extender3);
+
+            }
+
+            public void Dispose()
+                => Container?.Dispose();
+
+            [Export]
+            [Shared]
+            [CommandArguments(CommandName = "test1")]
+            public class TestCommandArguments1 : ICommandArguments
+            {
+                [ImportMany]
+                public ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>[] ArgumentExtensions { get; set; }
+
+                public IList<Option> Options => new List<Option>();
+
+                public IList<ICommandArgumentsExtension> Extensions { get; } = new List<ICommandArgumentsExtension>();
+
+                public void BindingCompleted() { }
+            }
+
+            [Export]
+            [Shared]
+            [CommandInfo(CommandName = "test1")]
+            public class TestCommand1 : IPretzelCommand
+            {
+                public Task<int> Execute()
+                {
+                    return Task.FromResult(0);
+                }
+            }
+
+            [Export]
+            [Shared]
+            [CommandArguments(CommandName = "test2")]
+            public class TestCommandArguments2 : ICommandArguments
+            {
+                [ImportMany]
+                public ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>[] ArgumentExtensions { get; set; }
+
+                public IList<Option> Options => new List<Option>();
+
+                public IList<ICommandArgumentsExtension> Extensions { get; } = new List<ICommandArgumentsExtension>();
+
+                public void BindingCompleted() { }
+            }
+
+            [Export]
+            [Shared]
+            [CommandInfo(CommandName = "test2")]
+            public class TestCommand2 : IPretzelCommand
+            {
+                public Task<int> Execute()
+                {
+                    return Task.FromResult(0);
+                }
+            }
+
+            [CommandArgumentsExtension(CommandNames = new[] { "test1" })]
+            public class Extender1 : ICommandArgumentsExtension
+            {
+                public void UpdateOptions(IList<Option> options)
+                {
+                }
+
+                public void BindingCompleted()
+                {
+                }
+            }
+
+            [CommandArgumentsExtension(CommandNames = new[] { "test2" })]
+            public class Extender2 : ICommandArgumentsExtension
+            {
+                public void UpdateOptions(IList<Option> options)
+                {
+                }
+
+                public void BindingCompleted()
+                {
+                }
+            }
+
+            [CommandArgumentsExtension(CommandNames = new[] { "test1", "test2" })]
+            public class Extender3 : ICommandArgumentsExtension
+            {
+                public void UpdateOptions(IList<Option> options)
+                {
+                }
+
+                public void BindingCompleted()
+                {
+                }
+            }
+
+        }
     }
 }

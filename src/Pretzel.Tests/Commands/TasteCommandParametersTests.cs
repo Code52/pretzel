@@ -6,10 +6,10 @@ using Xunit;
 
 namespace Pretzel.Tests.Commands
 {
-    public class TasteCommandParametersTests : BakeBaseCommandParametersTests<TasteCommandParameters>
+    public class TasteCommandParametersTests : BakeBaseCommandParametersTests<TasteCommandArguments>
     {
-        protected override TasteCommandParameters CreateParameters(IFileSystem fileSystem)
-            => new TasteCommandParameters(fileSystem);
+        protected override TasteCommandArguments CreateParameters(IFileSystem fileSystem)
+            => new TasteCommandArguments(fileSystem);
 
         [Theory]
         [InlineData("--nobrowser", true)]

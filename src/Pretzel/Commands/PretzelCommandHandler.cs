@@ -11,11 +11,11 @@ namespace Pretzel.Commands
 {
     public class PretzelCommandHandler : ICommandHandler
     {
-        public ICommandParameters CommandParameters { get; }
+        public ICommandArguments CommandParameters { get; }
         public ExportFactory<IPretzelCommand, CommandInfoAttribute> Command { get; }
         public IConfiguration Configuration { get; }
 
-        public PretzelCommandHandler(IConfiguration configuration, ICommandParameters commandParameters, ExportFactory<IPretzelCommand, CommandInfoAttribute> command)
+        public PretzelCommandHandler(IConfiguration configuration, ICommandArguments commandParameters, ExportFactory<IPretzelCommand, CommandInfoAttribute> command)
         {
             Configuration = configuration;
             CommandParameters = commandParameters;
@@ -39,17 +39,12 @@ namespace Pretzel.Commands
                 Configuration.ReadFromFile(pathProvider.Source);
             }
 
-            if (CommandParameters is ICommandParametersExtendable commandParametersExtendable)
+            foreach (var argumentsExtension in CommandParameters.Extensions)
             {
-                foreach (var factory in commandParametersExtendable.GetCommandExtentions())
-                {
-                    var extentedArguments = factory.CreateExport().Value;
+                new ModelBinder(argumentsExtension.GetType())
+                    .UpdateInstance(argumentsExtension, bindingContext);
 
-                    new ModelBinder(extentedArguments.GetType())
-                        .UpdateInstance(extentedArguments, bindingContext);
-
-                    extentedArguments.BindingCompleted();
-                }
+                argumentsExtension.BindingCompleted();
             }
 
             return await Command.CreateExport().Value.Execute();

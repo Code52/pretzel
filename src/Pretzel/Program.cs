@@ -1,10 +1,6 @@
-using Pretzel.Commands;
-using Pretzel.Logic.Commands;
-using Pretzel.Logic.Extensions;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
 using System.Composition;
 using System.Composition.Hosting;
@@ -13,6 +9,8 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Pretzel.Commands;
+using Pretzel.Logic.Extensions;
 
 namespace Pretzel
 {
@@ -41,7 +39,7 @@ namespace Pretzel
 
         [Import]
         public CommandCollection CommandCollection { get; set; }
-        
+
         [Export]
         public IFileSystem FileSystem { get; set; } = fileSystem;
 

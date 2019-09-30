@@ -14,10 +14,10 @@ namespace Pretzel.Commands
     [Export]
     [Shared]
     [CommandArguments(CommandName = BuiltInCommands.Import)]
-    public class ImportCommandParameters : PretzelBaseCommandParameters
+    public class ImportCommandArguments : PretzelBaseCommandArguments
     {
         [ImportingConstructor]
-        public ImportCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
+        public ImportCommandArguments(IFileSystem fileSystem) : base(fileSystem) { }
 
         protected override IEnumerable<Option> CreateOptions() => base.CreateOptions().Concat(new[]
         {
@@ -45,7 +45,7 @@ namespace Pretzel.Commands
         [Import]
         public IFileSystem FileSystem { get; set; }
         [Import]
-        public ImportCommandParameters Parameters { get; set; }
+        public ImportCommandArguments Parameters { get; set; }
 
         public Task<int> Execute()
         {

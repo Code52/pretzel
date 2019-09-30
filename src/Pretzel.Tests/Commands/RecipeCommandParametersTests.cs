@@ -6,10 +6,10 @@ using Xunit;
 
 namespace Pretzel.Tests.Commands
 {
-    public class RecipeCommandParametersTests : PretzelBaseCommandParametersTests<RecipeCommandParameters>
+    public class RecipeCommandParametersTests : PretzelBaseCommandParametersTests<RecipeCommandArguments>
     {
-        protected override RecipeCommandParameters CreateParameters(IFileSystem fileSystem)
-            => new RecipeCommandParameters(fileSystem);
+        protected override RecipeCommandArguments CreateParameters(IFileSystem fileSystem)
+            => new RecipeCommandArguments(fileSystem);
 
         [Theory]
         [InlineData("--wiki", true)]

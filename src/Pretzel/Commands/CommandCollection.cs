@@ -4,6 +4,7 @@ using System.Composition;
 using System.Linq;
 using Pretzel.Logic;
 using Pretzel.Logic.Commands;
+using Pretzel.Logic.Extensibility;
 
 namespace Pretzel.Commands
 {
@@ -19,12 +20,26 @@ namespace Pretzel.Commands
             set => commands = value;
         }
 
-        ExportFactory<ICommandParameters, CommandArgumentsAttribute>[] commandArguments;
+        ExportFactory<ICommandArguments, CommandArgumentsAttribute>[] commandArguments;
         [ImportMany]
-        public ExportFactory<ICommandParameters, CommandArgumentsAttribute>[] CommandArguments
+        public ExportFactory<ICommandArguments, CommandArgumentsAttribute>[] CommandArguments
         {
-            get => commandArguments ?? new ExportFactory<ICommandParameters, CommandArgumentsAttribute>[] { };
+            get => commandArguments ?? new ExportFactory<ICommandArguments, CommandArgumentsAttribute>[] { };
             set => commandArguments = value;
+        }
+
+        ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>[] argumentExtensions;
+        [ImportMany]
+        public ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>[] ArgumentExtensions
+        {
+            get
+            {
+                return argumentExtensions ?? new ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>[] { };
+            }
+            set
+            {
+                argumentExtensions = value;
+            }
         }
 
         [Export]
@@ -45,6 +60,17 @@ namespace Pretzel.Commands
                 foreach (var commandArgumentsExport in CommandArguments?.Where(a => a.Metadata.CommandName == command.Metadata.CommandName))
                 {
                     var args = commandArgumentsExport.CreateExport().Value;
+
+                    foreach (var argumentExtensionsExport in ArgumentExtensions.Where(a => a.Metadata.CommandNames.Contains(commandArgumentsExport.Metadata.CommandName)))
+                    {
+                        var arugumentExtension = argumentExtensionsExport.CreateExport().Value;
+                        args.Extensions.Add(arugumentExtension);
+                    }
+
+                    foreach(var arugumentExtension in args.Extensions)
+                    {
+                        arugumentExtension.UpdateOptions(args.Options);
+                    }
 
                     foreach (var option in args.Options)
                     {

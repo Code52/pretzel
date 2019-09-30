@@ -1,31 +1,32 @@
-using NSubstitute;
-using Pretzel.Commands;
-using Pretzel.Logic;
-using Pretzel.Logic.Commands;
-using Pretzel.Logic.Extensibility;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Composition;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using NSubstitute;
+using Pretzel.Commands;
+using Pretzel.Logic;
+using Pretzel.Logic.Commands;
+using Pretzel.Logic.Extensibility;
 using Xunit;
 
 namespace Pretzel.Tests.Commands
 {
     public class PretzelCommandHandlerTests
     {
-        public class TestParams : ICommandParameters
+        public class TestArguments : ICommandArguments
         {
-            public IList<Option> Options => throw new NotImplementedException();
+            public IList<Option> Options => new List<Option>();
 
             public void BindingCompleted()
             {
             }
 
             public bool SomeOption { get; set; }
+
+            public IList<ICommandArgumentsExtension> Extensions => new List<ICommandArgumentsExtension>();
         }
 
         [Fact]
@@ -38,7 +39,8 @@ namespace Pretzel.Tests.Commands
             });
 
             var context = new InvocationContext(new Parser(rootCommand).Parse("--someoption"), Substitute.For<IConsole>());
-            var testParams = new TestParams();
+            var testParams = new TestArguments();
+
             var sut = new PretzelCommandHandler(
                 Substitute.For<IConfiguration>(),
                 testParams,
@@ -59,11 +61,11 @@ namespace Pretzel.Tests.Commands
             var rootCommand = new RootCommand();
 
             var context = new InvocationContext(new Parser(rootCommand).Parse(string.Empty), Substitute.For<IConsole>());
-            var testParams = Substitute.For<ICommandParameters>();
+            var testArgument = Substitute.For<ICommandArguments>();
 
             var sut = new PretzelCommandHandler(
               Substitute.For<IConfiguration>(),
-              testParams,
+              testArgument,
               new ExportFactory<IPretzelCommand, CommandInfoAttribute>(
                   () => Tuple.Create(
                           Substitute.For<IPretzelCommand>(),
@@ -72,7 +74,7 @@ namespace Pretzel.Tests.Commands
 
             await sut.InvokeAsync(context);
 
-            testParams.Received().BindingCompleted();
+            testArgument.Received().BindingCompleted();
         }
 
         [Fact]
@@ -81,14 +83,14 @@ namespace Pretzel.Tests.Commands
             var configuration = Substitute.For<IConfiguration>();
 
             var rootCommand = new RootCommand();
-            var testParams = Substitute.For<ICommandParameters, ISourcePathProvider>();
-            ((ISourcePathProvider)testParams).Source.Returns("foo");
+            var testArgument = Substitute.For<ICommandArguments, ISourcePathProvider>();
+            ((ISourcePathProvider)testArgument).Source.Returns("foo");
 
             var context = new InvocationContext(new Parser(rootCommand).Parse(string.Empty), Substitute.For<IConsole>());
 
             var sut = new PretzelCommandHandler(
                 configuration,
-                testParams,
+                testArgument,
                 new ExportFactory<IPretzelCommand, CommandInfoAttribute>(
                     () => Tuple.Create(
                             Substitute.For<IPretzelCommand>(),
@@ -100,16 +102,16 @@ namespace Pretzel.Tests.Commands
             configuration.Received().ReadFromFile("foo");
         }
 
-        [CommandArguments(CommandName = nameof(TestParams2))]
-        public class TestParams2 : ICommandParameters, ICommandParametersExtendable
+        [CommandArguments(CommandName = nameof(TestArguments2))]
+        public class TestArguments2 : ICommandArguments
         {
-            public IList<Option> Options => throw new NotImplementedException();
+            public IList<Option> Options { get; } = new List<Option>();
 
             public void BindingCompleted()
             {
             }
 
-            public class ExtendedArguments : IHaveCommandLineArgs
+            public class ExtendedArguments : ICommandArgumentsExtension
             {
                 public bool BindingCompletedCalled { get; private set; }
                 public void BindingCompleted()
@@ -127,10 +129,12 @@ namespace Pretzel.Tests.Commands
 
             public readonly ExtendedArguments Args = new ExtendedArguments();
 
-            public ExportFactory<IHaveCommandLineArgs, CommandArgumentsExtentionAttribute>[] ArgumentExtenders => new[]
+            public ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>[] ArgumentExtensions => new[]
             {
-                new ExportFactory<IHaveCommandLineArgs, CommandArgumentsExtentionAttribute>(() => Tuple.Create<IHaveCommandLineArgs, Action>(Args, new Action(() => { })), new CommandArgumentsExtentionAttribute{ CommandNames = new []{ nameof(TestParams2)} })
+                new ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>(() => Tuple.Create<ICommandArgumentsExtension, Action>(Args, new Action(() => { })), new CommandArgumentsExtensionAttribute{ CommandNames = new []{ nameof(TestArguments2)} })
             };
+
+            public IList<ICommandArgumentsExtension> Extensions { get; } = new List<ICommandArgumentsExtension>();
         }
 
 
@@ -144,7 +148,10 @@ namespace Pretzel.Tests.Commands
             });
 
             var context = new InvocationContext(new Parser(rootCommand).Parse("--otheroption"), Substitute.For<IConsole>());
-            var testParams = new TestParams2();
+            var testParams = new TestArguments2();
+
+            testParams.Extensions.Add(testParams.Args);
+
             var sut = new PretzelCommandHandler(
                 Substitute.For<IConfiguration>(),
                 testParams,
@@ -169,7 +176,8 @@ namespace Pretzel.Tests.Commands
             });
 
             var context = new InvocationContext(new Parser(rootCommand).Parse("--otheroption"), Substitute.For<IConsole>());
-            var testParams = new TestParams2();
+            var testParams = new TestArguments2();
+            testParams.Extensions.Add(testParams.Args);
             var sut = new PretzelCommandHandler(
                 Substitute.For<IConfiguration>(),
                 testParams,
@@ -194,7 +202,7 @@ namespace Pretzel.Tests.Commands
 
             var sut = new PretzelCommandHandler(
                 Substitute.For<IConfiguration>(),
-                Substitute.For<ICommandParameters>(),
+                Substitute.For<ICommandArguments>(),
                 new ExportFactory<IPretzelCommand, CommandInfoAttribute>(
                     () => Tuple.Create(
                             command,
@@ -213,7 +221,7 @@ namespace Pretzel.Tests.Commands
 
             var context = new InvocationContext(new Parser(rootCommand).Parse(""), Substitute.For<IConsole>());
             var configuration = Substitute.For<IConfiguration>();
-            var @params = Substitute.For<ICommandParameters, ISourcePathProvider>();
+            var @params = Substitute.For<ICommandArguments, ISourcePathProvider>();
             ((ISourcePathProvider)@params).Source.Returns("bar");
             var command = Substitute.For<IPretzelCommand>();
 

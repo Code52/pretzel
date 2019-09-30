@@ -1,9 +1,8 @@
-using Pretzel.Logic.Commands;
-using Pretzel.Logic.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.IO.Abstractions;
+using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Logic
 {
@@ -39,7 +38,7 @@ namespace Pretzel.Logic
         public object this[string key] => _config[key];
 
         public IDefaultsConfiguration Defaults { get; private set; }
-        
+
         internal Configuration()
         {
             _config = new Dictionary<string, object>();

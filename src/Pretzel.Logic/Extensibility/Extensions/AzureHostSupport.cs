@@ -1,19 +1,18 @@
-using Pretzel.Logic.Commands;
-using Pretzel.Logic.Extensions;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Reflection;
+using Pretzel.Logic.Commands;
+using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Logic.Extensibility.Extensions
 {
     [Export]
     [Shared]
-    [CommandArgumentsExtention(CommandNames = new[] { BuiltInCommands.Create })]
-    public class AzureHostSupportArguments : IHaveCommandLineArgs
+    [CommandArgumentsExtension(CommandNames = new[] { BuiltInCommands.Create })]
+    public class AzureHostSupportArguments : ICommandArgumentsExtension
     {
         public void UpdateOptions(IList<Option> options)
         {

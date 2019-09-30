@@ -18,10 +18,10 @@ namespace Pretzel.Commands
     [Export]
     [Shared]
     [CommandArguments(CommandName = BuiltInCommands.Taste)]
-    public class TasteCommandParameters : BakeBaseCommandParameters
+    public class TasteCommandArguments : BakeBaseCommandArguments
     {
         [ImportingConstructor]
-        public TasteCommandParameters(IFileSystem fileSystem) : base(fileSystem) { }
+        public TasteCommandArguments(IFileSystem fileSystem) : base(fileSystem) { }
 
         protected override IEnumerable<Option> CreateOptions() => base.CreateOptions().Concat(new[]
         {
@@ -53,7 +53,7 @@ namespace Pretzel.Commands
         public SiteContextGenerator Generator { get; set; }
 
         [Import]
-        public TasteCommandParameters Parameters { get; set; }
+        public TasteCommandArguments Parameters { get; set; }
 
         [ImportMany]
         public IEnumerable<ITransform> Transforms { get; set; }

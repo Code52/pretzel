@@ -6,7 +6,7 @@ using Xunit;
 namespace Pretzel.Tests.Commands
 {
     public abstract class BakeBaseCommandParametersTests<T> : PretzelBaseCommandParametersTests<T>
-        where T : BakeBaseCommandParameters
+        where T : BakeBaseCommandArguments
     {
         [Theory]
         [InlineData("-c")]

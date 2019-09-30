@@ -6,12 +6,11 @@ using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using NSubstitute;
-using Pretzel.Commands;
 using Pretzel.Logic.Commands;
 
 namespace Pretzel.Tests.Commands
 {
-    public abstract class ParametersTests<T> where T : BaseParameters
+    public abstract class ParametersTests<T> where T : BaseCommandArguments
     {
         readonly IConsole Console = Substitute.For<IConsole>();
         protected readonly MockFileSystem fileSystem = new MockFileSystem();

@@ -9,11 +9,11 @@ using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Logic.Commands
 {
-    public abstract class PretzelBaseCommandParameters : BaseParameters, ISourcePathProvider
+    public abstract class PretzelBaseCommandArguments : BaseCommandArguments, ISourcePathProvider
     {
         protected readonly IFileSystem fileSystem;
 
-        protected PretzelBaseCommandParameters(IFileSystem fileSystem)
+        protected PretzelBaseCommandArguments(IFileSystem fileSystem)
         {
             this.fileSystem = fileSystem;
         }

@@ -1,10 +1,9 @@
+using System.Collections.Generic;
+using System.IO.Abstractions;
 using NSubstitute;
 using Pretzel.Logic.Extensibility.Extensions;
 using Pretzel.Logic.Templating.Context;
-using System.Collections.Generic;
-using System.IO.Abstractions;
 using Xunit;
-using Xunit.Extensions;
 
 namespace Pretzel.Tests.Extensibility.Extensions
 {
@@ -73,7 +72,7 @@ namespace Pretzel.Tests.Extensibility.Extensions
         }
 
         [Fact]
-        public void processes_only_css_and_html_files() 
+        public void processes_only_css_and_html_files()
         {
             // arrange
             var returnThis = Substitute.For<FileBase>();

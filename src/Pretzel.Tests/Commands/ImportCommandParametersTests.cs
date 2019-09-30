@@ -6,10 +6,10 @@ using Xunit;
 
 namespace Pretzel.Tests.Commands
 {
-    public class ImportCommandParametersTests : PretzelBaseCommandParametersTests<ImportCommandParameters>
+    public class ImportCommandParametersTests : PretzelBaseCommandParametersTests<ImportCommandArguments>
     {
-        protected override ImportCommandParameters CreateParameters(IFileSystem fileSystem)
-            => new ImportCommandParameters(fileSystem);
+        protected override ImportCommandArguments CreateParameters(IFileSystem fileSystem)
+            => new ImportCommandArguments(fileSystem);
 
         [Theory]
         [InlineData("--importtype", "foo")]

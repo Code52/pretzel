@@ -11,7 +11,7 @@ using Xunit;
 namespace Pretzel.Tests.Commands
 {
     public abstract class PretzelBaseCommandParametersTests<T> : ParametersTests<T>
-        where T : PretzelBaseCommandParameters
+        where T : PretzelBaseCommandArguments
     {
         [Theory]
         [InlineData("--drafts")]
