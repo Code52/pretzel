@@ -1,6 +1,6 @@
 permalink: /:title.html
 auto: true
-markdown: rdiscount
+markdown: kramdown
 exclude: rakefile.rb, server.bat, config.ru
 appname: Pretzel
 appslogan: 'Build delicious sites with '
