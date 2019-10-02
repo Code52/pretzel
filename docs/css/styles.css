@@ -1,0 +1,67 @@
+body 
+{ 
+    font-family: Segoe UI, Segoe WP, Helvetica, Arial, FreeSans, san-serif;
+    margin:0; 
+    padding:0; 
+    background: url('background_image.png') repeat-x top;
+    font-size:1.1em;
+}
+      
+h1 { font-family: Segoe UI Light, Segoe WP Light, Segoe UI, Helvetica, sans-serif; font-weight: lighter; font-size:3em; margin-top:0px;}
+			
+a, a:visited { color: #{{site.accent}}; text-decoration:none;}
+			
+a:hover { color: #{{site.darkaccent}}; text-decoration:underline;}
+			
+img { border: none;}
+			
+#code52 { color: #41b1e1; font-family: Segoe UI Light, Segoe WP Light, Segoe UI, Helvetica, sans-serif; }
+#code52 a, #code52 a:visited { color: #41b1e1; text-decoration:none; }
+#code52 a:hover { text-decoration:underline; }
+			
+#apptitle { font-family: Segoe UI; font-weight:bold;}
+			
+#container {  width: 900px; margin-left:auto; margin-right:auto;  margin-top:25px; }
+			
+#features { margin-top:25px; margin-bottom:25px;}
+			
+#screenshot { text-align:center; }
+			
+.screenshotborder
+{
+    width:790px;
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+}
+			
+#screenshotbordertop {margin-top:-22px;}
+#screenshotborderbottom {margin-bottom:20px;}
+			
+#downloads { margin-left:auto; margin-right:auto; width:435px;font-size:2em; }
+#downloads a { text-align:left;}
+#downloads div {text-align:center;}
+#downloads a img {margin-right:15px; margin-bottom:-5px;}
+			
+.accent { color: #{{site.accent}};}
+			
+.feature { float:left; width: 245px; margin-right:50px;}
+			
+.feature h2 { font-size: 1.15em; margin-top:0px; margin-bottom:0px;}
+			
+.twitter-share-button {margin-top:50px;}
+
+.footer {
+    margin-top: 20px;
+    color: #aaa;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+@media screen and (max-width:900px)
+{
+    body { width:auto; padding:10px;}
+    #container { width : 100%;  }
+    img { max-width:100%; }
+    .screenshotborder { display:none; }
+}
