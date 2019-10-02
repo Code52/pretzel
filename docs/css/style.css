@@ -1,3 +1,8 @@
+:root {
+    --accent: 000000;
+    --darkaccent: cacaca;
+}
+
 body 
 { 
     font-family: Segoe UI, Segoe WP, Helvetica, Arial, FreeSans, san-serif;
@@ -9,9 +14,9 @@ body
       
 h1 { font-family: Segoe UI Light, Segoe WP Light, Segoe UI, Helvetica, sans-serif; font-weight: lighter; font-size:3em; margin-top:0px;}
 			
-a, a:visited { color: #{{site.accent}}; text-decoration:none;}
+a, a:visited { color: var(--accent); text-decoration:none;}
 			
-a:hover { color: #{{site.darkaccent}}; text-decoration:underline;}
+a:hover { color: var(--darkaccent); text-decoration:underline;}
 			
 img { border: none;}
 			
@@ -43,7 +48,7 @@ img { border: none;}
 #downloads div {text-align:center;}
 #downloads a img {margin-right:15px; margin-bottom:-5px;}
 			
-.accent { color: #{{site.accent}};}
+.accent { color: var(--accent);}
 			
 .feature { float:left; width: 245px; margin-right:50px;}
 			
