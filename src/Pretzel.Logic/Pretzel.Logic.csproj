@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
     <TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
@@ -32,10 +32,10 @@
     <PackageReference Include="dotless.Core" Version="1.6.7" />
     <PackageReference Include="DotLiquid" Version="2.0.314" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.12" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.Extensions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="2.1.1" />
     <PackageReference Include="NDesk.Options" Version="0.2.1" />
     <PackageReference Include="NUglify" Version="1.5.13" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Runtime" Version="2.2.0" />
     <PackageReference Include="RazorEngine.NetCore" Version="2.2.4" />    
     <PackageReference Include="System.IO.Abstractions" Version="6.0.32" />
     <PackageReference Include="YamlDotNet" Version="6.1.2" />
@@ -43,10 +43,6 @@
     <PackageReference Include="SonarAnalyzer.CSharp" Version="7.16.0.8981">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Liquid.Designer.cs">
