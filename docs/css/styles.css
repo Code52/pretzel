@@ -50,7 +50,14 @@ img { border: none;}
 .feature h2 { font-size: 1.15em; margin-top:0px; margin-bottom:0px;}
 			
 .twitter-share-button {margin-top:50px;}
-			
+
+.footer {
+    margin-top: 20px;
+    color: #aaa;
+    font-size: 0.9em;
+    text-align: center;
+}
+
 @media screen and (max-width:900px)
 {
 		body { width:auto; padding:10px;}
