@@ -4,6 +4,7 @@
 [![Ptrezel tag on Stack Overflow](https://img.shields.io/badge/stackoverflow-pretzel-orange.svg)](http://stackoverflow.com/questions/tagged/pretzel)
 [![Chocolatey](https://img.shields.io/chocolatey/v/pretzel.svg?style=flat)](https://chocolatey.org/packages/pretzel/)
 [![Nuget](https://img.shields.io/nuget/v/Pretzel.Logic.svg)](https://www.nuget.org/packages/Pretzel.Logic/)
+[![Jekyll](https://img.shields.io/badge/Jekyll-docs-yellow)](https://jekyllrb.com/docs/usage/)
 
 
 ## Pretzel
