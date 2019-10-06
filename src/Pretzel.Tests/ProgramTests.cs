@@ -48,7 +48,7 @@ namespace Pretzel.Tests
         {
             using (var compositionHost = Program.Compose(true, true, null))
             {
-                var program = new Program()
+                var program = new Program();
                 compositionHost.SatisfyImports(program);
             }
         }
