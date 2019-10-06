@@ -36,7 +36,6 @@ namespace Pretzel.Commands
             set => argumentExtensions = value;
         }
 
-        [Export]
         public RootCommand RootCommand { get; set; }
 
         [Import]
