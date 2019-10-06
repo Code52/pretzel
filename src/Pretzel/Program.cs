@@ -14,7 +14,6 @@ using Pretzel.Logic.Extensions;
 
 namespace Pretzel
 {
-    [Export]
     internal class Program
     {
 #pragma warning disable S2223 // Non-constant static fields should not be visible
@@ -67,7 +66,8 @@ namespace Pretzel
 
                     using (var host = Compose(debug, safe, source))
                     {
-                        var program = host.GetExport<Program>();
+                        var program = new Program();
+                        host.SatisfyImports(program);
                         var result = await program.Run(GlobalOptions, args);
                         WaitForClose();
                         return result;
