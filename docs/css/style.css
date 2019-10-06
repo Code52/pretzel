@@ -1,72 +1,165 @@
 :root {
-    --accent: 000000;
-    --darkaccent: cacaca;
+    --accent: #000000;
+    --darkaccent: #aaa;
+    --code52-color: #41b1e1;
+    --background-color: #f6f6f6;
+    --header-fonts: "Segoe UI Light", "Segoe WP Light", "Segoe UI", Helvetica, sans-serif;
 }
 
-body 
-{ 
-    font-family: Segoe UI, Segoe WP, Helvetica, Arial, FreeSans, san-serif;
-    margin:0; 
-    padding:0; 
-    background: url('background_image.png') repeat-x top;
-    font-size:1.1em;
+body {
+    font-family: "Segoe UI", "Segoe WP", Helvetica, Arial, FreeSans, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    font-size: 1.1em;
 }
-      
-h1 { font-family: Segoe UI Light, Segoe WP Light, Segoe UI, Helvetica, sans-serif; font-weight: lighter; font-size:3em; margin-top:0px;}
-			
-a, a:visited { color: var(--accent); text-decoration:none;}
-			
-a:hover { color: var(--darkaccent); text-decoration:underline;}
-			
-img { border: none;}
-			
-#code52 { color: #41b1e1; font-family: Segoe UI Light, Segoe WP Light, Segoe UI, Helvetica, sans-serif; }
-#code52 a, #code52 a:visited { color: #41b1e1; text-decoration:none; }
-#code52 a:hover { text-decoration:underline; }
-			
-#apptitle { font-family: Segoe UI; font-weight:bold;}
-			
-#container {  width: 900px; margin-left:auto; margin-right:auto;  margin-top:25px; }
-			
-#features { margin-top:25px; margin-bottom:25px;}
-			
-#screenshot { text-align:center; }
-			
-.screenshotborder
-{
-    width:790px;
-    display:block;
-    margin-left:auto;
-    margin-right:auto;
+
+h1 {
+    font-family: var(--header-fonts);
+    font-weight: lighter;
+    font-size: 3em;
+    margin-top: 0px;
 }
-			
-#screenshotbordertop {margin-top:-22px;}
-#screenshotborderbottom {margin-bottom:20px;}
-			
-#downloads { margin-left:auto; margin-right:auto; width:435px;font-size:2em; }
-#downloads a { text-align:left;}
-#downloads div {text-align:center;}
-#downloads a img {margin-right:15px; margin-bottom:-5px;}
-			
-.accent { color: var(--accent);}
-			
-.feature { float:left; width: 245px; margin-right:50px;}
-			
-.feature h2 { font-size: 1.15em; margin-top:0px; margin-bottom:0px;}
-			
-.twitter-share-button {margin-top:50px;}
+
+a,
+a:visited {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--darkaccent);
+    text-decoration: underline;
+}
+
+img {
+    border: none;
+}
+
+#code52 {
+    color: var(--code52-color);
+    font-family: var(--header-fonts);
+}
+
+#code52 a,
+#code52 a:visited {
+    color: var(--code52-color);
+    text-decoration: none;
+}
+
+#code52 a:hover {
+    text-decoration: underline;
+}
+
+#apptitle {
+    font-family: "Segoe UI";
+    font-weight: bold;
+}
+
+#container {
+    width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 25px;
+}
+
+#features {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+#downloads {
+    min-height: 60px;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+#downloads a img {
+    margin-right: 5px;
+    margin-bottom: -5px;
+}
+
+.accent {
+    color: var(--accent);
+}
+
+.feature {
+    float: left;
+    width: 245px;
+    margin-right: 50px;
+}
+
+.feature h2 {
+    font-size: 1.15em;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
 
 .footer {
-    margin-top: 20px;
-    color: #aaa;
+    margin-top: 30px;
+    color: #cacaca;
     font-size: 0.9em;
     text-align: center;
 }
 
-@media screen and (max-width:900px)
-{
-    body { width:auto; padding:10px;}
-    #container { width : 100%;  }
-    img { max-width:100%; }
-    .screenshotborder { display:none; }
+.footer a,
+.footer a:visited {
+    color: var(--darkaccent);
+}
+
+
+.github-corner-icon {
+    fill: var(--code52-color);
+    color: var(--background-color);
+    position: absolute;
+    top: 0;
+    border: 0;
+    right: 0;
+}
+
+.github-corner:hover .octo-arm {
+    animation: octocat-wave 560ms ease-in-out
+}
+
+@keyframes octocat-wave {
+
+    0%,
+    100% {
+        transform: rotate(0)
+    }
+
+    20%,
+    60% {
+        transform: rotate(-25deg)
+    }
+
+    40%,
+    80% {
+        transform: rotate(10deg)
+    }
+}
+
+@media (max-width:500px) {
+    .github-corner:hover .octo-arm {
+        animation: none
+    }
+
+    .github-corner .octo-arm {
+        animation: octocat-wave 560ms ease-in-out
+    }
+}
+
+@media screen and (max-width:900px) {
+    body {
+        width: auto;
+        padding: 10px;
+    }
+
+    #container {
+        width: 100%;
+    }
+
+    img {
+        max-width: 100%;
+    }
 }

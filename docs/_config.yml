@@ -1,7 +1,6 @@
 permalink: /:title.html
 auto: true
 markdown: kramdown
-exclude: rakefile.rb, server.bat, config.ru
 appname: Pretzel
 appslogan: 'Build delicious sites with '
 username: Code52
@@ -13,7 +12,6 @@ description:
 feature1title: 'Create a site quickly'
 feature2title: 'See live changes to your site'
 feature3title: 'No messing around with Ruby'
-
 
 feature1desc: 'With the power of Markdown and Liquid, going from nada to awesome has never been so quick'
 feature2desc: 'By using <em>taste</em>, Pretzel reprocesses your changes and spits out HTML on the fly'
