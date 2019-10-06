@@ -1,4 +1,5 @@
 using System;
+using System.Composition;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
@@ -47,7 +48,8 @@ namespace Pretzel.Tests
         {
             using (var compositionHost = Program.Compose(true, true, null))
             {
-                compositionHost.GetExport<Program>();
+                var program = new Program()
+                compositionHost.SatisfyImports(program);
             }
         }
 
