@@ -29,7 +29,7 @@ namespace Pretzel
             {
                 Argument = new Argument<bool>()
             },
-            new Option(new[] { "--source", "-source", "-s", "--s" }, "The path to the source site (default current directory)")
+            new Option(new[] { "--source", "-s" }, "The path to the source site (default current directory)")
             {
                 Argument = new Argument<string>(() => fileSystem.Directory.GetCurrentDirectory())
             }
