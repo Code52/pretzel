@@ -44,45 +44,28 @@ namespace Pretzel
 
         private static async Task<int> Main(string[] args)
         {
-            var rootCommand = new RootCommand
-            {
-                TreatUnmatchedTokensAsErrors = false
-            };
+            Tracing.SetTrace(ConsoleTrace.Write);
 
             args = PatchSourcePath(args);
 
-            foreach (var option in GlobalOptions)
-            {
-                rootCommand.AddOption(option);
-            }
+            var parseResult = ParseArguments(args);
+            if (parseResult.hasError)
+                return -1;
 
-            rootCommand.Handler = CommandHandler.Create(async (bool debug, bool safe, string source) =>
-            {
-                try
-                {
-                    InitializeTrace(debug);
-                    Tracing.Info("starting pretzel...");
-                    Tracing.Debug("V{0}", Assembly.GetExecutingAssembly().GetName().Version);
-
-                    using (var host = Compose(debug, safe, source))
-                    {
-                        var program = new Program();
-                        host.SatisfyImports(program);
-                        var result = await program.Run(GlobalOptions, args);
-                        WaitForClose();
-                        return result;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Tracing.Error(ex.Message);
-                    WaitForClose();
-                    return -1;
-                }
-            });
             try
             {
-                return await rootCommand.InvokeAsync(args);
+                InitializeTrace(parseResult.debug);
+                Tracing.Info("starting pretzel...");
+                Tracing.Debug("V{0}", Assembly.GetExecutingAssembly().GetName().Version);
+
+                using (var host = Compose(parseResult.debug, parseResult.safe, parseResult.source))
+                {
+                    var program = new Program();
+                    host.SatisfyImports(program);
+                    var result = await program.Run(GlobalOptions, args);
+                    WaitForClose();
+                    return result;
+                }
             }
             catch (Exception ex)
             {
@@ -91,6 +74,33 @@ namespace Pretzel
                 return -1;
             }
         }
+
+        internal static (bool debug, bool safe, string source, bool hasError) ParseArguments(string[] args)
+        {
+            var command = new RootCommand()
+            {
+                TreatUnmatchedTokensAsErrors = false
+            };
+
+            foreach (var option in GlobalOptions)
+                command.AddOption(option);
+
+            var parseResult = new Parser(command).Parse(args);
+
+            if (parseResult.Errors.Count > 0)
+            {
+                foreach (var error in parseResult.Errors)
+                {
+                    Tracing.Error(error.Message);
+                }
+                return (true, true, null, true);
+            }
+            var debug = parseResult.FindResultFor(GlobalOptions.First(m => m.Name == "debug"))?.GetValueOrDefault<bool>() ?? false;
+            var safe = parseResult.FindResultFor(GlobalOptions.First(m => m.Name == "safe"))?.GetValueOrDefault<bool>() ?? false;
+            var source = parseResult.FindResultFor(GlobalOptions.First(m => m.Name == "source"))?.GetValueOrDefault<string>();
+            return (debug, safe, source, false);
+        }
+
 
         internal static string[] PatchSourcePath(string[] args)
         {
@@ -121,8 +131,6 @@ namespace Pretzel
 
         private static void InitializeTrace(bool debug)
         {
-            Tracing.SetTrace(ConsoleTrace.Write);
-
             if (debug)
             {
                 Tracing.SetMinimalLevel(TraceLevel.Debug);
