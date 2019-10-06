@@ -135,8 +135,6 @@ namespace Pretzel
             {
                 foreach (var option in globalOptions)
                 {
-                    CommandCollection.RootCommand.AddOption(option);
-
                     foreach (var command in CommandCollection.RootCommand.OfType<Command>())
                     {
                         command.AddOption(option);
