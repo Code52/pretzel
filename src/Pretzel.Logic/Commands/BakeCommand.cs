@@ -5,17 +5,16 @@ using System.Diagnostics;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
-using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Templating.Context;
 
-namespace Pretzel.Commands
+namespace Pretzel.Logic.Commands
 {
     [Shared]
-    [Export(typeof(IBakeCommandArguments))]
+    [Export]
     [CommandArguments]
-    public sealed class BakeCommandArguments : BakeBaseCommandArguments, IBakeCommandArguments
+    public sealed class BakeCommandArguments : BakeBaseCommandArguments
     {
         [ImportingConstructor]
         public BakeCommandArguments(IFileSystem fileSystem) : base(fileSystem) { }
@@ -37,7 +36,7 @@ namespace Pretzel.Commands
 
         [ImportMany]
         public IEnumerable<ITransform> Transforms { get; set; }
-        
+
         [Import]
         public IFileSystem FileSystem { get; set; }
 

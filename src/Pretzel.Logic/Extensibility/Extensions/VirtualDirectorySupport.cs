@@ -11,7 +11,7 @@ namespace Pretzel.Logic.Extensibility.Extensions
 {
     [Export]
     [Shared]
-    [CommandArgumentsExtension(CommandArgumentTypes = new[] { typeof(IBakeCommandArguments), typeof(ITasteCommandArguments) })]
+    [CommandArgumentsExtension(CommandArgumentTypes = new[] { typeof(BakeCommandArguments), typeof(TasteCommandArguments) })]
     public class VirtualDirectorySupportArguments : ICommandArgumentsExtension
     {
         public IList<Option> Options { get; } = new[]

@@ -5,16 +5,15 @@ using System.Composition;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
-using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Import;
 
-namespace Pretzel.Commands
+namespace Pretzel.Logic.Commands
 {
     [Shared]
-    [Export(typeof(IImportCommandArguments))]
+    [Export]
     [CommandArguments]
-    public class ImportCommandArguments : PretzelBaseCommandArguments, IImportCommandArguments
+    public class ImportCommandArguments : PretzelBaseCommandArguments
     {
         [ImportingConstructor]
         public ImportCommandArguments(IFileSystem fileSystem) : base(fileSystem) { }
@@ -53,7 +52,7 @@ namespace Pretzel.Commands
         {
             Tracing.Info("import - import posts from external source");
 
-            if (!Importers.Any(e => String.Equals(e, arguments.ImportType, StringComparison.InvariantCultureIgnoreCase)))
+            if (!Importers.Any(e => string.Equals(e, arguments.ImportType, StringComparison.InvariantCultureIgnoreCase)))
             {
                 Tracing.Info("Requested import type not found: {0}", arguments.ImportType);
 

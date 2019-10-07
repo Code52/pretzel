@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Pretzel.Modules
+namespace Pretzel.Logic.Modules
 {
     public class SimpleFileSystemWatcher : IFileSystemWatcher, IDisposable
     {

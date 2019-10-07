@@ -4,10 +4,9 @@ using System.CommandLine;
 using System.Composition;
 using System.Reflection;
 using System.Threading.Tasks;
-using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
 
-namespace Pretzel.Commands
+namespace Pretzel.Logic.Commands
 {
     [Shared]
     [Export]

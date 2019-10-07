@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
@@ -6,7 +6,7 @@ using System.IO.Abstractions;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 
-namespace Pretzel.Logic.Recipe
+namespace Pretzel.Logic.Recipes
 {
     public class Recipe
     {

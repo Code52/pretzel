@@ -30,7 +30,7 @@ namespace Pretzel.Tests.Recipe
         [Fact]
         public void Files_and_Folders_Are_Created_for_Jekyll()
         {
-            var recipe = new Logic.Recipe.Recipe(fileSystem, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, false);
+            var recipe = new Logic.Recipes.Recipe(fileSystem, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, false);
             recipe.Create();
 
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"_posts\"));
@@ -62,7 +62,7 @@ namespace Pretzel.Tests.Recipe
         [InlineData(false)]
         public void Files_and_Folders_Are_Created_for_Razor(bool wiki)
         {
-            var recipe = new Logic.Recipe.Recipe(fileSystem, "razor", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, wiki);
+            var recipe = new Logic.Recipes.Recipe(fileSystem, "razor", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, wiki);
             recipe.Create();
 
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"_posts\"));
@@ -106,7 +106,7 @@ namespace Pretzel.Tests.Recipe
         public void Other_Engine_returns_error()
         {
             fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-            var recipe = new Logic.Recipe.Recipe(fileSystem, "Musak", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, false);
+            var recipe = new Logic.Recipes.Recipe(fileSystem, "Musak", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, false);
 
             recipe.Create();
 
@@ -118,7 +118,7 @@ namespace Pretzel.Tests.Recipe
         {
             fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
             var additionalIngredient = Substitute.For<IAdditionalIngredient>();
-            var recipe = new Logic.Recipe.Recipe(fileSystem, "Razor", BaseSite, new[] { additionalIngredient }, false, false);
+            var recipe = new Logic.Recipes.Recipe(fileSystem, "Razor", BaseSite, new[] { additionalIngredient }, false, false);
             recipe.Create();
 
             additionalIngredient.Received().MixIn(BaseSite);
@@ -129,7 +129,7 @@ namespace Pretzel.Tests.Recipe
         {
             fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
             var additionalIngredient = Substitute.For<IAdditionalIngredient>();
-            var recipe = new Logic.Recipe.Recipe(fileSystem, "Liquid", BaseSite, new[] { additionalIngredient }, false, false);
+            var recipe = new Logic.Recipes.Recipe(fileSystem, "Liquid", BaseSite, new[] { additionalIngredient }, false, false);
             recipe.Create();
 
             additionalIngredient.Received().MixIn(BaseSite);
@@ -140,7 +140,7 @@ namespace Pretzel.Tests.Recipe
         {
             fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
             var additionalIngredient = Substitute.For<IAdditionalIngredient>();
-            var recipe = new Logic.Recipe.Recipe(fileSystem, "Musak", BaseSite, new[] { additionalIngredient }, false, false);
+            var recipe = new Logic.Recipes.Recipe(fileSystem, "Musak", BaseSite, new[] { additionalIngredient }, false, false);
             recipe.Create();
 
             additionalIngredient.DidNotReceive().MixIn(BaseSite);
@@ -151,7 +151,7 @@ namespace Pretzel.Tests.Recipe
         {
             fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
 
-            var recipe = new Logic.Recipe.Recipe(fileSystem, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, true);
+            var recipe = new Logic.Recipes.Recipe(fileSystem, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, true);
             recipe.Create();
 
             Assert.Contains("Wiki switch not valid with liquid templating engine", trace.ToString());
@@ -162,7 +162,7 @@ namespace Pretzel.Tests.Recipe
         {
             fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
 
-            var recipe = new Logic.Recipe.Recipe(fileSystem, "razor", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), true, false);
+            var recipe = new Logic.Recipes.Recipe(fileSystem, "razor", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), true, false);
             recipe.Create();
 
             Assert.Equal(40, fileSystem.AllPaths.Count());
@@ -194,7 +194,7 @@ namespace Pretzel.Tests.Recipe
             var fileSystemSubstitute = Substitute.For<IFileSystem>();
             fileSystemSubstitute.File.Returns(fileSubstitute);
 
-            var recipe = new Logic.Recipe.Recipe(fileSystemSubstitute, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, false);
+            var recipe = new Logic.Recipes.Recipe(fileSystemSubstitute, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, false);
             recipe.Create();
 
             Assert.Contains(@"Error trying to create template: System.Exception: Error!!!", trace.ToString());
@@ -205,7 +205,7 @@ namespace Pretzel.Tests.Recipe
         [Fact]
         public void Drafts_Folders_Is_Created()
         {
-            var recipe = new Logic.Recipe.Recipe(fileSystem, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, false, true);
+            var recipe = new Logic.Recipes.Recipe(fileSystem, "liquid", BaseSite, Enumerable.Empty<IAdditionalIngredient>(), false, false, true);
             recipe.Create();
 
             Assert.True(fileSystem.Directory.Exists(BaseSite + @"_drafts\"));

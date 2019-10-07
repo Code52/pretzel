@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Composition;
 using Pretzel.Logic.Templating;
 
-namespace Pretzel.Commands
+namespace Pretzel.Logic.Commands
 {
     [Export]
     [Shared]
     public sealed class TemplateEngineCollection
     {
-        [ImportMany] 
+        [ImportMany]
 #pragma warning disable 649
         public ExportFactory<ISiteEngine, SiteEngineInfoAttribute>[] templateEngineMap { get; set; }
 #pragma warning restore 649

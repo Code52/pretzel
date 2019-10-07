@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.IO.Abstractions;
 using Pretzel.Logic.Extensibility.Extensions;
 using Pretzel.Logic.Extensions;
 
-namespace Pretzel.Logic.Recipe
+namespace Pretzel.Logic.Recipes
 {
     public class Ingredient
     {
@@ -25,7 +25,7 @@ namespace Pretzel.Logic.Recipe
 
         public void Create()
         {
-            var postPath = fileSystem.Path.Combine(directory, !this.withDrafts ? @"_posts" : @"_drafts");
+            var postPath = fileSystem.Path.Combine(directory, !withDrafts ? @"_posts" : @"_drafts");
 
             var postName = string.Format("{0}-{1}.md", DateTime.Today.ToString("yyyy-MM-dd"), SlugifyFilter.Slugify(title));
             var pageContents = string.Format("---\r\n layout: post \r\n title: {0}\r\n comments: true\r\n---\r\n", title);

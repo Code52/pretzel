@@ -11,7 +11,7 @@ namespace Pretzel.Logic.Extensibility.Extensions
 {
     [Export]
     [Shared]
-    [CommandArgumentsExtension(CommandArgumentTypes = new[] { typeof(IRecipeCommandArguments) })]
+    [CommandArgumentsExtension(CommandArgumentTypes = new[] { typeof(RecipeCommandArguments) })]
     public class AzureHostSupportArguments : ICommandArgumentsExtension
     {
         public IList<Option> Options { get; } = new[]

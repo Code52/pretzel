@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Pretzel.Modules
+namespace Pretzel.Logic.Modules
 {
     public interface IFileSystemWatcher
     {

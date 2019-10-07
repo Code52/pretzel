@@ -6,19 +6,19 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 using Pretzel.Logic;
-using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Hosting;
+using Pretzel.Logic.Modules;
 using Pretzel.Logic.Templating;
 using Pretzel.Logic.Templating.Context;
-using Pretzel.Modules;
 
-namespace Pretzel.Commands
+namespace Pretzel.Logic.Commands
 {
     [Shared]
-    [Export(typeof(ITasteCommandArguments))]
+    [Export]
     [CommandArguments]
-    public class TasteCommandArguments : BakeBaseCommandArguments, ITasteCommandArguments
+    public class TasteCommandArguments : BakeBaseCommandArguments
     {
         [ImportingConstructor]
         public TasteCommandArguments(IFileSystem fileSystem) : base(fileSystem) { }

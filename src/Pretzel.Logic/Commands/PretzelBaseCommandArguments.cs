@@ -9,7 +9,7 @@ using Pretzel.Logic.Templating.Context;
 
 namespace Pretzel.Logic.Commands
 {
-    public abstract class PretzelBaseCommandArguments : BaseCommandArguments, ISourcePathProvider, IPretzelBaseCommandArguments
+    public abstract class PretzelBaseCommandArguments : BaseCommandArguments, ISourcePathProvider
     {
         protected readonly IFileSystem fileSystem;
 

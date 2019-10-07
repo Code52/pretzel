@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using Pretzel.Logic.Extensions;
 using Owin;
 using Microsoft.Owin.Hosting;
 
-namespace Pretzel
+namespace Pretzel.Logic.Hosting
 {
     public class WebHost : IDisposable
     {
@@ -82,7 +82,7 @@ namespace Pretzel
                     {
                         context.Response.ContentType = path.MimeType();
                         var fileContents = Content.GetBinaryContent(path);
-                        context.Response.Headers["Content-Range"] = string.Format("bytes 0-{0}", (fileContents.Length - 1));
+                        context.Response.Headers["Content-Range"] = string.Format("bytes 0-{0}", fileContents.Length - 1);
                         context.Response.Headers["Content-Length"] = fileContents.Length.ToString(CultureInfo.InvariantCulture);
                         return context.Response.WriteAsync(fileContents);
                     }
@@ -91,7 +91,7 @@ namespace Pretzel
                     {
                         // if path is a directory without trailing slash, redirects to the same url with a trailing slash
                         context.Response.StatusCode = 301;
-                        context.Response.Headers["location"] = String.Format("http://localhost:{0}{1}/", context.Request.LocalPort, path);
+                        context.Response.Headers["location"] = string.Format("http://localhost:{0}{1}/", context.Request.LocalPort, path);
                         return Task.Delay(0);
                     }
 

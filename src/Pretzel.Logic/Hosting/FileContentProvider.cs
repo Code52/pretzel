@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.IO;
+using System.Web;
 
-namespace Pretzel
+namespace Pretzel.Logic.Hosting
 {
     public class FileContentProvider : IWebContent
     {
@@ -96,12 +97,12 @@ namespace Pretzel
 
         private static readonly string[] defaultPages = { "index.html", "index.htm", "default.htm", "default.html", "index.xml" };
 
-    	/// <summary>
-    	/// Get the path for the page to send to the user
-    	/// </summary>
-    	/// <param name="request"> </param>
-    	/// <returns>Path to file</returns>
-    	private string GetRequestedPage(string request)
+        /// <summary>
+        /// Get the path for the page to send to the user
+        /// </summary>
+        /// <param name="request"> </param>
+        /// <returns>Path to file</returns>
+        private string GetRequestedPage(string request)
         {
             string requestString = GetFullPath(request);
 
@@ -126,7 +127,7 @@ namespace Pretzel
         /// <returns>Path to the file</returns>
         private string GetFullPath(string request)
         {
-            return System.Web.HttpUtility.UrlDecode(Path.Combine(basePath + request));
+            return HttpUtility.UrlDecode(Path.Combine(basePath + request));
         }
     }
 }

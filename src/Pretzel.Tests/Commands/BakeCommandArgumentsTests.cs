@@ -1,7 +1,7 @@
 using System;
 using System.IO.Abstractions;
 using System.Linq;
-using Pretzel.Commands;
+using Pretzel.Logic.Commands;
 
 namespace Pretzel.Tests.Commands
 {

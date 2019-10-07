@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Pretzel
+namespace Pretzel.Logic.Hosting
 {
     public interface IWebContent
     {

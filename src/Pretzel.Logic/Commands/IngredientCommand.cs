@@ -5,16 +5,15 @@ using System.Composition;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
-using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
-using Pretzel.Logic.Recipe;
+using Pretzel.Logic.Recipes;
 
-namespace Pretzel.Commands
+namespace Pretzel.Logic.Commands
 {
     [Shared]
-    [Export(typeof(IIngredientCommandArguments))]
+    [Export]
     [CommandArguments]
-    public class IngredientCommandArguments : PretzelBaseCommandArguments, IIngredientCommandArguments
+    public class IngredientCommandArguments : PretzelBaseCommandArguments
     {
         [ImportingConstructor]
         public IngredientCommandArguments(IFileSystem fileSystem) : base(fileSystem) { }

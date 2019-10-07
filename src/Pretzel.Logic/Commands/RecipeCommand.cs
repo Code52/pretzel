@@ -5,17 +5,16 @@ using System.Composition;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
-using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
-using Pretzel.Logic.Recipe;
+using Pretzel.Logic.Recipes;
 
-namespace Pretzel.Commands
+namespace Pretzel.Logic.Commands
 {
     [Shared]
-    [Export(typeof(IRecipeCommandArguments))]
+    [Export]
     [CommandArguments]
-    public class RecipeCommandArguments : PretzelBaseCommandArguments, IRecipeCommandArguments
+    public class RecipeCommandArguments : PretzelBaseCommandArguments
     {
         [ImportingConstructor]
         public RecipeCommandArguments(IFileSystem fileSystem) : base(fileSystem) { }
@@ -56,11 +55,11 @@ namespace Pretzel.Commands
         {
             Tracing.Info("create - configure a new site");
 
-            var engine = String.IsNullOrWhiteSpace(arguments.Template)
+            var engine = string.IsNullOrWhiteSpace(arguments.Template)
                              ? TemplateEngines.First()
                              : arguments.Template;
 
-            if (!TemplateEngines.Any(e => String.Equals(e, engine, StringComparison.InvariantCultureIgnoreCase)))
+            if (!TemplateEngines.Any(e => string.Equals(e, engine, StringComparison.InvariantCultureIgnoreCase)))
             {
                 Tracing.Info("Requested templating engine not found: {0}", engine);
 

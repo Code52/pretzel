@@ -6,7 +6,7 @@ using System.IO.Abstractions;
 
 namespace Pretzel.Logic.Commands
 {
-    public abstract class BakeBaseCommandArguments : PretzelBaseCommandArguments, IBakeBaseCommandArguments
+    public abstract class BakeBaseCommandArguments : PretzelBaseCommandArguments
     {
         protected BakeBaseCommandArguments(IFileSystem fileSystem) : base(fileSystem) { }
 
