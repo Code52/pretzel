@@ -18,9 +18,9 @@ namespace Pretzel.Logic.Commands
 
     [Shared]
     [CommandInfo(
-        CommandName = BuiltInCommands.Version,
-        CommandDescription = "display current Pretzel version",
-        CommandArgumentsType = typeof(VersionCommandArguments)
+        Name = BuiltInCommands.Version,
+        Description = "display current Pretzel version",
+        ArgumentsType = typeof(VersionCommandArguments)
         )]
     public sealed class VersionCommand : Command<VersionCommandArguments>
     {

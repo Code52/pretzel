@@ -37,9 +37,9 @@ namespace Pretzel.Logic.Commands
 
     [Shared]
     [CommandInfo(
-        CommandName = BuiltInCommands.Import,
-        CommandDescription = "import posts from external source",
-        CommandArgumentsType = typeof(ImportCommandArguments)
+        Name = BuiltInCommands.Import,
+        Description = "import posts from external source",
+        ArgumentsType = typeof(ImportCommandArguments)
         )]
     class ImportCommand : Command<ImportCommandArguments>
     {

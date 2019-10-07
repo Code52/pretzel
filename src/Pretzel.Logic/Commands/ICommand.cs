@@ -9,7 +9,7 @@ namespace Pretzel.Logic.Commands
     public interface ICommand
     {
         /// <summary>
-        /// Executes the specified command with arguments provided defined in <see cref="CommandInfoAttribute.CommandArgumentsType"/>.
+        /// Executes the specified command with arguments provided defined in <see cref="CommandInfoAttribute.ArgumentsType"/>.
         /// </summary>
         /// <param name="arguments">The arguments.</param>
         /// <returns></returns>

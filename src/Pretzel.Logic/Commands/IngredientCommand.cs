@@ -31,9 +31,9 @@ namespace Pretzel.Logic.Commands
 
     [Shared]
     [CommandInfo(
-        CommandName = BuiltInCommands.Ingredient,
-        CommandDescription = "create a new post",
-        CommandArgumentsType = typeof(IngredientCommandArguments))]
+        Name = BuiltInCommands.Ingredient,
+        Description = "create a new post",
+        ArgumentsType = typeof(IngredientCommandArguments))]
     public sealed class IngredientCommand : Command<IngredientCommandArguments>
     {
         [Import]

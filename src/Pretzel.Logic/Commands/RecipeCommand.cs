@@ -37,9 +37,9 @@ namespace Pretzel.Logic.Commands
 
     [Shared]
     [CommandInfo(
-        CommandName = BuiltInCommands.Create,
-        CommandDescription = "configure a new site",
-        CommandArgumentsType = typeof(RecipeCommandArguments)
+        Name = BuiltInCommands.Create,
+        Description = "configure a new site",
+        ArgumentsType = typeof(RecipeCommandArguments)
         )]
     public sealed class RecipeCommand : Command<RecipeCommandArguments>
     {

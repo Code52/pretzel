@@ -48,9 +48,9 @@ namespace Pretzel.Commands
 
             foreach (var command in Commands)
             {
-                var subCommand = new Command(command.Metadata.CommandName, command.Metadata.CommandDescription);
+                var subCommand = new Command(command.Metadata.Name, command.Metadata.Description);
 
-                var argument = CommandArguments.First(c => command.Metadata.CommandArgumentsType.IsAssignableFrom(c.GetType()));
+                var argument = CommandArguments.First(c => command.Metadata.ArgumentsType.IsAssignableFrom(c.GetType()));
 
                 if (argument is BaseCommandArguments baseCommandArguments)
                 {

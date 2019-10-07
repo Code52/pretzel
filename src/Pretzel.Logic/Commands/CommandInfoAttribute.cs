@@ -7,11 +7,11 @@ namespace Pretzel.Logic.Commands
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public sealed class CommandInfoAttribute : ExportAttribute
     {
-        public string CommandName { get; set; }
+        public string Name { get; set; }
 
-        public string CommandDescription { get; set; }
+        public string Description { get; set; }
 
-        public Type CommandArgumentsType { get; set; }
+        public Type ArgumentsType { get; set; }
 
         public CommandInfoAttribute() : base(typeof(ICommand))
         {

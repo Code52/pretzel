@@ -34,9 +34,9 @@ namespace Pretzel.Tests.Commands
                 {
                     new ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>(CreateCommand, new CommandInfoAttribute
                     {
-                        CommandName = "test",
-                        CommandDescription = "desc",
-                        CommandArgumentsType = arguments.GetType()
+                        Name = "test",
+                        Description = "desc",
+                        ArgumentsType = arguments.GetType()
                     })
                 },
                 CommandArguments = new[] { arguments }
@@ -60,9 +60,9 @@ namespace Pretzel.Tests.Commands
                 CreateCommand,
                 new CommandInfoAttribute
                 {
-                    CommandName = "test",
-                    CommandDescription = "desc",
-                    CommandArgumentsType = parameters.GetType()
+                    Name = "test",
+                    Description = "desc",
+                    ArgumentsType = parameters.GetType()
                 });
 
          
@@ -170,7 +170,7 @@ namespace Pretzel.Tests.Commands
 
             [Export]
             [Shared]
-            [CommandInfo(CommandName = "test1", CommandArgumentsType = typeof(TestCommandArguments1))]
+            [CommandInfo(Name = "test1", ArgumentsType = typeof(TestCommandArguments1))]
             public class TestCommand1 : Logic.Commands.ICommand
             {
                 public Task<int> Execute(ICommandArguments arguments)
@@ -197,7 +197,7 @@ namespace Pretzel.Tests.Commands
 
             [Export]
             [Shared]
-            [CommandInfo(CommandName = "test2", CommandArgumentsType = typeof(TestCommandArguments2))]
+            [CommandInfo(Name = "test2", ArgumentsType = typeof(TestCommandArguments2))]
             public class TestCommand2 : Logic.Commands.ICommand
             {
                 public Task<int> Execute(ICommandArguments arguments)
@@ -225,7 +225,7 @@ namespace Pretzel.Tests.Commands
 
             [Export]
             [Shared]
-            [CommandInfo(CommandName = "test3", CommandArgumentsType = typeof(ITestCommandArguments3))]
+            [CommandInfo(Name = "test3", ArgumentsType = typeof(ITestCommandArguments3))]
             public class TestCommand3 : Logic.Commands.ICommand
             {
                 public Task<int> Execute(ICommandArguments arguments)
