@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
     <TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
@@ -27,6 +27,11 @@
     <DefineConstants>NETSTANDARD</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Owin" Version="4.0.1" />
+    <PackageReference Include="Microsoft.Owin.Hosting" Version="4.0.1" />
+    <PackageReference Include="Nowin" Version="0.26.0" />
+    <PackageReference Include="Owin" Version="1.0" />
+    <PackageReference Include="Owin.Builder" Version="0.8.5" />
     <PackageReference Include="CommonMark.NET" Version="0.15.1" />
     <PackageReference Include="CsvHelper" Version="12.1.2" />
     <PackageReference Include="dotless.Core" Version="1.6.7" />
@@ -34,19 +39,20 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.12" />
     <PackageReference Include="Microsoft.AspNet.Razor" Version="3.2.7" />
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="2.1.1" />
-    <PackageReference Include="NDesk.Options" Version="0.2.1" />
     <PackageReference Include="NUglify" Version="1.5.13" />
     <PackageReference Include="RazorEngine" Version="3.10.0" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="7.16.0.8981">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="System.CommandLine.Experimental" Version="0.3.0-alpha.19405.1" />
     <PackageReference Include="System.IO.Abstractions" Version="6.0.32" />
     <PackageReference Include="YamlDotNet" Version="6.1.2" />
     <PackageReference Include="System.Composition" Version="1.2.0" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Liquid.Designer.cs">
