@@ -22,7 +22,7 @@ namespace Pretzel.Logic.Commands
 
     [Shared]
     [CommandInfo(
-        Name = BuiltInCommands.Bake,
+        Name = "bake",
         Description = "transforming content into a website",
         ArgumentsType = typeof(BakeCommandArguments)
         )]

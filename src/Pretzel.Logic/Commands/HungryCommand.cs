@@ -18,7 +18,7 @@ namespace Pretzel.Logic.Commands
     [Shared]
     [Export]
     [CommandInfo(
-        Name = BuiltInCommands.Hungry,
+        Name = "hungry",
         Description = "use only when hungry",
         ArgumentsType = typeof(HungryCommandArguments)
         )]

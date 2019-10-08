@@ -18,7 +18,7 @@ namespace Pretzel.Logic.Commands
 
     [Shared]
     [CommandInfo(
-        Name = BuiltInCommands.Version,
+        Name = "version",
         Description = "display current Pretzel version",
         ArgumentsType = typeof(VersionCommandArguments)
         )]

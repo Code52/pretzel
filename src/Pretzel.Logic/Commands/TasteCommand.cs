@@ -42,7 +42,7 @@ namespace Pretzel.Logic.Commands
 
     [Shared]
     [CommandInfo(
-        Name = BuiltInCommands.Taste,
+        Name = "taste",
         Description = "testing a site locally",
         ArgumentsType = typeof(TasteCommandArguments)
         )]

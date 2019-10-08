@@ -37,7 +37,7 @@ namespace Pretzel.Logic.Commands
 
     [Shared]
     [CommandInfo(
-        Name = BuiltInCommands.Create,
+        Name = "create",
         Description = "configure a new site",
         ArgumentsType = typeof(RecipeCommandArguments)
         )]
