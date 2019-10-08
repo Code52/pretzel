@@ -7,7 +7,7 @@ namespace Pretzel.Logic.Extensibility
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public sealed class CommandArgumentsExtensionAttribute : ExportAttribute
     {
-        public Type[] CommandArgumentTypes { get; set; }
+        public Type[] CommandTypes { get; set; }
 
         public CommandArgumentsExtensionAttribute() : base(typeof(ICommandArgumentsExtension))
         {

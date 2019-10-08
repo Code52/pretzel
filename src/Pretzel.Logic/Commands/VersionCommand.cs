@@ -20,7 +20,8 @@ namespace Pretzel.Logic.Commands
     [CommandInfo(
         Name = "version",
         Description = "display current Pretzel version",
-        ArgumentsType = typeof(VersionCommandArguments)
+        ArgumentsType = typeof(VersionCommandArguments),
+        CommandType = typeof(VersionCommand)
         )]
     public sealed class VersionCommand : Command<VersionCommandArguments>
     {

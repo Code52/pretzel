@@ -39,7 +39,8 @@ namespace Pretzel.Logic.Commands
     [CommandInfo(
         Name = "create",
         Description = "configure a new site",
-        ArgumentsType = typeof(RecipeCommandArguments)
+        ArgumentsType = typeof(RecipeCommandArguments),
+        CommandType = typeof(RecipeCommand)
         )]
     public sealed class RecipeCommand : Command<RecipeCommandArguments>
     {

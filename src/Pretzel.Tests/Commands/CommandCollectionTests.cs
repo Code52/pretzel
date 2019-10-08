@@ -65,7 +65,7 @@ namespace Pretzel.Tests.Commands
                     ArgumentsType = parameters.GetType()
                 });
 
-         
+
             var collection = new CommandCollection
             {
                 Configuration = Substitute.For<IConfiguration>(),
@@ -123,7 +123,7 @@ namespace Pretzel.Tests.Commands
             {
                 Container.GetExport<CommandCollection>();
                 var target = Container.GetExport<TestCommandArguments1>();
-                
+
                 Assert.Equal(2, target.Extensions.Count);
                 Assert.Contains(target.Extensions, e => e is Extender1);
                 Assert.Contains(target.Extensions, e => e is Extender3);
@@ -134,7 +134,7 @@ namespace Pretzel.Tests.Commands
             {
                 Container.GetExport<CommandCollection>();
                 var target = Container.GetExport<TestCommandArguments2>();
-                
+
                 Assert.Equal(2, target.Extensions.Count);
                 Assert.Contains(target.Extensions, e => e is Extender2);
                 Assert.Contains(target.Extensions, e => e is Extender3);
@@ -144,7 +144,7 @@ namespace Pretzel.Tests.Commands
             public void CollectsOnlyCommandsWhereInterfacesAreExported()
             {
                 Container.GetExport<CommandCollection>();
-                var target = Container.GetExport<ITestCommandArguments3>();
+                var target = Container.GetExport<TestCommandArguments3>();
 
                 Assert.Equal(1, target.Extensions.Count);
                 Assert.Contains(target.Extensions, e => e is Extender4);
@@ -170,7 +170,7 @@ namespace Pretzel.Tests.Commands
 
             [Export]
             [Shared]
-            [CommandInfo(Name = "test1", ArgumentsType = typeof(TestCommandArguments1))]
+            [CommandInfo(Name = "test1", ArgumentsType = typeof(TestCommandArguments1), CommandType = typeof(TestCommand1))]
             public class TestCommand1 : Logic.Commands.ICommand
             {
                 public Task<int> Execute(ICommandArguments arguments)
@@ -197,7 +197,7 @@ namespace Pretzel.Tests.Commands
 
             [Export]
             [Shared]
-            [CommandInfo(Name = "test2", ArgumentsType = typeof(TestCommandArguments2))]
+            [CommandInfo(Name = "test2", ArgumentsType = typeof(TestCommandArguments2), CommandType = typeof(TestCommand2))]
             public class TestCommand2 : Logic.Commands.ICommand
             {
                 public Task<int> Execute(ICommandArguments arguments)
@@ -206,12 +206,10 @@ namespace Pretzel.Tests.Commands
                 }
             }
 
-            public interface ITestCommandArguments3 : ICommandArguments { }
-
-            [Export(typeof(ITestCommandArguments3))]
+            [Export]
             [Shared]
             [CommandArguments]
-            public class TestCommandArguments3 : ITestCommandArguments3
+            public class TestCommandArguments3 : ICommandArguments
             {
                 [ImportMany]
                 public ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>[] ArgumentExtensions { get; set; }
@@ -225,7 +223,7 @@ namespace Pretzel.Tests.Commands
 
             [Export]
             [Shared]
-            [CommandInfo(Name = "test3", ArgumentsType = typeof(ITestCommandArguments3))]
+            [CommandInfo(Name = "test3", ArgumentsType = typeof(TestCommandArguments3), CommandType = typeof(TestCommand3))]
             public class TestCommand3 : Logic.Commands.ICommand
             {
                 public Task<int> Execute(ICommandArguments arguments)
@@ -234,7 +232,7 @@ namespace Pretzel.Tests.Commands
                 }
             }
 
-            [CommandArgumentsExtension(CommandArgumentTypes = new[] { typeof(TestCommandArguments1) })]
+            [CommandArgumentsExtension(CommandTypes = new[] { typeof(TestCommand1) })]
             public class Extender1 : ICommandArgumentsExtension
             {
                 public IList<Option> Options { get; } = Array.Empty<Option>();
@@ -244,7 +242,7 @@ namespace Pretzel.Tests.Commands
                 }
             }
 
-            [CommandArgumentsExtension(CommandArgumentTypes = new[] { typeof(TestCommandArguments2) })]
+            [CommandArgumentsExtension(CommandTypes = new[] { typeof(TestCommand2) })]
             public class Extender2 : ICommandArgumentsExtension
             {
                 public IList<Option> Options { get; } = Array.Empty<Option>();
@@ -254,7 +252,7 @@ namespace Pretzel.Tests.Commands
                 }
             }
 
-            [CommandArgumentsExtension(CommandArgumentTypes = new[] { typeof(TestCommandArguments1), typeof(TestCommandArguments2) })]
+            [CommandArgumentsExtension(CommandTypes = new[] { typeof(TestCommand1), typeof(TestCommand2) })]
             public class Extender3 : ICommandArgumentsExtension
             {
                 public IList<Option> Options { get; } = Array.Empty<Option>();
@@ -264,7 +262,7 @@ namespace Pretzel.Tests.Commands
                 }
             }
 
-            [CommandArgumentsExtension(CommandArgumentTypes = new[] { typeof(ITestCommandArguments3) })]
+            [CommandArgumentsExtension(CommandTypes = new[] { typeof(TestCommand3) })]
             public class Extender4 : ICommandArgumentsExtension
             {
                 public IList<Option> Options { get; } = Array.Empty<Option>();

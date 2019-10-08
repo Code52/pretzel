@@ -44,7 +44,8 @@ namespace Pretzel.Logic.Commands
     [CommandInfo(
         Name = "taste",
         Description = "testing a site locally",
-        ArgumentsType = typeof(TasteCommandArguments)
+        ArgumentsType = typeof(TasteCommandArguments),
+        CommandType = typeof(TasteCommand)
         )]
     public sealed class TasteCommand : Command<TasteCommandArguments>
     {

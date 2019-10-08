@@ -24,7 +24,8 @@ namespace Pretzel.Logic.Commands
     [CommandInfo(
         Name = "bake",
         Description = "transforming content into a website",
-        ArgumentsType = typeof(BakeCommandArguments)
+        ArgumentsType = typeof(BakeCommandArguments),
+        CommandType = typeof(BakeCommand)
         )]
     public sealed class BakeCommand : Command<BakeCommandArguments>
     {

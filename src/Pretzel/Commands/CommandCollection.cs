@@ -57,7 +57,7 @@ namespace Pretzel.Commands
                     baseCommandArguments.BuildOptions();
                 }
 
-                foreach (var argumentExtensionsExport in ArgumentExtensions.Where(a => a.Metadata.CommandArgumentTypes.Any(type => type.IsAssignableFrom(argument.GetType()))))
+                foreach (var argumentExtensionsExport in ArgumentExtensions.Where(a => a.Metadata.CommandTypes.Any(type => type == command.Metadata.CommandType)))
                 {
                     var arugumentExtension = argumentExtensionsExport.CreateExport().Value;
                     argument.Extensions.Add(arugumentExtension);

@@ -128,7 +128,7 @@ namespace Pretzel.Tests.Commands
 
             public ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>[] ArgumentExtensions => new[]
             {
-                new ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>(() => Tuple.Create<ICommandArgumentsExtension, Action>(Args, new Action(() => { })), new CommandArgumentsExtensionAttribute{ CommandArgumentTypes = new []{ typeof(TestArguments2)} })
+                new ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>(() => Tuple.Create<ICommandArgumentsExtension, Action>(Args, new Action(() => { })), new CommandArgumentsExtensionAttribute{ CommandTypes = new []{ typeof(TestArguments2)} })
             };
 
             public IList<ICommandArgumentsExtension> Extensions { get; } = new List<ICommandArgumentsExtension>();

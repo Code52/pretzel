@@ -39,9 +39,10 @@ namespace Pretzel.Logic.Commands
     [CommandInfo(
         Name = "import",
         Description = "import posts from external source",
-        ArgumentsType = typeof(ImportCommandArguments)
+        ArgumentsType = typeof(ImportCommandArguments),
+        CommandType = typeof(ImportCommand)
         )]
-    class ImportCommand : Command<ImportCommandArguments>
+    public sealed class ImportCommand : Command<ImportCommandArguments>
     {
         readonly static List<string> Importers = new List<string>(new[] { "wordpress", "blogger" });
 
