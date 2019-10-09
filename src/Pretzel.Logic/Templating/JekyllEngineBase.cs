@@ -46,7 +46,7 @@ namespace Pretzel.Logic.Templating
 
         protected abstract string RenderTemplate(string content, PageContext pageData);
 
-        public void Process(SiteContext siteContext, bool skipFileOnError = false)
+        public void Process(SiteContext context, bool skipFileOnError = false)
         {
             // Default rendering engine
             if (LightweightMarkupEngine == null)
@@ -56,23 +56,23 @@ namespace Pretzel.Logic.Templating
 
             Tracing.Debug("LightweightMarkupEngine: {0}", LightweightMarkupEngine.GetType().Name);
 
-            Context = siteContext;
+            Context = context;
             PreProcess();
 
-            for (int index = 0; index < siteContext.Posts.Count; index++)
+            for (int index = 0; index < context.Posts.Count; index++)
             {
-                var p = siteContext.Posts[index];
-                var previous = GetPrevious(siteContext.Posts, index);
-                var next = GetNext(siteContext.Posts, index);
-                ProcessFile(siteContext.OutputFolder, p, previous, next, skipFileOnError, p.Filepath);
+                var p = context.Posts[index];
+                var previous = GetPrevious(context.Posts, index);
+                var next = GetNext(context.Posts, index);
+                ProcessFile(context.OutputFolder, p, previous, next, skipFileOnError, p.Filepath);
             }
 
-            for (int index = 0; index < siteContext.Pages.Count; index++)
+            for (int index = 0; index < context.Pages.Count; index++)
             {
-                var p = siteContext.Pages[index];
-                var previous = GetPrevious(siteContext.Pages, index);
-                var next = GetNext(siteContext.Pages, index);
-                ProcessFile(siteContext.OutputFolder, p, previous, next, skipFileOnError);
+                var p = context.Pages[index];
+                var previous = GetPrevious(context.Pages, index);
+                var next = GetNext(context.Pages, index);
+                ProcessFile(context.OutputFolder, p, previous, next, skipFileOnError);
             }
         }
 
