@@ -45,7 +45,6 @@ namespace Pretzel.Logic.Hosting
                 })
                 .ConfigureKestrel(k => k.ListenLocalhost(Port))
                 .Configure(config => config.UseDefaultFiles().UseStaticFiles())
-
                 .UseWebRoot(BasePath).Build();
 
             await webHost.StartAsync();
