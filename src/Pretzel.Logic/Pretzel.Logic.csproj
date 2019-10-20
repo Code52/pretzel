@@ -36,7 +36,7 @@
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="2.1.1" />
     <PackageReference Include="NDesk.Options" Version="0.2.1" />
     <PackageReference Include="NUglify" Version="1.5.13" />
-    <PackageReference Include="RazorEngine.NetCore" Version="2.2.4" />    
+    <PackageReference Include="RazorEngine.NetCore.Pretzel" Version="2.2.5" />    
     <PackageReference Include="System.IO.Abstractions" Version="6.0.32" />
     <PackageReference Include="YamlDotNet" Version="6.1.2" />
     <PackageReference Include="System.Composition" Version="1.2.0" />
