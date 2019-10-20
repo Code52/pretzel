@@ -1,9 +1,11 @@
-﻿using Pretzel.Logic;
+using Pretzel.Logic;
 using Pretzel.Logic.Extensions;
 using System.Collections.Generic;
+using System.Composition;
 
 namespace Pretzel.Tests
 {
+    [Export(typeof(IConfiguration))]
     public sealed class ConfigurationMock : IConfiguration
     {
         private IDictionary<string, object> _config;
@@ -64,6 +66,10 @@ namespace Pretzel.Tests
         public IDefaultsConfiguration Defaults
         {
             get { return new DefaultsConfigurationMock(); }
+        }
+
+        public void ReadFromFile(string path)
+        {
         }
     }
 

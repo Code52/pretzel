@@ -1,20 +1,42 @@
-using NDesk.Options;
-using Pretzel.Logic.Extensions;
+using System.Collections.Generic;
+using System.CommandLine;
 using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Reflection;
+using Pretzel.Logic.Commands;
+using Pretzel.Logic.Extensions;
 
 namespace Pretzel.Logic.Extensibility.Extensions
 {
+    [Export]
+    [Shared]
+    [CommandArgumentsExtension(CommandTypes = new[] { typeof(RecipeCommand) })]
+    public class AzureHostSupportArguments : ICommandArgumentsExtension
+    {
+        public IList<Option> Options { get; } = new[]
+        {
+            new Option(new [] { "--azure", "-azure" }, "Enables deploy to azure support")
+            {
+                Argument = new Argument<bool>()
+            }
+        };
+
+        public void BindingCompleted()
+        {
+            //Not used
+        }
+        public bool Azure { get; set; }
+    }
+
     [Export(typeof(IAdditionalIngredient))]
-    [Export(typeof(IHaveCommandLineArgs))]
-    public class AzureHostSupport : IAdditionalIngredient, IHaveCommandLineArgs
+    public class AzureHostSupport : IAdditionalIngredient
     {
         private readonly IFileSystem fileSystem;
         private readonly IAssembly assembly;
-        private bool performAzureWorkaround;
+
+        [Import]
+        public AzureHostSupportArguments Arguments { get; set; }
 
         [ImportingConstructor]
         public AzureHostSupport(IFileSystem fileSystem, IAssembly assembly)
@@ -23,19 +45,9 @@ namespace Pretzel.Logic.Extensibility.Extensions
             this.assembly = assembly;
         }
 
-        public void UpdateOptions(OptionSet options)
-        {
-            options.Add("azure", "Enables deploy to azure support", v => performAzureWorkaround = (v != null));
-        }
-
-        public string[] GetArguments(string command)
-        {
-            return command == "create" ? new[] { "-azure" } : new string[0];
-        }
-
         public void MixIn(string directory)
         {
-            if (!performAzureWorkaround) return;
+            if (!Arguments.Azure) return;
             // Move everything under the _source folder
             var sourceFolder = Path.Combine(directory, "_source");
             if (!fileSystem.Directory.Exists(sourceFolder))
@@ -54,7 +66,7 @@ namespace Pretzel.Logic.Extensibility.Extensions
                 var trimStart = directoryToMove.Replace(directory, string.Empty).TrimStart(Path.DirectorySeparatorChar);
                 fileSystem.Directory.Move(directoryToMove, Path.Combine(sourceFolder, trimStart));
             }
-            
+
             fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.cs"), Properties.RazorAzure.Shim);
             fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.csproj"), Properties.RazorAzure.ShimProject);
             fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.sln"), Properties.RazorAzure.ShimSolution);
@@ -62,7 +74,7 @@ namespace Pretzel.Logic.Extensibility.Extensions
             var currentPath = assembly.GetEntryAssemblyLocation();
             var destination = Path.Combine(directory, "Pretzel.exe");
             if (!fileSystem.File.Exists(destination))
-            { 
+            {
                 fileSystem.File.Copy(currentPath, destination);
             }
 

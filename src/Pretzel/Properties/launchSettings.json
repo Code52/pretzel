@@ -2,8 +2,7 @@
   "profiles": {
     "Pretzel": {
       "commandName": "Project",
-      "commandLineArgs": "taste",
-      "workingDirectory": "c:\\f\\git\\Scissors.Blog"
+      "commandLineArgs": "taste -s c:\\f\\git\\Scissors.Blog --debug"
     }
   }
 }

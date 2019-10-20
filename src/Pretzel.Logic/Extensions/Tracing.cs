@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Pretzel.Logic.Extensions
 {
@@ -7,15 +7,9 @@ namespace Pretzel.Logic.Extensions
     /// </summary>
     public static class Tracing
     {
-        private static Action<string, TraceLevel> _trace;
-        private static TraceLevel _minLevel;
-
-        static Tracing()
-        {
-            // Do nothing by default
-            _trace = (message, TraceLevel) => { };
-            _minLevel = TraceLevel.Info;
-        }
+        // Do nothing by default
+        private static Action<string, TraceLevel> _trace = (message, TraceLevel) => { };
+        private static TraceLevel _minLevel = TraceLevel.Info;
 
         internal static void SetTrace(Action<string, TraceLevel> trace)
         {
@@ -69,7 +63,7 @@ namespace Pretzel.Logic.Extensions
 
         private static void TraceMessage(string message, object[] messageParameters, TraceLevel messageLevel)
         {
-            if(messageLevel >= _minLevel)
+            if (messageLevel >= _minLevel)
             {
                 _trace(string.Format(message, messageParameters), messageLevel);
             }

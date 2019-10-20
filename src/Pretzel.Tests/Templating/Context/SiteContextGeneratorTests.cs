@@ -361,8 +361,8 @@ title: 'about'
 # About page
 "));
 
-            var config = new Configuration(fileSystem, @"C:\TestSite");
-            config.ReadFromFile();
+            var config = new Configuration(fileSystem);
+            config.ReadFromFile(@"C:\TestSite");
             var sut = new SiteContextGenerator(fileSystem, new LinkHelper(), config);
 
             // Act
@@ -393,8 +393,8 @@ author: 'page-specific-author'
 # About page
 "));
 
-            var config = new Configuration(fileSystem, @"C:\TestSite");
-            config.ReadFromFile();
+            var config = new Configuration(fileSystem);
+            config.ReadFromFile(@"C:\TestSite");
             var sut = new SiteContextGenerator(fileSystem, new LinkHelper(), config);
 
             // Act
