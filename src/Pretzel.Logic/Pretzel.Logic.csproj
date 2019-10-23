@@ -27,16 +27,15 @@
     <DefineConstants>NETSTANDARD</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Owin" Version="4.0.1" />
-    <PackageReference Include="Microsoft.Owin.Hosting" Version="4.0.1" />
-    <PackageReference Include="Nowin" Version="0.26.0" />
-    <PackageReference Include="Owin" Version="1.0" />
-    <PackageReference Include="Owin.Builder" Version="0.8.5" />
     <PackageReference Include="CommonMark.NET" Version="0.15.1" />
     <PackageReference Include="CsvHelper" Version="12.1.2" />
     <PackageReference Include="dotless.Core" Version="1.6.7" />
     <PackageReference Include="DotLiquid" Version="2.0.314" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.12" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.Extensions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.Extensions" Version="2.2.0" />
     <PackageReference Include="NUglify" Version="1.5.13" />
     <PackageReference Include="RazorEngine.NetCore.Pretzel" Version="2.2.6" />
