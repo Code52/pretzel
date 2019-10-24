@@ -1,3 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
+using System.Text;
 using DotLiquid;
 using NSubstitute;
 using Pretzel.Logic;
@@ -8,15 +15,7 @@ using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Liquid;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Jekyll;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
-using System.Text;
 using Xunit;
-using Xunit.Extensions;
 
 namespace Pretzel.Tests.Templating.Jekyll
 {

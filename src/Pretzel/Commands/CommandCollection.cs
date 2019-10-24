@@ -1,8 +1,8 @@
 using System;
-using System.Collections.Generic;
+using System.CommandLine;
 using System.Composition;
 using System.Linq;
-using NDesk.Options;
+using Pretzel.Logic;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensibility;
 
@@ -12,56 +12,71 @@ namespace Pretzel.Commands
     [Shared]
     public sealed class CommandCollection
     {
+        ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>[] commands;
         [ImportMany]
-        public ExportFactory<ICommand, CommandInfoAttribute>[] Commands { get; set; }
-        [ImportMany]
-        public IEnumerable<Lazy<IHaveCommandLineArgs>> CommandLineExtensions { get; set; }
-        [Import]
-        public Lazy<CommandParameters> Parameters { get; set; }
-
-        private Dictionary<string, ICommand> commandMap;
-
-        public ICommand this[string name]
+        public ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>[] Commands
         {
-            get
-            {
-                ICommand command;
-                commandMap.TryGetValue(name.ToLower(System.Globalization.CultureInfo.InvariantCulture), out command);
-                return command;
-            }
+            get => commands ?? Array.Empty<ExportFactory<Logic.Commands.ICommand, CommandInfoAttribute>>();
+            set => commands = value;
         }
 
-        [OnImportsSatisfied]
-        public void OnImportsSatisfied()
+        ICommandArguments[] commandArguments;
+        [ImportMany]
+        public ICommandArguments[] CommandArguments
         {
-            commandMap = new Dictionary<string, ICommand>(Commands.Length);
+            get => commandArguments ?? Array.Empty<ICommandArguments>();
+            set => commandArguments = value;
+        }
+
+        ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>[] argumentExtensions;
+        [ImportMany]
+        public ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>[] ArgumentExtensions
+        {
+            get => argumentExtensions ?? Array.Empty<ExportFactory<ICommandArgumentsExtension, CommandArgumentsExtensionAttribute>>();
+            set => argumentExtensions = value;
+        }
+
+        public RootCommand RootCommand { get; set; }
+
+        [Import]
+        public IConfiguration Configuration { get; set; }
+
+        [OnImportsSatisfied]
+        internal void OnImportsSatisfied()
+        {
+            RootCommand = new RootCommand();
 
             foreach (var command in Commands)
             {
-                if (!commandMap.ContainsKey(command.Metadata.CommandName))
+                var subCommand = new Command(command.Metadata.Name, command.Metadata.Description);
+
+                var argument = CommandArguments.First(c => command.Metadata.ArgumentsType.IsAssignableFrom(c.GetType()));
+
+                if (argument is BaseCommandArguments baseCommandArguments)
                 {
-                    var export = command.CreateExport();
-                    commandMap.Add(command.Metadata.CommandName, export.Value);
+                    baseCommandArguments.BuildOptions();
                 }
-            }
-        }
 
-        public void WriteHelp(OptionSet defaultSet)
-        {
-            Console.WriteLine(@"Usage:");
-            Console.WriteLine(@"Pretzel.exe command [options]");
-            Console.WriteLine();
-            defaultSet.WriteOptionDescriptions(Console.Out);
-            Console.WriteLine();
+                foreach (var argumentExtensionsExport in ArgumentExtensions.Where(a => a.Metadata.CommandTypes.Any(type => type == command.Metadata.CommandType)))
+                {
+                    var arugumentExtension = argumentExtensionsExport.CreateExport().Value;
+                    argument.Extensions.Add(arugumentExtension);
+                }
 
-            foreach (var command in commandMap)
-            {
-                Console.WriteLine(@"Command: " + command.Key);
-                command.Value.WriteHelp(Console.Out);
-                var extraArgs = CommandLineExtensions.SelectMany(e => e.Value.GetArguments(command.Key)).ToArray();
-                if (extraArgs.Any())
-                    Parameters.Value.WriteOptions(Console.Out, extraArgs);
-                Console.WriteLine();
+                foreach (var arugumentExtension in argument.Extensions)
+                {
+                    foreach (var option in arugumentExtension.Options)
+                        argument.Options.Add(option);
+                }
+
+                foreach (var option in argument.Options)
+                {
+                    subCommand.AddOption(option);
+                }
+
+                subCommand.Handler = new PretzelCommandHandler(Configuration, argument, command);
+
+                RootCommand.AddCommand(subCommand);
             }
         }
     }

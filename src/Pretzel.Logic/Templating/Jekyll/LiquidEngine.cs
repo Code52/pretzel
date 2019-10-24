@@ -85,13 +85,13 @@ namespace Pretzel.Logic.Templating.Jekyll
             return x;
         }
 
-        protected override string RenderTemplate(string templateContents, PageContext pageData)
+        protected override string RenderTemplate(string content, PageContext pageData)
         {
             // Replace all em HTML tags in liquid tags ({{ or {%) by underscores
-            templateContents = emHtmlRegex.Replace(templateContents, "_");
+            content = emHtmlRegex.Replace(content, "_");
 
             var data = CreatePageData(pageData);
-            var template = Template.Parse(templateContents);
+            var template = Template.Parse(content);
             var output = template.Render(data);
 
             return output;

@@ -361,8 +361,8 @@ title: 'about'
 # About page
 "));
 
-            var config = new Configuration(fileSystem, @"C:\TestSite");
-            config.ReadFromFile();
+            var config = new Configuration(fileSystem);
+            config.ReadFromFile(@"C:\TestSite");
             var sut = new SiteContextGenerator(fileSystem, new LinkHelper(), config);
 
             // Act
@@ -393,8 +393,8 @@ author: 'page-specific-author'
 # About page
 "));
 
-            var config = new Configuration(fileSystem, @"C:\TestSite");
-            config.ReadFromFile();
+            var config = new Configuration(fileSystem);
+            config.ReadFromFile(@"C:\TestSite");
             var sut = new SiteContextGenerator(fileSystem, new LinkHelper(), config);
 
             // Act
@@ -993,8 +993,13 @@ date: 20150127
 
             Assert.Empty(siteContext.Pages);
             Assert.Contains(@"Failed to build post from File: C:\TestSite\SomeFile.md", trace.ToString());
+#if NETCORE
+            Assert.Contains(@"String '20150127' was not recognized as a valid DateTime.", trace.ToString());
+            Assert.Contains(@"System.FormatException: String '20150127' was not recognized as a valid DateTime.", trace.ToString());
+#else
             Assert.Contains(@"String was not recognized as a valid DateTime.", trace.ToString());
             Assert.Contains(@"System.FormatException: String was not recognized as a valid DateTime.", trace.ToString());
+#endif
         }
 
         [Fact]
