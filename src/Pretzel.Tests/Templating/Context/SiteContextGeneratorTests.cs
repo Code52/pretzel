@@ -992,9 +992,17 @@ date: 20150127
             var siteContext = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
 
             Assert.Empty(siteContext.Pages);
+
+            var x = trace.ToString();
+
             Assert.Contains(@"Failed to build post from File: C:\TestSite\SomeFile.md", trace.ToString());
+#if NETCORE
+            Assert.Contains(@"String '20150127' was not recognized as a valid DateTime.", trace.ToString());
+            Assert.Contains(@"System.FormatException: String '20150127' was not recognized as a valid DateTime.", trace.ToString());
+#else
             Assert.Contains(@"String was not recognized as a valid DateTime.", trace.ToString());
             Assert.Contains(@"System.FormatException: String was not recognized as a valid DateTime.", trace.ToString());
+#endif
         }
 
         [Fact]

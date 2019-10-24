@@ -14,6 +14,12 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)'=='net462'">
+    <DefineConstants>NET4</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp2.2'">
+    <DefineConstants>@(DefineConstants);NETCORE</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="NSubstitute" Version="4.2.1" />
     <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="6.0.32" />
@@ -23,7 +29,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net462'">
     <Reference Include="System.Web" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />

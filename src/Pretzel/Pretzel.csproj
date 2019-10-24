@@ -29,7 +29,7 @@
     </PackageReference>
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net462'">
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Web" />
