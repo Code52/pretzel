@@ -8,7 +8,7 @@
     <AssemblyTitle>Pretzel</AssemblyTitle>
     <Company></Company>
     <Product>Pretzel</Product>
-    <Description>A simple static site generator for Windows</Description>
+    <Description>A simple static site generator for Windows/Linux/MacOs</Description>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <ErrorLog>$(OutputPath)\static-analysis.sarif.json</ErrorLog>
