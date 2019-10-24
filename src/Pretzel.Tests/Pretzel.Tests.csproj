@@ -8,12 +8,6 @@
     <Copyright>Copyright ©  2012</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='net462'">
     <DefineConstants>NET4</DefineConstants>
   </PropertyGroup>
