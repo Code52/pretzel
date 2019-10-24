@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
     <TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
@@ -53,6 +53,10 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\**\*.*">
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="Properties\Liquid.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -73,26 +77,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RazorCsProject.resx</DependentUpon>
     </Compile>
-    <None Include="Resources\Liquid\Head.liquid" />
-    <None Include="Resources\Liquid\Sitemap.liquid" />
-    <None Include="Resources\RazorAzure\Shim.cs" />
-    <None Include="Resources\RazorCsProject\Category_cs" />
-    <None Include="Resources\RazorCsProject\NonProcessedPage_cs" />
-    <None Include="Resources\RazorCsProject\Page_cs" />
-    <None Include="Resources\RazorCsProject\PageContext_cs" />
-    <None Include="Resources\RazorCsProject\Paginator_cs" />
-    <None Include="Resources\RazorCsProject\SiteContext_cs" />
-    <None Include="Resources\RazorCsProject\Tag_cs" />
-    <None Include="Resources\RazorCsProject\AssemblyInfo_cs" />
     <Compile Update="Properties\RazorWiki.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>RazorWiki.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -106,11 +94,6 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Liquid.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Update="Properties\RazorWiki.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>RazorWiki.Designer.cs</LastGenOutput>
@@ -118,69 +101,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Liquid\Rss.liquid" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Liquid\Layout.liquid" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Liquid\Post.liquid" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\25.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Liquid\Atom.liquid" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Liquid\About.liquid" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Liquid\Index.liquid" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Liquid\FirstPost.liquid" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\favicon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\favicon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\logo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\RazorCsProject\NuGet_Config" />
-    <None Include="Resources\RazorCsProject\NuGet_targets" />
-    <None Include="Resources\RazorCsProject\packages_config" />
-    <None Include="Resources\RazorCsProject\Web_config" />
-    <None Include="Resources\RazorWiki\index.md" />
-    <None Include="Resources\RazorWiki\layout.cshtml" />
-    <None Include="Resources\Razor\About.cshtml" />
-    <None Include="Resources\Razor\Head.cshtml" />
-    <None Include="Resources\Razor\Sitemap.cshtml" />
-    <None Include="Resources\Razor\Atom.cshtml" />
-    <None Include="Resources\Razor\Config.cshtml" />
-    <None Include="Resources\Razor\FirstPost.cshtml" />
-    <None Include="Resources\Razor\Index.cshtml" />
-    <None Include="Resources\Razor\Layout.cshtml" />
-    <None Include="Resources\Razor\Post.cshtml" />
-    <None Include="Resources\Razor\Rss.cshtml" />
-    <None Include="Resources\RazorAzure\Shim.csproj" />
-    <None Include="Resources\RazorAzure\Shim.sln" />
-    <None Include="Resources\RazorCsProject\NuGet_exe" />
-    <None Include="Resources\RazorCsProject\LayoutProject_csproj" />
-    <None Include="Resources\RazorCsProject\LayoutSolution_sln" />
-    <None Include="Resources\RazorWiki\default.css" />
-    <None Include="Resources\RazorWiki\style.css" />
-    <None Include="Resources\Style.css" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Liquid\Config.liquid" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Resources\RazorAzure\Shim.cs" />
     <Compile Remove="VirtualDirectoryTransform.cs" />
     <Compile Remove="Minification\AssetMinifier.cs" />
   </ItemGroup>
