@@ -127,12 +127,12 @@ function ExecuteTests($cover)
     {
         cinst opencover.portable -y
         cinst coveralls.io -source https://nuget.org/api/v2/
-        & C:\ProgramData\chocolatey\lib\opencover.portable\tools\OpenCover.Console.exe -register:administrator -filter:"+[Pretzel.Logic]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -target:"%xunit20%\xunit.console.exe" -targetargs:"""src\Pretzel.Tests\bin\Release\net462\Pretzel.Tests.dll"" -noshadow -appveyor" -output:$artifacts\coverage.xml -returntargetcode -log:All
+        & C:\ProgramData\chocolatey\lib\opencover.portable\tools\OpenCover.Console.exe -register:administrator -filter:"+[Pretzel.Logic]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -target:"c:\Program Files\dotnet\dotnet.exe" -targetargs:"test ""src\Pretzel.Tests\Pretzel.Tests.csproj"" -c Release --no-build " -output:$artifacts\coverage.xml -returntargetcode -log:All -oldstyle
         & coveralls.net --opencover $artifacts\coverage.xml
     }
     Else
     {
-        &$tools\xunit\xunit.console.exe "$src\Pretzel.Tests\bin\Release\net462\Pretzel.Tests.dll"
+        &$tools\xunit\xunit.console.exe "$src\Pretzel.Tests\bin\Release\net462\Pretzel.Tests.dll $src\Pretzel.Tests\bin\Release\netcoreapp2.2\Pretzel.Tests.dll"
     }
     
     if ($LastExitCode -ne 0) { throw "Tests failed" }

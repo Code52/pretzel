@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.Composition;
+using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Connections;
 using Pretzel.Logic;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
@@ -66,7 +68,7 @@ namespace Pretzel.Logic.Commands
         [Import]
         public IConfiguration Configuration { get; set; }
 
-        protected override Task<int> Execute(TasteCommandArguments arguments)
+        protected async override Task<int> Execute(TasteCommandArguments arguments)
         {
             Tracing.Info("taste - testing a site locally");
 
@@ -89,7 +91,7 @@ namespace Pretzel.Logic.Commands
                 Tracing.Info("template engine {0} not found - (engines: {1})", arguments.Template,
                                            string.Join(", ", TemplateEngines.Engines.Keys));
 
-                return Task.FromResult(1);
+                return 1;
             }
 
             engine.Initialize();
@@ -101,17 +103,17 @@ namespace Pretzel.Logic.Commands
             {
                 watcher.OnChange(arguments.Source, file => WatcherOnChanged(file, arguments));
 
-                using (var w = new WebHost(arguments.Destination, new FileContentProvider(), Convert.ToInt32(arguments.Port)))
+                using (var w = new AspNetCoreWebHost(arguments.Destination, Convert.ToInt32(arguments.Port), arguments.Debug))
                 {
                     try
                     {
-                        w.Start();
+                        await w.Start();
                     }
-                    catch (System.Net.Sockets.SocketException)
+                    catch (IOException ex) when (ex.InnerException is AddressInUseException)
                     {
                         Tracing.Info("Port {0} is already in use", arguments.Port);
 
-                        return Task.FromResult(1);
+                        return 1;
                     }
 
                     var url = string.Format("http://localhost:{0}/", arguments.Port);
@@ -120,7 +122,14 @@ namespace Pretzel.Logic.Commands
                         Tracing.Info("Opening {0} in default browser...", url);
                         try
                         {
-                            System.Diagnostics.Process.Start(url);
+                            // How to launch browser on netcore
+                            // https://github.com/dotnet/corefx/issues/10361
+                            var psi = new System.Diagnostics.ProcessStartInfo
+                            {
+                                FileName = url,
+                                UseShellExecute = true
+                            };
+                            System.Diagnostics.Process.Start(psi);
                         }
                         catch (Exception)
                         {
@@ -143,7 +152,7 @@ namespace Pretzel.Logic.Commands
                 }
             }
 
-            return Task.FromResult(0);
+            return 0;
         }
 
         private void WatcherOnChanged(string file, TasteCommandArguments arguments)
