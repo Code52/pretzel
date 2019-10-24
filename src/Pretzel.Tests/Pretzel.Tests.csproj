@@ -7,6 +7,7 @@
     <Product>Pretzel.Tests</Product>
     <Copyright>Copyright ©  2012</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='net462'">
     <DefineConstants>NET4</DefineConstants>

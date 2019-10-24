@@ -13,6 +13,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <ErrorLog>$(OutputPath)\static-analysis.sarif.json</ErrorLog>
     <LangVersion>latest</LangVersion>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>pretzel.ico</ApplicationIcon>

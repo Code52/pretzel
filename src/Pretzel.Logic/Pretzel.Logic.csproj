@@ -16,6 +16,7 @@
     <PackageProjectUrl>https://github.com/code52/pretzel</PackageProjectUrl>
     <PackageReleaseNotes>https://github.com/Code52/pretzel/releases</PackageReleaseNotes>
     <PackageTags>Pretzel, Jekyll, HTML, Markdown, Liquid, Razor, static</PackageTags>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <DefineConstants>NETSTANDARD</DefineConstants>
