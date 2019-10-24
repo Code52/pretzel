@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Abstractions;
+using System.Reflection;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 
@@ -137,26 +138,40 @@ namespace Pretzel.Logic.Recipes
 
         private void CreateImages()
         {
-            var ms = new MemoryStream();
-            Properties.Resources._25.Save(ms, ImageFormat.Png);
-            fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img", "25.png"), ms.ToArray());
-
-            ms = new MemoryStream();
-            Properties.Resources.faviconpng.Save(ms, ImageFormat.Png);
-            fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img", "favicon.png"), ms.ToArray());
-
-            ms = new MemoryStream();
-            Properties.Resources.logo.Save(ms, ImageFormat.Png);
-            fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img", "logo.png"), ms.ToArray());
+            CreateImage(@"Resources\25.png", directory, @"img", "25.png");
+            CreateImage(@"Resources\favicon.png", directory, @"img", "favicon.png");
+            CreateImage(@"Resources\logo.png", directory, @"img", "logo.png");
 
             CreateFavicon();
         }
 
         private void CreateFavicon()
         {
-            var ms = new MemoryStream();
-            Properties.Resources.faviconico.Save(ms);
-            fileSystem.File.WriteAllBytes(Path.Combine(directory, @"img", "favicon.ico"), ms.ToArray());
+            CreateImage(@"Resources\favicon.ico", directory, @"img", "favicon.ico");
+        }
+
+        private void CreateImage(string resourceName, params string[] pathSegments)
+        {
+            using (var ms = new MemoryStream())
+            using (var resourceStream = GetResourceStream(resourceName))
+            {
+                resourceStream.CopyTo(ms);
+                fileSystem.File.WriteAllBytes(Path.Combine(pathSegments), ms.ToArray());
+            }
+        }
+
+        //https://github.com/dotnet/corefx/issues/12565
+        private Stream GetResourceStream(string path)
+        {
+            var assembly = GetType().Assembly;
+            var name = GetType().Assembly.GetName().Name;
+
+            path = path.Replace("/", ".").Replace("\\", ".");
+
+            var fullPath = $"{name}.{path}";
+            var stream = assembly.GetManifestResourceStream(fullPath);
+
+            return stream;
         }
 
         private void CreateDirectories()
