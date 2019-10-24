@@ -122,7 +122,14 @@ namespace Pretzel.Logic.Commands
                         Tracing.Info("Opening {0} in default browser...", url);
                         try
                         {
-                            System.Diagnostics.Process.Start(url);
+                            // How to launch browser on netcore
+                            // https://github.com/dotnet/corefx/issues/10361
+                            var psi = new System.Diagnostics.ProcessStartInfo
+                            {
+                                FileName = url,
+                                UseShellExecute = true
+                            };
+                            System.Diagnostics.Process.Start(psi);
                         }
                         catch (Exception)
                         {
