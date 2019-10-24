@@ -1,3 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
+using System.Text;
 using DotLiquid;
 using NSubstitute;
 using Pretzel.Logic;
@@ -8,15 +15,7 @@ using Pretzel.Logic.Extensions;
 using Pretzel.Logic.Liquid;
 using Pretzel.Logic.Templating.Context;
 using Pretzel.Logic.Templating.Jekyll;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
-using System.Text;
 using Xunit;
-using Xunit.Extensions;
 
 namespace Pretzel.Tests.Templating.Jekyll
 {
@@ -2301,6 +2300,67 @@ categories: [{0}]
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\page1.html").RemoveWhiteSpace());
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\page2.html").RemoveWhiteSpace());
                 Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\page3.html").RemoveWhiteSpace());
+            }
+        }
+
+        public class Given_Markdown_Page_Has_Data : BakingEnvironment<LiquidEngine>
+        {
+            private const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            private const string PageContents = "---\r\nlayout: default\r\ntitle: sample post\r\nauthor: dave\r\n---\r\n\r\n<a rel=\"author\" href=\"https://twitter.com/{{ site.data.people[page.author].twitter }}\" title=\"{{ site.data.people[page.author].name }}\">{{ site.data.people[page.author].name }}</a>";
+            private const string DataContents = "dave:\r\n    name: David Smith\r\n    twitter: DavidSilvaSmith";
+            private const string ExpectedfileContents = "<html><head><title>sample post</title></head><body><p><a rel=\"author\" href=\"https://twitter.com/DavidSilvaSmith\" title=\"David Smith\">David Smith</a></p></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\_data\people.yml", new MockFileData(DataContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = GetSiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
+                context.Title = "My Web Site";
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_Data_In_It()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
+            }
+        }
+        public class Given_Markdown_Page_Has_Data_With_Assign : BakingEnvironment<LiquidEngine>
+        {
+            private const string TemplateContents = "<html><head><title>{{ page.title }}</title></head><body>{{ content }}</body></html>";
+            private const string PageContents = "---\r\nlayout: default\r\ntitle: sample post\r\nauthor: dave\r\n---\r\n\r\n{% assign author = site.data.people[page.author] %}\r\n<a rel=\"author\" href=\"https://twitter.com/{{ author.twitter }}\" title=\"{{ author.name }}\">{{ author.name }}</a>";
+            private const string DataContents = "dave:\r\n    name: David Smith\r\n    twitter: DavidSilvaSmith";
+            private const string ExpectedfileContents = "<html><head><title>sample post</title></head><body><p><a rel=\"author\" href=\"https://twitter.com/DavidSilvaSmith\" title=\"David Smith\">David Smith</a></p></body></html>";
+
+            public override LiquidEngine Given()
+            {
+                return new LiquidEngine();
+            }
+
+            public override void When()
+            {
+                FileSystem.AddFile(@"C:\website\_layouts\default.html", new MockFileData(TemplateContents));
+                FileSystem.AddFile(@"C:\website\_data\people.yml", new MockFileData(DataContents));
+                FileSystem.AddFile(@"C:\website\index.md", new MockFileData(PageContents));
+                var generator = GetSiteContextGenerator(FileSystem);
+                var context = generator.BuildContext(@"C:\website\", @"C:\website\_site", false);
+                context.Title = "My Web Site";
+                Subject.FileSystem = FileSystem;
+                Subject.Process(context);
+            }
+
+            [Fact]
+            public void The_Output_Should_Have_Data_In_It()
+            {
+                Assert.Equal(ExpectedfileContents, FileSystem.File.ReadAllText(@"C:\website\_site\index.html").RemoveWhiteSpace());
             }
         }
     }

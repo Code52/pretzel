@@ -1,7 +1,3 @@
-using NSubstitute;
-using Pretzel.Logic;
-using Pretzel.Logic.Extensions;
-using Pretzel.Logic.Templating.Context;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,7 +7,11 @@ using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using NSubstitute;
+using Pretzel.Logic;
 using Pretzel.Logic.Extensibility;
+using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Templating.Context;
 using Xunit;
 
 namespace Pretzel.Tests.Templating.Context
@@ -361,8 +361,8 @@ title: 'about'
 # About page
 "));
 
-            var config = new Configuration(fileSystem, @"C:\TestSite");
-            config.ReadFromFile();
+            var config = new Configuration(fileSystem);
+            config.ReadFromFile(@"C:\TestSite");
             var sut = new SiteContextGenerator(fileSystem, new LinkHelper(), config);
 
             // Act
@@ -393,8 +393,8 @@ author: 'page-specific-author'
 # About page
 "));
 
-            var config = new Configuration(fileSystem, @"C:\TestSite");
-            config.ReadFromFile();
+            var config = new Configuration(fileSystem);
+            config.ReadFromFile(@"C:\TestSite");
             var sut = new SiteContextGenerator(fileSystem, new LinkHelper(), config);
 
             // Act
@@ -1198,6 +1198,25 @@ slug: my-slug
 
             // assert
             Assert.Equal(2, pageTransformMock.PostCount);
+        }
+
+        [Fact]
+        public void supports_datafiles()
+        {
+            fileSystem.AddFile(@"C:\TestSite\_data\people.yml", new MockFileData(@"dave:
+    name: David Smith
+    twitter: DavidSilvaSmith"));
+
+            // act
+            var context = generator.BuildContext(@"C:\TestSite", @"C:\TestSite\_site", false);
+
+            // assert
+            Assert.NotNull(context.Data);
+            Assert.IsType<Data>(context.Data);
+            Assert.NotNull(context.Data["people"]);
+            dynamic data = context.Data;
+            Assert.Equal("David Smith", data["people"]["dave"]["name"]);
+            Assert.Equal("DavidSilvaSmith", data["people"]["dave"]["twitter"]);
         }
     }
 }
