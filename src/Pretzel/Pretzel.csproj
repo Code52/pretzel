@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <GlobalTool>false</GlobalTool>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net462;netcoreapp2.2</TargetFrameworks>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <AssemblyTitle>Pretzel</AssemblyTitle>
-    <Company>Code52</Company>
+    <Company></Company>
     <Product>Pretzel</Product>
     <Description>A simple static site generator for Windows</Description>
     <OutputPath>bin\$(Configuration)\</OutputPath>
@@ -14,9 +14,18 @@
     <ErrorLog>$(OutputPath)\static-analysis.sarif.json</ErrorLog>
     <LangVersion>latest</LangVersion>
     <DebugType>Full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup>
     <ApplicationIcon>pretzel.ico</ApplicationIcon>
+    <Authors>Code52</Authors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(GlobalTool)' != true">
+    <TargetFrameworks>net462;netcoreapp2.2</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(GlobalTool)' == true">
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>pretzel</ToolCommandName>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <PackageOutputPath>../../artifacts</PackageOutputPath>
+    <PackageId>Pretzel.Tool</PackageId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="SonarAnalyzer.CSharp" Version="7.16.0.8981">
