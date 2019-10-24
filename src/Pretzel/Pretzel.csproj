@@ -6,7 +6,8 @@
     <OutputType>Exe</OutputType>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <AssemblyTitle>Pretzel</AssemblyTitle>
-    <Company></Company>
+    <Company>Code52</Company>
+    <Authors>Code52</Authors>
     <Product>Pretzel</Product>
     <Description>A simple static site generator for Windows/Linux/MacOs</Description>
     <OutputPath>bin\$(Configuration)\</OutputPath>
@@ -15,7 +16,6 @@
     <LangVersion>latest</LangVersion>
     <DebugType>Full</DebugType>
     <ApplicationIcon>pretzel.ico</ApplicationIcon>
-    <Authors>Code52</Authors>
   </PropertyGroup>
   <PropertyGroup Condition="'$(GlobalTool)' != true">
     <TargetFrameworks>net462;netcoreapp2.2</TargetFrameworks>
