@@ -10,6 +10,7 @@ using System.Linq;
 using Pretzel.Logic.Extensibility;
 using System.Collections.Generic;
 using System.Composition;
+using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
 namespace Pretzel.Logic.Templating.Razor
 {
@@ -27,41 +28,41 @@ namespace Pretzel.Logic.Templating.Razor
         {
         }
 
-	    private class TagComparer : IEqualityComparer<ITag>
-	    {
-		    public bool Equals(ITag x, ITag y)
-		    {
-			    if (x == null || y == null)
-			    {
-				    return false;
-			    }
+        private class TagComparer : IEqualityComparer<ITag>
+        {
+            public bool Equals(ITag x, ITag y)
+            {
+                if (x == null || y == null)
+                {
+                    return false;
+                }
 
-			    return x.Name == y.Name;
-		    }
+                return x.Name == y.Name;
+            }
 
-		    public int GetHashCode(ITag obj)
-		    {
-			    return obj.Name.GetHashCode();
-		    }
-	    }
+            public int GetHashCode(ITag obj)
+            {
+                return obj.Name.GetHashCode();
+            }
+        }
 
-	    protected override void PreProcess()
+        protected override void PreProcess()
         {
             includesPath = Path.Combine(Context.SourceFolder, "_includes");
 
             if (Tags != null)
             {
-	            var toAdd = Tags.Except(_allTags, new TagComparer()).ToList();
-	            _allTags.AddRange(toAdd);
+                var toAdd = Tags.Except(_allTags, new TagComparer()).ToList();
+                _allTags.AddRange(toAdd);
             }
 
             if (TagFactories != null)
             {
-	            var toAdd = TagFactories.Select(factory =>
-	            {
-		            factory.Initialize(Context);
-		            return factory.CreateTag();
-	            }).Except(_allTags, new TagComparer()).ToList();
+                var toAdd = TagFactories.Select(factory =>
+                {
+                    factory.Initialize(Context);
+                    return factory.CreateTag();
+                }).Except(_allTags, new TagComparer()).ToList();
 
                 _allTags.AddRange(toAdd);
             }
@@ -79,7 +80,8 @@ namespace Pretzel.Logic.Templating.Razor
                 TemplateManager = new IncludesResolver(FileSystem, includesPath),
                 BaseTemplateType = typeof(ExtensibleTemplate<>),
                 DisableTempFileLocking = true,
-                CachingProvider = new DefaultCachingProvider(t => { })
+                CachingProvider = new DefaultCachingProvider(t => { }),
+                ConfigureCompilerBuilder = builder => ModelDirective.Register(builder)
             };
             serviceConfiguration.Activator = new ExtensibleActivator(serviceConfiguration.Activator, Filters, _allTags);
 
