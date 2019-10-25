@@ -40,6 +40,9 @@ artifacts:
   - path: artifacts\Pretzel.Logic.*.nupkg
     name: Pretzel.Logic.nupkg
 
+  - path: artifacts\Pretzel.Tool.*.nupkg
+    name: Pretzel.Tool.nupkg
+
   - path: artifacts\Pretzel.*.nupkg
     name: Pretzel.nupkg
 
