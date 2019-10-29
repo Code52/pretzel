@@ -120,7 +120,7 @@ function CreatePackage($versionInfos)
     dotnet pack $src\Pretzel.Logic\Pretzel.Logic.csproj -o $artifacts /p:Version=$version --include-symbols --no-build
 
     # build Pretzel global tool
-    dotnet pack $src\Pretzel\Pretzel.csproj -o $artifacts /p:Version=$version --include-symbols -c Release --no-build /p:GlobalTool="True"
+    dotnet pack $src\Pretzel\Pretzel.csproj -o $artifacts /p:Version=$version -c Release --no-build /p:GlobalTool="True"
 }
 
 # Test
