@@ -77,18 +77,19 @@ namespace Pretzel.Logic.Recipes
                         Tracing.Info("Wiki switch not valid with liquid templating engine");
                     CreateDirectories();
 
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"rss.xml"), Properties.Liquid.Rss);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"atom.xml"), Properties.Liquid.Atom);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"sitemap.xml"), Properties.Liquid.Sitemap);
+                    CreateFile(@"Resources\Liquid\Rss.liquid", directory, @"rss.xml");
+                    CreateFile(@"Resources\Liquid\Atom.liquid", directory, @"atom.xml");
+                    CreateFile(@"Resources\Liquid\Sitemap.liquid", directory, @"sitemap.xml");
+                    CreateFile(@"Resources\Liquid\Config.liquid", directory, @"_config.yml");
+                    CreateFile(@"Resources\Liquid\Head.liquid", directory, @"_includes", "head.html");
 
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts", "layout.html"), Properties.Liquid.Layout);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts", "post.html"), Properties.Liquid.Post);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"index.html"), Properties.Liquid.Index);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"about.md"), Properties.Liquid.About);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_posts", string.Format("{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Liquid.FirstPost);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"css", "style.css"), Properties.Resources.Style);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Liquid.Config);
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_includes", "head.html"), Properties.Liquid.Head);
+                    CreateFile(@"Resources\Liquid\Layout.liquid", directory, @"_layouts", "layout.html");
+                    CreateFile(@"Resources\Liquid\Post.liquid", directory, @"_layouts", "post.html");
+
+                    CreateFile(@"Resources\Liquid\About.liquid", directory, @"about.md");
+                    CreateFile(@"Resources\Style.css", directory, @"style.css");
+
+                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_posts", string.Format("{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), GetResourceString(@"Resources\Liquid\FirstPost.liquid"));
 
                     CreateImages();
 
@@ -138,19 +139,19 @@ namespace Pretzel.Logic.Recipes
 
         private void CreateImages()
         {
-            CreateImage(@"Resources\25.png", directory, @"img", "25.png");
-            CreateImage(@"Resources\favicon.png", directory, @"img", "favicon.png");
-            CreateImage(@"Resources\logo.png", directory, @"img", "logo.png");
+            CreateFile(@"Resources\25.png", directory, @"img", "25.png");
+            CreateFile(@"Resources\favicon.png", directory, @"img", "favicon.png");
+            CreateFile(@"Resources\logo.png", directory, @"img", "logo.png");
 
             CreateFavicon();
         }
 
         private void CreateFavicon()
         {
-            CreateImage(@"Resources\favicon.ico", directory, @"img", "favicon.ico");
+            CreateFile(@"Resources\favicon.ico", directory, @"img", "favicon.ico");
         }
 
-        private void CreateImage(string resourceName, params string[] pathSegments)
+        private void CreateFile(string resourceName, params string[] pathSegments)
         {
             using (var ms = new MemoryStream())
             using (var resourceStream = GetResourceStream(resourceName))
@@ -172,6 +173,15 @@ namespace Pretzel.Logic.Recipes
             var stream = assembly.GetManifestResourceStream(fullPath);
 
             return stream;
+        }
+
+        private string GetResourceString(string path)
+        {
+            using (var stream = GetResourceStream(path))
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
         }
 
         private void CreateDirectories()
