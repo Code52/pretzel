@@ -6,6 +6,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using Pretzel.Logic.Commands;
 using Pretzel.Logic.Extensions;
+using Pretzel.Logic.Recipes;
 
 namespace Pretzel.Logic.Extensibility.Extensions
 {
@@ -67,9 +68,9 @@ namespace Pretzel.Logic.Extensibility.Extensions
                 fileSystem.Directory.Move(directoryToMove, Path.Combine(sourceFolder, trimStart));
             }
 
-            fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.cs"), Properties.RazorAzure.Shim);
-            fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.csproj"), Properties.RazorAzure.ShimProject);
-            fileSystem.File.WriteAllText(Path.Combine(directory, @"Shim.sln"), Properties.RazorAzure.ShimSolution);
+            Recipe.CreateFile(GetType(), fileSystem, @"Resources\RazorAzure\Shim.cs", directory, @"Shim.cs");
+            Recipe.CreateFile(GetType(), fileSystem, @"Resources\RazorAzure\Shim.csproj", directory, @"Shim.csproj");
+            Recipe.CreateFile(GetType(), fileSystem, @"Resources\RazorAzure\Shim.sln", directory, @"Shim.sln");
 
             var currentPath = assembly.GetEntryAssemblyLocation();
             var destination = Path.Combine(directory, "Pretzel.exe");

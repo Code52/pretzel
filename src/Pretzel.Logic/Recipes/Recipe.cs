@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Abstractions;
-using System.Reflection;
 using Pretzel.Logic.Extensibility;
 using Pretzel.Logic.Extensions;
 
@@ -43,26 +41,26 @@ namespace Pretzel.Logic.Recipes
 
                     if (wiki)
                     {
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts", "layout.cshtml"), Properties.RazorWiki.Layout);
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"index.md"), Properties.RazorWiki.Index);
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"css", "style.css"), Properties.RazorWiki.Style);
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"css", "default.css"), Properties.RazorWiki.DefaultStyle);
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Razor.Config);
+                        CreateFile(@"Resources\RazorWiki\layout.cshtml", directory, @"_layouts", "layout.cshtml");
+                        CreateFile(@"Resources\RazorWiki\index.md", directory, "index.md");
+                        CreateFile(@"Resources\RazorWiki\style.css", directory, @"css", "style.css");
+                        CreateFile(@"Resources\RazorWiki\default.css", directory, @"css", "default.css");
+                        CreateFile(@"Resources\Razor\Config.cshtml", directory, "_config.yml");
                         CreateFavicon();
                     }
                     else
                     {
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"rss.xml"), Properties.Razor.Rss);
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"atom.xml"), Properties.Razor.Atom);
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"sitemap.xml"), Properties.Razor.Sitemap);
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts", "layout.cshtml"), Properties.Razor.Layout);
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"_layouts", "post.cshtml"), Properties.Razor.Post);
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"index.cshtml"), Properties.Razor.Index);
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"about.md"), Properties.Razor.About);
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"_posts", string.Format("{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), Properties.Razor.FirstPost);
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"css", "style.css"), Properties.Resources.Style);
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"_config.yml"), Properties.Razor.Config);
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"_includes", "head.cshtml"), Properties.Razor.Head);
+                        CreateFile(@"Resources\Razor\Rss.cshtml", directory, @"rss.xml");
+                        CreateFile(@"Resources\Razor\Atom.cshtml", directory, @"atom.xml");
+                        CreateFile(@"Resources\Razor\Sitemap.cshtml", directory, @"sitemap.xml");
+                        CreateFile(@"Resources\Razor\Layout.cshtml", directory, @"_layouts", "layout.cshtml");
+                        CreateFile(@"Resources\Razor\Post.cshtml", directory, @"_layouts", "post.cshtml");
+                        CreateFile(@"Resources\Razor\Index.cshtml", directory, "index.cshtml");
+                        CreateFile(@"Resources\Razor\About.cshtml", directory, "about.md");
+                        fileSystem.File.WriteAllText(Path.Combine(directory, @"_posts", string.Format("{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), GetResourceString(@"Resources\Razor\FirstPost.cshtml"));
+                        CreateFile(@"Resources\Style.css", directory, @"css", "style.css");
+                        CreateFile(@"Resources\Razor\Config.cshtml", directory, "_config.yml");
+                        CreateFile(@"Resources\Razor\Head.cshtml", directory, @"_includes", "head.cshtml");
                         CreateImages();
                     }
 
@@ -80,16 +78,14 @@ namespace Pretzel.Logic.Recipes
                     CreateFile(@"Resources\Liquid\Rss.liquid", directory, @"rss.xml");
                     CreateFile(@"Resources\Liquid\Atom.liquid", directory, @"atom.xml");
                     CreateFile(@"Resources\Liquid\Sitemap.liquid", directory, @"sitemap.xml");
-                    CreateFile(@"Resources\Liquid\Config.liquid", directory, @"_config.yml");
-                    CreateFile(@"Resources\Liquid\Head.liquid", directory, @"_includes", "head.html");
-
                     CreateFile(@"Resources\Liquid\Layout.liquid", directory, @"_layouts", "layout.html");
                     CreateFile(@"Resources\Liquid\Post.liquid", directory, @"_layouts", "post.html");
-
+                    CreateFile(@"Resources\Liquid\Index.liquid", directory, @"index.html");
                     CreateFile(@"Resources\Liquid\About.liquid", directory, @"about.md");
-                    CreateFile(@"Resources\Style.css", directory, @"style.css");
-
                     fileSystem.File.WriteAllText(Path.Combine(directory, @"_posts", string.Format("{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), GetResourceString(@"Resources\Liquid\FirstPost.liquid"));
+                    CreateFile(@"Resources\Style.css", directory, @"css", "style.css");
+                    CreateFile(@"Resources\Liquid\Config.liquid", directory, @"_config.yml");
+                    CreateFile(@"Resources\Liquid\Head.liquid", directory, @"_includes", "head.html");
 
                     CreateImages();
 
@@ -119,22 +115,21 @@ namespace Pretzel.Logic.Recipes
             fileSystem.Directory.CreateDirectory(Path.Combine(layoutDirectory, @"PretzelClasses"));
             fileSystem.Directory.CreateDirectory(Path.Combine(layoutDirectory, @".nuget"));
 
-            fileSystem.File.WriteAllBytes(Path.Combine(layoutDirectory, @"Properties", "AssemblyInfo.cs"), Properties.RazorCsProject.AssemblyInfo_cs);
-            fileSystem.File.WriteAllBytes(Path.Combine(layoutDirectory, @"PretzelClasses", "Category.cs"), Properties.RazorCsProject.Category_cs);
-            fileSystem.File.WriteAllBytes(Path.Combine(layoutDirectory, @"LayoutProject.csproj"), Properties.RazorCsProject.LayoutProject_csproj);
-            fileSystem.File.WriteAllBytes(Path.Combine(layoutDirectory, @"layoutSolution.sln"), Properties.RazorCsProject.LayoutSolution_sln);
-            fileSystem.File.WriteAllBytes(Path.Combine(layoutDirectory, @"PretzelClasses", "NonProcessedPage.cs"), Properties.RazorCsProject.NonProcessedPage_cs);
-            fileSystem.File.WriteAllBytes(Path.Combine(layoutDirectory, @".nuget", "NuGet.config"), Properties.RazorCsProject.NuGet_Config);
-            fileSystem.File.WriteAllBytes(Path.Combine(layoutDirectory, @".nuget", "NuGet.exe"), Properties.RazorCsProject.NuGet_exe);
-            fileSystem.File.WriteAllBytes(Path.Combine(layoutDirectory, @".nuget", "NuGet.targets"), Properties.RazorCsProject.NuGet_targets);
-            fileSystem.File.WriteAllBytes(Path.Combine(layoutDirectory, @"PretzelClasses", "PageContext.cs"), Properties.RazorCsProject.PageContext_cs);
-            fileSystem.File.WriteAllBytes(Path.Combine(layoutDirectory, @"PretzelClasses", "Page.cs"), Properties.RazorCsProject.Page_cs);
-            fileSystem.File.WriteAllBytes(Path.Combine(layoutDirectory, @"PretzelClasses", "Paginator.cs"), Properties.RazorCsProject.Paginator_cs);
-            fileSystem.File.WriteAllBytes(Path.Combine(layoutDirectory, @"PretzelClasses", "SiteContext.cs"), Properties.RazorCsProject.SiteContext_cs);
-            fileSystem.File.WriteAllBytes(Path.Combine(layoutDirectory, @"PretzelClasses", "Tag.cs"), Properties.RazorCsProject.Tag_cs);
-            fileSystem.File.WriteAllBytes(Path.Combine(layoutDirectory, @"web.config"), Properties.RazorCsProject.Web_config);
-            fileSystem.File.WriteAllBytes(Path.Combine(layoutDirectory, @"packages.config"),
-                                          Properties.RazorCsProject.packages_config);
+            CreateFile(@"Resources\RazorCsProject\AssemblyInfo_cs", layoutDirectory, @"Properties", "AssemblyInfo.cs");
+            CreateFile(@"Resources\RazorCsProject\Category_cs", layoutDirectory, @"PretzelClasses", "Category.cs");
+            CreateFile(@"Resources\RazorCsProject\LayoutProject_csproj", layoutDirectory, "LayoutProject.csproj");
+            CreateFile(@"Resources\RazorCsProject\LayoutSolution_sln", layoutDirectory, "layoutSolution.sln");
+            CreateFile(@"Resources\RazorCsProject\NonProcessedPage_cs", layoutDirectory, @"PretzelClasses", "NonProcessedPage.cs");
+            CreateFile(@"Resources\RazorCsProject\NuGet_Config", layoutDirectory, @".nuget", "NuGet.config");
+            CreateFile(@"Resources\RazorCsProject\NuGet_exe", layoutDirectory, @".nuget", "NuGet.exe");
+            CreateFile(@"Resources\RazorCsProject\NuGet_targets", layoutDirectory, @".nuget", "NuGet.targets");
+            CreateFile(@"Resources\RazorCsProject\PageContext_cs", layoutDirectory, @"PretzelClasses", "PageContext.cs");
+            CreateFile(@"Resources\RazorCsProject\Page_cs", layoutDirectory, @"PretzelClasses", "Page.cs");
+            CreateFile(@"Resources\RazorCsProject\Paginator_cs", layoutDirectory, @"PretzelClasses", "Paginator.cs");
+            CreateFile(@"Resources\RazorCsProject\SiteContext_cs", layoutDirectory, @"PretzelClasses", "SiteContext.cs");
+            CreateFile(@"Resources\RazorCsProject\Tag_cs", layoutDirectory, @"PretzelClasses", "Tag.cs");
+            CreateFile(@"Resources\RazorCsProject\Web_config", layoutDirectory, "web.config");
+            CreateFile(@"Resources\RazorCsProject\packages_config", layoutDirectory, "packages.config");
         }
 
         private void CreateImages()
@@ -161,11 +156,21 @@ namespace Pretzel.Logic.Recipes
             }
         }
 
-        //https://github.com/dotnet/corefx/issues/12565
-        private Stream GetResourceStream(string path)
+        internal static void CreateFile(Type type, IFileSystem fileSystem, string resourceName, params string[] pathSegments)
         {
-            var assembly = GetType().Assembly;
-            var name = GetType().Assembly.GetName().Name;
+            using (var ms = new MemoryStream())
+            using (var resourceStream = GetResourceStream(type, resourceName))
+            {
+                resourceStream.CopyTo(ms);
+                fileSystem.File.WriteAllBytes(Path.Combine(pathSegments), ms.ToArray());
+            }
+        }
+
+        //https://github.com/dotnet/corefx/issues/12565
+        private static Stream GetResourceStream(Type type, string path)
+        {
+            var assembly = type.Assembly;
+            var name = type.Assembly.GetName().Name;
 
             path = path.Replace("/", ".").Replace("\\", ".");
 
@@ -174,6 +179,9 @@ namespace Pretzel.Logic.Recipes
 
             return stream;
         }
+
+        private Stream GetResourceStream(string path)
+            => GetResourceStream(GetType(), path);
 
         private string GetResourceString(string path)
         {
