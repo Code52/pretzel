@@ -57,7 +57,7 @@ namespace Pretzel.Logic.Recipes
                         CreateFile(@"Resources\Razor\Post.cshtml", directory, @"_layouts", "post.cshtml");
                         CreateFile(@"Resources\Razor\Index.cshtml", directory, "index.cshtml");
                         CreateFile(@"Resources\Razor\About.cshtml", directory, "about.md");
-                        fileSystem.File.WriteAllText(Path.Combine(directory, @"_posts", string.Format("{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), GetResourceString(@"Resources\Razor\FirstPost.cshtml"));
+                        CreateFile(@"Resources\Razor\FirstPost.cshtml", directory, @"_posts", $"{DateTime.Today.ToString("yyyy-MM-dd")}-myfirstpost.md");
                         CreateFile(@"Resources\Style.css", directory, @"css", "style.css");
                         CreateFile(@"Resources\Razor\Config.cshtml", directory, "_config.yml");
                         CreateFile(@"Resources\Razor\Head.cshtml", directory, @"_includes", "head.cshtml");
@@ -82,7 +82,7 @@ namespace Pretzel.Logic.Recipes
                     CreateFile(@"Resources\Liquid\Post.liquid", directory, @"_layouts", "post.html");
                     CreateFile(@"Resources\Liquid\Index.liquid", directory, @"index.html");
                     CreateFile(@"Resources\Liquid\About.liquid", directory, @"about.md");
-                    fileSystem.File.WriteAllText(Path.Combine(directory, @"_posts", string.Format("{0}-myfirstpost.md", DateTime.Today.ToString("yyyy-MM-dd"))), GetResourceString(@"Resources\Liquid\FirstPost.liquid"));
+                    CreateFile(@"Resources\Liquid\FirstPost.liquid", directory, @"_posts", $"{DateTime.Today.ToString("yyyy-MM-dd")}-myfirstpost.md");
                     CreateFile(@"Resources\Style.css", directory, @"css", "style.css");
                     CreateFile(@"Resources\Liquid\Config.liquid", directory, @"_config.yml");
                     CreateFile(@"Resources\Liquid\Head.liquid", directory, @"_includes", "head.html");
@@ -182,15 +182,6 @@ namespace Pretzel.Logic.Recipes
 
         private Stream GetResourceStream(string path)
             => GetResourceStream(GetType(), path);
-
-        private string GetResourceString(string path)
-        {
-            using (var stream = GetResourceStream(path))
-            using (var reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
-        }
 
         private void CreateDirectories()
         {
