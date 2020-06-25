@@ -16,7 +16,15 @@
     <LangVersion>latest</LangVersion>
     <DebugType>Full</DebugType>
     <ApplicationIcon>pretzel.ico</ApplicationIcon>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(GlobalTool)' != true">
     <TargetFrameworks>net462;netcoreapp2.2</TargetFrameworks>
   </PropertyGroup>
