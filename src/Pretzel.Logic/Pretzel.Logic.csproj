@@ -17,7 +17,15 @@
     <PackageReleaseNotes>https://github.com/Code52/pretzel/releases</PackageReleaseNotes>
     <PackageTags>Pretzel, Jekyll, HTML, Markdown, Liquid, Razor, static</PackageTags>
     <DebugType>Full</DebugType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <DefineConstants>NETSTANDARD</DefineConstants>
   </PropertyGroup>
