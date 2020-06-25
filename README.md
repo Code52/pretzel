@@ -1,4 +1,9 @@
-﻿[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/rp8nq03r4b7mdecf?svg=true)](https://ci.appveyor.com/project/laedit/pretzel)
+/!\ It has been a while since we lost the time and will to work on this project, so it has been archived.
+
+Feel free to fork it and proposed an adapted version, or to use [Wyam](https://wyam.io/), [Statiq.Web](https://statiq.dev/), [Jekyll in Windows](https://jekyllrb.com/docs/installation/windows/) or [any other static site generator](https://www.staticgen.com/).
+
+---
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/rp8nq03r4b7mdecf?svg=true)](https://ci.appveyor.com/project/laedit/pretzel)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/3949/badge.svg)](https://scan.coverity.com/projects/3949)
 [![Coverage Status](https://coveralls.io/repos/Code52/pretzel/badge.svg)](https://coveralls.io/r/Code52/pretzel)
 [![Ptrezel tag on Stack Overflow](https://img.shields.io/badge/stackoverflow-pretzel-orange.svg)](http://stackoverflow.com/questions/tagged/pretzel)
